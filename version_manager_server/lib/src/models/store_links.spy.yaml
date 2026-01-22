@@ -1,0 +1,8 @@
+class: StoreLinks
+fields:
+    ### Магазин приложений
+    store: Store, default=unknown,
+
+    ### Ссылка на магазин приложений
+    url: String,
+

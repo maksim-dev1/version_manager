@@ -1,0 +1,27 @@
+emailIdp:
+  - login:
+  - startRegistration:
+  - verifyRegistrationCode:
+  - finishRegistration:
+  - startPasswordReset:
+  - verifyPasswordResetCode:
+  - finishPasswordReset:
+jwtRefresh:
+  - refreshAccessToken:
+application:
+  - addAplication:
+  - getAllApplications:
+  - editApplication:
+  - deactivateApplication:
+  - deleteApplication:
+auth:
+  - login:
+version:
+  - addVersion:
+  - getAllVersions:
+  - getVersionsByFilters:
+  - updateVersion:
+  - blockUnblockVersion:
+  - deleteVersion:
+greeting:
+  - hello:

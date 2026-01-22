@@ -1,0 +1,37 @@
+class: AppVersion
+table: app_versions
+fields:
+    ### Serverpod автоматически добавит поле id: UuidValue
+
+    ### Идентификатор приложения (внешний ключ к таблице applications)
+    applicationId: UuidValue,
+
+    ### Версия приложения (например: 1.0.0)
+    version: String,
+
+    ### Номер сборки приложения
+    buildNumber: int,
+
+    ### Платформа (например: android, ios)
+    platform: Platform, default=unknown,
+
+    ### Описание изменений в этой версии
+    changelog: String,
+
+    ### Заблокирована ли эта версия для установки
+    isBlocked: bool, default=false,
+
+    ### Причина блокировки версии
+    blockReason: String?,
+
+    ### Предлагать эту версию для обновления
+    recommendedUpdate: bool, default=false,
+
+    ### Ссылки на магазины приложений
+    storeLinks: List<StoreLinks>,
+
+    ### Дата и время создания записи
+    createdAt: DateTime, default=now,
+
+    ### Дата и время последнего обновления записи
+    updatedAt: DateTime, default=now,

@@ -1,0 +1,8 @@
+enum: Store
+serialized: byName
+default: unknown
+values:
+    - unknown
+    - google_play
+    - app_store
+    - ru_store

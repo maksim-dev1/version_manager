@@ -1,0 +1,26 @@
+class: Application
+table: applications
+fields:
+    ### Serverpod автоматически добавит поле id: UuidValue
+
+    ### Уникальный идентификатор приложения (например: com.example.myapp)
+    packageName: String,
+
+    ### Название приложения
+    appName: String,
+
+    ### Описание
+    description: String,
+
+    ### Иконка приложения (URL)
+    iconUrl: String,
+
+    ### Активно ли приложение
+    isActive: bool, default=true,
+
+    ### Дата и время создания записи
+    createdAt: DateTime, 
+
+    ### Дата и время последнего обновления записи
+    updatedAt: DateTime,
+
