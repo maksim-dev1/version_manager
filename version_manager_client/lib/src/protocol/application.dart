@@ -25,7 +25,7 @@ abstract class Application implements _i1.SerializableModel {
   }) : isActive = isActive ?? true;
 
   factory Application({
-    int? id,
+    _i1.UuidValue? id,
     required String packageName,
     required String appName,
     required String description,
@@ -37,7 +37,9 @@ abstract class Application implements _i1.SerializableModel {
 
   factory Application.fromJson(Map<String, dynamic> jsonSerialization) {
     return Application(
-      id: jsonSerialization['id'] as int?,
+      id: jsonSerialization['id'] == null
+          ? null
+          : _i1.UuidValueJsonExtension.fromJson(jsonSerialization['id']),
       packageName: jsonSerialization['packageName'] as String,
       appName: jsonSerialization['appName'] as String,
       description: jsonSerialization['description'] as String,
@@ -52,12 +54,9 @@ abstract class Application implements _i1.SerializableModel {
     );
   }
 
-  /// The database id, set if the object has been inserted into the
-  /// database or if it has been fetched from the database. Otherwise,
-  /// the id will be null.
-  int? id;
+  /// Уникальный идентификатор записи
+  _i1.UuidValue? id;
 
-  /// Serverpod автоматически добавит поле id: UuidValue
   /// Уникальный идентификатор приложения (например: com.example.myapp)
   String packageName;
 
@@ -83,7 +82,7 @@ abstract class Application implements _i1.SerializableModel {
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
   Application copyWith({
-    int? id,
+    _i1.UuidValue? id,
     String? packageName,
     String? appName,
     String? description,
@@ -96,7 +95,7 @@ abstract class Application implements _i1.SerializableModel {
   Map<String, dynamic> toJson() {
     return {
       '__className__': 'Application',
-      if (id != null) 'id': id,
+      if (id != null) 'id': id?.toJson(),
       'packageName': packageName,
       'appName': appName,
       'description': description,
@@ -117,7 +116,7 @@ class _Undefined {}
 
 class _ApplicationImpl extends Application {
   _ApplicationImpl({
-    int? id,
+    _i1.UuidValue? id,
     required String packageName,
     required String appName,
     required String description,
@@ -151,7 +150,7 @@ class _ApplicationImpl extends Application {
     DateTime? updatedAt,
   }) {
     return Application(
-      id: id is int? ? id : this.id,
+      id: id is _i1.UuidValue? ? id : this.id,
       packageName: packageName ?? this.packageName,
       appName: appName ?? this.appName,
       description: description ?? this.description,

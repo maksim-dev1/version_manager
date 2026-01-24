@@ -36,7 +36,7 @@ abstract class AppVersion implements _i1.SerializableModel {
        updatedAt = updatedAt ?? DateTime.now();
 
   factory AppVersion({
-    int? id,
+    _i1.UuidValue? id,
     required _i1.UuidValue applicationId,
     required String version,
     required int buildNumber,
@@ -52,7 +52,9 @@ abstract class AppVersion implements _i1.SerializableModel {
 
   factory AppVersion.fromJson(Map<String, dynamic> jsonSerialization) {
     return AppVersion(
-      id: jsonSerialization['id'] as int?,
+      id: jsonSerialization['id'] == null
+          ? null
+          : _i1.UuidValueJsonExtension.fromJson(jsonSerialization['id']),
       applicationId: _i1.UuidValueJsonExtension.fromJson(
         jsonSerialization['applicationId'],
       ),
@@ -77,12 +79,9 @@ abstract class AppVersion implements _i1.SerializableModel {
     );
   }
 
-  /// The database id, set if the object has been inserted into the
-  /// database or if it has been fetched from the database. Otherwise,
-  /// the id will be null.
-  int? id;
+  /// Уникальный идентификатор версии
+  _i1.UuidValue? id;
 
-  /// Serverpod автоматически добавит поле id: UuidValue
   /// Идентификатор приложения (внешний ключ к таблице applications)
   _i1.UuidValue applicationId;
 
@@ -120,7 +119,7 @@ abstract class AppVersion implements _i1.SerializableModel {
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
   AppVersion copyWith({
-    int? id,
+    _i1.UuidValue? id,
     _i1.UuidValue? applicationId,
     String? version,
     int? buildNumber,
@@ -137,7 +136,7 @@ abstract class AppVersion implements _i1.SerializableModel {
   Map<String, dynamic> toJson() {
     return {
       '__className__': 'AppVersion',
-      if (id != null) 'id': id,
+      if (id != null) 'id': id?.toJson(),
       'applicationId': applicationId.toJson(),
       'version': version,
       'buildNumber': buildNumber,
@@ -162,7 +161,7 @@ class _Undefined {}
 
 class _AppVersionImpl extends AppVersion {
   _AppVersionImpl({
-    int? id,
+    _i1.UuidValue? id,
     required _i1.UuidValue applicationId,
     required String version,
     required int buildNumber,
@@ -208,7 +207,7 @@ class _AppVersionImpl extends AppVersion {
     DateTime? updatedAt,
   }) {
     return AppVersion(
-      id: id is int? ? id : this.id,
+      id: id is _i1.UuidValue? ? id : this.id,
       applicationId: applicationId ?? this.applicationId,
       version: version ?? this.version,
       buildNumber: buildNumber ?? this.buildNumber,

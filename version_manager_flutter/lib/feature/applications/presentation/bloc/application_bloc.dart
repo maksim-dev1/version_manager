@@ -19,8 +19,9 @@ class ApplicationBloc extends Bloc<ApplicationEvent, ApplicationState> {
           application: application,
         ),
         _GetAllApplications() => _getAllApplications(emit: emit),
-        _EditApplication(:final application) => _editApplication(
+        _EditApplication(:final application, :final changeablePackageName) => _editApplication(
           emit: emit,
+          changeablePackageName: changeablePackageName,
           application: application,
         ),
         _DeactivateApplication(:final packageName, :final isActive) =>
@@ -66,16 +67,18 @@ class ApplicationBloc extends Bloc<ApplicationEvent, ApplicationState> {
 
   Future<void> _editApplication({
     required Emitter<ApplicationState> emit,
+    required String changeablePackageName,
     required Application application,
   }) async {
     emit(ApplicationState.loading());
     try {
-      final updatedApplication = await _applicationRepository.editApplication(
+      final applications = await _applicationRepository.editApplication(
+        changeablePackageName: changeablePackageName,
         application: application,
       );
 
       emit(
-        ApplicationState.updatedApplication(application: updatedApplication),
+        ApplicationState.loaded(applications: applications),
       );
     } catch (e) {
       emit(ApplicationState.error(message: e.toString()));

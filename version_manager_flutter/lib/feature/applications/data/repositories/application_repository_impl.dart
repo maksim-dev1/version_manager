@@ -1,18 +1,18 @@
 import 'package:version_manager_client/src/protocol/application.dart';
 import 'package:version_manager_flutter/feature/applications/domain/repository/application_repository.dart';
-import 'package:version_manager_flutter/shared/services/api_service.dart';
+import 'package:version_manager_flutter/shared/services/api_client_service.dart';
 
 class ApplicationRepositoryImpl implements ApplicationRepository {
-  final ApiService _apiService;
+  final ApiClientService _apiService;
 
-  ApplicationRepositoryImpl({required ApiService apiService})
+  ApplicationRepositoryImpl({required ApiClientService apiService})
     : _apiService = apiService;
 
   @override
   Future<List<Application>> addAplication({
     required Application application,
-  }) {
-    final applications = _apiService.client.application.addAplication(
+  }) async {
+    final applications = await _apiService.client.application.addAplication(
       application: application,
     );
 
@@ -23,8 +23,8 @@ class ApplicationRepositoryImpl implements ApplicationRepository {
   Future<List<Application>> deactivateApplication({
     required String packageName,
     required bool isActive,
-  }) {
-    final applications = _apiService.client.application.deactivateApplication(
+  }) async {
+    final applications = await _apiService.client.application.deactivateApplication(
       packageName: packageName,
       isActive: isActive,
     );
@@ -35,8 +35,8 @@ class ApplicationRepositoryImpl implements ApplicationRepository {
   @override
   Future<List<Application>> deleteApplication({
     required String packageName,
-  }) {
-    final applications = _apiService.client.application.deleteApplication(
+  }) async {
+    final applications = await _apiService.client.application.deleteApplication(
       packageName: packageName,
     );
 
@@ -44,19 +44,21 @@ class ApplicationRepositoryImpl implements ApplicationRepository {
   }
 
   @override
-  Future<Application> editApplication({
+  Future<List<Application>> editApplication({
+    required String changeablePackageName,
     required Application application,
-  }) {
-    final updatedApplication = _apiService.client.application.editApplication(
+  }) async {
+    final applications = await _apiService.client.application.editApplication(
+      changeablePackageName: changeablePackageName,
       application: application,
     );
 
-    return updatedApplication;
+    return applications;
   }
 
   @override
-  Future<List<Application>> getAllApplications() {
-    final applications = _apiService.client.application.getAllApplications();
+  Future<List<Application>> getAllApplications() async {
+    final applications = await _apiService.client.application.getAllApplications();
 
     return applications;
   }

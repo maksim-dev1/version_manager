@@ -109,6 +109,8 @@ class VersionEndpoint extends Endpoint {
   /// Получение списка версий всех платформ с сортировкой по версии и сборке
   ///
   Future<List<AppVersion>> getAllVersions(Session session) async {
+    // Проверка авторизации
+
     try {
       final versions = await AppVersion.db.find(session);
 
@@ -161,6 +163,8 @@ class VersionEndpoint extends Endpoint {
     required UuidValue applicationId,
     Platform? platform,
   }) async {
+    // Проверка авторизации
+
     try {
       final versions = await AppVersion.db.find(
         session,
@@ -199,10 +203,12 @@ class VersionEndpoint extends Endpoint {
   /// Обновление существующей версии приложения
   ///
   /// Все поля версии будут обновлены. Объект должен содержать валидный id.
-  Future<AppVersion> updateVersion(
+  Future<List<AppVersion>> updateVersion(
     Session session, {
     required AppVersion appVersion,
   }) async {
+    // Проверка авторизации
+
     try {
       // Валидация входных данных
       if (appVersion.id == null) {
@@ -233,12 +239,14 @@ class VersionEndpoint extends Endpoint {
         updatedAt: DateTime.now(),
       );
 
-      final updatedVersion = await AppVersion.db.updateRow(
+      await AppVersion.db.updateRow(
         session,
         versionToUpdate,
       );
 
-      return updatedVersion;
+      final versions = await AppVersion.db.find(session);
+
+      return versions;
     } on ArgumentError catch (e) {
       session.log(
         'Validation error in updateVersion: $e',
@@ -263,10 +271,12 @@ class VersionEndpoint extends Endpoint {
   ///
   Future<List<AppVersion>> blockUnblockVersion(
     Session session, {
-    required int id,
+    required UuidValue id,
     required bool isBlocked,
     required String reason,
   }) async {
+    // Проверка авторизации
+
     try {
       // Валидация входных данных
       if (isBlocked && reason.trim().isEmpty) {
@@ -325,6 +335,8 @@ class VersionEndpoint extends Endpoint {
     Session session, {
     required AppVersion version,
   }) async {
+    // Проверка авторизации
+
     try {
       // Валидация входных данных
       if (version.id == null) {

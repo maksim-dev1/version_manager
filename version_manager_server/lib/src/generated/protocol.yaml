@@ -1,3 +1,9 @@
+application:
+  - addAplication:
+  - getAllApplications:
+  - editApplication:
+  - deactivateApplication:
+  - deleteApplication:
 emailIdp:
   - login:
   - startRegistration:
@@ -6,16 +12,8 @@ emailIdp:
   - startPasswordReset:
   - verifyPasswordResetCode:
   - finishPasswordReset:
-jwtRefresh:
+refreshJwtTokens:
   - refreshAccessToken:
-application:
-  - addAplication:
-  - getAllApplications:
-  - editApplication:
-  - deactivateApplication:
-  - deleteApplication:
-auth:
-  - login:
 version:
   - addVersion:
   - getAllVersions:

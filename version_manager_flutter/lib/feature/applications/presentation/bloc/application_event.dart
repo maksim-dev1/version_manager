@@ -9,6 +9,7 @@ sealed class ApplicationEvent with _$ApplicationEvent {
   const factory ApplicationEvent.getAllApplications() = _GetAllApplications;
 
   const factory ApplicationEvent.editApplication({
+    required String changeablePackageName,
     required Application application,
   }) = _EditApplication;
 

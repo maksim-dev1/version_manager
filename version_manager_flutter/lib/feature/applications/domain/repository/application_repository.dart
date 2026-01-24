@@ -10,7 +10,8 @@ abstract interface class ApplicationRepository {
   Future<List<Application>> getAllApplications();
 
   /// Редактирование приложения.
-  Future<Application> editApplication({
+  Future<List<Application>> editApplication({
+    required String changeablePackageName,
     required Application application,
   });
 

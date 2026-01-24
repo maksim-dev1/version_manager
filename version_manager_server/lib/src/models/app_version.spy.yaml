@@ -1,7 +1,8 @@
 class: AppVersion
 table: app_versions
 fields:
-    ### Serverpod автоматически добавит поле id: UuidValue
+    ### Уникальный идентификатор версии
+    id: UuidValue?, defaultPersist=random
 
     ### Идентификатор приложения (внешний ключ к таблице applications)
     applicationId: UuidValue,

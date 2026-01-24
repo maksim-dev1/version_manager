@@ -1,7 +1,8 @@
 class: Application
 table: applications
 fields:
-    ### Serverpod автоматически добавит поле id: UuidValue
+    ### Уникальный идентификатор записи
+    id: UuidValue?, defaultPersist=random
 
     ### Уникальный идентификатор приложения (например: com.example.myapp)
     packageName: String,

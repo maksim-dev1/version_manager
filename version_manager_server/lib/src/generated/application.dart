@@ -13,7 +13,7 @@
 import 'package:serverpod/serverpod.dart' as _i1;
 
 abstract class Application
-    implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
+    implements _i1.TableRow<_i1.UuidValue?>, _i1.ProtocolSerialization {
   Application._({
     this.id,
     required this.packageName,
@@ -26,7 +26,7 @@ abstract class Application
   }) : isActive = isActive ?? true;
 
   factory Application({
-    int? id,
+    _i1.UuidValue? id,
     required String packageName,
     required String appName,
     required String description,
@@ -38,7 +38,9 @@ abstract class Application
 
   factory Application.fromJson(Map<String, dynamic> jsonSerialization) {
     return Application(
-      id: jsonSerialization['id'] as int?,
+      id: jsonSerialization['id'] == null
+          ? null
+          : _i1.UuidValueJsonExtension.fromJson(jsonSerialization['id']),
       packageName: jsonSerialization['packageName'] as String,
       appName: jsonSerialization['appName'] as String,
       description: jsonSerialization['description'] as String,
@@ -58,9 +60,8 @@ abstract class Application
   static const db = ApplicationRepository._();
 
   @override
-  int? id;
+  _i1.UuidValue? id;
 
-  /// Serverpod автоматически добавит поле id: UuidValue
   /// Уникальный идентификатор приложения (например: com.example.myapp)
   String packageName;
 
@@ -83,13 +84,13 @@ abstract class Application
   DateTime updatedAt;
 
   @override
-  _i1.Table<int?> get table => t;
+  _i1.Table<_i1.UuidValue?> get table => t;
 
   /// Returns a shallow copy of this [Application]
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
   Application copyWith({
-    int? id,
+    _i1.UuidValue? id,
     String? packageName,
     String? appName,
     String? description,
@@ -102,7 +103,7 @@ abstract class Application
   Map<String, dynamic> toJson() {
     return {
       '__className__': 'Application',
-      if (id != null) 'id': id,
+      if (id != null) 'id': id?.toJson(),
       'packageName': packageName,
       'appName': appName,
       'description': description,
@@ -117,7 +118,7 @@ abstract class Application
   Map<String, dynamic> toJsonForProtocol() {
     return {
       '__className__': 'Application',
-      if (id != null) 'id': id,
+      if (id != null) 'id': id?.toJson(),
       'packageName': packageName,
       'appName': appName,
       'description': description,
@@ -162,7 +163,7 @@ class _Undefined {}
 
 class _ApplicationImpl extends Application {
   _ApplicationImpl({
-    int? id,
+    _i1.UuidValue? id,
     required String packageName,
     required String appName,
     required String description,
@@ -196,7 +197,7 @@ class _ApplicationImpl extends Application {
     DateTime? updatedAt,
   }) {
     return Application(
-      id: id is int? ? id : this.id,
+      id: id is _i1.UuidValue? ? id : this.id,
       packageName: packageName ?? this.packageName,
       appName: appName ?? this.appName,
       description: description ?? this.description,
@@ -249,7 +250,7 @@ class ApplicationUpdateTable extends _i1.UpdateTable<ApplicationTable> {
       );
 }
 
-class ApplicationTable extends _i1.Table<int?> {
+class ApplicationTable extends _i1.Table<_i1.UuidValue?> {
   ApplicationTable({super.tableRelation}) : super(tableName: 'applications') {
     updateTable = ApplicationUpdateTable(this);
     packageName = _i1.ColumnString(
@@ -285,7 +286,6 @@ class ApplicationTable extends _i1.Table<int?> {
 
   late final ApplicationUpdateTable updateTable;
 
-  /// Serverpod автоматически добавит поле id: UuidValue
   /// Уникальный идентификатор приложения (например: com.example.myapp)
   late final _i1.ColumnString packageName;
 
@@ -327,7 +327,7 @@ class ApplicationInclude extends _i1.IncludeObject {
   Map<String, _i1.Include?> get includes => {};
 
   @override
-  _i1.Table<int?> get table => Application.t;
+  _i1.Table<_i1.UuidValue?> get table => Application.t;
 }
 
 class ApplicationIncludeList extends _i1.IncludeList {
@@ -347,7 +347,7 @@ class ApplicationIncludeList extends _i1.IncludeList {
   Map<String, _i1.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table<int?> get table => Application.t;
+  _i1.Table<_i1.UuidValue?> get table => Application.t;
 }
 
 class ApplicationRepository {
@@ -435,7 +435,7 @@ class ApplicationRepository {
   /// Finds a single [Application] by its [id] or null if no such row exists.
   Future<Application?> findById(
     _i1.Session session,
-    int id, {
+    _i1.UuidValue id, {
     _i1.Transaction? transaction,
   }) async {
     return session.db.findById<Application>(
@@ -513,7 +513,7 @@ class ApplicationRepository {
   /// Returns the updated row or null if no row with the given id exists.
   Future<Application?> updateById(
     _i1.Session session,
-    int id, {
+    _i1.UuidValue id, {
     required _i1.ColumnValueListBuilder<ApplicationUpdateTable> columnValues,
     _i1.Transaction? transaction,
   }) async {

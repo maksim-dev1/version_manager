@@ -128,12 +128,12 @@ return deleteApplication(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( Application application)?  addAplication,TResult Function()?  getAllApplications,TResult Function( Application application)?  editApplication,TResult Function( String packageName,  bool isActive)?  deactivateApplication,TResult Function( String packageName)?  deleteApplication,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( Application application)?  addAplication,TResult Function()?  getAllApplications,TResult Function( String changeablePackageName,  Application application)?  editApplication,TResult Function( String packageName,  bool isActive)?  deactivateApplication,TResult Function( String packageName)?  deleteApplication,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AddAplication() when addAplication != null:
 return addAplication(_that.application);case _GetAllApplications() when getAllApplications != null:
 return getAllApplications();case _EditApplication() when editApplication != null:
-return editApplication(_that.application);case _DeactivateApplication() when deactivateApplication != null:
+return editApplication(_that.changeablePackageName,_that.application);case _DeactivateApplication() when deactivateApplication != null:
 return deactivateApplication(_that.packageName,_that.isActive);case _DeleteApplication() when deleteApplication != null:
 return deleteApplication(_that.packageName);case _:
   return orElse();
@@ -153,12 +153,12 @@ return deleteApplication(_that.packageName);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( Application application)  addAplication,required TResult Function()  getAllApplications,required TResult Function( Application application)  editApplication,required TResult Function( String packageName,  bool isActive)  deactivateApplication,required TResult Function( String packageName)  deleteApplication,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( Application application)  addAplication,required TResult Function()  getAllApplications,required TResult Function( String changeablePackageName,  Application application)  editApplication,required TResult Function( String packageName,  bool isActive)  deactivateApplication,required TResult Function( String packageName)  deleteApplication,}) {final _that = this;
 switch (_that) {
 case _AddAplication():
 return addAplication(_that.application);case _GetAllApplications():
 return getAllApplications();case _EditApplication():
-return editApplication(_that.application);case _DeactivateApplication():
+return editApplication(_that.changeablePackageName,_that.application);case _DeactivateApplication():
 return deactivateApplication(_that.packageName,_that.isActive);case _DeleteApplication():
 return deleteApplication(_that.packageName);}
 }
@@ -174,12 +174,12 @@ return deleteApplication(_that.packageName);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( Application application)?  addAplication,TResult? Function()?  getAllApplications,TResult? Function( Application application)?  editApplication,TResult? Function( String packageName,  bool isActive)?  deactivateApplication,TResult? Function( String packageName)?  deleteApplication,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( Application application)?  addAplication,TResult? Function()?  getAllApplications,TResult? Function( String changeablePackageName,  Application application)?  editApplication,TResult? Function( String packageName,  bool isActive)?  deactivateApplication,TResult? Function( String packageName)?  deleteApplication,}) {final _that = this;
 switch (_that) {
 case _AddAplication() when addAplication != null:
 return addAplication(_that.application);case _GetAllApplications() when getAllApplications != null:
 return getAllApplications();case _EditApplication() when editApplication != null:
-return editApplication(_that.application);case _DeactivateApplication() when deactivateApplication != null:
+return editApplication(_that.changeablePackageName,_that.application);case _DeactivateApplication() when deactivateApplication != null:
 return deactivateApplication(_that.packageName,_that.isActive);case _DeleteApplication() when deleteApplication != null:
 return deleteApplication(_that.packageName);case _:
   return null;
@@ -291,9 +291,10 @@ String toString() {
 
 
 class _EditApplication implements ApplicationEvent {
-  const _EditApplication({required this.application});
+  const _EditApplication({required this.changeablePackageName, required this.application});
   
 
+ final  String changeablePackageName;
  final  Application application;
 
 /// Create a copy of ApplicationEvent
@@ -306,16 +307,16 @@ _$EditApplicationCopyWith<_EditApplication> get copyWith => __$EditApplicationCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _EditApplication&&(identical(other.application, application) || other.application == application));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _EditApplication&&(identical(other.changeablePackageName, changeablePackageName) || other.changeablePackageName == changeablePackageName)&&(identical(other.application, application) || other.application == application));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,application);
+int get hashCode => Object.hash(runtimeType,changeablePackageName,application);
 
 @override
 String toString() {
-  return 'ApplicationEvent.editApplication(application: $application)';
+  return 'ApplicationEvent.editApplication(changeablePackageName: $changeablePackageName, application: $application)';
 }
 
 
@@ -326,7 +327,7 @@ abstract mixin class _$EditApplicationCopyWith<$Res> implements $ApplicationEven
   factory _$EditApplicationCopyWith(_EditApplication value, $Res Function(_EditApplication) _then) = __$EditApplicationCopyWithImpl;
 @useResult
 $Res call({
- Application application
+ String changeablePackageName, Application application
 });
 
 
@@ -343,9 +344,10 @@ class __$EditApplicationCopyWithImpl<$Res>
 
 /// Create a copy of ApplicationEvent
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? application = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? changeablePackageName = null,Object? application = null,}) {
   return _then(_EditApplication(
-application: null == application ? _self.application : application // ignore: cast_nullable_to_non_nullable
+changeablePackageName: null == changeablePackageName ? _self.changeablePackageName : changeablePackageName // ignore: cast_nullable_to_non_nullable
+as String,application: null == application ? _self.application : application // ignore: cast_nullable_to_non_nullable
 as Application,
   ));
 }
@@ -531,14 +533,13 @@ extension ApplicationStatePatterns on ApplicationState {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( ApplicationInitial value)?  initial,TResult Function( ApplicationLoading value)?  loading,TResult Function( ApplicationLoaded value)?  loaded,TResult Function( UpdatedApplication value)?  updatedApplication,TResult Function( ApplicationError value)?  error,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( ApplicationInitial value)?  initial,TResult Function( ApplicationLoading value)?  loading,TResult Function( ApplicationLoaded value)?  loaded,TResult Function( ApplicationError value)?  error,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case ApplicationInitial() when initial != null:
 return initial(_that);case ApplicationLoading() when loading != null:
 return loading(_that);case ApplicationLoaded() when loaded != null:
-return loaded(_that);case UpdatedApplication() when updatedApplication != null:
-return updatedApplication(_that);case ApplicationError() when error != null:
+return loaded(_that);case ApplicationError() when error != null:
 return error(_that);case _:
   return orElse();
 
@@ -557,14 +558,13 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( ApplicationInitial value)  initial,required TResult Function( ApplicationLoading value)  loading,required TResult Function( ApplicationLoaded value)  loaded,required TResult Function( UpdatedApplication value)  updatedApplication,required TResult Function( ApplicationError value)  error,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( ApplicationInitial value)  initial,required TResult Function( ApplicationLoading value)  loading,required TResult Function( ApplicationLoaded value)  loaded,required TResult Function( ApplicationError value)  error,}){
 final _that = this;
 switch (_that) {
 case ApplicationInitial():
 return initial(_that);case ApplicationLoading():
 return loading(_that);case ApplicationLoaded():
-return loaded(_that);case UpdatedApplication():
-return updatedApplication(_that);case ApplicationError():
+return loaded(_that);case ApplicationError():
 return error(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
@@ -579,14 +579,13 @@ return error(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( ApplicationInitial value)?  initial,TResult? Function( ApplicationLoading value)?  loading,TResult? Function( ApplicationLoaded value)?  loaded,TResult? Function( UpdatedApplication value)?  updatedApplication,TResult? Function( ApplicationError value)?  error,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( ApplicationInitial value)?  initial,TResult? Function( ApplicationLoading value)?  loading,TResult? Function( ApplicationLoaded value)?  loaded,TResult? Function( ApplicationError value)?  error,}){
 final _that = this;
 switch (_that) {
 case ApplicationInitial() when initial != null:
 return initial(_that);case ApplicationLoading() when loading != null:
 return loading(_that);case ApplicationLoaded() when loaded != null:
-return loaded(_that);case UpdatedApplication() when updatedApplication != null:
-return updatedApplication(_that);case ApplicationError() when error != null:
+return loaded(_that);case ApplicationError() when error != null:
 return error(_that);case _:
   return null;
 
@@ -604,13 +603,12 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( List<Application> applications)?  loaded,TResult Function( Application application)?  updatedApplication,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( List<Application> applications)?  loaded,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case ApplicationInitial() when initial != null:
 return initial();case ApplicationLoading() when loading != null:
 return loading();case ApplicationLoaded() when loaded != null:
-return loaded(_that.applications);case UpdatedApplication() when updatedApplication != null:
-return updatedApplication(_that.application);case ApplicationError() when error != null:
+return loaded(_that.applications);case ApplicationError() when error != null:
 return error(_that.message);case _:
   return orElse();
 
@@ -629,13 +627,12 @@ return error(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( List<Application> applications)  loaded,required TResult Function( Application application)  updatedApplication,required TResult Function( String message)  error,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( List<Application> applications)  loaded,required TResult Function( String message)  error,}) {final _that = this;
 switch (_that) {
 case ApplicationInitial():
 return initial();case ApplicationLoading():
 return loading();case ApplicationLoaded():
-return loaded(_that.applications);case UpdatedApplication():
-return updatedApplication(_that.application);case ApplicationError():
+return loaded(_that.applications);case ApplicationError():
 return error(_that.message);}
 }
 /// A variant of `when` that fallback to returning `null`
@@ -650,13 +647,12 @@ return error(_that.message);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( List<Application> applications)?  loaded,TResult? Function( Application application)?  updatedApplication,TResult? Function( String message)?  error,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( List<Application> applications)?  loaded,TResult? Function( String message)?  error,}) {final _that = this;
 switch (_that) {
 case ApplicationInitial() when initial != null:
 return initial();case ApplicationLoading() when loading != null:
 return loading();case ApplicationLoaded() when loaded != null:
-return loaded(_that.applications);case UpdatedApplication() when updatedApplication != null:
-return updatedApplication(_that.application);case ApplicationError() when error != null:
+return loaded(_that.applications);case ApplicationError() when error != null:
 return error(_that.message);case _:
   return null;
 
@@ -795,72 +791,6 @@ class _$ApplicationLoadedCopyWithImpl<$Res>
   return _then(ApplicationLoaded(
 applications: null == applications ? _self._applications : applications // ignore: cast_nullable_to_non_nullable
 as List<Application>,
-  ));
-}
-
-
-}
-
-/// @nodoc
-
-
-class UpdatedApplication implements ApplicationState {
-  const UpdatedApplication({required this.application});
-  
-
- final  Application application;
-
-/// Create a copy of ApplicationState
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$UpdatedApplicationCopyWith<UpdatedApplication> get copyWith => _$UpdatedApplicationCopyWithImpl<UpdatedApplication>(this, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UpdatedApplication&&(identical(other.application, application) || other.application == application));
-}
-
-
-@override
-int get hashCode => Object.hash(runtimeType,application);
-
-@override
-String toString() {
-  return 'ApplicationState.updatedApplication(application: $application)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class $UpdatedApplicationCopyWith<$Res> implements $ApplicationStateCopyWith<$Res> {
-  factory $UpdatedApplicationCopyWith(UpdatedApplication value, $Res Function(UpdatedApplication) _then) = _$UpdatedApplicationCopyWithImpl;
-@useResult
-$Res call({
- Application application
-});
-
-
-
-
-}
-/// @nodoc
-class _$UpdatedApplicationCopyWithImpl<$Res>
-    implements $UpdatedApplicationCopyWith<$Res> {
-  _$UpdatedApplicationCopyWithImpl(this._self, this._then);
-
-  final UpdatedApplication _self;
-  final $Res Function(UpdatedApplication) _then;
-
-/// Create a copy of ApplicationState
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? application = null,}) {
-  return _then(UpdatedApplication(
-application: null == application ? _self.application : application // ignore: cast_nullable_to_non_nullable
-as Application,
   ));
 }
 

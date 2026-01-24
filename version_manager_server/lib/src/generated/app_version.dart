@@ -16,7 +16,7 @@ import 'store_links.dart' as _i3;
 import 'package:version_manager_server/src/generated/protocol.dart' as _i4;
 
 abstract class AppVersion
-    implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
+    implements _i1.TableRow<_i1.UuidValue?>, _i1.ProtocolSerialization {
   AppVersion._({
     this.id,
     required this.applicationId,
@@ -37,7 +37,7 @@ abstract class AppVersion
        updatedAt = updatedAt ?? DateTime.now();
 
   factory AppVersion({
-    int? id,
+    _i1.UuidValue? id,
     required _i1.UuidValue applicationId,
     required String version,
     required int buildNumber,
@@ -53,7 +53,9 @@ abstract class AppVersion
 
   factory AppVersion.fromJson(Map<String, dynamic> jsonSerialization) {
     return AppVersion(
-      id: jsonSerialization['id'] as int?,
+      id: jsonSerialization['id'] == null
+          ? null
+          : _i1.UuidValueJsonExtension.fromJson(jsonSerialization['id']),
       applicationId: _i1.UuidValueJsonExtension.fromJson(
         jsonSerialization['applicationId'],
       ),
@@ -83,9 +85,8 @@ abstract class AppVersion
   static const db = AppVersionRepository._();
 
   @override
-  int? id;
+  _i1.UuidValue? id;
 
-  /// Serverpod автоматически добавит поле id: UuidValue
   /// Идентификатор приложения (внешний ключ к таблице applications)
   _i1.UuidValue applicationId;
 
@@ -120,13 +121,13 @@ abstract class AppVersion
   DateTime updatedAt;
 
   @override
-  _i1.Table<int?> get table => t;
+  _i1.Table<_i1.UuidValue?> get table => t;
 
   /// Returns a shallow copy of this [AppVersion]
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
   AppVersion copyWith({
-    int? id,
+    _i1.UuidValue? id,
     _i1.UuidValue? applicationId,
     String? version,
     int? buildNumber,
@@ -143,7 +144,7 @@ abstract class AppVersion
   Map<String, dynamic> toJson() {
     return {
       '__className__': 'AppVersion',
-      if (id != null) 'id': id,
+      if (id != null) 'id': id?.toJson(),
       'applicationId': applicationId.toJson(),
       'version': version,
       'buildNumber': buildNumber,
@@ -162,7 +163,7 @@ abstract class AppVersion
   Map<String, dynamic> toJsonForProtocol() {
     return {
       '__className__': 'AppVersion',
-      if (id != null) 'id': id,
+      if (id != null) 'id': id?.toJson(),
       'applicationId': applicationId.toJson(),
       'version': version,
       'buildNumber': buildNumber,
@@ -213,7 +214,7 @@ class _Undefined {}
 
 class _AppVersionImpl extends AppVersion {
   _AppVersionImpl({
-    int? id,
+    _i1.UuidValue? id,
     required _i1.UuidValue applicationId,
     required String version,
     required int buildNumber,
@@ -259,7 +260,7 @@ class _AppVersionImpl extends AppVersion {
     DateTime? updatedAt,
   }) {
     return AppVersion(
-      id: id is int? ? id : this.id,
+      id: id is _i1.UuidValue? ? id : this.id,
       applicationId: applicationId ?? this.applicationId,
       version: version ?? this.version,
       buildNumber: buildNumber ?? this.buildNumber,
@@ -342,7 +343,7 @@ class AppVersionUpdateTable extends _i1.UpdateTable<AppVersionTable> {
       );
 }
 
-class AppVersionTable extends _i1.Table<int?> {
+class AppVersionTable extends _i1.Table<_i1.UuidValue?> {
   AppVersionTable({super.tableRelation}) : super(tableName: 'app_versions') {
     updateTable = AppVersionUpdateTable(this);
     applicationId = _i1.ColumnUuid(
@@ -399,7 +400,6 @@ class AppVersionTable extends _i1.Table<int?> {
 
   late final AppVersionUpdateTable updateTable;
 
-  /// Serverpod автоматически добавит поле id: UuidValue
   /// Идентификатор приложения (внешний ключ к таблице applications)
   late final _i1.ColumnUuid applicationId;
 
@@ -457,7 +457,7 @@ class AppVersionInclude extends _i1.IncludeObject {
   Map<String, _i1.Include?> get includes => {};
 
   @override
-  _i1.Table<int?> get table => AppVersion.t;
+  _i1.Table<_i1.UuidValue?> get table => AppVersion.t;
 }
 
 class AppVersionIncludeList extends _i1.IncludeList {
@@ -477,7 +477,7 @@ class AppVersionIncludeList extends _i1.IncludeList {
   Map<String, _i1.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table<int?> get table => AppVersion.t;
+  _i1.Table<_i1.UuidValue?> get table => AppVersion.t;
 }
 
 class AppVersionRepository {
@@ -565,7 +565,7 @@ class AppVersionRepository {
   /// Finds a single [AppVersion] by its [id] or null if no such row exists.
   Future<AppVersion?> findById(
     _i1.Session session,
-    int id, {
+    _i1.UuidValue id, {
     _i1.Transaction? transaction,
   }) async {
     return session.db.findById<AppVersion>(
@@ -643,7 +643,7 @@ class AppVersionRepository {
   /// Returns the updated row or null if no row with the given id exists.
   Future<AppVersion?> updateById(
     _i1.Session session,
-    int id, {
+    _i1.UuidValue id, {
     required _i1.ColumnValueListBuilder<AppVersionUpdateTable> columnValues,
     _i1.Transaction? transaction,
   }) async {

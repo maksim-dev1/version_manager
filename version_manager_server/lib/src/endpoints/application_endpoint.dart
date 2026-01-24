@@ -60,6 +60,8 @@ class ApplicationEndpoint extends Endpoint {
   /// Получение списка всех приложений.
   ///
   Future<List<Application>> getAllApplications(Session session) async {
+    // Проверка авторизации
+
     try {
       /// Получение и возврат списка всех приложений из базы данных
       final applications = await Application.db.find(session);
@@ -77,8 +79,9 @@ class ApplicationEndpoint extends Endpoint {
 
   /// Редактирование приложения.
   ///
-  Future<Application> editApplication(
+  Future<List<Application>> editApplication(
     Session session, {
+    required String changeablePackageName,
     required Application application,
   }) async {
     try {
@@ -92,27 +95,30 @@ class ApplicationEndpoint extends Endpoint {
       }
 
       /// Поиск существующего приложения по packageName
-      final app = await Application.db.findFirstRow(
+      final existingApp = await Application.db.findFirstRow(
         session,
-        where: (app) => app.packageName.equals(application.packageName),
+        where: (app) => app.packageName.equals(changeablePackageName),
       );
 
       /// Если приложение не найдено, выбрасываем исключение
-      if (app == null) {
+      if (existingApp == null) {
         throw StateError(
-          'Application with package name "${application.packageName}" does not exist.',
+          'Application with package name "$changeablePackageName" does not exist.',
         );
       }
 
       /// Добавление времени обновления
       final appToUpdated = application.copyWith(
+        id: existingApp.id,
         updatedAt: DateTime.now(),
       );
 
       /// Обновление приложения
-      final updatedApp = await Application.db.updateRow(session, appToUpdated);
+      await Application.db.updateRow(session, appToUpdated);
 
-      return updatedApp;
+      final applications = await Application.db.find(session);
+
+      return applications;
     } on ArgumentError catch (e) {
       session.log(
         'Validation error in editApplication: $e',
@@ -143,6 +149,8 @@ class ApplicationEndpoint extends Endpoint {
     required String packageName,
     required bool isActive,
   }) async {
+    // Проверка авторизации
+
     try {
       // Валидация входных данных
       if (packageName.trim().isEmpty) {
@@ -204,6 +212,8 @@ class ApplicationEndpoint extends Endpoint {
     Session session, {
     required String packageName,
   }) async {
+    // Проверка авторизации
+
     try {
       // Валидация входных данных
       if (packageName.trim().isEmpty) {

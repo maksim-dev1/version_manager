@@ -2,18 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:serverpod_flutter/serverpod_flutter.dart';
 import 'package:version_manager_flutter/app.dart';
-import 'package:version_manager_flutter/shared/services/api_service.dart';
+import 'package:version_manager_flutter/shared/services/api_client_service.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   final serverUrl = _getServerUrl();
+
   // Инициализация API сервиса
-  final apiService = ApiService();
+  final apiService = ApiClientService();
   await apiService.initClient(serverUrl);
 
   runApp(
-    Provider(
+    Provider<ApiClientService>(
       create: (context) => apiService,
-      child: const App(),
+      child: App(),
     ),
   );
 }
@@ -27,43 +30,3 @@ String _getServerUrl() {
 
   return serverUrl;
 }
-
-// class VersionManagerApp extends StatelessWidget {
-//   const VersionManagerApp({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: 'Version Manager',
-//       debugShowCheckedModeBanner: false,
-//       theme: ThemeData(
-//         colorScheme: ColorScheme.fromSeed(
-//           seedColor: Colors.deepPurple,
-//           brightness: Brightness.light,
-//         ),
-//         useMaterial3: true,
-//         cardTheme: CardThemeData(
-//           elevation: 2,
-//           shape: RoundedRectangleBorder(
-//             borderRadius: BorderRadius.circular(12),
-//           ),
-//         ),
-//       ),
-//       darkTheme: ThemeData(
-//         colorScheme: ColorScheme.fromSeed(
-//           seedColor: Colors.deepPurple,
-//           brightness: Brightness.dark,
-//         ),
-//         useMaterial3: true,
-//         cardTheme: CardThemeData(
-//           elevation: 2,
-//           shape: RoundedRectangleBorder(
-//             borderRadius: BorderRadius.circular(12),
-//           ),
-//         ),
-//       ),
-//       themeMode: ThemeMode.system,
-//       home: const LoginScreen(),
-//     );
-//   }
-// }
