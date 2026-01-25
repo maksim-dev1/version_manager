@@ -12,17 +12,49 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
 import 'dart:async' as _i2;
-import 'package:version_manager_client/src/protocol/application.dart' as _i3;
+import 'package:version_manager_client/src/protocol/app_check_response.dart'
+    as _i3;
+import 'package:version_manager_client/src/protocol/enums/platform.dart' as _i4;
+import 'package:version_manager_client/src/protocol/application.dart' as _i5;
 import 'package:serverpod_auth_idp_client/serverpod_auth_idp_client.dart'
-    as _i4;
+    as _i6;
 import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
-    as _i5;
-import 'package:version_manager_client/src/protocol/app_version.dart' as _i6;
-import 'package:version_manager_client/src/protocol/enums/platform.dart' as _i7;
-import 'package:version_manager_client/src/protocol/store_links.dart' as _i8;
+    as _i7;
+import 'package:version_manager_client/src/protocol/app_version.dart' as _i8;
+import 'package:version_manager_client/src/protocol/store_links.dart' as _i9;
 import 'package:version_manager_client/src/protocol/greetings/greeting.dart'
-    as _i9;
-import 'protocol.dart' as _i10;
+    as _i10;
+import 'protocol.dart' as _i11;
+
+/// {@category Endpoint}
+class EndpointAppCheck extends _i1.EndpointRef {
+  EndpointAppCheck(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'appCheck';
+
+  /// Проверка версии приложения клиента
+  ///
+  /// Принимает информацию о текущей версии клиента и возвращает:
+  /// - Заблокирована ли эта версия
+  /// - Информацию о последней доступной версии
+  /// - Ссылки на магазины для обновления
+  _i2.Future<_i3.AppCheckResponse> checkVersion({
+    required String packageName,
+    required String currentVersion,
+    required String currentBuildNumber,
+    required _i4.Platform platform,
+  }) => caller.callServerEndpoint<_i3.AppCheckResponse>(
+    'appCheck',
+    'checkVersion',
+    {
+      'packageName': packageName,
+      'currentVersion': currentVersion,
+      'currentBuildNumber': currentBuildNumber,
+      'platform': platform,
+    },
+  );
+}
 
 /// {@category Endpoint}
 class EndpointApplication extends _i1.EndpointRef {
@@ -33,9 +65,9 @@ class EndpointApplication extends _i1.EndpointRef {
 
   /// Добавление нового приложения.
   ///
-  _i2.Future<List<_i3.Application>> addAplication({
-    required _i3.Application application,
-  }) => caller.callServerEndpoint<List<_i3.Application>>(
+  _i2.Future<List<_i5.Application>> addAplication({
+    required _i5.Application application,
+  }) => caller.callServerEndpoint<List<_i5.Application>>(
     'application',
     'addAplication',
     {'application': application},
@@ -43,8 +75,8 @@ class EndpointApplication extends _i1.EndpointRef {
 
   /// Получение списка всех приложений.
   ///
-  _i2.Future<List<_i3.Application>> getAllApplications() =>
-      caller.callServerEndpoint<List<_i3.Application>>(
+  _i2.Future<List<_i5.Application>> getAllApplications() =>
+      caller.callServerEndpoint<List<_i5.Application>>(
         'application',
         'getAllApplications',
         {},
@@ -52,10 +84,10 @@ class EndpointApplication extends _i1.EndpointRef {
 
   /// Редактирование приложения.
   ///
-  _i2.Future<List<_i3.Application>> editApplication({
+  _i2.Future<List<_i5.Application>> editApplication({
     required String changeablePackageName,
-    required _i3.Application application,
-  }) => caller.callServerEndpoint<List<_i3.Application>>(
+    required _i5.Application application,
+  }) => caller.callServerEndpoint<List<_i5.Application>>(
     'application',
     'editApplication',
     {
@@ -66,10 +98,10 @@ class EndpointApplication extends _i1.EndpointRef {
 
   /// Деактивация/Активация приложения.
   ///
-  _i2.Future<List<_i3.Application>> deactivateApplication({
+  _i2.Future<List<_i5.Application>> deactivateApplication({
     required String packageName,
     required bool isActive,
-  }) => caller.callServerEndpoint<List<_i3.Application>>(
+  }) => caller.callServerEndpoint<List<_i5.Application>>(
     'application',
     'deactivateApplication',
     {
@@ -80,9 +112,9 @@ class EndpointApplication extends _i1.EndpointRef {
 
   /// Удаление приложения.
   ///
-  _i2.Future<List<_i3.Application>> deleteApplication({
+  _i2.Future<List<_i5.Application>> deleteApplication({
     required String packageName,
-  }) => caller.callServerEndpoint<List<_i3.Application>>(
+  }) => caller.callServerEndpoint<List<_i5.Application>>(
     'application',
     'deleteApplication',
     {'packageName': packageName},
@@ -90,7 +122,7 @@ class EndpointApplication extends _i1.EndpointRef {
 }
 
 /// {@category Endpoint}
-class EndpointEmailIdp extends _i4.EndpointEmailIdpBase {
+class EndpointEmailIdp extends _i6.EndpointEmailIdpBase {
   EndpointEmailIdp(_i1.EndpointCaller caller) : super(caller);
 
   @override
@@ -106,10 +138,10 @@ class EndpointEmailIdp extends _i4.EndpointEmailIdpBase {
   ///
   /// Throws an [AuthUserBlockedException] if the auth user is blocked.
   @override
-  _i2.Future<_i5.AuthSuccess> login({
+  _i2.Future<_i7.AuthSuccess> login({
     required String email,
     required String password,
-  }) => caller.callServerEndpoint<_i5.AuthSuccess>(
+  }) => caller.callServerEndpoint<_i7.AuthSuccess>(
     'emailIdp',
     'login',
     {
@@ -174,10 +206,10 @@ class EndpointEmailIdp extends _i4.EndpointEmailIdpBase {
   ///
   /// Returns a session for the newly created user.
   @override
-  _i2.Future<_i5.AuthSuccess> finishRegistration({
+  _i2.Future<_i7.AuthSuccess> finishRegistration({
     required String registrationToken,
     required String password,
-  }) => caller.callServerEndpoint<_i5.AuthSuccess>(
+  }) => caller.callServerEndpoint<_i7.AuthSuccess>(
     'emailIdp',
     'finishRegistration',
     {
@@ -263,7 +295,7 @@ class EndpointEmailIdp extends _i4.EndpointEmailIdpBase {
 }
 
 /// {@category Endpoint}
-class EndpointRefreshJwtTokens extends _i5.EndpointRefreshJwtTokens {
+class EndpointRefreshJwtTokens extends _i7.EndpointRefreshJwtTokens {
   EndpointRefreshJwtTokens(_i1.EndpointCaller caller) : super(caller);
 
   @override
@@ -288,9 +320,9 @@ class EndpointRefreshJwtTokens extends _i5.EndpointRefreshJwtTokens {
   /// This endpoint is unauthenticated, meaning the client won't include any
   /// authentication information with the call.
   @override
-  _i2.Future<_i5.AuthSuccess> refreshAccessToken({
+  _i2.Future<_i7.AuthSuccess> refreshAccessToken({
     required String refreshToken,
-  }) => caller.callServerEndpoint<_i5.AuthSuccess>(
+  }) => caller.callServerEndpoint<_i7.AuthSuccess>(
     'refreshJwtTokens',
     'refreshAccessToken',
     {'refreshToken': refreshToken},
@@ -307,14 +339,14 @@ class EndpointVersion extends _i1.EndpointRef {
 
   /// Добавление новой версии приложения.
   ///
-  _i2.Future<List<_i6.AppVersion>> addVersion({
+  _i2.Future<List<_i8.AppVersion>> addVersion({
     required _i1.UuidValue applicationId,
     required String version,
     required int buildNumber,
     required String changelog,
-    List<_i7.Platform>? platforms,
-    List<_i8.StoreLinks>? storeLinks,
-  }) => caller.callServerEndpoint<List<_i6.AppVersion>>(
+    List<_i4.Platform>? platforms,
+    List<_i9.StoreLinks>? storeLinks,
+  }) => caller.callServerEndpoint<List<_i8.AppVersion>>(
     'version',
     'addVersion',
     {
@@ -329,18 +361,18 @@ class EndpointVersion extends _i1.EndpointRef {
 
   /// Получение списка версий всех платформ с сортировкой по версии и сборке
   ///
-  _i2.Future<List<_i6.AppVersion>> getAllVersions() =>
-      caller.callServerEndpoint<List<_i6.AppVersion>>(
+  _i2.Future<List<_i8.AppVersion>> getAllVersions() =>
+      caller.callServerEndpoint<List<_i8.AppVersion>>(
         'version',
         'getAllVersions',
         {},
       );
 
   /// Получение списка версий по фильтрам с сортировкой
-  _i2.Future<List<_i6.AppVersion>> getVersionsByFilters({
+  _i2.Future<List<_i8.AppVersion>> getVersionsByFilters({
     required _i1.UuidValue applicationId,
-    _i7.Platform? platform,
-  }) => caller.callServerEndpoint<List<_i6.AppVersion>>(
+    _i4.Platform? platform,
+  }) => caller.callServerEndpoint<List<_i8.AppVersion>>(
     'version',
     'getVersionsByFilters',
     {
@@ -352,9 +384,9 @@ class EndpointVersion extends _i1.EndpointRef {
   /// Обновление существующей версии приложения
   ///
   /// Все поля версии будут обновлены. Объект должен содержать валидный id.
-  _i2.Future<List<_i6.AppVersion>> updateVersion({
-    required _i6.AppVersion appVersion,
-  }) => caller.callServerEndpoint<List<_i6.AppVersion>>(
+  _i2.Future<List<_i8.AppVersion>> updateVersion({
+    required _i8.AppVersion appVersion,
+  }) => caller.callServerEndpoint<List<_i8.AppVersion>>(
     'version',
     'updateVersion',
     {'appVersion': appVersion},
@@ -362,11 +394,11 @@ class EndpointVersion extends _i1.EndpointRef {
 
   /// Блокирования/Разблокирование версии приложения
   ///
-  _i2.Future<List<_i6.AppVersion>> blockUnblockVersion({
+  _i2.Future<List<_i8.AppVersion>> blockUnblockVersion({
     required _i1.UuidValue id,
     required bool isBlocked,
     required String reason,
-  }) => caller.callServerEndpoint<List<_i6.AppVersion>>(
+  }) => caller.callServerEndpoint<List<_i8.AppVersion>>(
     'version',
     'blockUnblockVersion',
     {
@@ -378,9 +410,9 @@ class EndpointVersion extends _i1.EndpointRef {
 
   /// Удаление версии приложения по id
   ///
-  _i2.Future<List<_i6.AppVersion>> deleteVersion({
-    required _i6.AppVersion version,
-  }) => caller.callServerEndpoint<List<_i6.AppVersion>>(
+  _i2.Future<List<_i8.AppVersion>> deleteVersion({
+    required _i8.AppVersion version,
+  }) => caller.callServerEndpoint<List<_i8.AppVersion>>(
     'version',
     'deleteVersion',
     {'version': version},
@@ -397,8 +429,8 @@ class EndpointGreeting extends _i1.EndpointRef {
   String get name => 'greeting';
 
   /// Returns a personalized greeting message: "Hello {name}".
-  _i2.Future<_i9.Greeting> hello(String name) =>
-      caller.callServerEndpoint<_i9.Greeting>(
+  _i2.Future<_i10.Greeting> hello(String name) =>
+      caller.callServerEndpoint<_i10.Greeting>(
         'greeting',
         'hello',
         {'name': name},
@@ -407,13 +439,13 @@ class EndpointGreeting extends _i1.EndpointRef {
 
 class Modules {
   Modules(Client client) {
-    serverpod_auth_idp = _i4.Caller(client);
-    serverpod_auth_core = _i5.Caller(client);
+    serverpod_auth_idp = _i6.Caller(client);
+    serverpod_auth_core = _i7.Caller(client);
   }
 
-  late final _i4.Caller serverpod_auth_idp;
+  late final _i6.Caller serverpod_auth_idp;
 
-  late final _i5.Caller serverpod_auth_core;
+  late final _i7.Caller serverpod_auth_core;
 }
 
 class Client extends _i1.ServerpodClientShared {
@@ -436,7 +468,7 @@ class Client extends _i1.ServerpodClientShared {
     bool? disconnectStreamsOnLostInternetConnection,
   }) : super(
          host,
-         _i10.Protocol(),
+         _i11.Protocol(),
          securityContext: securityContext,
          streamingConnectionTimeout: streamingConnectionTimeout,
          connectionTimeout: connectionTimeout,
@@ -445,6 +477,7 @@ class Client extends _i1.ServerpodClientShared {
          disconnectStreamsOnLostInternetConnection:
              disconnectStreamsOnLostInternetConnection,
        ) {
+    appCheck = EndpointAppCheck(this);
     application = EndpointApplication(this);
     emailIdp = EndpointEmailIdp(this);
     refreshJwtTokens = EndpointRefreshJwtTokens(this);
@@ -452,6 +485,8 @@ class Client extends _i1.ServerpodClientShared {
     greeting = EndpointGreeting(this);
     modules = Modules(this);
   }
+
+  late final EndpointAppCheck appCheck;
 
   late final EndpointApplication application;
 
@@ -467,6 +502,7 @@ class Client extends _i1.ServerpodClientShared {
 
   @override
   Map<String, _i1.EndpointRef> get endpointRefLookup => {
+    'appCheck': appCheck,
     'application': application,
     'emailIdp': emailIdp,
     'refreshJwtTokens': refreshJwtTokens,

@@ -1,3 +1,5 @@
+appCheck:
+  - checkVersion:
 application:
   - addAplication:
   - getAllApplications:

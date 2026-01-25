@@ -11,56 +11,106 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
-import '../endpoints/application_endpoint.dart' as _i2;
-import '../endpoints/email_idp_endpoint.dart' as _i3;
-import '../endpoints/refresh_jwt_tokens_endpoint.dart' as _i4;
-import '../endpoints/version_endpoint.dart' as _i5;
-import '../greetings/greeting_endpoint.dart' as _i6;
-import 'package:version_manager_server/src/generated/application.dart' as _i7;
+import '../endpoints/app_check_endpoint.dart' as _i2;
+import '../endpoints/application_endpoint.dart' as _i3;
+import '../endpoints/email_idp_endpoint.dart' as _i4;
+import '../endpoints/refresh_jwt_tokens_endpoint.dart' as _i5;
+import '../endpoints/version_endpoint.dart' as _i6;
+import '../greetings/greeting_endpoint.dart' as _i7;
 import 'package:version_manager_server/src/generated/enums/platform.dart'
     as _i8;
-import 'package:version_manager_server/src/generated/store_links.dart' as _i9;
-import 'package:version_manager_server/src/generated/app_version.dart' as _i10;
+import 'package:version_manager_server/src/generated/application.dart' as _i9;
+import 'package:version_manager_server/src/generated/store_links.dart' as _i10;
+import 'package:version_manager_server/src/generated/app_version.dart' as _i11;
 import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
-    as _i11;
-import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
     as _i12;
+import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
+    as _i13;
 
 class Endpoints extends _i1.EndpointDispatch {
   @override
   void initializeEndpoints(_i1.Server server) {
     var endpoints = <String, _i1.Endpoint>{
-      'application': _i2.ApplicationEndpoint()
+      'appCheck': _i2.AppCheckEndpoint()
+        ..initialize(
+          server,
+          'appCheck',
+          null,
+        ),
+      'application': _i3.ApplicationEndpoint()
         ..initialize(
           server,
           'application',
           null,
         ),
-      'emailIdp': _i3.EmailIdpEndpoint()
+      'emailIdp': _i4.EmailIdpEndpoint()
         ..initialize(
           server,
           'emailIdp',
           null,
         ),
-      'refreshJwtTokens': _i4.RefreshJwtTokensEndpoint()
+      'refreshJwtTokens': _i5.RefreshJwtTokensEndpoint()
         ..initialize(
           server,
           'refreshJwtTokens',
           null,
         ),
-      'version': _i5.VersionEndpoint()
+      'version': _i6.VersionEndpoint()
         ..initialize(
           server,
           'version',
           null,
         ),
-      'greeting': _i6.GreetingEndpoint()
+      'greeting': _i7.GreetingEndpoint()
         ..initialize(
           server,
           'greeting',
           null,
         ),
     };
+    connectors['appCheck'] = _i1.EndpointConnector(
+      name: 'appCheck',
+      endpoint: endpoints['appCheck']!,
+      methodConnectors: {
+        'checkVersion': _i1.MethodConnector(
+          name: 'checkVersion',
+          params: {
+            'packageName': _i1.ParameterDescription(
+              name: 'packageName',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'currentVersion': _i1.ParameterDescription(
+              name: 'currentVersion',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'currentBuildNumber': _i1.ParameterDescription(
+              name: 'currentBuildNumber',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'platform': _i1.ParameterDescription(
+              name: 'platform',
+              type: _i1.getType<_i8.Platform>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['appCheck'] as _i2.AppCheckEndpoint).checkVersion(
+                    session,
+                    packageName: params['packageName'],
+                    currentVersion: params['currentVersion'],
+                    currentBuildNumber: params['currentBuildNumber'],
+                    platform: params['platform'],
+                  ),
+        ),
+      },
+    );
     connectors['application'] = _i1.EndpointConnector(
       name: 'application',
       endpoint: endpoints['application']!,
@@ -70,7 +120,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'application': _i1.ParameterDescription(
               name: 'application',
-              type: _i1.getType<_i7.Application>(),
+              type: _i1.getType<_i9.Application>(),
               nullable: false,
             ),
           },
@@ -78,7 +128,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['application'] as _i2.ApplicationEndpoint)
+              ) async => (endpoints['application'] as _i3.ApplicationEndpoint)
                   .addAplication(
                     session,
                     application: params['application'],
@@ -91,7 +141,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['application'] as _i2.ApplicationEndpoint)
+              ) async => (endpoints['application'] as _i3.ApplicationEndpoint)
                   .getAllApplications(session),
         ),
         'editApplication': _i1.MethodConnector(
@@ -104,7 +154,7 @@ class Endpoints extends _i1.EndpointDispatch {
             ),
             'application': _i1.ParameterDescription(
               name: 'application',
-              type: _i1.getType<_i7.Application>(),
+              type: _i1.getType<_i9.Application>(),
               nullable: false,
             ),
           },
@@ -112,7 +162,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['application'] as _i2.ApplicationEndpoint)
+              ) async => (endpoints['application'] as _i3.ApplicationEndpoint)
                   .editApplication(
                     session,
                     changeablePackageName: params['changeablePackageName'],
@@ -137,7 +187,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['application'] as _i2.ApplicationEndpoint)
+              ) async => (endpoints['application'] as _i3.ApplicationEndpoint)
                   .deactivateApplication(
                     session,
                     packageName: params['packageName'],
@@ -157,7 +207,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['application'] as _i2.ApplicationEndpoint)
+              ) async => (endpoints['application'] as _i3.ApplicationEndpoint)
                   .deleteApplication(
                     session,
                     packageName: params['packageName'],
@@ -187,7 +237,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['emailIdp'] as _i3.EmailIdpEndpoint).login(
+              ) async => (endpoints['emailIdp'] as _i4.EmailIdpEndpoint).login(
                 session,
                 email: params['email'],
                 password: params['password'],
@@ -206,7 +256,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['emailIdp'] as _i3.EmailIdpEndpoint)
+              ) async => (endpoints['emailIdp'] as _i4.EmailIdpEndpoint)
                   .startRegistration(
                     session,
                     email: params['email'],
@@ -230,7 +280,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['emailIdp'] as _i3.EmailIdpEndpoint)
+              ) async => (endpoints['emailIdp'] as _i4.EmailIdpEndpoint)
                   .verifyRegistrationCode(
                     session,
                     accountRequestId: params['accountRequestId'],
@@ -255,7 +305,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['emailIdp'] as _i3.EmailIdpEndpoint)
+              ) async => (endpoints['emailIdp'] as _i4.EmailIdpEndpoint)
                   .finishRegistration(
                     session,
                     registrationToken: params['registrationToken'],
@@ -275,7 +325,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['emailIdp'] as _i3.EmailIdpEndpoint)
+              ) async => (endpoints['emailIdp'] as _i4.EmailIdpEndpoint)
                   .startPasswordReset(
                     session,
                     email: params['email'],
@@ -299,7 +349,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['emailIdp'] as _i3.EmailIdpEndpoint)
+              ) async => (endpoints['emailIdp'] as _i4.EmailIdpEndpoint)
                   .verifyPasswordResetCode(
                     session,
                     passwordResetRequestId: params['passwordResetRequestId'],
@@ -324,7 +374,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['emailIdp'] as _i3.EmailIdpEndpoint)
+              ) async => (endpoints['emailIdp'] as _i4.EmailIdpEndpoint)
                   .finishPasswordReset(
                     session,
                     finishPasswordResetToken:
@@ -353,7 +403,7 @@ class Endpoints extends _i1.EndpointDispatch {
                 Map<String, dynamic> params,
               ) async =>
                   (endpoints['refreshJwtTokens']
-                          as _i4.RefreshJwtTokensEndpoint)
+                          as _i5.RefreshJwtTokensEndpoint)
                       .refreshAccessToken(
                         session,
                         refreshToken: params['refreshToken'],
@@ -395,7 +445,7 @@ class Endpoints extends _i1.EndpointDispatch {
             ),
             'storeLinks': _i1.ParameterDescription(
               name: 'storeLinks',
-              type: _i1.getType<List<_i9.StoreLinks>?>(),
+              type: _i1.getType<List<_i10.StoreLinks>?>(),
               nullable: true,
             ),
           },
@@ -404,7 +454,7 @@ class Endpoints extends _i1.EndpointDispatch {
                 _i1.Session session,
                 Map<String, dynamic> params,
               ) async =>
-                  (endpoints['version'] as _i5.VersionEndpoint).addVersion(
+                  (endpoints['version'] as _i6.VersionEndpoint).addVersion(
                     session,
                     applicationId: params['applicationId'],
                     version: params['version'],
@@ -421,7 +471,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['version'] as _i5.VersionEndpoint)
+              ) async => (endpoints['version'] as _i6.VersionEndpoint)
                   .getAllVersions(session),
         ),
         'getVersionsByFilters': _i1.MethodConnector(
@@ -442,7 +492,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['version'] as _i5.VersionEndpoint)
+              ) async => (endpoints['version'] as _i6.VersionEndpoint)
                   .getVersionsByFilters(
                     session,
                     applicationId: params['applicationId'],
@@ -454,7 +504,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'appVersion': _i1.ParameterDescription(
               name: 'appVersion',
-              type: _i1.getType<_i10.AppVersion>(),
+              type: _i1.getType<_i11.AppVersion>(),
               nullable: false,
             ),
           },
@@ -463,7 +513,7 @@ class Endpoints extends _i1.EndpointDispatch {
                 _i1.Session session,
                 Map<String, dynamic> params,
               ) async =>
-                  (endpoints['version'] as _i5.VersionEndpoint).updateVersion(
+                  (endpoints['version'] as _i6.VersionEndpoint).updateVersion(
                     session,
                     appVersion: params['appVersion'],
                   ),
@@ -491,7 +541,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['version'] as _i5.VersionEndpoint)
+              ) async => (endpoints['version'] as _i6.VersionEndpoint)
                   .blockUnblockVersion(
                     session,
                     id: params['id'],
@@ -504,7 +554,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'version': _i1.ParameterDescription(
               name: 'version',
-              type: _i1.getType<_i10.AppVersion>(),
+              type: _i1.getType<_i11.AppVersion>(),
               nullable: false,
             ),
           },
@@ -513,7 +563,7 @@ class Endpoints extends _i1.EndpointDispatch {
                 _i1.Session session,
                 Map<String, dynamic> params,
               ) async =>
-                  (endpoints['version'] as _i5.VersionEndpoint).deleteVersion(
+                  (endpoints['version'] as _i6.VersionEndpoint).deleteVersion(
                     session,
                     version: params['version'],
                   ),
@@ -537,16 +587,16 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['greeting'] as _i6.GreetingEndpoint).hello(
+              ) async => (endpoints['greeting'] as _i7.GreetingEndpoint).hello(
                 session,
                 params['name'],
               ),
         ),
       },
     );
-    modules['serverpod_auth_idp'] = _i11.Endpoints()
+    modules['serverpod_auth_idp'] = _i12.Endpoints()
       ..initializeEndpoints(server);
-    modules['serverpod_auth_core'] = _i12.Endpoints()
+    modules['serverpod_auth_core'] = _i13.Endpoints()
       ..initializeEndpoints(server);
   }
 }

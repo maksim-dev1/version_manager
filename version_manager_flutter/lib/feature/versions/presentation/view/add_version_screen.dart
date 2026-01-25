@@ -143,7 +143,10 @@ class _AddVersionScreenState extends State<AddVersionScreen> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 24.0,
+            vertical: 32.0,
+          ),
           child: Center(
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 600),
@@ -204,7 +207,7 @@ class _AddVersionScreenState extends State<AddVersionScreen> {
 
                         // Выбор приложения
                         Text(
-                          'Приложения',
+                          'Приложение',
                           style: theme.textTheme.titleSmall?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
@@ -339,10 +342,12 @@ class _AddVersionScreenState extends State<AddVersionScreen> {
                                                           );
                                                         },
                                                         separatorBuilder:
-                                                            (context, index) =>
-                                                                const SizedBox(
-                                                                  height: 8,
-                                                                ),
+                                                            (
+                                                              context,
+                                                              index,
+                                                            ) => const SizedBox(
+                                                              height: 8,
+                                                            ),
                                                         itemCount:
                                                             applications.length,
                                                       ),
@@ -424,86 +429,6 @@ class _AddVersionScreenState extends State<AddVersionScreen> {
                             },
                           ),
                         ),
-                        // if (_selectedApplication == null)
-                        //   BlocBuilder<ApplicationBloc, ApplicationState>(
-                        //     builder: (context, state) {
-                        //       return switch (state) {
-                        //         ApplicationLoaded(:final applications) =>
-                        //           DropdownButtonFormField<Application>(
-                        //             decoration: InputDecoration(
-                        //               labelText: 'Приложение',
-                        //               prefixIcon: const Icon(
-                        //                 Icons.apps_rounded,
-                        //               ),
-                        //               border: OutlineInputBorder(
-                        //                 borderRadius: BorderRadius.circular(12),
-                        //               ),
-                        //               filled: true,
-                        //             ),
-                        //             value: _selectedApplication,
-                        //             items: applications
-                        //                 .map(
-                        //                   (app) => DropdownMenuItem(
-                        //                     value: app,
-                        //                     child: Text(app.appName),
-                        //                   ),
-                        //                 )
-                        //                 .toList(),
-                        //             onChanged: (value) {
-                        //               setState(() {
-                        //                 _selectedApplication = value;
-                        //               });
-                        //             },
-                        //             validator: (value) {
-                        //               if (value == null) {
-                        //                 return 'Выберите приложение';
-                        //               }
-                        //               return null;
-                        //             },
-                        //           ),
-                        //         _ => const Center(
-                        //           child: CircularProgressIndicator(),
-                        //         ),
-                        //       };
-                        //     },
-                        //   )
-                        // else
-                        //   Container(
-                        //     padding: const EdgeInsets.all(16),
-                        //     decoration: BoxDecoration(
-                        //       color: colorScheme.surfaceContainerHighest,
-                        //       borderRadius: BorderRadius.circular(12),
-                        //     ),
-                        //     child: Row(
-                        //       children: [
-                        //         const Icon(Icons.apps_rounded),
-                        //         const SizedBox(width: 12),
-                        //         Expanded(
-                        //           child: Column(
-                        //             crossAxisAlignment:
-                        //                 CrossAxisAlignment.start,
-                        //             children: [
-                        //               Text(
-                        //                 _selectedApplication!.appName,
-                        //                 style: theme.textTheme.titleMedium
-                        //                     ?.copyWith(
-                        //                       fontWeight: FontWeight.bold,
-                        //                     ),
-                        //               ),
-                        //               Text(
-                        //                 _selectedApplication!.packageName,
-                        //                 style: theme.textTheme.bodySmall
-                        //                     ?.copyWith(
-                        //                       color:
-                        //                           colorScheme.onSurfaceVariant,
-                        //                     ),
-                        //               ),
-                        //             ],
-                        //           ),
-                        //         ),
-                        //       ],
-                        //     ),
-                        //   ),
                         const SizedBox(height: 20),
 
                         // Версия
@@ -625,91 +550,114 @@ class _AddVersionScreenState extends State<AddVersionScreen> {
                             ),
                           )
                         else
-                          ..._selectedPlatforms.map((platform) {
-                            final links = _platformStoreLinks[platform] ?? [];
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                DecoratedBox(
-                                  decoration: BoxDecoration(
-                                    color: colorScheme.primaryContainer,
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                      vertical: 8,
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          _getPlatformIcon(platform),
-                                          size: 20,
-                                          color: colorScheme.onPrimaryContainer,
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Text(
-                                          _getPlatformName(platform),
-                                          style: theme.textTheme.titleSmall
-                                              ?.copyWith(
-                                                fontWeight: FontWeight.bold,
-                                                color: colorScheme
-                                                    .onPrimaryContainer,
-                                              ),
-                                        ),
-                                        const Spacer(),
-                                        IconButton(
-                                          onPressed: () =>
-                                              _addStoreLink(platform),
-                                          icon: const Icon(Icons.add_rounded),
-                                          tooltip: 'Добавить ссылку',
-                                          iconSize: 20,
-                                          color: colorScheme.onPrimaryContainer,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                if (links.isEmpty)
+                          ListView.separated(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: _selectedPlatforms.length,
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(height: 12),
+                            itemBuilder: (context, platformIndex) {
+                              final platform =
+                                  _selectedPlatforms[platformIndex];
+                              final links = _platformStoreLinks[platform] ?? [];
+
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
                                   DecoratedBox(
                                     decoration: BoxDecoration(
-                                      color:
-                                          colorScheme.surfaceContainerHighest,
+                                      color: colorScheme.primaryContainer,
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Padding(
-                                      padding: const EdgeInsets.all(12),
-                                      child: Center(
-                                        child: Text(
-                                          'Нет ссылок',
-                                          style: theme.textTheme.bodySmall
-                                              ?.copyWith(
-                                                color: colorScheme
-                                                    .onSurfaceVariant,
-                                              ),
-                                        ),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                        vertical: 8,
                                       ),
-                                    ),
-                                  )
-                                else
-                                  ...links.map(
-                                    (link) => Padding(
-                                      padding: const EdgeInsets.only(bottom: 8),
-                                      child: StoreLinkCard(
-                                        storeLink: link,
-                                        onDelete: () {
-                                          setState(() {
-                                            _platformStoreLinks[platform]!
-                                                .remove(link);
-                                          });
-                                        },
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            _getPlatformIcon(platform),
+                                            size: 20,
+                                            color:
+                                                colorScheme.onPrimaryContainer,
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            _getPlatformName(platform),
+                                            style: theme.textTheme.titleSmall
+                                                ?.copyWith(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: colorScheme
+                                                      .onPrimaryContainer,
+                                                ),
+                                          ),
+                                          const Spacer(),
+                                          IconButton(
+                                            onPressed: () =>
+                                                _addStoreLink(platform),
+                                            icon: const Icon(
+                                              Icons.add_rounded,
+                                            ),
+                                            tooltip: 'Добавить ссылку',
+                                            iconSize: 20,
+                                            color:
+                                                colorScheme.onPrimaryContainer,
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ),
-                              ],
-                            );
-                          }),
+                                  const SizedBox(height: 8),
+                                  if (links.isEmpty)
+                                    DecoratedBox(
+                                      decoration: BoxDecoration(
+                                        color:
+                                            colorScheme.surfaceContainerHighest,
+                                        borderRadius: BorderRadius.circular(
+                                          8,
+                                        ),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(12),
+                                        child: Center(
+                                          child: Text(
+                                            'Нет ссылок',
+                                            style: theme.textTheme.bodySmall
+                                                ?.copyWith(
+                                                  color: colorScheme
+                                                      .onSurfaceVariant,
+                                                ),
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  else
+                                    ListView.separated(
+                                      shrinkWrap: true,
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      itemCount: links.length,
+                                      separatorBuilder: (context, index) =>
+                                          const SizedBox(height: 8),
+                                      itemBuilder: (context, linkIndex) {
+                                        final link = links[linkIndex];
+                                        return StoreLinkCard(
+                                          storeLink: link,
+                                          onDelete: () {
+                                            setState(() {
+                                              _platformStoreLinks[platform]!
+                                                  .remove(link);
+                                            });
+                                          },
+                                        );
+                                      },
+                                    ),
+                                ],
+                              );
+                            },
+                          ),
+
                         const SizedBox(height: 32),
 
                         // Submit Button

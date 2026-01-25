@@ -220,13 +220,14 @@ class _AddApplicationScreenState extends State<AddApplicationScreen> {
                                 return 'Введите package name';
                               }
                               if (!RegExp(
-                                r'^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$',
+                                r'^[a-zA-Z][a-zA-Z0-9_]*(\.[a-zA-Z][a-zA-Z0-9_]*)+$',
                               ).hasMatch(value.trim())) {
                                 return 'Неверный формат (пример: com.example.app)';
                               }
                               return null;
                             },
                           ),
+
                           const SizedBox(height: 20),
 
                           // App Name

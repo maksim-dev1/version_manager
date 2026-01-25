@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:version_manager_client/version_manager_client.dart';
+import 'package:version_manager_flutter/feature/versions/presentation/bloc/version_bloc.dart';
 import 'package:version_manager_flutter/shared/ui/action_sheet.dart';
 import 'package:version_manager_flutter/shared/ui/details_dialog.dart';
 
@@ -181,15 +183,21 @@ class VersionCard extends StatelessWidget {
                   IconButton(
                     onPressed: () => showModalBottomSheet(
                       context: context,
-                      builder: (context) => ActionSheet(
+                      builder: (_) => ActionSheet(
                         onEdit: () {
                           print('Version edit action');
                         },
                         onDelete: () {
-                          print('Version delete action');
+                         
                         },
                         onToggleActive: () {
-                          print('Version toggle active action');
+                           context.read<VersionBloc>().add(
+                            VersionEvent.blockUnblockVersion(
+                              id: version.id!,
+                              isBlocked: !version.isBlocked,
+                              reason: 'test',
+                            ),
+                          );
                         },
                         title: 'Действия с версией ${version.version}',
                         isBlocked: version.isBlocked,

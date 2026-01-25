@@ -16,17 +16,21 @@ import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
     as _i3;
 import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
     as _i4;
-import 'app_version.dart' as _i5;
-import 'application.dart' as _i6;
-import 'enums/platform.dart' as _i7;
-import 'enums/store.dart' as _i8;
-import 'greetings/greeting.dart' as _i9;
-import 'store_links.dart' as _i10;
-import 'package:version_manager_server/src/generated/application.dart' as _i11;
-import 'package:version_manager_server/src/generated/app_version.dart' as _i12;
+import 'app_check_request.dart' as _i5;
+import 'app_check_response.dart' as _i6;
+import 'app_version.dart' as _i7;
+import 'application.dart' as _i8;
+import 'enums/platform.dart' as _i9;
+import 'enums/store.dart' as _i10;
+import 'greetings/greeting.dart' as _i11;
+import 'store_links.dart' as _i12;
+import 'package:version_manager_server/src/generated/application.dart' as _i13;
+import 'package:version_manager_server/src/generated/app_version.dart' as _i14;
 import 'package:version_manager_server/src/generated/enums/platform.dart'
-    as _i13;
-import 'package:version_manager_server/src/generated/store_links.dart' as _i14;
+    as _i15;
+import 'package:version_manager_server/src/generated/store_links.dart' as _i16;
+export 'app_check_request.dart';
+export 'app_check_response.dart';
 export 'app_version.dart';
 export 'application.dart';
 export 'enums/platform.dart';
@@ -252,76 +256,96 @@ class Protocol extends _i1.SerializationManagerServer {
       }
     }
 
-    if (t == _i5.AppVersion) {
-      return _i5.AppVersion.fromJson(data) as T;
+    if (t == _i5.AppCheckRequest) {
+      return _i5.AppCheckRequest.fromJson(data) as T;
     }
-    if (t == _i6.Application) {
-      return _i6.Application.fromJson(data) as T;
+    if (t == _i6.AppCheckResponse) {
+      return _i6.AppCheckResponse.fromJson(data) as T;
     }
-    if (t == _i7.Platform) {
-      return _i7.Platform.fromJson(data) as T;
+    if (t == _i7.AppVersion) {
+      return _i7.AppVersion.fromJson(data) as T;
     }
-    if (t == _i8.Store) {
-      return _i8.Store.fromJson(data) as T;
+    if (t == _i8.Application) {
+      return _i8.Application.fromJson(data) as T;
     }
-    if (t == _i9.Greeting) {
-      return _i9.Greeting.fromJson(data) as T;
+    if (t == _i9.Platform) {
+      return _i9.Platform.fromJson(data) as T;
     }
-    if (t == _i10.StoreLinks) {
-      return _i10.StoreLinks.fromJson(data) as T;
+    if (t == _i10.Store) {
+      return _i10.Store.fromJson(data) as T;
     }
-    if (t == _i1.getType<_i5.AppVersion?>()) {
-      return (data != null ? _i5.AppVersion.fromJson(data) : null) as T;
+    if (t == _i11.Greeting) {
+      return _i11.Greeting.fromJson(data) as T;
     }
-    if (t == _i1.getType<_i6.Application?>()) {
-      return (data != null ? _i6.Application.fromJson(data) : null) as T;
+    if (t == _i12.StoreLinks) {
+      return _i12.StoreLinks.fromJson(data) as T;
     }
-    if (t == _i1.getType<_i7.Platform?>()) {
-      return (data != null ? _i7.Platform.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i5.AppCheckRequest?>()) {
+      return (data != null ? _i5.AppCheckRequest.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i8.Store?>()) {
-      return (data != null ? _i8.Store.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i6.AppCheckResponse?>()) {
+      return (data != null ? _i6.AppCheckResponse.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i9.Greeting?>()) {
-      return (data != null ? _i9.Greeting.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i7.AppVersion?>()) {
+      return (data != null ? _i7.AppVersion.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i10.StoreLinks?>()) {
-      return (data != null ? _i10.StoreLinks.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i8.Application?>()) {
+      return (data != null ? _i8.Application.fromJson(data) : null) as T;
     }
-    if (t == List<_i10.StoreLinks>) {
-      return (data as List).map((e) => deserialize<_i10.StoreLinks>(e)).toList()
+    if (t == _i1.getType<_i9.Platform?>()) {
+      return (data != null ? _i9.Platform.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i10.Store?>()) {
+      return (data != null ? _i10.Store.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i11.Greeting?>()) {
+      return (data != null ? _i11.Greeting.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i12.StoreLinks?>()) {
+      return (data != null ? _i12.StoreLinks.fromJson(data) : null) as T;
+    }
+    if (t == List<_i12.StoreLinks>) {
+      return (data as List).map((e) => deserialize<_i12.StoreLinks>(e)).toList()
           as T;
     }
-    if (t == List<_i11.Application>) {
-      return (data as List)
-              .map((e) => deserialize<_i11.Application>(e))
-              .toList()
-          as T;
-    }
-    if (t == List<_i12.AppVersion>) {
-      return (data as List).map((e) => deserialize<_i12.AppVersion>(e)).toList()
-          as T;
-    }
-    if (t == List<_i13.Platform>) {
-      return (data as List).map((e) => deserialize<_i13.Platform>(e)).toList()
-          as T;
-    }
-    if (t == _i1.getType<List<_i13.Platform>?>()) {
+    if (t == _i1.getType<List<_i12.StoreLinks>?>()) {
       return (data != null
               ? (data as List)
-                    .map((e) => deserialize<_i13.Platform>(e))
+                    .map((e) => deserialize<_i12.StoreLinks>(e))
                     .toList()
               : null)
           as T;
     }
-    if (t == List<_i14.StoreLinks>) {
-      return (data as List).map((e) => deserialize<_i14.StoreLinks>(e)).toList()
+    if (t == List<_i13.Application>) {
+      return (data as List)
+              .map((e) => deserialize<_i13.Application>(e))
+              .toList()
           as T;
     }
-    if (t == _i1.getType<List<_i14.StoreLinks>?>()) {
+    if (t == List<_i14.AppVersion>) {
+      return (data as List).map((e) => deserialize<_i14.AppVersion>(e)).toList()
+          as T;
+    }
+    if (t == List<_i15.Platform>) {
+      return (data as List).map((e) => deserialize<_i15.Platform>(e)).toList()
+          as T;
+    }
+    if (t == _i1.getType<List<_i15.Platform>?>()) {
       return (data != null
               ? (data as List)
-                    .map((e) => deserialize<_i14.StoreLinks>(e))
+                    .map((e) => deserialize<_i15.Platform>(e))
+                    .toList()
+              : null)
+          as T;
+    }
+    if (t == List<_i16.StoreLinks>) {
+      return (data as List).map((e) => deserialize<_i16.StoreLinks>(e)).toList()
+          as T;
+    }
+    if (t == _i1.getType<List<_i16.StoreLinks>?>()) {
+      return (data != null
+              ? (data as List)
+                    .map((e) => deserialize<_i16.StoreLinks>(e))
                     .toList()
               : null)
           as T;
@@ -340,12 +364,14 @@ class Protocol extends _i1.SerializationManagerServer {
 
   static String? getClassNameForType(Type type) {
     return switch (type) {
-      _i5.AppVersion => 'AppVersion',
-      _i6.Application => 'Application',
-      _i7.Platform => 'Platform',
-      _i8.Store => 'Store',
-      _i9.Greeting => 'Greeting',
-      _i10.StoreLinks => 'StoreLinks',
+      _i5.AppCheckRequest => 'AppCheckRequest',
+      _i6.AppCheckResponse => 'AppCheckResponse',
+      _i7.AppVersion => 'AppVersion',
+      _i8.Application => 'Application',
+      _i9.Platform => 'Platform',
+      _i10.Store => 'Store',
+      _i11.Greeting => 'Greeting',
+      _i12.StoreLinks => 'StoreLinks',
       _ => null,
     };
   }
@@ -363,17 +389,21 @@ class Protocol extends _i1.SerializationManagerServer {
     }
 
     switch (data) {
-      case _i5.AppVersion():
+      case _i5.AppCheckRequest():
+        return 'AppCheckRequest';
+      case _i6.AppCheckResponse():
+        return 'AppCheckResponse';
+      case _i7.AppVersion():
         return 'AppVersion';
-      case _i6.Application():
+      case _i8.Application():
         return 'Application';
-      case _i7.Platform():
+      case _i9.Platform():
         return 'Platform';
-      case _i8.Store():
+      case _i10.Store():
         return 'Store';
-      case _i9.Greeting():
+      case _i11.Greeting():
         return 'Greeting';
-      case _i10.StoreLinks():
+      case _i12.StoreLinks():
         return 'StoreLinks';
     }
     className = _i2.Protocol().getClassNameForObject(data);
@@ -397,23 +427,29 @@ class Protocol extends _i1.SerializationManagerServer {
     if (dataClassName is! String) {
       return super.deserializeByClassName(data);
     }
+    if (dataClassName == 'AppCheckRequest') {
+      return deserialize<_i5.AppCheckRequest>(data['data']);
+    }
+    if (dataClassName == 'AppCheckResponse') {
+      return deserialize<_i6.AppCheckResponse>(data['data']);
+    }
     if (dataClassName == 'AppVersion') {
-      return deserialize<_i5.AppVersion>(data['data']);
+      return deserialize<_i7.AppVersion>(data['data']);
     }
     if (dataClassName == 'Application') {
-      return deserialize<_i6.Application>(data['data']);
+      return deserialize<_i8.Application>(data['data']);
     }
     if (dataClassName == 'Platform') {
-      return deserialize<_i7.Platform>(data['data']);
+      return deserialize<_i9.Platform>(data['data']);
     }
     if (dataClassName == 'Store') {
-      return deserialize<_i8.Store>(data['data']);
+      return deserialize<_i10.Store>(data['data']);
     }
     if (dataClassName == 'Greeting') {
-      return deserialize<_i9.Greeting>(data['data']);
+      return deserialize<_i11.Greeting>(data['data']);
     }
     if (dataClassName == 'StoreLinks') {
-      return deserialize<_i10.StoreLinks>(data['data']);
+      return deserialize<_i12.StoreLinks>(data['data']);
     }
     if (dataClassName.startsWith('serverpod.')) {
       data['className'] = dataClassName.substring(10);
@@ -451,10 +487,10 @@ class Protocol extends _i1.SerializationManagerServer {
       }
     }
     switch (t) {
-      case _i5.AppVersion:
-        return _i5.AppVersion.t;
-      case _i6.Application:
-        return _i6.Application.t;
+      case _i7.AppVersion:
+        return _i7.AppVersion.t;
+      case _i8.Application:
+        return _i8.Application.t;
     }
     return null;
   }

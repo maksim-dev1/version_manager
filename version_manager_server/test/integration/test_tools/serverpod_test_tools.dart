@@ -14,15 +14,17 @@
 import 'package:serverpod_test/serverpod_test.dart' as _i1;
 import 'package:serverpod/serverpod.dart' as _i2;
 import 'dart:async' as _i3;
-import 'package:version_manager_server/src/generated/application.dart' as _i4;
-import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
-    as _i5;
-import 'package:version_manager_server/src/generated/app_version.dart' as _i6;
+import 'package:version_manager_server/src/generated/app_check_response.dart'
+    as _i4;
 import 'package:version_manager_server/src/generated/enums/platform.dart'
+    as _i5;
+import 'package:version_manager_server/src/generated/application.dart' as _i6;
+import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
     as _i7;
-import 'package:version_manager_server/src/generated/store_links.dart' as _i8;
+import 'package:version_manager_server/src/generated/app_version.dart' as _i8;
+import 'package:version_manager_server/src/generated/store_links.dart' as _i9;
 import 'package:version_manager_server/src/generated/greetings/greeting.dart'
-    as _i9;
+    as _i10;
 import 'package:version_manager_server/src/generated/protocol.dart';
 import 'package:version_manager_server/src/generated/endpoints.dart';
 export 'package:serverpod_test/serverpod_test_public_exports.dart';
@@ -130,6 +132,8 @@ void withServerpod(
 }
 
 class TestEndpoints {
+  late final _AppCheckEndpoint appCheck;
+
   late final _ApplicationEndpoint application;
 
   late final _EmailIdpEndpoint emailIdp;
@@ -148,6 +152,10 @@ class _InternalTestEndpoints extends TestEndpoints
     _i2.SerializationManager serializationManager,
     _i2.EndpointDispatch endpoints,
   ) {
+    appCheck = _AppCheckEndpoint(
+      endpoints,
+      serializationManager,
+    );
     application = _ApplicationEndpoint(
       endpoints,
       serializationManager,
@@ -171,6 +179,56 @@ class _InternalTestEndpoints extends TestEndpoints
   }
 }
 
+class _AppCheckEndpoint {
+  _AppCheckEndpoint(
+    this._endpointDispatch,
+    this._serializationManager,
+  );
+
+  final _i2.EndpointDispatch _endpointDispatch;
+
+  final _i2.SerializationManager _serializationManager;
+
+  _i3.Future<_i4.AppCheckResponse> checkVersion(
+    _i1.TestSessionBuilder sessionBuilder, {
+    required String packageName,
+    required String currentVersion,
+    required String currentBuildNumber,
+    required _i5.Platform platform,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'appCheck',
+            method: 'checkVersion',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'appCheck',
+          methodName: 'checkVersion',
+          parameters: _i1.testObjectToJson({
+            'packageName': packageName,
+            'currentVersion': currentVersion,
+            'currentBuildNumber': currentBuildNumber,
+            'platform': platform,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i4.AppCheckResponse>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+}
+
 class _ApplicationEndpoint {
   _ApplicationEndpoint(
     this._endpointDispatch,
@@ -181,9 +239,9 @@ class _ApplicationEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<List<_i4.Application>> addAplication(
+  _i3.Future<List<_i6.Application>> addAplication(
     _i1.TestSessionBuilder sessionBuilder, {
-    required _i4.Application application,
+    required _i6.Application application,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -204,7 +262,7 @@ class _ApplicationEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<List<_i4.Application>>);
+                as _i3.Future<List<_i6.Application>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -212,7 +270,7 @@ class _ApplicationEndpoint {
     });
   }
 
-  _i3.Future<List<_i4.Application>> getAllApplications(
+  _i3.Future<List<_i6.Application>> getAllApplications(
     _i1.TestSessionBuilder sessionBuilder,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
@@ -234,7 +292,7 @@ class _ApplicationEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<List<_i4.Application>>);
+                as _i3.Future<List<_i6.Application>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -242,10 +300,10 @@ class _ApplicationEndpoint {
     });
   }
 
-  _i3.Future<List<_i4.Application>> editApplication(
+  _i3.Future<List<_i6.Application>> editApplication(
     _i1.TestSessionBuilder sessionBuilder, {
     required String changeablePackageName,
-    required _i4.Application application,
+    required _i6.Application application,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -269,7 +327,7 @@ class _ApplicationEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<List<_i4.Application>>);
+                as _i3.Future<List<_i6.Application>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -277,7 +335,7 @@ class _ApplicationEndpoint {
     });
   }
 
-  _i3.Future<List<_i4.Application>> deactivateApplication(
+  _i3.Future<List<_i6.Application>> deactivateApplication(
     _i1.TestSessionBuilder sessionBuilder, {
     required String packageName,
     required bool isActive,
@@ -304,7 +362,7 @@ class _ApplicationEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<List<_i4.Application>>);
+                as _i3.Future<List<_i6.Application>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -312,7 +370,7 @@ class _ApplicationEndpoint {
     });
   }
 
-  _i3.Future<List<_i4.Application>> deleteApplication(
+  _i3.Future<List<_i6.Application>> deleteApplication(
     _i1.TestSessionBuilder sessionBuilder, {
     required String packageName,
   }) async {
@@ -335,7 +393,7 @@ class _ApplicationEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<List<_i4.Application>>);
+                as _i3.Future<List<_i6.Application>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -354,7 +412,7 @@ class _EmailIdpEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i5.AuthSuccess> login(
+  _i3.Future<_i7.AuthSuccess> login(
     _i1.TestSessionBuilder sessionBuilder, {
     required String email,
     required String password,
@@ -381,7 +439,7 @@ class _EmailIdpEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i5.AuthSuccess>);
+                as _i3.Future<_i7.AuthSuccess>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -455,7 +513,7 @@ class _EmailIdpEndpoint {
     });
   }
 
-  _i3.Future<_i5.AuthSuccess> finishRegistration(
+  _i3.Future<_i7.AuthSuccess> finishRegistration(
     _i1.TestSessionBuilder sessionBuilder, {
     required String registrationToken,
     required String password,
@@ -482,7 +540,7 @@ class _EmailIdpEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i5.AuthSuccess>);
+                as _i3.Future<_i7.AuthSuccess>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -602,7 +660,7 @@ class _RefreshJwtTokensEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i5.AuthSuccess> refreshAccessToken(
+  _i3.Future<_i7.AuthSuccess> refreshAccessToken(
     _i1.TestSessionBuilder sessionBuilder, {
     required String refreshToken,
   }) async {
@@ -625,7 +683,7 @@ class _RefreshJwtTokensEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i5.AuthSuccess>);
+                as _i3.Future<_i7.AuthSuccess>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -644,14 +702,14 @@ class _VersionEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<List<_i6.AppVersion>> addVersion(
+  _i3.Future<List<_i8.AppVersion>> addVersion(
     _i1.TestSessionBuilder sessionBuilder, {
     required _i2.UuidValue applicationId,
     required String version,
     required int buildNumber,
     required String changelog,
-    List<_i7.Platform>? platforms,
-    List<_i8.StoreLinks>? storeLinks,
+    List<_i5.Platform>? platforms,
+    List<_i9.StoreLinks>? storeLinks,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -679,7 +737,7 @@ class _VersionEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<List<_i6.AppVersion>>);
+                as _i3.Future<List<_i8.AppVersion>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -687,7 +745,7 @@ class _VersionEndpoint {
     });
   }
 
-  _i3.Future<List<_i6.AppVersion>> getAllVersions(
+  _i3.Future<List<_i8.AppVersion>> getAllVersions(
     _i1.TestSessionBuilder sessionBuilder,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
@@ -709,7 +767,7 @@ class _VersionEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<List<_i6.AppVersion>>);
+                as _i3.Future<List<_i8.AppVersion>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -717,10 +775,10 @@ class _VersionEndpoint {
     });
   }
 
-  _i3.Future<List<_i6.AppVersion>> getVersionsByFilters(
+  _i3.Future<List<_i8.AppVersion>> getVersionsByFilters(
     _i1.TestSessionBuilder sessionBuilder, {
     required _i2.UuidValue applicationId,
-    _i7.Platform? platform,
+    _i5.Platform? platform,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -744,7 +802,7 @@ class _VersionEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<List<_i6.AppVersion>>);
+                as _i3.Future<List<_i8.AppVersion>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -752,9 +810,9 @@ class _VersionEndpoint {
     });
   }
 
-  _i3.Future<List<_i6.AppVersion>> updateVersion(
+  _i3.Future<List<_i8.AppVersion>> updateVersion(
     _i1.TestSessionBuilder sessionBuilder, {
-    required _i6.AppVersion appVersion,
+    required _i8.AppVersion appVersion,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -775,7 +833,7 @@ class _VersionEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<List<_i6.AppVersion>>);
+                as _i3.Future<List<_i8.AppVersion>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -783,7 +841,7 @@ class _VersionEndpoint {
     });
   }
 
-  _i3.Future<List<_i6.AppVersion>> blockUnblockVersion(
+  _i3.Future<List<_i8.AppVersion>> blockUnblockVersion(
     _i1.TestSessionBuilder sessionBuilder, {
     required _i2.UuidValue id,
     required bool isBlocked,
@@ -812,7 +870,7 @@ class _VersionEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<List<_i6.AppVersion>>);
+                as _i3.Future<List<_i8.AppVersion>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -820,9 +878,9 @@ class _VersionEndpoint {
     });
   }
 
-  _i3.Future<List<_i6.AppVersion>> deleteVersion(
+  _i3.Future<List<_i8.AppVersion>> deleteVersion(
     _i1.TestSessionBuilder sessionBuilder, {
-    required _i6.AppVersion version,
+    required _i8.AppVersion version,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -843,7 +901,7 @@ class _VersionEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<List<_i6.AppVersion>>);
+                as _i3.Future<List<_i8.AppVersion>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -862,7 +920,7 @@ class _GreetingEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i9.Greeting> hello(
+  _i3.Future<_i10.Greeting> hello(
     _i1.TestSessionBuilder sessionBuilder,
     String name,
   ) async {
@@ -885,7 +943,7 @@ class _GreetingEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i9.Greeting>);
+                as _i3.Future<_i10.Greeting>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
