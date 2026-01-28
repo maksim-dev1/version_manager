@@ -1,27 +1,68 @@
+### Приложение для управления версиями
 class: Application
 table: applications
 fields:
-    ### Уникальный идентификатор записи
-    id: UuidValue?, defaultPersist=random
+  ### Уникальный идентификатор приложения
+  id: UuidValue?, defaultPersist=random_v7
+  
+  ### Уникальный идентификатор в формате обратной доменной нотации (например, com.example.app)
+  namespace: String
+  
+  ### Название приложения (3-50 символов)
+  name: String
+  
+  ### Описание приложения (10-500 символов)
+  description: String
+  
+  ### URL иконки приложения
+  iconUrl: String?
+  
+  ### Массив поддерживаемых платформ (минимум 1)
+  platforms: List<PlatformType>
+  
+  ### Тип владельца (user или team)
+  ownerType: OwnerType
+  
+  ### Владелец-пользователь (если личное приложение, связь с AuthUser из auth модуля)
+  ownerUser: module:serverpod_auth_core:AuthUser?, relation(optional, onDelete=Cascade)
+  
+  ### Владелец-команда (если командное приложение)
+  ownerTeam: Team?, relation(name=team_applications, optional, onDelete=Cascade)
+  
+  ### Ссылки на магазины приложений
+  storeLinks: List<StoreLink>?, relation(name=application_store_links)
+  
+  ### Версии приложения
+  versions: List<Version>?, relation(name=application_versions)
+  
+  ### Логи проверки версий
+  checkLogs: List<VersionCheckLog>?, relation(name=application_check_logs)
+  
+  ### Активно ли приложение
+  isActive: bool, default=true
+  
+  ### Хеш API ключа приложения для аутентификации
+  apiKeyHash: String
+  
+  ### Дата создания API ключа
+  apiKeyCreatedAt: DateTime, default=now
+  
+  ### Дата последней регенерации API ключа
+  apiKeyLastRegeneratedAt: DateTime?
+  
+  ### Дата создания приложения
+  createdAt: DateTime, default=now
+  
+  ### Дата последнего обновления приложения
+  updatedAt: DateTime, default=now
 
-    ### Уникальный идентификатор приложения (например: com.example.myapp)
-    packageName: String,
-
-    ### Название приложения
-    appName: String,
-
-    ### Описание
-    description: String,
-
-    ### Иконка приложения (URL)
-    iconUrl: String,
-
-    ### Активно ли приложение
-    isActive: bool, default=true,
-
-    ### Дата и время создания записи
-    createdAt: DateTime, 
-
-    ### Дата и время последнего обновления записи
-    updatedAt: DateTime,
-
+indexes:
+  application_namespace_unique_idx:
+    fields: namespace
+    unique: true
+  application_owner_user_idx:
+    fields: ownerUserId
+  application_owner_team_idx:
+    fields: ownerTeamId
+  application_api_key_hash_idx:
+    fields: apiKeyHash

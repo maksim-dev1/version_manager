@@ -1,0 +1,7 @@
+### Статус участника команды
+enum: TeamMemberStatusType
+serialized: byName
+default: invited
+values:
+  - invited
+  - active

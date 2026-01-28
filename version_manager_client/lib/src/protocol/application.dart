@@ -11,28 +11,65 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
+import 'enums/platform_type.dart' as _i2;
+import 'enums/owner_type.dart' as _i3;
+import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
+    as _i4;
+import 'team.dart' as _i5;
+import 'store_link.dart' as _i6;
+import 'version.dart' as _i7;
+import 'version_check_log.dart' as _i8;
+import 'package:version_manager_client/src/protocol/protocol.dart' as _i9;
 
+/// Приложение для управления версиями
 abstract class Application implements _i1.SerializableModel {
   Application._({
     this.id,
-    required this.packageName,
-    required this.appName,
+    required this.namespace,
+    required this.name,
     required this.description,
-    required this.iconUrl,
+    this.iconUrl,
+    required this.platforms,
+    required this.ownerType,
+    this.ownerUserId,
+    this.ownerUser,
+    this.ownerTeamId,
+    this.ownerTeam,
+    this.storeLinks,
+    this.versions,
+    this.checkLogs,
     bool? isActive,
-    required this.createdAt,
-    required this.updatedAt,
-  }) : isActive = isActive ?? true;
+    required this.apiKeyHash,
+    DateTime? apiKeyCreatedAt,
+    this.apiKeyLastRegeneratedAt,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) : isActive = isActive ?? true,
+       apiKeyCreatedAt = apiKeyCreatedAt ?? DateTime.now(),
+       createdAt = createdAt ?? DateTime.now(),
+       updatedAt = updatedAt ?? DateTime.now();
 
   factory Application({
     _i1.UuidValue? id,
-    required String packageName,
-    required String appName,
+    required String namespace,
+    required String name,
     required String description,
-    required String iconUrl,
+    String? iconUrl,
+    required List<_i2.PlatformType> platforms,
+    required _i3.OwnerType ownerType,
+    _i1.UuidValue? ownerUserId,
+    _i4.AuthUser? ownerUser,
+    _i1.UuidValue? ownerTeamId,
+    _i5.Team? ownerTeam,
+    List<_i6.StoreLink>? storeLinks,
+    List<_i7.Version>? versions,
+    List<_i8.VersionCheckLog>? checkLogs,
     bool? isActive,
-    required DateTime createdAt,
-    required DateTime updatedAt,
+    required String apiKeyHash,
+    DateTime? apiKeyCreatedAt,
+    DateTime? apiKeyLastRegeneratedAt,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) = _ApplicationImpl;
 
   factory Application.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -40,42 +77,129 @@ abstract class Application implements _i1.SerializableModel {
       id: jsonSerialization['id'] == null
           ? null
           : _i1.UuidValueJsonExtension.fromJson(jsonSerialization['id']),
-      packageName: jsonSerialization['packageName'] as String,
-      appName: jsonSerialization['appName'] as String,
+      namespace: jsonSerialization['namespace'] as String,
+      name: jsonSerialization['name'] as String,
       description: jsonSerialization['description'] as String,
-      iconUrl: jsonSerialization['iconUrl'] as String,
+      iconUrl: jsonSerialization['iconUrl'] as String?,
+      platforms: _i9.Protocol().deserialize<List<_i2.PlatformType>>(
+        jsonSerialization['platforms'],
+      ),
+      ownerType: _i3.OwnerType.fromJson(
+        (jsonSerialization['ownerType'] as String),
+      ),
+      ownerUserId: jsonSerialization['ownerUserId'] == null
+          ? null
+          : _i1.UuidValueJsonExtension.fromJson(
+              jsonSerialization['ownerUserId'],
+            ),
+      ownerUser: jsonSerialization['ownerUser'] == null
+          ? null
+          : _i9.Protocol().deserialize<_i4.AuthUser>(
+              jsonSerialization['ownerUser'],
+            ),
+      ownerTeamId: jsonSerialization['ownerTeamId'] == null
+          ? null
+          : _i1.UuidValueJsonExtension.fromJson(
+              jsonSerialization['ownerTeamId'],
+            ),
+      ownerTeam: jsonSerialization['ownerTeam'] == null
+          ? null
+          : _i9.Protocol().deserialize<_i5.Team>(
+              jsonSerialization['ownerTeam'],
+            ),
+      storeLinks: jsonSerialization['storeLinks'] == null
+          ? null
+          : _i9.Protocol().deserialize<List<_i6.StoreLink>>(
+              jsonSerialization['storeLinks'],
+            ),
+      versions: jsonSerialization['versions'] == null
+          ? null
+          : _i9.Protocol().deserialize<List<_i7.Version>>(
+              jsonSerialization['versions'],
+            ),
+      checkLogs: jsonSerialization['checkLogs'] == null
+          ? null
+          : _i9.Protocol().deserialize<List<_i8.VersionCheckLog>>(
+              jsonSerialization['checkLogs'],
+            ),
       isActive: jsonSerialization['isActive'] as bool?,
-      createdAt: _i1.DateTimeJsonExtension.fromJson(
-        jsonSerialization['createdAt'],
-      ),
-      updatedAt: _i1.DateTimeJsonExtension.fromJson(
-        jsonSerialization['updatedAt'],
-      ),
+      apiKeyHash: jsonSerialization['apiKeyHash'] as String,
+      apiKeyCreatedAt: jsonSerialization['apiKeyCreatedAt'] == null
+          ? null
+          : _i1.DateTimeJsonExtension.fromJson(
+              jsonSerialization['apiKeyCreatedAt'],
+            ),
+      apiKeyLastRegeneratedAt:
+          jsonSerialization['apiKeyLastRegeneratedAt'] == null
+          ? null
+          : _i1.DateTimeJsonExtension.fromJson(
+              jsonSerialization['apiKeyLastRegeneratedAt'],
+            ),
+      createdAt: jsonSerialization['createdAt'] == null
+          ? null
+          : _i1.DateTimeJsonExtension.fromJson(jsonSerialization['createdAt']),
+      updatedAt: jsonSerialization['updatedAt'] == null
+          ? null
+          : _i1.DateTimeJsonExtension.fromJson(jsonSerialization['updatedAt']),
     );
   }
 
-  /// Уникальный идентификатор записи
+  /// Уникальный идентификатор приложения
   _i1.UuidValue? id;
 
-  /// Уникальный идентификатор приложения (например: com.example.myapp)
-  String packageName;
+  /// Уникальный идентификатор в формате обратной доменной нотации (например, com.example.app)
+  String namespace;
 
-  /// Название приложения
-  String appName;
+  /// Название приложения (3-50 символов)
+  String name;
 
-  /// Описание
+  /// Описание приложения (10-500 символов)
   String description;
 
-  /// Иконка приложения (URL)
-  String iconUrl;
+  /// URL иконки приложения
+  String? iconUrl;
+
+  /// Массив поддерживаемых платформ (минимум 1)
+  List<_i2.PlatformType> platforms;
+
+  /// Тип владельца (user или team)
+  _i3.OwnerType ownerType;
+
+  _i1.UuidValue? ownerUserId;
+
+  /// Владелец-пользователь (если личное приложение, связь с AuthUser из auth модуля)
+  _i4.AuthUser? ownerUser;
+
+  _i1.UuidValue? ownerTeamId;
+
+  /// Владелец-команда (если командное приложение)
+  _i5.Team? ownerTeam;
+
+  /// Ссылки на магазины приложений
+  List<_i6.StoreLink>? storeLinks;
+
+  /// Версии приложения
+  List<_i7.Version>? versions;
+
+  /// Логи проверки версий
+  List<_i8.VersionCheckLog>? checkLogs;
 
   /// Активно ли приложение
   bool isActive;
 
-  /// Дата и время создания записи
+  /// Хеш API ключа приложения для аутентификации
+  String apiKeyHash;
+
+  /// Дата создания API ключа
+  DateTime apiKeyCreatedAt;
+
+  /// Дата последней регенерации API ключа
+  DateTime? apiKeyLastRegeneratedAt;
+
+  /// Дата создания приложения
   DateTime createdAt;
 
-  /// Дата и время последнего обновления записи
+  /// Дата последнего обновления приложения
   DateTime updatedAt;
 
   /// Returns a shallow copy of this [Application]
@@ -83,11 +207,23 @@ abstract class Application implements _i1.SerializableModel {
   @_i1.useResult
   Application copyWith({
     _i1.UuidValue? id,
-    String? packageName,
-    String? appName,
+    String? namespace,
+    String? name,
     String? description,
     String? iconUrl,
+    List<_i2.PlatformType>? platforms,
+    _i3.OwnerType? ownerType,
+    _i1.UuidValue? ownerUserId,
+    _i4.AuthUser? ownerUser,
+    _i1.UuidValue? ownerTeamId,
+    _i5.Team? ownerTeam,
+    List<_i6.StoreLink>? storeLinks,
+    List<_i7.Version>? versions,
+    List<_i8.VersionCheckLog>? checkLogs,
     bool? isActive,
+    String? apiKeyHash,
+    DateTime? apiKeyCreatedAt,
+    DateTime? apiKeyLastRegeneratedAt,
     DateTime? createdAt,
     DateTime? updatedAt,
   });
@@ -96,11 +232,27 @@ abstract class Application implements _i1.SerializableModel {
     return {
       '__className__': 'Application',
       if (id != null) 'id': id?.toJson(),
-      'packageName': packageName,
-      'appName': appName,
+      'namespace': namespace,
+      'name': name,
       'description': description,
-      'iconUrl': iconUrl,
+      if (iconUrl != null) 'iconUrl': iconUrl,
+      'platforms': platforms.toJson(valueToJson: (v) => v.toJson()),
+      'ownerType': ownerType.toJson(),
+      if (ownerUserId != null) 'ownerUserId': ownerUserId?.toJson(),
+      if (ownerUser != null) 'ownerUser': ownerUser?.toJson(),
+      if (ownerTeamId != null) 'ownerTeamId': ownerTeamId?.toJson(),
+      if (ownerTeam != null) 'ownerTeam': ownerTeam?.toJson(),
+      if (storeLinks != null)
+        'storeLinks': storeLinks?.toJson(valueToJson: (v) => v.toJson()),
+      if (versions != null)
+        'versions': versions?.toJson(valueToJson: (v) => v.toJson()),
+      if (checkLogs != null)
+        'checkLogs': checkLogs?.toJson(valueToJson: (v) => v.toJson()),
       'isActive': isActive,
+      'apiKeyHash': apiKeyHash,
+      'apiKeyCreatedAt': apiKeyCreatedAt.toJson(),
+      if (apiKeyLastRegeneratedAt != null)
+        'apiKeyLastRegeneratedAt': apiKeyLastRegeneratedAt?.toJson(),
       'createdAt': createdAt.toJson(),
       'updatedAt': updatedAt.toJson(),
     };
@@ -117,20 +269,44 @@ class _Undefined {}
 class _ApplicationImpl extends Application {
   _ApplicationImpl({
     _i1.UuidValue? id,
-    required String packageName,
-    required String appName,
+    required String namespace,
+    required String name,
     required String description,
-    required String iconUrl,
+    String? iconUrl,
+    required List<_i2.PlatformType> platforms,
+    required _i3.OwnerType ownerType,
+    _i1.UuidValue? ownerUserId,
+    _i4.AuthUser? ownerUser,
+    _i1.UuidValue? ownerTeamId,
+    _i5.Team? ownerTeam,
+    List<_i6.StoreLink>? storeLinks,
+    List<_i7.Version>? versions,
+    List<_i8.VersionCheckLog>? checkLogs,
     bool? isActive,
-    required DateTime createdAt,
-    required DateTime updatedAt,
+    required String apiKeyHash,
+    DateTime? apiKeyCreatedAt,
+    DateTime? apiKeyLastRegeneratedAt,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) : super._(
          id: id,
-         packageName: packageName,
-         appName: appName,
+         namespace: namespace,
+         name: name,
          description: description,
          iconUrl: iconUrl,
+         platforms: platforms,
+         ownerType: ownerType,
+         ownerUserId: ownerUserId,
+         ownerUser: ownerUser,
+         ownerTeamId: ownerTeamId,
+         ownerTeam: ownerTeam,
+         storeLinks: storeLinks,
+         versions: versions,
+         checkLogs: checkLogs,
          isActive: isActive,
+         apiKeyHash: apiKeyHash,
+         apiKeyCreatedAt: apiKeyCreatedAt,
+         apiKeyLastRegeneratedAt: apiKeyLastRegeneratedAt,
          createdAt: createdAt,
          updatedAt: updatedAt,
        );
@@ -141,21 +317,61 @@ class _ApplicationImpl extends Application {
   @override
   Application copyWith({
     Object? id = _Undefined,
-    String? packageName,
-    String? appName,
+    String? namespace,
+    String? name,
     String? description,
-    String? iconUrl,
+    Object? iconUrl = _Undefined,
+    List<_i2.PlatformType>? platforms,
+    _i3.OwnerType? ownerType,
+    Object? ownerUserId = _Undefined,
+    Object? ownerUser = _Undefined,
+    Object? ownerTeamId = _Undefined,
+    Object? ownerTeam = _Undefined,
+    Object? storeLinks = _Undefined,
+    Object? versions = _Undefined,
+    Object? checkLogs = _Undefined,
     bool? isActive,
+    String? apiKeyHash,
+    DateTime? apiKeyCreatedAt,
+    Object? apiKeyLastRegeneratedAt = _Undefined,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
     return Application(
       id: id is _i1.UuidValue? ? id : this.id,
-      packageName: packageName ?? this.packageName,
-      appName: appName ?? this.appName,
+      namespace: namespace ?? this.namespace,
+      name: name ?? this.name,
       description: description ?? this.description,
-      iconUrl: iconUrl ?? this.iconUrl,
+      iconUrl: iconUrl is String? ? iconUrl : this.iconUrl,
+      platforms: platforms ?? this.platforms.map((e0) => e0).toList(),
+      ownerType: ownerType ?? this.ownerType,
+      ownerUserId: ownerUserId is _i1.UuidValue?
+          ? ownerUserId
+          : this.ownerUserId,
+      ownerUser: ownerUser is _i4.AuthUser?
+          ? ownerUser
+          : this.ownerUser?.copyWith(),
+      ownerTeamId: ownerTeamId is _i1.UuidValue?
+          ? ownerTeamId
+          : this.ownerTeamId,
+      ownerTeam: ownerTeam is _i5.Team?
+          ? ownerTeam
+          : this.ownerTeam?.copyWith(),
+      storeLinks: storeLinks is List<_i6.StoreLink>?
+          ? storeLinks
+          : this.storeLinks?.map((e0) => e0.copyWith()).toList(),
+      versions: versions is List<_i7.Version>?
+          ? versions
+          : this.versions?.map((e0) => e0.copyWith()).toList(),
+      checkLogs: checkLogs is List<_i8.VersionCheckLog>?
+          ? checkLogs
+          : this.checkLogs?.map((e0) => e0.copyWith()).toList(),
       isActive: isActive ?? this.isActive,
+      apiKeyHash: apiKeyHash ?? this.apiKeyHash,
+      apiKeyCreatedAt: apiKeyCreatedAt ?? this.apiKeyCreatedAt,
+      apiKeyLastRegeneratedAt: apiKeyLastRegeneratedAt is DateTime?
+          ? apiKeyLastRegeneratedAt
+          : this.apiKeyLastRegeneratedAt,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );

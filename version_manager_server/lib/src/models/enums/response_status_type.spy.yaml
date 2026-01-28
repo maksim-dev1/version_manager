@@ -1,0 +1,9 @@
+### Статус ответа при проверке версии
+enum: ResponseStatusType
+serialized: byName
+default: active
+values:
+  - blocked
+  - update_available
+  - active
+  - error

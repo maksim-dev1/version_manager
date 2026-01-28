@@ -8,32 +8,70 @@
 // ignore_for_file: type_literal_in_constant_pattern
 // ignore_for_file: use_super_parameters
 // ignore_for_file: invalid_use_of_internal_member
+// ignore_for_file: unnecessary_null_comparison
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
+import 'enums/platform_type.dart' as _i2;
+import 'enums/owner_type.dart' as _i3;
+import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
+    as _i4;
+import 'team.dart' as _i5;
+import 'store_link.dart' as _i6;
+import 'version.dart' as _i7;
+import 'version_check_log.dart' as _i8;
+import 'package:version_manager_server/src/generated/protocol.dart' as _i9;
 
+/// Приложение для управления версиями
 abstract class Application
     implements _i1.TableRow<_i1.UuidValue?>, _i1.ProtocolSerialization {
   Application._({
     this.id,
-    required this.packageName,
-    required this.appName,
+    required this.namespace,
+    required this.name,
     required this.description,
-    required this.iconUrl,
+    this.iconUrl,
+    required this.platforms,
+    required this.ownerType,
+    this.ownerUserId,
+    this.ownerUser,
+    this.ownerTeamId,
+    this.ownerTeam,
+    this.storeLinks,
+    this.versions,
+    this.checkLogs,
     bool? isActive,
-    required this.createdAt,
-    required this.updatedAt,
-  }) : isActive = isActive ?? true;
+    required this.apiKeyHash,
+    DateTime? apiKeyCreatedAt,
+    this.apiKeyLastRegeneratedAt,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) : isActive = isActive ?? true,
+       apiKeyCreatedAt = apiKeyCreatedAt ?? DateTime.now(),
+       createdAt = createdAt ?? DateTime.now(),
+       updatedAt = updatedAt ?? DateTime.now();
 
   factory Application({
     _i1.UuidValue? id,
-    required String packageName,
-    required String appName,
+    required String namespace,
+    required String name,
     required String description,
-    required String iconUrl,
+    String? iconUrl,
+    required List<_i2.PlatformType> platforms,
+    required _i3.OwnerType ownerType,
+    _i1.UuidValue? ownerUserId,
+    _i4.AuthUser? ownerUser,
+    _i1.UuidValue? ownerTeamId,
+    _i5.Team? ownerTeam,
+    List<_i6.StoreLink>? storeLinks,
+    List<_i7.Version>? versions,
+    List<_i8.VersionCheckLog>? checkLogs,
     bool? isActive,
-    required DateTime createdAt,
-    required DateTime updatedAt,
+    required String apiKeyHash,
+    DateTime? apiKeyCreatedAt,
+    DateTime? apiKeyLastRegeneratedAt,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) = _ApplicationImpl;
 
   factory Application.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -41,17 +79,70 @@ abstract class Application
       id: jsonSerialization['id'] == null
           ? null
           : _i1.UuidValueJsonExtension.fromJson(jsonSerialization['id']),
-      packageName: jsonSerialization['packageName'] as String,
-      appName: jsonSerialization['appName'] as String,
+      namespace: jsonSerialization['namespace'] as String,
+      name: jsonSerialization['name'] as String,
       description: jsonSerialization['description'] as String,
-      iconUrl: jsonSerialization['iconUrl'] as String,
+      iconUrl: jsonSerialization['iconUrl'] as String?,
+      platforms: _i9.Protocol().deserialize<List<_i2.PlatformType>>(
+        jsonSerialization['platforms'],
+      ),
+      ownerType: _i3.OwnerType.fromJson(
+        (jsonSerialization['ownerType'] as String),
+      ),
+      ownerUserId: jsonSerialization['ownerUserId'] == null
+          ? null
+          : _i1.UuidValueJsonExtension.fromJson(
+              jsonSerialization['ownerUserId'],
+            ),
+      ownerUser: jsonSerialization['ownerUser'] == null
+          ? null
+          : _i9.Protocol().deserialize<_i4.AuthUser>(
+              jsonSerialization['ownerUser'],
+            ),
+      ownerTeamId: jsonSerialization['ownerTeamId'] == null
+          ? null
+          : _i1.UuidValueJsonExtension.fromJson(
+              jsonSerialization['ownerTeamId'],
+            ),
+      ownerTeam: jsonSerialization['ownerTeam'] == null
+          ? null
+          : _i9.Protocol().deserialize<_i5.Team>(
+              jsonSerialization['ownerTeam'],
+            ),
+      storeLinks: jsonSerialization['storeLinks'] == null
+          ? null
+          : _i9.Protocol().deserialize<List<_i6.StoreLink>>(
+              jsonSerialization['storeLinks'],
+            ),
+      versions: jsonSerialization['versions'] == null
+          ? null
+          : _i9.Protocol().deserialize<List<_i7.Version>>(
+              jsonSerialization['versions'],
+            ),
+      checkLogs: jsonSerialization['checkLogs'] == null
+          ? null
+          : _i9.Protocol().deserialize<List<_i8.VersionCheckLog>>(
+              jsonSerialization['checkLogs'],
+            ),
       isActive: jsonSerialization['isActive'] as bool?,
-      createdAt: _i1.DateTimeJsonExtension.fromJson(
-        jsonSerialization['createdAt'],
-      ),
-      updatedAt: _i1.DateTimeJsonExtension.fromJson(
-        jsonSerialization['updatedAt'],
-      ),
+      apiKeyHash: jsonSerialization['apiKeyHash'] as String,
+      apiKeyCreatedAt: jsonSerialization['apiKeyCreatedAt'] == null
+          ? null
+          : _i1.DateTimeJsonExtension.fromJson(
+              jsonSerialization['apiKeyCreatedAt'],
+            ),
+      apiKeyLastRegeneratedAt:
+          jsonSerialization['apiKeyLastRegeneratedAt'] == null
+          ? null
+          : _i1.DateTimeJsonExtension.fromJson(
+              jsonSerialization['apiKeyLastRegeneratedAt'],
+            ),
+      createdAt: jsonSerialization['createdAt'] == null
+          ? null
+          : _i1.DateTimeJsonExtension.fromJson(jsonSerialization['createdAt']),
+      updatedAt: jsonSerialization['updatedAt'] == null
+          ? null
+          : _i1.DateTimeJsonExtension.fromJson(jsonSerialization['updatedAt']),
     );
   }
 
@@ -62,25 +153,59 @@ abstract class Application
   @override
   _i1.UuidValue? id;
 
-  /// Уникальный идентификатор приложения (например: com.example.myapp)
-  String packageName;
+  /// Уникальный идентификатор в формате обратной доменной нотации (например, com.example.app)
+  String namespace;
 
-  /// Название приложения
-  String appName;
+  /// Название приложения (3-50 символов)
+  String name;
 
-  /// Описание
+  /// Описание приложения (10-500 символов)
   String description;
 
-  /// Иконка приложения (URL)
-  String iconUrl;
+  /// URL иконки приложения
+  String? iconUrl;
+
+  /// Массив поддерживаемых платформ (минимум 1)
+  List<_i2.PlatformType> platforms;
+
+  /// Тип владельца (user или team)
+  _i3.OwnerType ownerType;
+
+  _i1.UuidValue? ownerUserId;
+
+  /// Владелец-пользователь (если личное приложение, связь с AuthUser из auth модуля)
+  _i4.AuthUser? ownerUser;
+
+  _i1.UuidValue? ownerTeamId;
+
+  /// Владелец-команда (если командное приложение)
+  _i5.Team? ownerTeam;
+
+  /// Ссылки на магазины приложений
+  List<_i6.StoreLink>? storeLinks;
+
+  /// Версии приложения
+  List<_i7.Version>? versions;
+
+  /// Логи проверки версий
+  List<_i8.VersionCheckLog>? checkLogs;
 
   /// Активно ли приложение
   bool isActive;
 
-  /// Дата и время создания записи
+  /// Хеш API ключа приложения для аутентификации
+  String apiKeyHash;
+
+  /// Дата создания API ключа
+  DateTime apiKeyCreatedAt;
+
+  /// Дата последней регенерации API ключа
+  DateTime? apiKeyLastRegeneratedAt;
+
+  /// Дата создания приложения
   DateTime createdAt;
 
-  /// Дата и время последнего обновления записи
+  /// Дата последнего обновления приложения
   DateTime updatedAt;
 
   @override
@@ -91,11 +216,23 @@ abstract class Application
   @_i1.useResult
   Application copyWith({
     _i1.UuidValue? id,
-    String? packageName,
-    String? appName,
+    String? namespace,
+    String? name,
     String? description,
     String? iconUrl,
+    List<_i2.PlatformType>? platforms,
+    _i3.OwnerType? ownerType,
+    _i1.UuidValue? ownerUserId,
+    _i4.AuthUser? ownerUser,
+    _i1.UuidValue? ownerTeamId,
+    _i5.Team? ownerTeam,
+    List<_i6.StoreLink>? storeLinks,
+    List<_i7.Version>? versions,
+    List<_i8.VersionCheckLog>? checkLogs,
     bool? isActive,
+    String? apiKeyHash,
+    DateTime? apiKeyCreatedAt,
+    DateTime? apiKeyLastRegeneratedAt,
     DateTime? createdAt,
     DateTime? updatedAt,
   });
@@ -104,11 +241,27 @@ abstract class Application
     return {
       '__className__': 'Application',
       if (id != null) 'id': id?.toJson(),
-      'packageName': packageName,
-      'appName': appName,
+      'namespace': namespace,
+      'name': name,
       'description': description,
-      'iconUrl': iconUrl,
+      if (iconUrl != null) 'iconUrl': iconUrl,
+      'platforms': platforms.toJson(valueToJson: (v) => v.toJson()),
+      'ownerType': ownerType.toJson(),
+      if (ownerUserId != null) 'ownerUserId': ownerUserId?.toJson(),
+      if (ownerUser != null) 'ownerUser': ownerUser?.toJson(),
+      if (ownerTeamId != null) 'ownerTeamId': ownerTeamId?.toJson(),
+      if (ownerTeam != null) 'ownerTeam': ownerTeam?.toJson(),
+      if (storeLinks != null)
+        'storeLinks': storeLinks?.toJson(valueToJson: (v) => v.toJson()),
+      if (versions != null)
+        'versions': versions?.toJson(valueToJson: (v) => v.toJson()),
+      if (checkLogs != null)
+        'checkLogs': checkLogs?.toJson(valueToJson: (v) => v.toJson()),
       'isActive': isActive,
+      'apiKeyHash': apiKeyHash,
+      'apiKeyCreatedAt': apiKeyCreatedAt.toJson(),
+      if (apiKeyLastRegeneratedAt != null)
+        'apiKeyLastRegeneratedAt': apiKeyLastRegeneratedAt?.toJson(),
       'createdAt': createdAt.toJson(),
       'updatedAt': updatedAt.toJson(),
     };
@@ -119,18 +272,50 @@ abstract class Application
     return {
       '__className__': 'Application',
       if (id != null) 'id': id?.toJson(),
-      'packageName': packageName,
-      'appName': appName,
+      'namespace': namespace,
+      'name': name,
       'description': description,
-      'iconUrl': iconUrl,
+      if (iconUrl != null) 'iconUrl': iconUrl,
+      'platforms': platforms.toJson(valueToJson: (v) => v.toJson()),
+      'ownerType': ownerType.toJson(),
+      if (ownerUserId != null) 'ownerUserId': ownerUserId?.toJson(),
+      if (ownerUser != null) 'ownerUser': ownerUser?.toJsonForProtocol(),
+      if (ownerTeamId != null) 'ownerTeamId': ownerTeamId?.toJson(),
+      if (ownerTeam != null) 'ownerTeam': ownerTeam?.toJsonForProtocol(),
+      if (storeLinks != null)
+        'storeLinks': storeLinks?.toJson(
+          valueToJson: (v) => v.toJsonForProtocol(),
+        ),
+      if (versions != null)
+        'versions': versions?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
+      if (checkLogs != null)
+        'checkLogs': checkLogs?.toJson(
+          valueToJson: (v) => v.toJsonForProtocol(),
+        ),
       'isActive': isActive,
+      'apiKeyHash': apiKeyHash,
+      'apiKeyCreatedAt': apiKeyCreatedAt.toJson(),
+      if (apiKeyLastRegeneratedAt != null)
+        'apiKeyLastRegeneratedAt': apiKeyLastRegeneratedAt?.toJson(),
       'createdAt': createdAt.toJson(),
       'updatedAt': updatedAt.toJson(),
     };
   }
 
-  static ApplicationInclude include() {
-    return ApplicationInclude._();
+  static ApplicationInclude include({
+    _i4.AuthUserInclude? ownerUser,
+    _i5.TeamInclude? ownerTeam,
+    _i6.StoreLinkIncludeList? storeLinks,
+    _i7.VersionIncludeList? versions,
+    _i8.VersionCheckLogIncludeList? checkLogs,
+  }) {
+    return ApplicationInclude._(
+      ownerUser: ownerUser,
+      ownerTeam: ownerTeam,
+      storeLinks: storeLinks,
+      versions: versions,
+      checkLogs: checkLogs,
+    );
   }
 
   static ApplicationIncludeList includeList({
@@ -164,20 +349,44 @@ class _Undefined {}
 class _ApplicationImpl extends Application {
   _ApplicationImpl({
     _i1.UuidValue? id,
-    required String packageName,
-    required String appName,
+    required String namespace,
+    required String name,
     required String description,
-    required String iconUrl,
+    String? iconUrl,
+    required List<_i2.PlatformType> platforms,
+    required _i3.OwnerType ownerType,
+    _i1.UuidValue? ownerUserId,
+    _i4.AuthUser? ownerUser,
+    _i1.UuidValue? ownerTeamId,
+    _i5.Team? ownerTeam,
+    List<_i6.StoreLink>? storeLinks,
+    List<_i7.Version>? versions,
+    List<_i8.VersionCheckLog>? checkLogs,
     bool? isActive,
-    required DateTime createdAt,
-    required DateTime updatedAt,
+    required String apiKeyHash,
+    DateTime? apiKeyCreatedAt,
+    DateTime? apiKeyLastRegeneratedAt,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) : super._(
          id: id,
-         packageName: packageName,
-         appName: appName,
+         namespace: namespace,
+         name: name,
          description: description,
          iconUrl: iconUrl,
+         platforms: platforms,
+         ownerType: ownerType,
+         ownerUserId: ownerUserId,
+         ownerUser: ownerUser,
+         ownerTeamId: ownerTeamId,
+         ownerTeam: ownerTeam,
+         storeLinks: storeLinks,
+         versions: versions,
+         checkLogs: checkLogs,
          isActive: isActive,
+         apiKeyHash: apiKeyHash,
+         apiKeyCreatedAt: apiKeyCreatedAt,
+         apiKeyLastRegeneratedAt: apiKeyLastRegeneratedAt,
          createdAt: createdAt,
          updatedAt: updatedAt,
        );
@@ -188,21 +397,61 @@ class _ApplicationImpl extends Application {
   @override
   Application copyWith({
     Object? id = _Undefined,
-    String? packageName,
-    String? appName,
+    String? namespace,
+    String? name,
     String? description,
-    String? iconUrl,
+    Object? iconUrl = _Undefined,
+    List<_i2.PlatformType>? platforms,
+    _i3.OwnerType? ownerType,
+    Object? ownerUserId = _Undefined,
+    Object? ownerUser = _Undefined,
+    Object? ownerTeamId = _Undefined,
+    Object? ownerTeam = _Undefined,
+    Object? storeLinks = _Undefined,
+    Object? versions = _Undefined,
+    Object? checkLogs = _Undefined,
     bool? isActive,
+    String? apiKeyHash,
+    DateTime? apiKeyCreatedAt,
+    Object? apiKeyLastRegeneratedAt = _Undefined,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
     return Application(
       id: id is _i1.UuidValue? ? id : this.id,
-      packageName: packageName ?? this.packageName,
-      appName: appName ?? this.appName,
+      namespace: namespace ?? this.namespace,
+      name: name ?? this.name,
       description: description ?? this.description,
-      iconUrl: iconUrl ?? this.iconUrl,
+      iconUrl: iconUrl is String? ? iconUrl : this.iconUrl,
+      platforms: platforms ?? this.platforms.map((e0) => e0).toList(),
+      ownerType: ownerType ?? this.ownerType,
+      ownerUserId: ownerUserId is _i1.UuidValue?
+          ? ownerUserId
+          : this.ownerUserId,
+      ownerUser: ownerUser is _i4.AuthUser?
+          ? ownerUser
+          : this.ownerUser?.copyWith(),
+      ownerTeamId: ownerTeamId is _i1.UuidValue?
+          ? ownerTeamId
+          : this.ownerTeamId,
+      ownerTeam: ownerTeam is _i5.Team?
+          ? ownerTeam
+          : this.ownerTeam?.copyWith(),
+      storeLinks: storeLinks is List<_i6.StoreLink>?
+          ? storeLinks
+          : this.storeLinks?.map((e0) => e0.copyWith()).toList(),
+      versions: versions is List<_i7.Version>?
+          ? versions
+          : this.versions?.map((e0) => e0.copyWith()).toList(),
+      checkLogs: checkLogs is List<_i8.VersionCheckLog>?
+          ? checkLogs
+          : this.checkLogs?.map((e0) => e0.copyWith()).toList(),
       isActive: isActive ?? this.isActive,
+      apiKeyHash: apiKeyHash ?? this.apiKeyHash,
+      apiKeyCreatedAt: apiKeyCreatedAt ?? this.apiKeyCreatedAt,
+      apiKeyLastRegeneratedAt: apiKeyLastRegeneratedAt is DateTime?
+          ? apiKeyLastRegeneratedAt
+          : this.apiKeyLastRegeneratedAt,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -212,13 +461,13 @@ class _ApplicationImpl extends Application {
 class ApplicationUpdateTable extends _i1.UpdateTable<ApplicationTable> {
   ApplicationUpdateTable(super.table);
 
-  _i1.ColumnValue<String, String> packageName(String value) => _i1.ColumnValue(
-    table.packageName,
+  _i1.ColumnValue<String, String> namespace(String value) => _i1.ColumnValue(
+    table.namespace,
     value,
   );
 
-  _i1.ColumnValue<String, String> appName(String value) => _i1.ColumnValue(
-    table.appName,
+  _i1.ColumnValue<String, String> name(String value) => _i1.ColumnValue(
+    table.name,
     value,
   );
 
@@ -227,13 +476,59 @@ class ApplicationUpdateTable extends _i1.UpdateTable<ApplicationTable> {
     value,
   );
 
-  _i1.ColumnValue<String, String> iconUrl(String value) => _i1.ColumnValue(
+  _i1.ColumnValue<String, String> iconUrl(String? value) => _i1.ColumnValue(
     table.iconUrl,
+    value,
+  );
+
+  _i1.ColumnValue<List<_i2.PlatformType>, List<_i2.PlatformType>> platforms(
+    List<_i2.PlatformType> value,
+  ) => _i1.ColumnValue(
+    table.platforms,
+    value,
+  );
+
+  _i1.ColumnValue<_i3.OwnerType, _i3.OwnerType> ownerType(
+    _i3.OwnerType value,
+  ) => _i1.ColumnValue(
+    table.ownerType,
+    value,
+  );
+
+  _i1.ColumnValue<_i1.UuidValue, _i1.UuidValue> ownerUserId(
+    _i1.UuidValue? value,
+  ) => _i1.ColumnValue(
+    table.ownerUserId,
+    value,
+  );
+
+  _i1.ColumnValue<_i1.UuidValue, _i1.UuidValue> ownerTeamId(
+    _i1.UuidValue? value,
+  ) => _i1.ColumnValue(
+    table.ownerTeamId,
     value,
   );
 
   _i1.ColumnValue<bool, bool> isActive(bool value) => _i1.ColumnValue(
     table.isActive,
+    value,
+  );
+
+  _i1.ColumnValue<String, String> apiKeyHash(String value) => _i1.ColumnValue(
+    table.apiKeyHash,
+    value,
+  );
+
+  _i1.ColumnValue<DateTime, DateTime> apiKeyCreatedAt(DateTime value) =>
+      _i1.ColumnValue(
+        table.apiKeyCreatedAt,
+        value,
+      );
+
+  _i1.ColumnValue<DateTime, DateTime> apiKeyLastRegeneratedAt(
+    DateTime? value,
+  ) => _i1.ColumnValue(
+    table.apiKeyLastRegeneratedAt,
     value,
   );
 
@@ -253,12 +548,12 @@ class ApplicationUpdateTable extends _i1.UpdateTable<ApplicationTable> {
 class ApplicationTable extends _i1.Table<_i1.UuidValue?> {
   ApplicationTable({super.tableRelation}) : super(tableName: 'applications') {
     updateTable = ApplicationUpdateTable(this);
-    packageName = _i1.ColumnString(
-      'packageName',
+    namespace = _i1.ColumnString(
+      'namespace',
       this,
     );
-    appName = _i1.ColumnString(
-      'appName',
+    name = _i1.ColumnString(
+      'name',
       this,
     );
     description = _i1.ColumnString(
@@ -269,62 +564,314 @@ class ApplicationTable extends _i1.Table<_i1.UuidValue?> {
       'iconUrl',
       this,
     );
+    platforms = _i1.ColumnSerializable<List<_i2.PlatformType>>(
+      'platforms',
+      this,
+    );
+    ownerType = _i1.ColumnEnum(
+      'ownerType',
+      this,
+      _i1.EnumSerialization.byName,
+    );
+    ownerUserId = _i1.ColumnUuid(
+      'ownerUserId',
+      this,
+    );
+    ownerTeamId = _i1.ColumnUuid(
+      'ownerTeamId',
+      this,
+    );
     isActive = _i1.ColumnBool(
       'isActive',
       this,
       hasDefault: true,
     );
+    apiKeyHash = _i1.ColumnString(
+      'apiKeyHash',
+      this,
+    );
+    apiKeyCreatedAt = _i1.ColumnDateTime(
+      'apiKeyCreatedAt',
+      this,
+      hasDefault: true,
+    );
+    apiKeyLastRegeneratedAt = _i1.ColumnDateTime(
+      'apiKeyLastRegeneratedAt',
+      this,
+    );
     createdAt = _i1.ColumnDateTime(
       'createdAt',
       this,
+      hasDefault: true,
     );
     updatedAt = _i1.ColumnDateTime(
       'updatedAt',
       this,
+      hasDefault: true,
     );
   }
 
   late final ApplicationUpdateTable updateTable;
 
-  /// Уникальный идентификатор приложения (например: com.example.myapp)
-  late final _i1.ColumnString packageName;
+  /// Уникальный идентификатор в формате обратной доменной нотации (например, com.example.app)
+  late final _i1.ColumnString namespace;
 
-  /// Название приложения
-  late final _i1.ColumnString appName;
+  /// Название приложения (3-50 символов)
+  late final _i1.ColumnString name;
 
-  /// Описание
+  /// Описание приложения (10-500 символов)
   late final _i1.ColumnString description;
 
-  /// Иконка приложения (URL)
+  /// URL иконки приложения
   late final _i1.ColumnString iconUrl;
+
+  /// Массив поддерживаемых платформ (минимум 1)
+  late final _i1.ColumnSerializable<List<_i2.PlatformType>> platforms;
+
+  /// Тип владельца (user или team)
+  late final _i1.ColumnEnum<_i3.OwnerType> ownerType;
+
+  late final _i1.ColumnUuid ownerUserId;
+
+  /// Владелец-пользователь (если личное приложение, связь с AuthUser из auth модуля)
+  _i4.AuthUserTable? _ownerUser;
+
+  late final _i1.ColumnUuid ownerTeamId;
+
+  /// Владелец-команда (если командное приложение)
+  _i5.TeamTable? _ownerTeam;
+
+  /// Ссылки на магазины приложений
+  _i6.StoreLinkTable? ___storeLinks;
+
+  /// Ссылки на магазины приложений
+  _i1.ManyRelation<_i6.StoreLinkTable>? _storeLinks;
+
+  /// Версии приложения
+  _i7.VersionTable? ___versions;
+
+  /// Версии приложения
+  _i1.ManyRelation<_i7.VersionTable>? _versions;
+
+  /// Логи проверки версий
+  _i8.VersionCheckLogTable? ___checkLogs;
+
+  /// Логи проверки версий
+  _i1.ManyRelation<_i8.VersionCheckLogTable>? _checkLogs;
 
   /// Активно ли приложение
   late final _i1.ColumnBool isActive;
 
-  /// Дата и время создания записи
+  /// Хеш API ключа приложения для аутентификации
+  late final _i1.ColumnString apiKeyHash;
+
+  /// Дата создания API ключа
+  late final _i1.ColumnDateTime apiKeyCreatedAt;
+
+  /// Дата последней регенерации API ключа
+  late final _i1.ColumnDateTime apiKeyLastRegeneratedAt;
+
+  /// Дата создания приложения
   late final _i1.ColumnDateTime createdAt;
 
-  /// Дата и время последнего обновления записи
+  /// Дата последнего обновления приложения
   late final _i1.ColumnDateTime updatedAt;
+
+  _i4.AuthUserTable get ownerUser {
+    if (_ownerUser != null) return _ownerUser!;
+    _ownerUser = _i1.createRelationTable(
+      relationFieldName: 'ownerUser',
+      field: Application.t.ownerUserId,
+      foreignField: _i4.AuthUser.t.id,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) =>
+          _i4.AuthUserTable(tableRelation: foreignTableRelation),
+    );
+    return _ownerUser!;
+  }
+
+  _i5.TeamTable get ownerTeam {
+    if (_ownerTeam != null) return _ownerTeam!;
+    _ownerTeam = _i1.createRelationTable(
+      relationFieldName: 'ownerTeam',
+      field: Application.t.ownerTeamId,
+      foreignField: _i5.Team.t.id,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) =>
+          _i5.TeamTable(tableRelation: foreignTableRelation),
+    );
+    return _ownerTeam!;
+  }
+
+  _i6.StoreLinkTable get __storeLinks {
+    if (___storeLinks != null) return ___storeLinks!;
+    ___storeLinks = _i1.createRelationTable(
+      relationFieldName: '__storeLinks',
+      field: Application.t.id,
+      foreignField: _i6.StoreLink.t.applicationId,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) =>
+          _i6.StoreLinkTable(tableRelation: foreignTableRelation),
+    );
+    return ___storeLinks!;
+  }
+
+  _i7.VersionTable get __versions {
+    if (___versions != null) return ___versions!;
+    ___versions = _i1.createRelationTable(
+      relationFieldName: '__versions',
+      field: Application.t.id,
+      foreignField: _i7.Version.t.applicationId,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) =>
+          _i7.VersionTable(tableRelation: foreignTableRelation),
+    );
+    return ___versions!;
+  }
+
+  _i8.VersionCheckLogTable get __checkLogs {
+    if (___checkLogs != null) return ___checkLogs!;
+    ___checkLogs = _i1.createRelationTable(
+      relationFieldName: '__checkLogs',
+      field: Application.t.id,
+      foreignField: _i8.VersionCheckLog.t.applicationId,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) =>
+          _i8.VersionCheckLogTable(tableRelation: foreignTableRelation),
+    );
+    return ___checkLogs!;
+  }
+
+  _i1.ManyRelation<_i6.StoreLinkTable> get storeLinks {
+    if (_storeLinks != null) return _storeLinks!;
+    var relationTable = _i1.createRelationTable(
+      relationFieldName: 'storeLinks',
+      field: Application.t.id,
+      foreignField: _i6.StoreLink.t.applicationId,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) =>
+          _i6.StoreLinkTable(tableRelation: foreignTableRelation),
+    );
+    _storeLinks = _i1.ManyRelation<_i6.StoreLinkTable>(
+      tableWithRelations: relationTable,
+      table: _i6.StoreLinkTable(
+        tableRelation: relationTable.tableRelation!.lastRelation,
+      ),
+    );
+    return _storeLinks!;
+  }
+
+  _i1.ManyRelation<_i7.VersionTable> get versions {
+    if (_versions != null) return _versions!;
+    var relationTable = _i1.createRelationTable(
+      relationFieldName: 'versions',
+      field: Application.t.id,
+      foreignField: _i7.Version.t.applicationId,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) =>
+          _i7.VersionTable(tableRelation: foreignTableRelation),
+    );
+    _versions = _i1.ManyRelation<_i7.VersionTable>(
+      tableWithRelations: relationTable,
+      table: _i7.VersionTable(
+        tableRelation: relationTable.tableRelation!.lastRelation,
+      ),
+    );
+    return _versions!;
+  }
+
+  _i1.ManyRelation<_i8.VersionCheckLogTable> get checkLogs {
+    if (_checkLogs != null) return _checkLogs!;
+    var relationTable = _i1.createRelationTable(
+      relationFieldName: 'checkLogs',
+      field: Application.t.id,
+      foreignField: _i8.VersionCheckLog.t.applicationId,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) =>
+          _i8.VersionCheckLogTable(tableRelation: foreignTableRelation),
+    );
+    _checkLogs = _i1.ManyRelation<_i8.VersionCheckLogTable>(
+      tableWithRelations: relationTable,
+      table: _i8.VersionCheckLogTable(
+        tableRelation: relationTable.tableRelation!.lastRelation,
+      ),
+    );
+    return _checkLogs!;
+  }
 
   @override
   List<_i1.Column> get columns => [
     id,
-    packageName,
-    appName,
+    namespace,
+    name,
     description,
     iconUrl,
+    platforms,
+    ownerType,
+    ownerUserId,
+    ownerTeamId,
     isActive,
+    apiKeyHash,
+    apiKeyCreatedAt,
+    apiKeyLastRegeneratedAt,
     createdAt,
     updatedAt,
   ];
+
+  @override
+  _i1.Table? getRelationTable(String relationField) {
+    if (relationField == 'ownerUser') {
+      return ownerUser;
+    }
+    if (relationField == 'ownerTeam') {
+      return ownerTeam;
+    }
+    if (relationField == 'storeLinks') {
+      return __storeLinks;
+    }
+    if (relationField == 'versions') {
+      return __versions;
+    }
+    if (relationField == 'checkLogs') {
+      return __checkLogs;
+    }
+    return null;
+  }
 }
 
 class ApplicationInclude extends _i1.IncludeObject {
-  ApplicationInclude._();
+  ApplicationInclude._({
+    _i4.AuthUserInclude? ownerUser,
+    _i5.TeamInclude? ownerTeam,
+    _i6.StoreLinkIncludeList? storeLinks,
+    _i7.VersionIncludeList? versions,
+    _i8.VersionCheckLogIncludeList? checkLogs,
+  }) {
+    _ownerUser = ownerUser;
+    _ownerTeam = ownerTeam;
+    _storeLinks = storeLinks;
+    _versions = versions;
+    _checkLogs = checkLogs;
+  }
+
+  _i4.AuthUserInclude? _ownerUser;
+
+  _i5.TeamInclude? _ownerTeam;
+
+  _i6.StoreLinkIncludeList? _storeLinks;
+
+  _i7.VersionIncludeList? _versions;
+
+  _i8.VersionCheckLogIncludeList? _checkLogs;
 
   @override
-  Map<String, _i1.Include?> get includes => {};
+  Map<String, _i1.Include?> get includes => {
+    'ownerUser': _ownerUser,
+    'ownerTeam': _ownerTeam,
+    'storeLinks': _storeLinks,
+    'versions': _versions,
+    'checkLogs': _checkLogs,
+  };
 
   @override
   _i1.Table<_i1.UuidValue?> get table => Application.t;
@@ -352,6 +899,14 @@ class ApplicationIncludeList extends _i1.IncludeList {
 
 class ApplicationRepository {
   const ApplicationRepository._();
+
+  final attach = const ApplicationAttachRepository._();
+
+  final attachRow = const ApplicationAttachRowRepository._();
+
+  final detach = const ApplicationDetachRepository._();
+
+  final detachRow = const ApplicationDetachRowRepository._();
 
   /// Returns a list of [Application]s matching the given query parameters.
   ///
@@ -384,6 +939,7 @@ class ApplicationRepository {
     bool orderDescending = false,
     _i1.OrderByListBuilder<ApplicationTable>? orderByList,
     _i1.Transaction? transaction,
+    ApplicationInclude? include,
   }) async {
     return session.db.find<Application>(
       where: where?.call(Application.t),
@@ -393,6 +949,7 @@ class ApplicationRepository {
       limit: limit,
       offset: offset,
       transaction: transaction,
+      include: include,
     );
   }
 
@@ -421,6 +978,7 @@ class ApplicationRepository {
     bool orderDescending = false,
     _i1.OrderByListBuilder<ApplicationTable>? orderByList,
     _i1.Transaction? transaction,
+    ApplicationInclude? include,
   }) async {
     return session.db.findFirstRow<Application>(
       where: where?.call(Application.t),
@@ -429,6 +987,7 @@ class ApplicationRepository {
       orderDescending: orderDescending,
       offset: offset,
       transaction: transaction,
+      include: include,
     );
   }
 
@@ -437,10 +996,12 @@ class ApplicationRepository {
     _i1.Session session,
     _i1.UuidValue id, {
     _i1.Transaction? transaction,
+    ApplicationInclude? include,
   }) async {
     return session.db.findById<Application>(
       id,
       transaction: transaction,
+      include: include,
     );
   }
 
@@ -598,6 +1159,394 @@ class ApplicationRepository {
     return session.db.count<Application>(
       where: where?.call(Application.t),
       limit: limit,
+      transaction: transaction,
+    );
+  }
+}
+
+class ApplicationAttachRepository {
+  const ApplicationAttachRepository._();
+
+  /// Creates a relation between this [Application] and the given [StoreLink]s
+  /// by setting each [StoreLink]'s foreign key `applicationId` to refer to this [Application].
+  Future<void> storeLinks(
+    _i1.Session session,
+    Application application,
+    List<_i6.StoreLink> storeLink, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (storeLink.any((e) => e.id == null)) {
+      throw ArgumentError.notNull('storeLink.id');
+    }
+    if (application.id == null) {
+      throw ArgumentError.notNull('application.id');
+    }
+
+    var $storeLink = storeLink
+        .map((e) => e.copyWith(applicationId: application.id))
+        .toList();
+    await session.db.update<_i6.StoreLink>(
+      $storeLink,
+      columns: [_i6.StoreLink.t.applicationId],
+      transaction: transaction,
+    );
+  }
+
+  /// Creates a relation between this [Application] and the given [Version]s
+  /// by setting each [Version]'s foreign key `applicationId` to refer to this [Application].
+  Future<void> versions(
+    _i1.Session session,
+    Application application,
+    List<_i7.Version> version, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (version.any((e) => e.id == null)) {
+      throw ArgumentError.notNull('version.id');
+    }
+    if (application.id == null) {
+      throw ArgumentError.notNull('application.id');
+    }
+
+    var $version = version
+        .map((e) => e.copyWith(applicationId: application.id))
+        .toList();
+    await session.db.update<_i7.Version>(
+      $version,
+      columns: [_i7.Version.t.applicationId],
+      transaction: transaction,
+    );
+  }
+
+  /// Creates a relation between this [Application] and the given [VersionCheckLog]s
+  /// by setting each [VersionCheckLog]'s foreign key `applicationId` to refer to this [Application].
+  Future<void> checkLogs(
+    _i1.Session session,
+    Application application,
+    List<_i8.VersionCheckLog> versionCheckLog, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (versionCheckLog.any((e) => e.id == null)) {
+      throw ArgumentError.notNull('versionCheckLog.id');
+    }
+    if (application.id == null) {
+      throw ArgumentError.notNull('application.id');
+    }
+
+    var $versionCheckLog = versionCheckLog
+        .map((e) => e.copyWith(applicationId: application.id))
+        .toList();
+    await session.db.update<_i8.VersionCheckLog>(
+      $versionCheckLog,
+      columns: [_i8.VersionCheckLog.t.applicationId],
+      transaction: transaction,
+    );
+  }
+}
+
+class ApplicationAttachRowRepository {
+  const ApplicationAttachRowRepository._();
+
+  /// Creates a relation between the given [Application] and [AuthUser]
+  /// by setting the [Application]'s foreign key `ownerUserId` to refer to the [AuthUser].
+  Future<void> ownerUser(
+    _i1.Session session,
+    Application application,
+    _i4.AuthUser ownerUser, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (application.id == null) {
+      throw ArgumentError.notNull('application.id');
+    }
+    if (ownerUser.id == null) {
+      throw ArgumentError.notNull('ownerUser.id');
+    }
+
+    var $application = application.copyWith(ownerUserId: ownerUser.id);
+    await session.db.updateRow<Application>(
+      $application,
+      columns: [Application.t.ownerUserId],
+      transaction: transaction,
+    );
+  }
+
+  /// Creates a relation between the given [Application] and [Team]
+  /// by setting the [Application]'s foreign key `ownerTeamId` to refer to the [Team].
+  Future<void> ownerTeam(
+    _i1.Session session,
+    Application application,
+    _i5.Team ownerTeam, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (application.id == null) {
+      throw ArgumentError.notNull('application.id');
+    }
+    if (ownerTeam.id == null) {
+      throw ArgumentError.notNull('ownerTeam.id');
+    }
+
+    var $application = application.copyWith(ownerTeamId: ownerTeam.id);
+    await session.db.updateRow<Application>(
+      $application,
+      columns: [Application.t.ownerTeamId],
+      transaction: transaction,
+    );
+  }
+
+  /// Creates a relation between this [Application] and the given [StoreLink]
+  /// by setting the [StoreLink]'s foreign key `applicationId` to refer to this [Application].
+  Future<void> storeLinks(
+    _i1.Session session,
+    Application application,
+    _i6.StoreLink storeLink, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (storeLink.id == null) {
+      throw ArgumentError.notNull('storeLink.id');
+    }
+    if (application.id == null) {
+      throw ArgumentError.notNull('application.id');
+    }
+
+    var $storeLink = storeLink.copyWith(applicationId: application.id);
+    await session.db.updateRow<_i6.StoreLink>(
+      $storeLink,
+      columns: [_i6.StoreLink.t.applicationId],
+      transaction: transaction,
+    );
+  }
+
+  /// Creates a relation between this [Application] and the given [Version]
+  /// by setting the [Version]'s foreign key `applicationId` to refer to this [Application].
+  Future<void> versions(
+    _i1.Session session,
+    Application application,
+    _i7.Version version, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (version.id == null) {
+      throw ArgumentError.notNull('version.id');
+    }
+    if (application.id == null) {
+      throw ArgumentError.notNull('application.id');
+    }
+
+    var $version = version.copyWith(applicationId: application.id);
+    await session.db.updateRow<_i7.Version>(
+      $version,
+      columns: [_i7.Version.t.applicationId],
+      transaction: transaction,
+    );
+  }
+
+  /// Creates a relation between this [Application] and the given [VersionCheckLog]
+  /// by setting the [VersionCheckLog]'s foreign key `applicationId` to refer to this [Application].
+  Future<void> checkLogs(
+    _i1.Session session,
+    Application application,
+    _i8.VersionCheckLog versionCheckLog, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (versionCheckLog.id == null) {
+      throw ArgumentError.notNull('versionCheckLog.id');
+    }
+    if (application.id == null) {
+      throw ArgumentError.notNull('application.id');
+    }
+
+    var $versionCheckLog = versionCheckLog.copyWith(
+      applicationId: application.id,
+    );
+    await session.db.updateRow<_i8.VersionCheckLog>(
+      $versionCheckLog,
+      columns: [_i8.VersionCheckLog.t.applicationId],
+      transaction: transaction,
+    );
+  }
+}
+
+class ApplicationDetachRepository {
+  const ApplicationDetachRepository._();
+
+  /// Detaches the relation between this [Application] and the given [StoreLink]
+  /// by setting the [StoreLink]'s foreign key `applicationId` to `null`.
+  ///
+  /// This removes the association between the two models without deleting
+  /// the related record.
+  Future<void> storeLinks(
+    _i1.Session session,
+    List<_i6.StoreLink> storeLink, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (storeLink.any((e) => e.id == null)) {
+      throw ArgumentError.notNull('storeLink.id');
+    }
+
+    var $storeLink = storeLink
+        .map((e) => e.copyWith(applicationId: null))
+        .toList();
+    await session.db.update<_i6.StoreLink>(
+      $storeLink,
+      columns: [_i6.StoreLink.t.applicationId],
+      transaction: transaction,
+    );
+  }
+
+  /// Detaches the relation between this [Application] and the given [Version]
+  /// by setting the [Version]'s foreign key `applicationId` to `null`.
+  ///
+  /// This removes the association between the two models without deleting
+  /// the related record.
+  Future<void> versions(
+    _i1.Session session,
+    List<_i7.Version> version, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (version.any((e) => e.id == null)) {
+      throw ArgumentError.notNull('version.id');
+    }
+
+    var $version = version.map((e) => e.copyWith(applicationId: null)).toList();
+    await session.db.update<_i7.Version>(
+      $version,
+      columns: [_i7.Version.t.applicationId],
+      transaction: transaction,
+    );
+  }
+
+  /// Detaches the relation between this [Application] and the given [VersionCheckLog]
+  /// by setting the [VersionCheckLog]'s foreign key `applicationId` to `null`.
+  ///
+  /// This removes the association between the two models without deleting
+  /// the related record.
+  Future<void> checkLogs(
+    _i1.Session session,
+    List<_i8.VersionCheckLog> versionCheckLog, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (versionCheckLog.any((e) => e.id == null)) {
+      throw ArgumentError.notNull('versionCheckLog.id');
+    }
+
+    var $versionCheckLog = versionCheckLog
+        .map((e) => e.copyWith(applicationId: null))
+        .toList();
+    await session.db.update<_i8.VersionCheckLog>(
+      $versionCheckLog,
+      columns: [_i8.VersionCheckLog.t.applicationId],
+      transaction: transaction,
+    );
+  }
+}
+
+class ApplicationDetachRowRepository {
+  const ApplicationDetachRowRepository._();
+
+  /// Detaches the relation between this [Application] and the [AuthUser] set in `ownerUser`
+  /// by setting the [Application]'s foreign key `ownerUserId` to `null`.
+  ///
+  /// This removes the association between the two models without deleting
+  /// the related record.
+  Future<void> ownerUser(
+    _i1.Session session,
+    Application application, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (application.id == null) {
+      throw ArgumentError.notNull('application.id');
+    }
+
+    var $application = application.copyWith(ownerUserId: null);
+    await session.db.updateRow<Application>(
+      $application,
+      columns: [Application.t.ownerUserId],
+      transaction: transaction,
+    );
+  }
+
+  /// Detaches the relation between this [Application] and the [Team] set in `ownerTeam`
+  /// by setting the [Application]'s foreign key `ownerTeamId` to `null`.
+  ///
+  /// This removes the association between the two models without deleting
+  /// the related record.
+  Future<void> ownerTeam(
+    _i1.Session session,
+    Application application, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (application.id == null) {
+      throw ArgumentError.notNull('application.id');
+    }
+
+    var $application = application.copyWith(ownerTeamId: null);
+    await session.db.updateRow<Application>(
+      $application,
+      columns: [Application.t.ownerTeamId],
+      transaction: transaction,
+    );
+  }
+
+  /// Detaches the relation between this [Application] and the given [StoreLink]
+  /// by setting the [StoreLink]'s foreign key `applicationId` to `null`.
+  ///
+  /// This removes the association between the two models without deleting
+  /// the related record.
+  Future<void> storeLinks(
+    _i1.Session session,
+    _i6.StoreLink storeLink, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (storeLink.id == null) {
+      throw ArgumentError.notNull('storeLink.id');
+    }
+
+    var $storeLink = storeLink.copyWith(applicationId: null);
+    await session.db.updateRow<_i6.StoreLink>(
+      $storeLink,
+      columns: [_i6.StoreLink.t.applicationId],
+      transaction: transaction,
+    );
+  }
+
+  /// Detaches the relation between this [Application] and the given [Version]
+  /// by setting the [Version]'s foreign key `applicationId` to `null`.
+  ///
+  /// This removes the association between the two models without deleting
+  /// the related record.
+  Future<void> versions(
+    _i1.Session session,
+    _i7.Version version, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (version.id == null) {
+      throw ArgumentError.notNull('version.id');
+    }
+
+    var $version = version.copyWith(applicationId: null);
+    await session.db.updateRow<_i7.Version>(
+      $version,
+      columns: [_i7.Version.t.applicationId],
+      transaction: transaction,
+    );
+  }
+
+  /// Detaches the relation between this [Application] and the given [VersionCheckLog]
+  /// by setting the [VersionCheckLog]'s foreign key `applicationId` to `null`.
+  ///
+  /// This removes the association between the two models without deleting
+  /// the related record.
+  Future<void> checkLogs(
+    _i1.Session session,
+    _i8.VersionCheckLog versionCheckLog, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (versionCheckLog.id == null) {
+      throw ArgumentError.notNull('versionCheckLog.id');
+    }
+
+    var $versionCheckLog = versionCheckLog.copyWith(applicationId: null);
+    await session.db.updateRow<_i8.VersionCheckLog>(
+      $versionCheckLog,
+      columns: [_i8.VersionCheckLog.t.applicationId],
       transaction: transaction,
     );
   }

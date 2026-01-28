@@ -1,0 +1,43 @@
+### Участник команды с определенной ролью и статусом
+class: TeamMember
+table: team_members
+fields:
+  ### Уникальный идентификатор участника
+  id: UuidValue?, defaultPersist=random_v7
+  
+  ### Команда
+  team: Team?, relation(name=team_members_relation, onDelete=Cascade)
+  
+  ### Пользователь (связь с AuthUser из auth модуля)
+  user: module:serverpod_auth_core:AuthUser?, relation(onDelete=Cascade)
+  
+  ### Роль участника в команде (owner, admin, developer, observer)
+  role: TeamRoleType
+  
+  ### Статус участника (invited, active)
+  status: TeamMemberStatusType, default=invited
+  
+  ### Пользователь, который пригласил (NULL для owner)
+  invitedBy: module:serverpod_auth_core:AuthUser?, relation(optional, onDelete=SetNull)
+  
+  ### Дата приглашения
+  invitedAt: DateTime, default=now
+  
+  ### Дата принятия приглашения (NULL если status=invited)
+  joinedAt: DateTime?
+  
+  ### Дата истечения приглашения (NULL если status=active)
+  invitationExpiresAt: DateTime?
+
+indexes:
+  team_member_team_idx:
+    fields: teamId
+  team_member_user_idx:
+    fields: userId
+  team_member_status_idx:
+    fields: status
+  team_member_invited_by_idx:
+    fields: invitedById
+  team_member_team_user_unique_idx:
+    fields: teamId, userId
+    unique: true

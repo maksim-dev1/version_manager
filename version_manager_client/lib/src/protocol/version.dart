@@ -1,0 +1,278 @@
+/* AUTOMATICALLY GENERATED CODE DO NOT MODIFY */
+/*   To generate run: "serverpod generate"    */
+
+// ignore_for_file: implementation_imports
+// ignore_for_file: library_private_types_in_public_api
+// ignore_for_file: non_constant_identifier_names
+// ignore_for_file: public_member_api_docs
+// ignore_for_file: type_literal_in_constant_pattern
+// ignore_for_file: use_super_parameters
+// ignore_for_file: invalid_use_of_internal_member
+
+// ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:serverpod_client/serverpod_client.dart' as _i1;
+import 'application.dart' as _i2;
+import 'version.dart' as _i3;
+import 'version_check_log.dart' as _i4;
+import 'package:version_manager_client/src/protocol/protocol.dart' as _i5;
+
+/// Версия приложения с информацией об изменениях
+abstract class Version implements _i1.SerializableModel {
+  Version._({
+    this.id,
+    required this.applicationId,
+    this.application,
+    required this.versionNumber,
+    required this.buildNumber,
+    required this.changelog,
+    bool? isBlocked,
+    this.blockReason,
+    this.recommendedVersionId,
+    this.recommendedVersion,
+    this.recommendingVersions,
+    this.checkLogs,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) : isBlocked = isBlocked ?? false,
+       createdAt = createdAt ?? DateTime.now(),
+       updatedAt = updatedAt ?? DateTime.now();
+
+  factory Version({
+    _i1.UuidValue? id,
+    required _i1.UuidValue applicationId,
+    _i2.Application? application,
+    required String versionNumber,
+    required int buildNumber,
+    required String changelog,
+    bool? isBlocked,
+    String? blockReason,
+    _i1.UuidValue? recommendedVersionId,
+    _i3.Version? recommendedVersion,
+    List<_i3.Version>? recommendingVersions,
+    List<_i4.VersionCheckLog>? checkLogs,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) = _VersionImpl;
+
+  factory Version.fromJson(Map<String, dynamic> jsonSerialization) {
+    return Version(
+      id: jsonSerialization['id'] == null
+          ? null
+          : _i1.UuidValueJsonExtension.fromJson(jsonSerialization['id']),
+      applicationId: _i1.UuidValueJsonExtension.fromJson(
+        jsonSerialization['applicationId'],
+      ),
+      application: jsonSerialization['application'] == null
+          ? null
+          : _i5.Protocol().deserialize<_i2.Application>(
+              jsonSerialization['application'],
+            ),
+      versionNumber: jsonSerialization['versionNumber'] as String,
+      buildNumber: jsonSerialization['buildNumber'] as int,
+      changelog: jsonSerialization['changelog'] as String,
+      isBlocked: jsonSerialization['isBlocked'] as bool?,
+      blockReason: jsonSerialization['blockReason'] as String?,
+      recommendedVersionId: jsonSerialization['recommendedVersionId'] == null
+          ? null
+          : _i1.UuidValueJsonExtension.fromJson(
+              jsonSerialization['recommendedVersionId'],
+            ),
+      recommendedVersion: jsonSerialization['recommendedVersion'] == null
+          ? null
+          : _i5.Protocol().deserialize<_i3.Version>(
+              jsonSerialization['recommendedVersion'],
+            ),
+      recommendingVersions: jsonSerialization['recommendingVersions'] == null
+          ? null
+          : _i5.Protocol().deserialize<List<_i3.Version>>(
+              jsonSerialization['recommendingVersions'],
+            ),
+      checkLogs: jsonSerialization['checkLogs'] == null
+          ? null
+          : _i5.Protocol().deserialize<List<_i4.VersionCheckLog>>(
+              jsonSerialization['checkLogs'],
+            ),
+      createdAt: jsonSerialization['createdAt'] == null
+          ? null
+          : _i1.DateTimeJsonExtension.fromJson(jsonSerialization['createdAt']),
+      updatedAt: jsonSerialization['updatedAt'] == null
+          ? null
+          : _i1.DateTimeJsonExtension.fromJson(jsonSerialization['updatedAt']),
+    );
+  }
+
+  /// Уникальный идентификатор версии
+  _i1.UuidValue? id;
+
+  _i1.UuidValue applicationId;
+
+  /// Приложение
+  _i2.Application? application;
+
+  /// Номер версии в формате X.X.X (например, 1.2.3)
+  String versionNumber;
+
+  /// Номер сборки (целое положительное число)
+  int buildNumber;
+
+  /// Описание изменений в версии (10-2000 символов)
+  String changelog;
+
+  /// Заблокирована ли версия для использования
+  bool isBlocked;
+
+  /// Причина блокировки (обязательно если isBlocked=true)
+  String? blockReason;
+
+  _i1.UuidValue? recommendedVersionId;
+
+  /// Рекомендуемая версия для обновления (self-relation)
+  _i3.Version? recommendedVersion;
+
+  /// Версии, которые рекомендуют эту версию
+  List<_i3.Version>? recommendingVersions;
+
+  /// Логи проверки этой версии
+  List<_i4.VersionCheckLog>? checkLogs;
+
+  /// Дата создания версии
+  DateTime createdAt;
+
+  /// Дата последнего обновления версии
+  DateTime updatedAt;
+
+  /// Returns a shallow copy of this [Version]
+  /// with some or all fields replaced by the given arguments.
+  @_i1.useResult
+  Version copyWith({
+    _i1.UuidValue? id,
+    _i1.UuidValue? applicationId,
+    _i2.Application? application,
+    String? versionNumber,
+    int? buildNumber,
+    String? changelog,
+    bool? isBlocked,
+    String? blockReason,
+    _i1.UuidValue? recommendedVersionId,
+    _i3.Version? recommendedVersion,
+    List<_i3.Version>? recommendingVersions,
+    List<_i4.VersionCheckLog>? checkLogs,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  });
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      '__className__': 'Version',
+      if (id != null) 'id': id?.toJson(),
+      'applicationId': applicationId.toJson(),
+      if (application != null) 'application': application?.toJson(),
+      'versionNumber': versionNumber,
+      'buildNumber': buildNumber,
+      'changelog': changelog,
+      'isBlocked': isBlocked,
+      if (blockReason != null) 'blockReason': blockReason,
+      if (recommendedVersionId != null)
+        'recommendedVersionId': recommendedVersionId?.toJson(),
+      if (recommendedVersion != null)
+        'recommendedVersion': recommendedVersion?.toJson(),
+      if (recommendingVersions != null)
+        'recommendingVersions': recommendingVersions?.toJson(
+          valueToJson: (v) => v.toJson(),
+        ),
+      if (checkLogs != null)
+        'checkLogs': checkLogs?.toJson(valueToJson: (v) => v.toJson()),
+      'createdAt': createdAt.toJson(),
+      'updatedAt': updatedAt.toJson(),
+    };
+  }
+
+  @override
+  String toString() {
+    return _i1.SerializationManager.encode(this);
+  }
+}
+
+class _Undefined {}
+
+class _VersionImpl extends Version {
+  _VersionImpl({
+    _i1.UuidValue? id,
+    required _i1.UuidValue applicationId,
+    _i2.Application? application,
+    required String versionNumber,
+    required int buildNumber,
+    required String changelog,
+    bool? isBlocked,
+    String? blockReason,
+    _i1.UuidValue? recommendedVersionId,
+    _i3.Version? recommendedVersion,
+    List<_i3.Version>? recommendingVersions,
+    List<_i4.VersionCheckLog>? checkLogs,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) : super._(
+         id: id,
+         applicationId: applicationId,
+         application: application,
+         versionNumber: versionNumber,
+         buildNumber: buildNumber,
+         changelog: changelog,
+         isBlocked: isBlocked,
+         blockReason: blockReason,
+         recommendedVersionId: recommendedVersionId,
+         recommendedVersion: recommendedVersion,
+         recommendingVersions: recommendingVersions,
+         checkLogs: checkLogs,
+         createdAt: createdAt,
+         updatedAt: updatedAt,
+       );
+
+  /// Returns a shallow copy of this [Version]
+  /// with some or all fields replaced by the given arguments.
+  @_i1.useResult
+  @override
+  Version copyWith({
+    Object? id = _Undefined,
+    _i1.UuidValue? applicationId,
+    Object? application = _Undefined,
+    String? versionNumber,
+    int? buildNumber,
+    String? changelog,
+    bool? isBlocked,
+    Object? blockReason = _Undefined,
+    Object? recommendedVersionId = _Undefined,
+    Object? recommendedVersion = _Undefined,
+    Object? recommendingVersions = _Undefined,
+    Object? checkLogs = _Undefined,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) {
+    return Version(
+      id: id is _i1.UuidValue? ? id : this.id,
+      applicationId: applicationId ?? this.applicationId,
+      application: application is _i2.Application?
+          ? application
+          : this.application?.copyWith(),
+      versionNumber: versionNumber ?? this.versionNumber,
+      buildNumber: buildNumber ?? this.buildNumber,
+      changelog: changelog ?? this.changelog,
+      isBlocked: isBlocked ?? this.isBlocked,
+      blockReason: blockReason is String? ? blockReason : this.blockReason,
+      recommendedVersionId: recommendedVersionId is _i1.UuidValue?
+          ? recommendedVersionId
+          : this.recommendedVersionId,
+      recommendedVersion: recommendedVersion is _i3.Version?
+          ? recommendedVersion
+          : this.recommendedVersion?.copyWith(),
+      recommendingVersions: recommendingVersions is List<_i3.Version>?
+          ? recommendingVersions
+          : this.recommendingVersions?.map((e0) => e0.copyWith()).toList(),
+      checkLogs: checkLogs is List<_i4.VersionCheckLog>?
+          ? checkLogs
+          : this.checkLogs?.map((e0) => e0.copyWith()).toList(),
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+}

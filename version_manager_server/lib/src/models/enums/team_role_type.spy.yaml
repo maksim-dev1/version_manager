@@ -1,0 +1,9 @@
+### Роль участника в команде
+enum: TeamRoleType
+serialized: byName
+default: observer
+values:
+  - owner
+  - admin
+  - developer
+  - observer

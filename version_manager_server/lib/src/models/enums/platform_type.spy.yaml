@@ -1,0 +1,11 @@
+### Тип платформы для приложения
+enum: PlatformType
+serialized: byName
+default: ios
+values:
+  - ios
+  - android
+  - web
+  - macos
+  - windows
+  - linux

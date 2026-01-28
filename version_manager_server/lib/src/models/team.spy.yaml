@@ -1,0 +1,31 @@
+### Команда пользователей для совместного управления приложениями
+class: Team
+table: teams
+fields:
+  ### Уникальный идентификатор команды
+  id: UuidValue?, defaultPersist=random_v7
+  
+  ### Название команды (3-50 символов)
+  name: String
+  
+  ### Описание команды
+  description: String?
+  
+  ### Владелец команды (связь с AuthUser из auth модуля)
+  owner: module:serverpod_auth_core:AuthUser?, relation(onDelete=Cascade)
+  
+  ### Участники команды
+  members: List<TeamMember>?, relation(name=team_members_relation)
+  
+  ### Приложения, принадлежащие команде
+  applications: List<Application>?, relation(name=team_applications)
+  
+  ### Дата создания команды
+  createdAt: DateTime, default=now
+  
+  ### Дата последнего обновления команды
+  updatedAt: DateTime, default=now
+
+indexes:
+  team_owner_idx:
+    fields: ownerId

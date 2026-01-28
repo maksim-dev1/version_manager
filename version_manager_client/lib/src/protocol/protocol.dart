@@ -11,31 +11,34 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
-import 'app_check_request.dart' as _i2;
-import 'app_check_response.dart' as _i3;
-import 'app_version.dart' as _i4;
-import 'application.dart' as _i5;
-import 'enums/platform.dart' as _i6;
-import 'enums/store.dart' as _i7;
+import 'application.dart' as _i2;
+import 'enums/owner_type.dart' as _i3;
+import 'enums/platform_type.dart' as _i4;
+import 'enums/response_status_type.dart' as _i5;
+import 'enums/team_member_status_type.dart' as _i6;
+import 'enums/team_role_type.dart' as _i7;
 import 'greetings/greeting.dart' as _i8;
-import 'store_links.dart' as _i9;
-import 'package:version_manager_client/src/protocol/application.dart' as _i10;
-import 'package:version_manager_client/src/protocol/app_version.dart' as _i11;
-import 'package:version_manager_client/src/protocol/enums/platform.dart'
-    as _i12;
-import 'package:version_manager_client/src/protocol/store_links.dart' as _i13;
+import 'store_link.dart' as _i9;
+import 'team.dart' as _i10;
+import 'team_member.dart' as _i11;
+import 'version.dart' as _i12;
+import 'version_check_log.dart' as _i13;
 import 'package:serverpod_auth_idp_client/serverpod_auth_idp_client.dart'
     as _i14;
 import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
     as _i15;
-export 'app_check_request.dart';
-export 'app_check_response.dart';
-export 'app_version.dart';
 export 'application.dart';
-export 'enums/platform.dart';
-export 'enums/store.dart';
+export 'enums/owner_type.dart';
+export 'enums/platform_type.dart';
+export 'enums/response_status_type.dart';
+export 'enums/team_member_status_type.dart';
+export 'enums/team_role_type.dart';
 export 'greetings/greeting.dart';
-export 'store_links.dart';
+export 'store_link.dart';
+export 'team.dart';
+export 'team_member.dart';
+export 'version.dart';
+export 'version_check_log.dart';
 export 'client.dart';
 
 class Protocol extends _i1.SerializationManager {
@@ -72,96 +75,141 @@ class Protocol extends _i1.SerializationManager {
       }
     }
 
-    if (t == _i2.AppCheckRequest) {
-      return _i2.AppCheckRequest.fromJson(data) as T;
+    if (t == _i2.Application) {
+      return _i2.Application.fromJson(data) as T;
     }
-    if (t == _i3.AppCheckResponse) {
-      return _i3.AppCheckResponse.fromJson(data) as T;
+    if (t == _i3.OwnerType) {
+      return _i3.OwnerType.fromJson(data) as T;
     }
-    if (t == _i4.AppVersion) {
-      return _i4.AppVersion.fromJson(data) as T;
+    if (t == _i4.PlatformType) {
+      return _i4.PlatformType.fromJson(data) as T;
     }
-    if (t == _i5.Application) {
-      return _i5.Application.fromJson(data) as T;
+    if (t == _i5.ResponseStatusType) {
+      return _i5.ResponseStatusType.fromJson(data) as T;
     }
-    if (t == _i6.Platform) {
-      return _i6.Platform.fromJson(data) as T;
+    if (t == _i6.TeamMemberStatusType) {
+      return _i6.TeamMemberStatusType.fromJson(data) as T;
     }
-    if (t == _i7.Store) {
-      return _i7.Store.fromJson(data) as T;
+    if (t == _i7.TeamRoleType) {
+      return _i7.TeamRoleType.fromJson(data) as T;
     }
     if (t == _i8.Greeting) {
       return _i8.Greeting.fromJson(data) as T;
     }
-    if (t == _i9.StoreLinks) {
-      return _i9.StoreLinks.fromJson(data) as T;
+    if (t == _i9.StoreLink) {
+      return _i9.StoreLink.fromJson(data) as T;
     }
-    if (t == _i1.getType<_i2.AppCheckRequest?>()) {
-      return (data != null ? _i2.AppCheckRequest.fromJson(data) : null) as T;
+    if (t == _i10.Team) {
+      return _i10.Team.fromJson(data) as T;
     }
-    if (t == _i1.getType<_i3.AppCheckResponse?>()) {
-      return (data != null ? _i3.AppCheckResponse.fromJson(data) : null) as T;
+    if (t == _i11.TeamMember) {
+      return _i11.TeamMember.fromJson(data) as T;
     }
-    if (t == _i1.getType<_i4.AppVersion?>()) {
-      return (data != null ? _i4.AppVersion.fromJson(data) : null) as T;
+    if (t == _i12.Version) {
+      return _i12.Version.fromJson(data) as T;
     }
-    if (t == _i1.getType<_i5.Application?>()) {
-      return (data != null ? _i5.Application.fromJson(data) : null) as T;
+    if (t == _i13.VersionCheckLog) {
+      return _i13.VersionCheckLog.fromJson(data) as T;
     }
-    if (t == _i1.getType<_i6.Platform?>()) {
-      return (data != null ? _i6.Platform.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i2.Application?>()) {
+      return (data != null ? _i2.Application.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i7.Store?>()) {
-      return (data != null ? _i7.Store.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i3.OwnerType?>()) {
+      return (data != null ? _i3.OwnerType.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i4.PlatformType?>()) {
+      return (data != null ? _i4.PlatformType.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i5.ResponseStatusType?>()) {
+      return (data != null ? _i5.ResponseStatusType.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i6.TeamMemberStatusType?>()) {
+      return (data != null ? _i6.TeamMemberStatusType.fromJson(data) : null)
+          as T;
+    }
+    if (t == _i1.getType<_i7.TeamRoleType?>()) {
+      return (data != null ? _i7.TeamRoleType.fromJson(data) : null) as T;
     }
     if (t == _i1.getType<_i8.Greeting?>()) {
       return (data != null ? _i8.Greeting.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i9.StoreLinks?>()) {
-      return (data != null ? _i9.StoreLinks.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i9.StoreLink?>()) {
+      return (data != null ? _i9.StoreLink.fromJson(data) : null) as T;
     }
-    if (t == List<_i9.StoreLinks>) {
-      return (data as List).map((e) => deserialize<_i9.StoreLinks>(e)).toList()
-          as T;
+    if (t == _i1.getType<_i10.Team?>()) {
+      return (data != null ? _i10.Team.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<List<_i9.StoreLinks>?>()) {
-      return (data != null
-              ? (data as List)
-                    .map((e) => deserialize<_i9.StoreLinks>(e))
-                    .toList()
-              : null)
-          as T;
+    if (t == _i1.getType<_i11.TeamMember?>()) {
+      return (data != null ? _i11.TeamMember.fromJson(data) : null) as T;
     }
-    if (t == List<_i10.Application>) {
+    if (t == _i1.getType<_i12.Version?>()) {
+      return (data != null ? _i12.Version.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i13.VersionCheckLog?>()) {
+      return (data != null ? _i13.VersionCheckLog.fromJson(data) : null) as T;
+    }
+    if (t == List<_i4.PlatformType>) {
       return (data as List)
-              .map((e) => deserialize<_i10.Application>(e))
+              .map((e) => deserialize<_i4.PlatformType>(e))
               .toList()
           as T;
     }
-    if (t == List<_i11.AppVersion>) {
-      return (data as List).map((e) => deserialize<_i11.AppVersion>(e)).toList()
+    if (t == List<_i9.StoreLink>) {
+      return (data as List).map((e) => deserialize<_i9.StoreLink>(e)).toList()
           as T;
     }
-    if (t == List<_i12.Platform>) {
-      return (data as List).map((e) => deserialize<_i12.Platform>(e)).toList()
-          as T;
-    }
-    if (t == _i1.getType<List<_i12.Platform>?>()) {
+    if (t == _i1.getType<List<_i9.StoreLink>?>()) {
       return (data != null
               ? (data as List)
-                    .map((e) => deserialize<_i12.Platform>(e))
+                    .map((e) => deserialize<_i9.StoreLink>(e))
                     .toList()
               : null)
           as T;
     }
-    if (t == List<_i13.StoreLinks>) {
-      return (data as List).map((e) => deserialize<_i13.StoreLinks>(e)).toList()
+    if (t == List<_i12.Version>) {
+      return (data as List).map((e) => deserialize<_i12.Version>(e)).toList()
           as T;
     }
-    if (t == _i1.getType<List<_i13.StoreLinks>?>()) {
+    if (t == _i1.getType<List<_i12.Version>?>()) {
+      return (data != null
+              ? (data as List).map((e) => deserialize<_i12.Version>(e)).toList()
+              : null)
+          as T;
+    }
+    if (t == List<_i13.VersionCheckLog>) {
+      return (data as List)
+              .map((e) => deserialize<_i13.VersionCheckLog>(e))
+              .toList()
+          as T;
+    }
+    if (t == _i1.getType<List<_i13.VersionCheckLog>?>()) {
       return (data != null
               ? (data as List)
-                    .map((e) => deserialize<_i13.StoreLinks>(e))
+                    .map((e) => deserialize<_i13.VersionCheckLog>(e))
+                    .toList()
+              : null)
+          as T;
+    }
+    if (t == List<_i11.TeamMember>) {
+      return (data as List).map((e) => deserialize<_i11.TeamMember>(e)).toList()
+          as T;
+    }
+    if (t == _i1.getType<List<_i11.TeamMember>?>()) {
+      return (data != null
+              ? (data as List)
+                    .map((e) => deserialize<_i11.TeamMember>(e))
+                    .toList()
+              : null)
+          as T;
+    }
+    if (t == List<_i2.Application>) {
+      return (data as List).map((e) => deserialize<_i2.Application>(e)).toList()
+          as T;
+    }
+    if (t == _i1.getType<List<_i2.Application>?>()) {
+      return (data != null
+              ? (data as List)
+                    .map((e) => deserialize<_i2.Application>(e))
                     .toList()
               : null)
           as T;
@@ -177,14 +225,18 @@ class Protocol extends _i1.SerializationManager {
 
   static String? getClassNameForType(Type type) {
     return switch (type) {
-      _i2.AppCheckRequest => 'AppCheckRequest',
-      _i3.AppCheckResponse => 'AppCheckResponse',
-      _i4.AppVersion => 'AppVersion',
-      _i5.Application => 'Application',
-      _i6.Platform => 'Platform',
-      _i7.Store => 'Store',
+      _i2.Application => 'Application',
+      _i3.OwnerType => 'OwnerType',
+      _i4.PlatformType => 'PlatformType',
+      _i5.ResponseStatusType => 'ResponseStatusType',
+      _i6.TeamMemberStatusType => 'TeamMemberStatusType',
+      _i7.TeamRoleType => 'TeamRoleType',
       _i8.Greeting => 'Greeting',
-      _i9.StoreLinks => 'StoreLinks',
+      _i9.StoreLink => 'StoreLink',
+      _i10.Team => 'Team',
+      _i11.TeamMember => 'TeamMember',
+      _i12.Version => 'Version',
+      _i13.VersionCheckLog => 'VersionCheckLog',
       _ => null,
     };
   }
@@ -202,22 +254,30 @@ class Protocol extends _i1.SerializationManager {
     }
 
     switch (data) {
-      case _i2.AppCheckRequest():
-        return 'AppCheckRequest';
-      case _i3.AppCheckResponse():
-        return 'AppCheckResponse';
-      case _i4.AppVersion():
-        return 'AppVersion';
-      case _i5.Application():
+      case _i2.Application():
         return 'Application';
-      case _i6.Platform():
-        return 'Platform';
-      case _i7.Store():
-        return 'Store';
+      case _i3.OwnerType():
+        return 'OwnerType';
+      case _i4.PlatformType():
+        return 'PlatformType';
+      case _i5.ResponseStatusType():
+        return 'ResponseStatusType';
+      case _i6.TeamMemberStatusType():
+        return 'TeamMemberStatusType';
+      case _i7.TeamRoleType():
+        return 'TeamRoleType';
       case _i8.Greeting():
         return 'Greeting';
-      case _i9.StoreLinks():
-        return 'StoreLinks';
+      case _i9.StoreLink():
+        return 'StoreLink';
+      case _i10.Team():
+        return 'Team';
+      case _i11.TeamMember():
+        return 'TeamMember';
+      case _i12.Version():
+        return 'Version';
+      case _i13.VersionCheckLog():
+        return 'VersionCheckLog';
     }
     className = _i14.Protocol().getClassNameForObject(data);
     if (className != null) {
@@ -236,29 +296,41 @@ class Protocol extends _i1.SerializationManager {
     if (dataClassName is! String) {
       return super.deserializeByClassName(data);
     }
-    if (dataClassName == 'AppCheckRequest') {
-      return deserialize<_i2.AppCheckRequest>(data['data']);
-    }
-    if (dataClassName == 'AppCheckResponse') {
-      return deserialize<_i3.AppCheckResponse>(data['data']);
-    }
-    if (dataClassName == 'AppVersion') {
-      return deserialize<_i4.AppVersion>(data['data']);
-    }
     if (dataClassName == 'Application') {
-      return deserialize<_i5.Application>(data['data']);
+      return deserialize<_i2.Application>(data['data']);
     }
-    if (dataClassName == 'Platform') {
-      return deserialize<_i6.Platform>(data['data']);
+    if (dataClassName == 'OwnerType') {
+      return deserialize<_i3.OwnerType>(data['data']);
     }
-    if (dataClassName == 'Store') {
-      return deserialize<_i7.Store>(data['data']);
+    if (dataClassName == 'PlatformType') {
+      return deserialize<_i4.PlatformType>(data['data']);
+    }
+    if (dataClassName == 'ResponseStatusType') {
+      return deserialize<_i5.ResponseStatusType>(data['data']);
+    }
+    if (dataClassName == 'TeamMemberStatusType') {
+      return deserialize<_i6.TeamMemberStatusType>(data['data']);
+    }
+    if (dataClassName == 'TeamRoleType') {
+      return deserialize<_i7.TeamRoleType>(data['data']);
     }
     if (dataClassName == 'Greeting') {
       return deserialize<_i8.Greeting>(data['data']);
     }
-    if (dataClassName == 'StoreLinks') {
-      return deserialize<_i9.StoreLinks>(data['data']);
+    if (dataClassName == 'StoreLink') {
+      return deserialize<_i9.StoreLink>(data['data']);
+    }
+    if (dataClassName == 'Team') {
+      return deserialize<_i10.Team>(data['data']);
+    }
+    if (dataClassName == 'TeamMember') {
+      return deserialize<_i11.TeamMember>(data['data']);
+    }
+    if (dataClassName == 'Version') {
+      return deserialize<_i12.Version>(data['data']);
+    }
+    if (dataClassName == 'VersionCheckLog') {
+      return deserialize<_i13.VersionCheckLog>(data['data']);
     }
     if (dataClassName.startsWith('serverpod_auth_idp.')) {
       data['className'] = dataClassName.substring(19);

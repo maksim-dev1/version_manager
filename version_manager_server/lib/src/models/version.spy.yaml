@@ -1,0 +1,53 @@
+### Версия приложения с информацией об изменениях
+class: Version
+table: versions
+fields:
+  ### Уникальный идентификатор версии
+  id: UuidValue?, defaultPersist=random_v7
+  
+  ### Приложение
+  application: Application?, relation(name=application_versions, onDelete=Cascade)
+  
+  ### Номер версии в формате X.X.X (например, 1.2.3)
+  versionNumber: String
+  
+  ### Номер сборки (целое положительное число)
+  buildNumber: int
+  
+  ### Описание изменений в версии (10-2000 символов)
+  changelog: String
+  
+  ### Заблокирована ли версия для использования
+  isBlocked: bool, default=false
+  
+  ### Причина блокировки (обязательно если isBlocked=true)
+  blockReason: String?
+  
+  ### Рекомендуемая версия для обновления (self-relation)
+  recommendedVersion: Version?, relation(name=version_recommendation, optional, onDelete=SetNull)
+  
+  ### Версии, которые рекомендуют эту версию
+  recommendingVersions: List<Version>?, relation(name=version_recommendation)
+  
+  ### Логи проверки этой версии
+  checkLogs: List<VersionCheckLog>?, relation(name=version_check_logs)
+  
+  ### Дата создания версии
+  createdAt: DateTime, default=now
+  
+  ### Дата последнего обновления версии
+  updatedAt: DateTime, default=now
+
+indexes:
+  version_application_idx:
+    fields: applicationId
+  version_build_number_idx:
+    fields: buildNumber
+  version_recommended_idx:
+    fields: recommendedVersionId
+  version_app_version_unique_idx:
+    fields: applicationId, versionNumber
+    unique: true
+  version_app_build_unique_idx:
+    fields: applicationId, buildNumber
+    unique: true

@@ -1,0 +1,7 @@
+### Тип владельца приложения
+enum: OwnerType
+serialized: byName
+default: user
+values:
+  - user
+  - team

@@ -1,0 +1,30 @@
+### Ссылка на страницу приложения в магазине (Google Play, App Store и т.д.)
+class: StoreLink
+table: store_links
+fields:
+  ### Уникальный идентификатор ссылки
+  id: UuidValue?, defaultPersist=random_v7
+  
+  ### Приложение
+  application: Application?, relation(name=application_store_links, onDelete=Cascade)
+  
+  ### Платформа (ios, android, web и т.д.)
+  platform: PlatformType
+  
+  ### Название магазина (Google Play, App Store и т.д.)
+  storeName: String
+  
+  ### URL страницы приложения в магазине
+  url: String
+  
+  ### Дата создания ссылки
+  createdAt: DateTime, default=now
+  
+  ### Дата последнего обновления ссылки
+  updatedAt: DateTime, default=now
+
+indexes:
+  store_link_application_idx:
+    fields: applicationId
+  store_link_platform_idx:
+    fields: platform
