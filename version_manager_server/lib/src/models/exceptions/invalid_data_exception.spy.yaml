@@ -1,0 +1,5 @@
+exception: InvalidDataException
+fields:
+  message: String
+  field: String?
+  stackTrace: String?

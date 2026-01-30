@@ -22,18 +22,20 @@ import 'enums/platform_type.dart' as _i7;
 import 'enums/response_status_type.dart' as _i8;
 import 'enums/team_member_status_type.dart' as _i9;
 import 'enums/team_role_type.dart' as _i10;
-import 'greetings/greeting.dart' as _i11;
-import 'store_link.dart' as _i12;
-import 'team.dart' as _i13;
-import 'team_member.dart' as _i14;
-import 'version.dart' as _i15;
-import 'version_check_log.dart' as _i16;
+import 'exceptions/invalid_data_exception.dart' as _i11;
+import 'greetings/greeting.dart' as _i12;
+import 'store_link.dart' as _i13;
+import 'team.dart' as _i14;
+import 'team_member.dart' as _i15;
+import 'version.dart' as _i16;
+import 'version_check_log.dart' as _i17;
 export 'application.dart';
 export 'enums/owner_type.dart';
 export 'enums/platform_type.dart';
 export 'enums/response_status_type.dart';
 export 'enums/team_member_status_type.dart';
 export 'enums/team_role_type.dart';
+export 'exceptions/invalid_data_exception.dart';
 export 'greetings/greeting.dart';
 export 'store_link.dart';
 export 'team.dart';
@@ -1098,23 +1100,26 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i10.TeamRoleType) {
       return _i10.TeamRoleType.fromJson(data) as T;
     }
-    if (t == _i11.Greeting) {
-      return _i11.Greeting.fromJson(data) as T;
+    if (t == _i11.InvalidDataException) {
+      return _i11.InvalidDataException.fromJson(data) as T;
     }
-    if (t == _i12.StoreLink) {
-      return _i12.StoreLink.fromJson(data) as T;
+    if (t == _i12.Greeting) {
+      return _i12.Greeting.fromJson(data) as T;
     }
-    if (t == _i13.Team) {
-      return _i13.Team.fromJson(data) as T;
+    if (t == _i13.StoreLink) {
+      return _i13.StoreLink.fromJson(data) as T;
     }
-    if (t == _i14.TeamMember) {
-      return _i14.TeamMember.fromJson(data) as T;
+    if (t == _i14.Team) {
+      return _i14.Team.fromJson(data) as T;
     }
-    if (t == _i15.Version) {
-      return _i15.Version.fromJson(data) as T;
+    if (t == _i15.TeamMember) {
+      return _i15.TeamMember.fromJson(data) as T;
     }
-    if (t == _i16.VersionCheckLog) {
-      return _i16.VersionCheckLog.fromJson(data) as T;
+    if (t == _i16.Version) {
+      return _i16.Version.fromJson(data) as T;
+    }
+    if (t == _i17.VersionCheckLog) {
+      return _i17.VersionCheckLog.fromJson(data) as T;
     }
     if (t == _i1.getType<_i5.Application?>()) {
       return (data != null ? _i5.Application.fromJson(data) : null) as T;
@@ -1135,23 +1140,27 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i1.getType<_i10.TeamRoleType?>()) {
       return (data != null ? _i10.TeamRoleType.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i11.Greeting?>()) {
-      return (data != null ? _i11.Greeting.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i11.InvalidDataException?>()) {
+      return (data != null ? _i11.InvalidDataException.fromJson(data) : null)
+          as T;
     }
-    if (t == _i1.getType<_i12.StoreLink?>()) {
-      return (data != null ? _i12.StoreLink.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i12.Greeting?>()) {
+      return (data != null ? _i12.Greeting.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i13.Team?>()) {
-      return (data != null ? _i13.Team.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i13.StoreLink?>()) {
+      return (data != null ? _i13.StoreLink.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i14.TeamMember?>()) {
-      return (data != null ? _i14.TeamMember.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i14.Team?>()) {
+      return (data != null ? _i14.Team.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i15.Version?>()) {
-      return (data != null ? _i15.Version.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i15.TeamMember?>()) {
+      return (data != null ? _i15.TeamMember.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i16.VersionCheckLog?>()) {
-      return (data != null ? _i16.VersionCheckLog.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i16.Version?>()) {
+      return (data != null ? _i16.Version.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i17.VersionCheckLog?>()) {
+      return (data != null ? _i17.VersionCheckLog.fromJson(data) : null) as T;
     }
     if (t == List<_i7.PlatformType>) {
       return (data as List)
@@ -1159,50 +1168,50 @@ class Protocol extends _i1.SerializationManagerServer {
               .toList()
           as T;
     }
-    if (t == List<_i12.StoreLink>) {
-      return (data as List).map((e) => deserialize<_i12.StoreLink>(e)).toList()
+    if (t == List<_i13.StoreLink>) {
+      return (data as List).map((e) => deserialize<_i13.StoreLink>(e)).toList()
           as T;
     }
-    if (t == _i1.getType<List<_i12.StoreLink>?>()) {
+    if (t == _i1.getType<List<_i13.StoreLink>?>()) {
       return (data != null
               ? (data as List)
-                    .map((e) => deserialize<_i12.StoreLink>(e))
+                    .map((e) => deserialize<_i13.StoreLink>(e))
                     .toList()
               : null)
           as T;
     }
-    if (t == List<_i15.Version>) {
-      return (data as List).map((e) => deserialize<_i15.Version>(e)).toList()
+    if (t == List<_i16.Version>) {
+      return (data as List).map((e) => deserialize<_i16.Version>(e)).toList()
           as T;
     }
-    if (t == _i1.getType<List<_i15.Version>?>()) {
+    if (t == _i1.getType<List<_i16.Version>?>()) {
       return (data != null
-              ? (data as List).map((e) => deserialize<_i15.Version>(e)).toList()
+              ? (data as List).map((e) => deserialize<_i16.Version>(e)).toList()
               : null)
           as T;
     }
-    if (t == List<_i16.VersionCheckLog>) {
+    if (t == List<_i17.VersionCheckLog>) {
       return (data as List)
-              .map((e) => deserialize<_i16.VersionCheckLog>(e))
+              .map((e) => deserialize<_i17.VersionCheckLog>(e))
               .toList()
           as T;
     }
-    if (t == _i1.getType<List<_i16.VersionCheckLog>?>()) {
+    if (t == _i1.getType<List<_i17.VersionCheckLog>?>()) {
       return (data != null
               ? (data as List)
-                    .map((e) => deserialize<_i16.VersionCheckLog>(e))
+                    .map((e) => deserialize<_i17.VersionCheckLog>(e))
                     .toList()
               : null)
           as T;
     }
-    if (t == List<_i14.TeamMember>) {
-      return (data as List).map((e) => deserialize<_i14.TeamMember>(e)).toList()
+    if (t == List<_i15.TeamMember>) {
+      return (data as List).map((e) => deserialize<_i15.TeamMember>(e)).toList()
           as T;
     }
-    if (t == _i1.getType<List<_i14.TeamMember>?>()) {
+    if (t == _i1.getType<List<_i15.TeamMember>?>()) {
       return (data != null
               ? (data as List)
-                    .map((e) => deserialize<_i14.TeamMember>(e))
+                    .map((e) => deserialize<_i15.TeamMember>(e))
                     .toList()
               : null)
           as T;
@@ -1239,12 +1248,13 @@ class Protocol extends _i1.SerializationManagerServer {
       _i8.ResponseStatusType => 'ResponseStatusType',
       _i9.TeamMemberStatusType => 'TeamMemberStatusType',
       _i10.TeamRoleType => 'TeamRoleType',
-      _i11.Greeting => 'Greeting',
-      _i12.StoreLink => 'StoreLink',
-      _i13.Team => 'Team',
-      _i14.TeamMember => 'TeamMember',
-      _i15.Version => 'Version',
-      _i16.VersionCheckLog => 'VersionCheckLog',
+      _i11.InvalidDataException => 'InvalidDataException',
+      _i12.Greeting => 'Greeting',
+      _i13.StoreLink => 'StoreLink',
+      _i14.Team => 'Team',
+      _i15.TeamMember => 'TeamMember',
+      _i16.Version => 'Version',
+      _i17.VersionCheckLog => 'VersionCheckLog',
       _ => null,
     };
   }
@@ -1274,17 +1284,19 @@ class Protocol extends _i1.SerializationManagerServer {
         return 'TeamMemberStatusType';
       case _i10.TeamRoleType():
         return 'TeamRoleType';
-      case _i11.Greeting():
+      case _i11.InvalidDataException():
+        return 'InvalidDataException';
+      case _i12.Greeting():
         return 'Greeting';
-      case _i12.StoreLink():
+      case _i13.StoreLink():
         return 'StoreLink';
-      case _i13.Team():
+      case _i14.Team():
         return 'Team';
-      case _i14.TeamMember():
+      case _i15.TeamMember():
         return 'TeamMember';
-      case _i15.Version():
+      case _i16.Version():
         return 'Version';
-      case _i16.VersionCheckLog():
+      case _i17.VersionCheckLog():
         return 'VersionCheckLog';
     }
     className = _i2.Protocol().getClassNameForObject(data);
@@ -1326,23 +1338,26 @@ class Protocol extends _i1.SerializationManagerServer {
     if (dataClassName == 'TeamRoleType') {
       return deserialize<_i10.TeamRoleType>(data['data']);
     }
+    if (dataClassName == 'InvalidDataException') {
+      return deserialize<_i11.InvalidDataException>(data['data']);
+    }
     if (dataClassName == 'Greeting') {
-      return deserialize<_i11.Greeting>(data['data']);
+      return deserialize<_i12.Greeting>(data['data']);
     }
     if (dataClassName == 'StoreLink') {
-      return deserialize<_i12.StoreLink>(data['data']);
+      return deserialize<_i13.StoreLink>(data['data']);
     }
     if (dataClassName == 'Team') {
-      return deserialize<_i13.Team>(data['data']);
+      return deserialize<_i14.Team>(data['data']);
     }
     if (dataClassName == 'TeamMember') {
-      return deserialize<_i14.TeamMember>(data['data']);
+      return deserialize<_i15.TeamMember>(data['data']);
     }
     if (dataClassName == 'Version') {
-      return deserialize<_i15.Version>(data['data']);
+      return deserialize<_i16.Version>(data['data']);
     }
     if (dataClassName == 'VersionCheckLog') {
-      return deserialize<_i16.VersionCheckLog>(data['data']);
+      return deserialize<_i17.VersionCheckLog>(data['data']);
     }
     if (dataClassName.startsWith('serverpod.')) {
       data['className'] = dataClassName.substring(10);
@@ -1382,16 +1397,16 @@ class Protocol extends _i1.SerializationManagerServer {
     switch (t) {
       case _i5.Application:
         return _i5.Application.t;
-      case _i12.StoreLink:
-        return _i12.StoreLink.t;
-      case _i13.Team:
-        return _i13.Team.t;
-      case _i14.TeamMember:
-        return _i14.TeamMember.t;
-      case _i15.Version:
-        return _i15.Version.t;
-      case _i16.VersionCheckLog:
-        return _i16.VersionCheckLog.t;
+      case _i13.StoreLink:
+        return _i13.StoreLink.t;
+      case _i14.Team:
+        return _i14.Team.t;
+      case _i15.TeamMember:
+        return _i15.TeamMember.t;
+      case _i16.Version:
+        return _i16.Version.t;
+      case _i17.VersionCheckLog:
+        return _i17.VersionCheckLog.t;
     }
     return null;
   }

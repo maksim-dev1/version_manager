@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
+    <meta name="x-apple-disable-message-reformatting">
+    <title>{{TITLE}}</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f4f4f4; font-family: Arial, Helvetica, sans-serif;">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f4f4f4; padding: 20px 0;">
+        <tr>
+            <td align="center">
+                <!-- Main Container -->
+                <table width="600" cellpadding="0" cellspacing="0" border="0" style="background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); max-width: 600px; width: 100%;">
+                    
+                    <!-- Header with Icon -->
+                    <tr>
+                        <td style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); padding: 40px 30px; text-align: center;">
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td align="center">
+                                        <div style="background-color: rgba(255,255,255,0.2); border-radius: 50%; width: 80px; height: 80px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+                                            <span style="font-size: 40px;">{{ICON}}</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                            <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 600;">
+                                {{TITLE}}
+                            </h1>
+                        </td>
+                    </tr>
+                    
+                    <!-- Body -->
+                    <tr>
+                        <td style="padding: 40px 30px;">
+                            <p style="margin: 0 0 20px; font-size: 16px; line-height: 24px; color: #333333;">
+                                Здравствуйте{{#USERNAME}}, {{USERNAME}}{{/USERNAME}}!
+                            </p>
+                            
+                            <!-- Message Content -->
+                            <div style="margin: 0 0 30px; font-size: 16px; line-height: 26px; color: #333333;">
+                                {{MESSAGE}}
+                            </div>
+                            
+                            <!-- Call to Action Button (Optional) -->
+                            {{#CTA_URL}}
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 30px 0;">
+                                <tr>
+                                    <td align="center">
+                                        <a href="{{CTA_URL}}" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 50px; font-size: 16px; font-weight: 600; min-width: 200px; text-align: center;">
+                                            {{CTA_TEXT}}
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                            {{/CTA_URL}}
+                            
+                            <!-- Additional Info Box (Optional) -->
+                            {{#INFO_MESSAGE}}
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top: 30px;">
+                                <tr>
+                                    <td style="background-color: #e7f3ff; border-left: 4px solid #2196F3; padding: 15px; border-radius: 4px;">
+                                        <p style="margin: 0; font-size: 14px; line-height: 20px; color: #004085;">
+                                            ℹ️ {{INFO_MESSAGE}}
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+                            {{/INFO_MESSAGE}}
+                            
+                            <!-- Timestamp (Optional) -->
+                            {{#TIMESTAMP}}
+                            <p style="margin: 30px 0 0; font-size: 14px; color: #6c757d; line-height: 20px;">
+                                📅 {{TIMESTAMP}}
+                            </p>
+                            {{/TIMESTAMP}}
+                        </td>
+                    </tr>
+                    
+                    <!-- Footer -->
+                    <tr>
+                        <td style="background-color: #f8f9fa; padding: 30px; text-align: center; border-top: 1px solid #e9ecef;">
+                            <p style="margin: 0 0 15px; font-size: 14px; color: #6c757d; line-height: 20px;">
+                                С уважением,<br>Команда {{APP_NAME}}
+                            </p>
+                            
+                            <!-- Support Link -->
+                            {{#SUPPORT_URL}}
+                            <p style="margin: 15px 0; font-size: 14px; line-height: 20px;">
+                                <a href="{{SUPPORT_URL}}" style="color: #667eea; text-decoration: none;">
+                                    Нужна помощь? Свяжитесь с поддержкой
+                                </a>
+                            </p>
+                            {{/SUPPORT_URL}}
+                            
+                            <p style="margin: 15px 0 0; font-size: 12px; color: #adb5bd; line-height: 18px;">
+                                Это автоматическое письмо. Пожалуйста, не отвечайте на него.
+                            </p>
+                            
+                            <!-- Unsubscribe Link (Optional) -->
+                            {{#UNSUBSCRIBE_URL}}
+                            <p style="margin: 10px 0 0; font-size: 12px; line-height: 18px;">
+                                <a href="{{UNSUBSCRIBE_URL}}" style="color: #adb5bd; text-decoration: underline;">
+                                    Отписаться от уведомлений
+                                </a>
+                            </p>
+                            {{/UNSUBSCRIBE_URL}}
+                        </td>
+                    </tr>
+                    
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
