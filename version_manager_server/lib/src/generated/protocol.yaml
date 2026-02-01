@@ -1,2 +1,11 @@
+auth:
+  - checkEmail:
+  - registerSendCode:
+  - registerVerifyCode:
+  - registerSetPassword:
+  - login:
+  - refresh:
+  - logout:
+  - logoutAll:
 greeting:
   - hello:

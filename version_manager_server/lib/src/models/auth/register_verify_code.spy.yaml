@@ -1,0 +1,4 @@
+class: RegisterVerifyCodeRequest
+fields:
+  email: String
+  code: String

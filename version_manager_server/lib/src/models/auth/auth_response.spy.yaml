@@ -1,0 +1,5 @@
+class: AuthResponse
+fields:
+  accessToken: String
+  refreshToken: String
+  user: UserPublic

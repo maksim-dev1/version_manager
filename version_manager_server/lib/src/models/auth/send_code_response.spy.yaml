@@ -1,0 +1,4 @@
+class: SendCodeResponse
+fields:
+  success: bool
+  retryAfterSeconds: int?

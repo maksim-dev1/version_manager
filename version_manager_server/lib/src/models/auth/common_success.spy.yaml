@@ -1,0 +1,4 @@
+class: SuccessResponse
+fields:
+  success: bool
+  message: String?

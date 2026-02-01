@@ -1,0 +1,3 @@
+class: CheckEmailResponse
+fields:
+  exists: bool

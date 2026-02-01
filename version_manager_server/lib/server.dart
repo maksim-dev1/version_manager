@@ -1,16 +1,16 @@
 import 'dart:io';
 
-import 'package:serverpod/protocol.dart';
 import 'package:serverpod/serverpod.dart';
 
 import 'src/generated/endpoints.dart';
+import 'src/generated/protocol.dart';
 import 'src/web/routes/app_config_route.dart';
 import 'src/web/routes/root.dart';
 
 /// The starting point of the Serverpod server.
 void run(List<String> args) async {
   // Initialize Serverpod and connect it with your generated code.
-  final pod = Serverpod(args, Protocol(), Endpoints());  
+  final pod = Serverpod(args, Protocol(), Endpoints());
 
   // Setup a default page at the web root.
   // These are used by the default page.

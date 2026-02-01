@@ -1,0 +1,10 @@
+class: UserPublic
+fields:
+  id: UuidValue
+  email: String
+  firstName: String?
+  lastName: String?
+  displayName: String?
+  avatarUrl: String?
+  isEmailVerified: bool
+  createdAt: DateTime

@@ -1,0 +1,7 @@
+class: LoginRequest
+fields:
+  email: String
+  password: String
+  deviceInfo: String?
+  userAgent: String?
+  ipAddress: String?

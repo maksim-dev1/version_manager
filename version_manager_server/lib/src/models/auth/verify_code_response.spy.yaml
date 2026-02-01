@@ -1,0 +1,6 @@
+class: VerifyCodeResponse
+fields:
+  success: bool
+  verificationId: UuidValue?
+  attemptsLeft: int?
+  message: String?

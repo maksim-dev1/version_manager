@@ -1,0 +1,3 @@
+class: RegisterSendCodeRequest
+fields:
+  email: String

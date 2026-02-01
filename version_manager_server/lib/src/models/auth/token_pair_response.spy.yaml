@@ -1,0 +1,4 @@
+class: TokenPairResponse
+fields:
+  accessToken: String
+  refreshToken: String
