@@ -12,25 +12,27 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
 
-/// Статус ответа check-version
-enum ResponseStatusType implements _i1.SerializableModel {
-  blocked,
-  update_available,
-  active,
-  error;
+/// Назначение OTP/кода
+enum VerificationPurposeType implements _i1.SerializableModel {
+  sign_up,
+  login,
+  reset_password,
+  change_email;
 
-  static ResponseStatusType fromJson(String name) {
+  static VerificationPurposeType fromJson(String name) {
     switch (name) {
-      case 'blocked':
-        return ResponseStatusType.blocked;
-      case 'update_available':
-        return ResponseStatusType.update_available;
-      case 'active':
-        return ResponseStatusType.active;
-      case 'error':
-        return ResponseStatusType.error;
+      case 'sign_up':
+        return VerificationPurposeType.sign_up;
+      case 'login':
+        return VerificationPurposeType.login;
+      case 'reset_password':
+        return VerificationPurposeType.reset_password;
+      case 'change_email':
+        return VerificationPurposeType.change_email;
       default:
-        return ResponseStatusType.active;
+        throw ArgumentError(
+          'Value "$name" cannot be converted to "VerificationPurposeType"',
+        );
     }
   }
 

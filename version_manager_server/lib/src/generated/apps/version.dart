@@ -12,12 +12,12 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
-import 'application.dart' as _i2;
-import 'version.dart' as _i3;
-import 'version_check_log.dart' as _i4;
+import '../apps/application.dart' as _i2;
+import '../apps/version.dart' as _i3;
+import '../logs/version_check_log.dart' as _i4;
 import 'package:version_manager_server/src/generated/protocol.dart' as _i5;
 
-/// Версия приложения с информацией об изменениях
+/// Версия приложения
 abstract class Version
     implements _i1.TableRow<_i1.UuidValue?>, _i1.ProtocolSerialization {
   Version._({
@@ -112,39 +112,28 @@ abstract class Version
 
   _i1.UuidValue applicationId;
 
-  /// Приложение
   _i2.Application? application;
 
-  /// Номер версии в формате X.X.X (например, 1.2.3)
   String versionNumber;
 
-  /// Номер сборки (целое положительное число)
   int buildNumber;
 
-  /// Описание изменений в версии (10-2000 символов)
   String changelog;
 
-  /// Заблокирована ли версия для использования
   bool isBlocked;
 
-  /// Причина блокировки (обязательно если isBlocked=true)
   String? blockReason;
 
   _i1.UuidValue? recommendedVersionId;
 
-  /// Рекомендуемая версия для обновления (self-relation)
   _i3.Version? recommendedVersion;
 
-  /// Версии, которые рекомендуют эту версию
   List<_i3.Version>? recommendingVersions;
 
-  /// Логи проверки этой версии
   List<_i4.VersionCheckLog>? checkLogs;
 
-  /// Дата создания версии
   DateTime createdAt;
 
-  /// Дата последнего обновления версии
   DateTime updatedAt;
 
   @override
@@ -453,45 +442,32 @@ class VersionTable extends _i1.Table<_i1.UuidValue?> {
 
   late final _i1.ColumnUuid applicationId;
 
-  /// Приложение
   _i2.ApplicationTable? _application;
 
-  /// Номер версии в формате X.X.X (например, 1.2.3)
   late final _i1.ColumnString versionNumber;
 
-  /// Номер сборки (целое положительное число)
   late final _i1.ColumnInt buildNumber;
 
-  /// Описание изменений в версии (10-2000 символов)
   late final _i1.ColumnString changelog;
 
-  /// Заблокирована ли версия для использования
   late final _i1.ColumnBool isBlocked;
 
-  /// Причина блокировки (обязательно если isBlocked=true)
   late final _i1.ColumnString blockReason;
 
   late final _i1.ColumnUuid recommendedVersionId;
 
-  /// Рекомендуемая версия для обновления (self-relation)
   _i3.VersionTable? _recommendedVersion;
 
-  /// Версии, которые рекомендуют эту версию
   _i3.VersionTable? ___recommendingVersions;
 
-  /// Версии, которые рекомендуют эту версию
   _i1.ManyRelation<_i3.VersionTable>? _recommendingVersions;
 
-  /// Логи проверки этой версии
   _i4.VersionCheckLogTable? ___checkLogs;
 
-  /// Логи проверки этой версии
   _i1.ManyRelation<_i4.VersionCheckLogTable>? _checkLogs;
 
-  /// Дата создания версии
   late final _i1.ColumnDateTime createdAt;
 
-  /// Дата последнего обновления версии
   late final _i1.ColumnDateTime updatedAt;
 
   _i2.ApplicationTable get application {

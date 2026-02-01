@@ -1,0 +1,43 @@
+### Приложение для управления версиями
+class: Application
+table: applications
+fields:
+  id: UuidValue?, defaultPersist=random_v7
+
+  namespace: String
+  name: String
+  description: String
+  iconUrl: String?
+
+  platforms: List<PlatformType>  # enum[] (минимум 1)
+  ownerType: OwnerType
+
+  # Владелец-пользователь (личное)
+  ownerUser: User?, relation(name=user_applications, optional, onDelete=Cascade)
+
+  # Владелец-команда (командное)
+  ownerTeam: Team?, relation(name=team_applications, optional, onDelete=Cascade)
+
+  storeLinks: List<StoreLink>?, relation(name=application_store_links)
+  versions: List<Version>?, relation(name=application_versions)
+  checkLogs: List<VersionCheckLog>?, relation(name=application_check_logs)
+
+  isActive: bool, default=true
+
+  apiKeyHash: String
+  apiKeyCreatedAt: DateTime, default=now
+  apiKeyLastRegeneratedAt: DateTime?
+
+  createdAt: DateTime, default=now
+  updatedAt: DateTime, default=now
+
+indexes:
+  application_namespace_unique_idx:
+    fields: namespace
+    unique: true
+  application_owner_user_idx:
+    fields: ownerUserId
+  application_owner_team_idx:
+    fields: ownerTeamId
+  application_api_key_hash_idx:
+    fields: apiKeyHash

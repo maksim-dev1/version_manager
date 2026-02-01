@@ -11,13 +11,13 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
-import 'application.dart' as _i2;
-import 'version.dart' as _i3;
-import 'enums/platform_type.dart' as _i4;
-import 'enums/response_status_type.dart' as _i5;
+import '../apps/application.dart' as _i2;
+import '../apps/version.dart' as _i3;
+import '../enums/platform_type.dart' as _i4;
+import '../enums/response_status_type.dart' as _i5;
 import 'package:version_manager_client/src/protocol/protocol.dart' as _i6;
 
-/// Лог проверки версии приложения с информацией об устройстве
+/// Лог проверки версии
 abstract class VersionCheckLog implements _i1.SerializableModel {
   VersionCheckLog._({
     this.id,
@@ -95,47 +95,37 @@ abstract class VersionCheckLog implements _i1.SerializableModel {
     );
   }
 
-  /// Уникальный идентификатор записи лога
+  /// The database id, set if the object has been inserted into the
+  /// database or if it has been fetched from the database. Otherwise,
+  /// the id will be null.
   _i1.UuidValue? id;
 
   _i1.UuidValue applicationId;
 
-  /// Приложение
   _i2.Application? application;
 
   _i1.UuidValue? versionId;
 
-  /// Версия (может быть NULL если версия не найдена)
   _i3.Version? version;
 
-  /// Номер версии из запроса
   String versionNumber;
 
-  /// Номер сборки из запроса
   int buildNumber;
 
-  /// Платформа устройства
   _i4.PlatformType platform;
 
-  /// Версия операционной системы
   String? osVersion;
 
-  /// Уникальный идентификатор устройства
   String? deviceId;
 
-  /// Локаль пользователя (например, en_US, ru_RU)
   String? locale;
 
-  /// Модель устройства
   String? deviceModel;
 
-  /// IP адрес запроса
   String? ipAddress;
 
-  /// Статус ответа на проверку версии
   _i5.ResponseStatusType responseStatus;
 
-  /// Дата и время проверки
   DateTime checkedAt;
 
   /// Returns a shallow copy of this [VersionCheckLog]

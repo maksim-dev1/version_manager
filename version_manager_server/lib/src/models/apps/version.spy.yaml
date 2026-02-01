@@ -1,0 +1,36 @@
+### Версия приложения
+class: Version
+table: versions
+fields:
+  id: UuidValue?, defaultPersist=random_v7
+
+  application: Application?, relation(name=application_versions, onDelete=Cascade)
+
+  versionNumber: String
+  buildNumber: int
+  changelog: String
+
+  isBlocked: bool, default=false
+  blockReason: String?
+
+  recommendedVersion: Version?, relation(name=version_recommendation, optional, onDelete=SetNull)
+  recommendingVersions: List<Version>?, relation(name=version_recommendation)
+
+  checkLogs: List<VersionCheckLog>?, relation(name=version_check_logs)
+
+  createdAt: DateTime, default=now
+  updatedAt: DateTime, default=now
+
+indexes:
+  version_application_idx:
+    fields: applicationId
+  version_build_number_idx:
+    fields: buildNumber
+  version_recommended_idx:
+    fields: recommendedVersionId
+  version_app_version_unique_idx:
+    fields: applicationId, versionNumber
+    unique: true
+  version_app_build_unique_idx:
+    fields: applicationId, buildNumber
+    unique: true

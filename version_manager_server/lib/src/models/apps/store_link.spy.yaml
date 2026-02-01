@@ -1,0 +1,23 @@
+### Ссылка на магазин
+class: StoreLink
+table: store_links
+fields:
+  id: UuidValue?, defaultPersist=random_v7
+
+  application: Application?, relation(name=application_store_links, onDelete=Cascade)
+
+  platform: PlatformType
+  storeName: String
+  url: String
+
+  createdAt: DateTime, default=now
+  updatedAt: DateTime, default=now
+
+indexes:
+  store_link_application_idx:
+    fields: applicationId
+  store_link_platform_idx:
+    fields: platform
+  store_link_app_platform_url_unique_idx:
+    fields: applicationId, platform, url
+    unique: true

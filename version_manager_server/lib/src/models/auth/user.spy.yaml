@@ -1,0 +1,37 @@
+# Пользователь системы
+class: User
+table: users
+fields:
+  id: UuidValue?, defaultPersist=random_v7
+
+  email: String
+  passwordHash: String
+
+  firstName: String?
+  lastName: String?
+  displayName: String?
+  avatarUrl: String?
+  phone: String?
+
+  isEmailVerified: bool, default=false
+  emailVerifiedAt: DateTime?
+  isActive: bool, default=true
+
+  lastLoginAt: DateTime?
+  createdAt: DateTime, default=now
+  updatedAt: DateTime, default=now
+
+  # Обратные связи
+  sessions: List<AuthSession>?, relation(name=user_sessions)
+  verificationCodes: List<VerificationCode>?, relation(name=user_verification_codes)
+
+  ownedTeams: List<Team>?, relation(name=user_owned_teams)
+  teamMemberships: List<TeamMember>?, relation(name=user_team_memberships)
+  sentTeamInvites: List<TeamMember>?, relation(name=user_sent_team_invites)
+
+  ownedApplications: List<Application>?, relation(name=user_applications)
+
+indexes:
+  user_email_unique_idx:
+    fields: email
+    unique: true

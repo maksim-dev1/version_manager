@@ -1,0 +1,41 @@
+# Код верификации (OTP) для регистрации/логина/сброса пароля
+class: VerificationCode
+table: verification_codes
+fields:
+  id: UuidValue?, defaultPersist=random_v7
+
+  # Может быть NULL на этапе "ввели email" до создания пользователя
+  user: User?, relation(name=user_verification_codes, optional, onDelete=Cascade)
+
+  email: String
+  purpose: VerificationPurposeType
+
+  # Храним хеш кода (не сам 6-значный код)
+  codeHash: String
+
+  expiresAt: DateTime
+  createdAt: DateTime, default=now
+
+  isUsed: bool, default=false
+  usedAt: DateTime?
+
+  # Лимиты из ТЗ
+  attemptsUsed: int, default=0
+  maxAttempts: int, default=5
+  resendAvailableAt: DateTime?
+
+  # Техническое (для аудита/антиспама)
+  ipAddress: String?
+  userAgent: String?
+
+indexes:
+  verification_code_email_idx:
+    fields: email
+  verification_code_purpose_idx:
+    fields: purpose
+  verification_code_user_idx:
+    fields: userId
+  verification_code_expires_idx:
+    fields: expiresAt
+  verification_code_is_used_idx:
+    fields: isUsed

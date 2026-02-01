@@ -12,13 +12,12 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
-import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
-    as _i2;
-import 'team_member.dart' as _i3;
-import 'application.dart' as _i4;
+import '../auth/user.dart' as _i2;
+import '../teams/team_member.dart' as _i3;
+import '../apps/application.dart' as _i4;
 import 'package:version_manager_server/src/generated/protocol.dart' as _i5;
 
-/// Команда пользователей для совместного управления приложениями
+/// Команда пользователей
 abstract class Team
     implements _i1.TableRow<_i1.UuidValue?>, _i1.ProtocolSerialization {
   Team._({
@@ -39,7 +38,7 @@ abstract class Team
     required String name,
     String? description,
     required _i1.UuidValue ownerId,
-    _i2.AuthUser? owner,
+    _i2.User? owner,
     List<_i3.TeamMember>? members,
     List<_i4.Application>? applications,
     DateTime? createdAt,
@@ -58,9 +57,7 @@ abstract class Team
       ),
       owner: jsonSerialization['owner'] == null
           ? null
-          : _i5.Protocol().deserialize<_i2.AuthUser>(
-              jsonSerialization['owner'],
-            ),
+          : _i5.Protocol().deserialize<_i2.User>(jsonSerialization['owner']),
       members: jsonSerialization['members'] == null
           ? null
           : _i5.Protocol().deserialize<List<_i3.TeamMember>>(
@@ -87,27 +84,20 @@ abstract class Team
   @override
   _i1.UuidValue? id;
 
-  /// Название команды (3-50 символов)
   String name;
 
-  /// Описание команды
   String? description;
 
   _i1.UuidValue ownerId;
 
-  /// Владелец команды (связь с AuthUser из auth модуля)
-  _i2.AuthUser? owner;
+  _i2.User? owner;
 
-  /// Участники команды
   List<_i3.TeamMember>? members;
 
-  /// Приложения, принадлежащие команде
   List<_i4.Application>? applications;
 
-  /// Дата создания команды
   DateTime createdAt;
 
-  /// Дата последнего обновления команды
   DateTime updatedAt;
 
   @override
@@ -121,7 +111,7 @@ abstract class Team
     String? name,
     String? description,
     _i1.UuidValue? ownerId,
-    _i2.AuthUser? owner,
+    _i2.User? owner,
     List<_i3.TeamMember>? members,
     List<_i4.Application>? applications,
     DateTime? createdAt,
@@ -166,7 +156,7 @@ abstract class Team
   }
 
   static TeamInclude include({
-    _i2.AuthUserInclude? owner,
+    _i2.UserInclude? owner,
     _i3.TeamMemberIncludeList? members,
     _i4.ApplicationIncludeList? applications,
   }) {
@@ -211,7 +201,7 @@ class _TeamImpl extends Team {
     required String name,
     String? description,
     required _i1.UuidValue ownerId,
-    _i2.AuthUser? owner,
+    _i2.User? owner,
     List<_i3.TeamMember>? members,
     List<_i4.Application>? applications,
     DateTime? createdAt,
@@ -248,7 +238,7 @@ class _TeamImpl extends Team {
       name: name ?? this.name,
       description: description is String? ? description : this.description,
       ownerId: ownerId ?? this.ownerId,
-      owner: owner is _i2.AuthUser? ? owner : this.owner?.copyWith(),
+      owner: owner is _i2.User? ? owner : this.owner?.copyWith(),
       members: members is List<_i3.TeamMember>?
           ? members
           : this.members?.map((e0) => e0.copyWith()).toList(),
@@ -322,44 +312,35 @@ class TeamTable extends _i1.Table<_i1.UuidValue?> {
 
   late final TeamUpdateTable updateTable;
 
-  /// Название команды (3-50 символов)
   late final _i1.ColumnString name;
 
-  /// Описание команды
   late final _i1.ColumnString description;
 
   late final _i1.ColumnUuid ownerId;
 
-  /// Владелец команды (связь с AuthUser из auth модуля)
-  _i2.AuthUserTable? _owner;
+  _i2.UserTable? _owner;
 
-  /// Участники команды
   _i3.TeamMemberTable? ___members;
 
-  /// Участники команды
   _i1.ManyRelation<_i3.TeamMemberTable>? _members;
 
-  /// Приложения, принадлежащие команде
   _i4.ApplicationTable? ___applications;
 
-  /// Приложения, принадлежащие команде
   _i1.ManyRelation<_i4.ApplicationTable>? _applications;
 
-  /// Дата создания команды
   late final _i1.ColumnDateTime createdAt;
 
-  /// Дата последнего обновления команды
   late final _i1.ColumnDateTime updatedAt;
 
-  _i2.AuthUserTable get owner {
+  _i2.UserTable get owner {
     if (_owner != null) return _owner!;
     _owner = _i1.createRelationTable(
       relationFieldName: 'owner',
       field: Team.t.ownerId,
-      foreignField: _i2.AuthUser.t.id,
+      foreignField: _i2.User.t.id,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i2.AuthUserTable(tableRelation: foreignTableRelation),
+          _i2.UserTable(tableRelation: foreignTableRelation),
     );
     return _owner!;
   }
@@ -455,7 +436,7 @@ class TeamTable extends _i1.Table<_i1.UuidValue?> {
 
 class TeamInclude extends _i1.IncludeObject {
   TeamInclude._({
-    _i2.AuthUserInclude? owner,
+    _i2.UserInclude? owner,
     _i3.TeamMemberIncludeList? members,
     _i4.ApplicationIncludeList? applications,
   }) {
@@ -464,7 +445,7 @@ class TeamInclude extends _i1.IncludeObject {
     _applications = applications;
   }
 
-  _i2.AuthUserInclude? _owner;
+  _i2.UserInclude? _owner;
 
   _i3.TeamMemberIncludeList? _members;
 
@@ -825,12 +806,12 @@ class TeamAttachRepository {
 class TeamAttachRowRepository {
   const TeamAttachRowRepository._();
 
-  /// Creates a relation between the given [Team] and [AuthUser]
-  /// by setting the [Team]'s foreign key `ownerId` to refer to the [AuthUser].
+  /// Creates a relation between the given [Team] and [User]
+  /// by setting the [Team]'s foreign key `ownerId` to refer to the [User].
   Future<void> owner(
     _i1.Session session,
     Team team,
-    _i2.AuthUser owner, {
+    _i2.User owner, {
     _i1.Transaction? transaction,
   }) async {
     if (team.id == null) {

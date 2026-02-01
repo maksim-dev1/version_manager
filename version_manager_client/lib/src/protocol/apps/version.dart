@@ -11,12 +11,12 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
-import 'application.dart' as _i2;
-import 'version.dart' as _i3;
-import 'version_check_log.dart' as _i4;
+import '../apps/application.dart' as _i2;
+import '../apps/version.dart' as _i3;
+import '../logs/version_check_log.dart' as _i4;
 import 'package:version_manager_client/src/protocol/protocol.dart' as _i5;
 
-/// Версия приложения с информацией об изменениях
+/// Версия приложения
 abstract class Version implements _i1.SerializableModel {
   Version._({
     this.id,
@@ -101,44 +101,35 @@ abstract class Version implements _i1.SerializableModel {
     );
   }
 
-  /// Уникальный идентификатор версии
+  /// The database id, set if the object has been inserted into the
+  /// database or if it has been fetched from the database. Otherwise,
+  /// the id will be null.
   _i1.UuidValue? id;
 
   _i1.UuidValue applicationId;
 
-  /// Приложение
   _i2.Application? application;
 
-  /// Номер версии в формате X.X.X (например, 1.2.3)
   String versionNumber;
 
-  /// Номер сборки (целое положительное число)
   int buildNumber;
 
-  /// Описание изменений в версии (10-2000 символов)
   String changelog;
 
-  /// Заблокирована ли версия для использования
   bool isBlocked;
 
-  /// Причина блокировки (обязательно если isBlocked=true)
   String? blockReason;
 
   _i1.UuidValue? recommendedVersionId;
 
-  /// Рекомендуемая версия для обновления (self-relation)
   _i3.Version? recommendedVersion;
 
-  /// Версии, которые рекомендуют эту версию
   List<_i3.Version>? recommendingVersions;
 
-  /// Логи проверки этой версии
   List<_i4.VersionCheckLog>? checkLogs;
 
-  /// Дата создания версии
   DateTime createdAt;
 
-  /// Дата последнего обновления версии
   DateTime updatedAt;
 
   /// Returns a shallow copy of this [Version]

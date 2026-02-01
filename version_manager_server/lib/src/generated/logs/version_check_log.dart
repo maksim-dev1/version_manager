@@ -12,13 +12,13 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
-import 'application.dart' as _i2;
-import 'version.dart' as _i3;
-import 'enums/platform_type.dart' as _i4;
-import 'enums/response_status_type.dart' as _i5;
+import '../apps/application.dart' as _i2;
+import '../apps/version.dart' as _i3;
+import '../enums/platform_type.dart' as _i4;
+import '../enums/response_status_type.dart' as _i5;
 import 'package:version_manager_server/src/generated/protocol.dart' as _i6;
 
-/// Лог проверки версии приложения с информацией об устройстве
+/// Лог проверки версии
 abstract class VersionCheckLog
     implements _i1.TableRow<_i1.UuidValue?>, _i1.ProtocolSerialization {
   VersionCheckLog._({
@@ -106,42 +106,30 @@ abstract class VersionCheckLog
 
   _i1.UuidValue applicationId;
 
-  /// Приложение
   _i2.Application? application;
 
   _i1.UuidValue? versionId;
 
-  /// Версия (может быть NULL если версия не найдена)
   _i3.Version? version;
 
-  /// Номер версии из запроса
   String versionNumber;
 
-  /// Номер сборки из запроса
   int buildNumber;
 
-  /// Платформа устройства
   _i4.PlatformType platform;
 
-  /// Версия операционной системы
   String? osVersion;
 
-  /// Уникальный идентификатор устройства
   String? deviceId;
 
-  /// Локаль пользователя (например, en_US, ru_RU)
   String? locale;
 
-  /// Модель устройства
   String? deviceModel;
 
-  /// IP адрес запроса
   String? ipAddress;
 
-  /// Статус ответа на проверку версии
   _i5.ResponseStatusType responseStatus;
 
-  /// Дата и время проверки
   DateTime checkedAt;
 
   @override
@@ -461,42 +449,30 @@ class VersionCheckLogTable extends _i1.Table<_i1.UuidValue?> {
 
   late final _i1.ColumnUuid applicationId;
 
-  /// Приложение
   _i2.ApplicationTable? _application;
 
   late final _i1.ColumnUuid versionId;
 
-  /// Версия (может быть NULL если версия не найдена)
   _i3.VersionTable? _version;
 
-  /// Номер версии из запроса
   late final _i1.ColumnString versionNumber;
 
-  /// Номер сборки из запроса
   late final _i1.ColumnInt buildNumber;
 
-  /// Платформа устройства
   late final _i1.ColumnEnum<_i4.PlatformType> platform;
 
-  /// Версия операционной системы
   late final _i1.ColumnString osVersion;
 
-  /// Уникальный идентификатор устройства
   late final _i1.ColumnString deviceId;
 
-  /// Локаль пользователя (например, en_US, ru_RU)
   late final _i1.ColumnString locale;
 
-  /// Модель устройства
   late final _i1.ColumnString deviceModel;
 
-  /// IP адрес запроса
   late final _i1.ColumnString ipAddress;
 
-  /// Статус ответа на проверку версии
   late final _i1.ColumnEnum<_i5.ResponseStatusType> responseStatus;
 
-  /// Дата и время проверки
   late final _i1.ColumnDateTime checkedAt;
 
   _i2.ApplicationTable get application {

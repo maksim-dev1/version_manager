@@ -1,0 +1,33 @@
+### Участник команды
+class: TeamMember
+table: team_members
+fields:
+  id: UuidValue?, defaultPersist=random_v7
+
+  team: Team?, relation(name=team_members_relation, onDelete=Cascade)
+
+  # Участник
+  user: User?, relation(name=user_team_memberships, onDelete=Cascade)
+
+  role: TeamRoleType
+  status: TeamMemberStatusType, default=invited
+
+  # Кто пригласил (NULL для owner или системных случаев)
+  invitedBy: User?, relation(name=user_sent_team_invites, optional, onDelete=SetNull)
+
+  invitedAt: DateTime, default=now
+  joinedAt: DateTime?
+  invitationExpiresAt: DateTime?
+
+indexes:
+  team_member_team_idx:
+    fields: teamId
+  team_member_user_idx:
+    fields: userId
+  team_member_status_idx:
+    fields: status
+  team_member_invited_by_idx:
+    fields: invitedById
+  team_member_team_user_unique_idx:
+    fields: teamId, userId
+    unique: true

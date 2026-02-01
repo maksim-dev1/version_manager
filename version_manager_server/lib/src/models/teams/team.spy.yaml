@@ -1,0 +1,20 @@
+### Команда пользователей
+class: Team
+table: teams
+fields:
+  id: UuidValue?, defaultPersist=random_v7
+
+  name: String
+  description: String?
+
+  owner: User?, relation(name=user_owned_teams, onDelete=Cascade)
+
+  members: List<TeamMember>?, relation(name=team_members_relation)
+  applications: List<Application>?, relation(name=team_applications)
+
+  createdAt: DateTime, default=now
+  updatedAt: DateTime, default=now
+
+indexes:
+  team_owner_idx:
+    fields: ownerId

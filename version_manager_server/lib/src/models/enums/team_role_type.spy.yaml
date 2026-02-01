@@ -1,4 +1,4 @@
-### Роль участника в команде
+### Роль участника команды
 enum: TeamRoleType
 serialized: byName
 default: observer

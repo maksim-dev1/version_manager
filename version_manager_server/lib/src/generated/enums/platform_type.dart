@@ -12,7 +12,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
 
-/// Тип платформы для приложения
+/// Тип платформы
 enum PlatformType implements _i1.SerializableModel {
   ios,
   android,

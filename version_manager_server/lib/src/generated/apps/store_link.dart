@@ -12,11 +12,11 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
-import 'application.dart' as _i2;
-import 'enums/platform_type.dart' as _i3;
+import '../apps/application.dart' as _i2;
+import '../enums/platform_type.dart' as _i3;
 import 'package:version_manager_server/src/generated/protocol.dart' as _i4;
 
-/// Ссылка на страницу приложения в магазине (Google Play, App Store и т.д.)
+/// Ссылка на магазин
 abstract class StoreLink
     implements _i1.TableRow<_i1.UuidValue?>, _i1.ProtocolSerialization {
   StoreLink._({
@@ -78,22 +78,16 @@ abstract class StoreLink
 
   _i1.UuidValue applicationId;
 
-  /// Приложение
   _i2.Application? application;
 
-  /// Платформа (ios, android, web и т.д.)
   _i3.PlatformType platform;
 
-  /// Название магазина (Google Play, App Store и т.д.)
   String storeName;
 
-  /// URL страницы приложения в магазине
   String url;
 
-  /// Дата создания ссылки
   DateTime createdAt;
 
-  /// Дата последнего обновления ссылки
   DateTime updatedAt;
 
   @override
@@ -300,22 +294,16 @@ class StoreLinkTable extends _i1.Table<_i1.UuidValue?> {
 
   late final _i1.ColumnUuid applicationId;
 
-  /// Приложение
   _i2.ApplicationTable? _application;
 
-  /// Платформа (ios, android, web и т.д.)
   late final _i1.ColumnEnum<_i3.PlatformType> platform;
 
-  /// Название магазина (Google Play, App Store и т.д.)
   late final _i1.ColumnString storeName;
 
-  /// URL страницы приложения в магазине
   late final _i1.ColumnString url;
 
-  /// Дата создания ссылки
   late final _i1.ColumnDateTime createdAt;
 
-  /// Дата последнего обновления ссылки
   late final _i1.ColumnDateTime updatedAt;
 
   _i2.ApplicationTable get application {

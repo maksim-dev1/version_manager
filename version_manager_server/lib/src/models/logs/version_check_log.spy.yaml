@@ -1,44 +1,23 @@
-### Лог проверки версии приложения с информацией об устройстве
+### Лог проверки версии
 class: VersionCheckLog
 table: version_check_logs
 fields:
-  ### Уникальный идентификатор записи лога
   id: UuidValue?, defaultPersist=random_v7
-  
-  ### Приложение
+
   application: Application?, relation(name=application_check_logs, onDelete=Cascade)
-  
-  ### Версия (может быть NULL если версия не найдена)
   version: Version?, relation(name=version_check_logs, optional, onDelete=SetNull)
-  
-  ### Номер версии из запроса
+
   versionNumber: String
-  
-  ### Номер сборки из запроса
   buildNumber: int
-  
-  ### Платформа устройства
   platform: PlatformType
-  
-  ### Версия операционной системы
+
   osVersion: String?
-  
-  ### Уникальный идентификатор устройства
   deviceId: String?
-  
-  ### Локаль пользователя (например, en_US, ru_RU)
   locale: String?
-  
-  ### Модель устройства
   deviceModel: String?
-  
-  ### IP адрес запроса
   ipAddress: String?
-  
-  ### Статус ответа на проверку версии
+
   responseStatus: ResponseStatusType
-  
-  ### Дата и время проверки
   checkedAt: DateTime, default=now
 
 indexes:

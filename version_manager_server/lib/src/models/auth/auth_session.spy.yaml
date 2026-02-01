@@ -1,0 +1,37 @@
+# Сессия авторизации пользователя (ваша custom-сессия)
+class: AuthSession
+table: auth_sessions
+fields:
+  id: UuidValue?, defaultPersist=random_v7
+
+  user: User?, relation(name=user_sessions, onDelete=Cascade)
+
+  # Лучше хранить хеши токенов, а не сами токены
+  tokenHash: String
+  refreshTokenHash: String
+
+  deviceInfo: String?
+  ipAddress: String?
+  userAgent: String?
+
+  expiresAt: DateTime
+  refreshExpiresAt: DateTime
+  createdAt: DateTime, default=now
+  lastActivityAt: DateTime?
+
+  isActive: bool, default=true
+  revokedAt: DateTime?
+
+indexes:
+  auth_session_token_hash_unique_idx:
+    fields: tokenHash
+    unique: true
+  auth_session_refresh_token_hash_unique_idx:
+    fields: refreshTokenHash
+    unique: true
+  auth_session_user_idx:
+    fields: userId
+  auth_session_is_active_idx:
+    fields: isActive
+  auth_session_expires_idx:
+    fields: expiresAt

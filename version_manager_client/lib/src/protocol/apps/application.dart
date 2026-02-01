@@ -11,14 +11,13 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
-import 'enums/platform_type.dart' as _i2;
-import 'enums/owner_type.dart' as _i3;
-import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
-    as _i4;
-import 'team.dart' as _i5;
-import 'store_link.dart' as _i6;
-import 'version.dart' as _i7;
-import 'version_check_log.dart' as _i8;
+import '../enums/platform_type.dart' as _i2;
+import '../enums/owner_type.dart' as _i3;
+import '../auth/user.dart' as _i4;
+import '../teams/team.dart' as _i5;
+import '../apps/store_link.dart' as _i6;
+import '../apps/version.dart' as _i7;
+import '../logs/version_check_log.dart' as _i8;
 import 'package:version_manager_client/src/protocol/protocol.dart' as _i9;
 
 /// Приложение для управления версиями
@@ -58,7 +57,7 @@ abstract class Application implements _i1.SerializableModel {
     required List<_i2.PlatformType> platforms,
     required _i3.OwnerType ownerType,
     _i1.UuidValue? ownerUserId,
-    _i4.AuthUser? ownerUser,
+    _i4.User? ownerUser,
     _i1.UuidValue? ownerTeamId,
     _i5.Team? ownerTeam,
     List<_i6.StoreLink>? storeLinks,
@@ -94,7 +93,7 @@ abstract class Application implements _i1.SerializableModel {
             ),
       ownerUser: jsonSerialization['ownerUser'] == null
           ? null
-          : _i9.Protocol().deserialize<_i4.AuthUser>(
+          : _i9.Protocol().deserialize<_i4.User>(
               jsonSerialization['ownerUser'],
             ),
       ownerTeamId: jsonSerialization['ownerTeamId'] == null
@@ -144,62 +143,47 @@ abstract class Application implements _i1.SerializableModel {
     );
   }
 
-  /// Уникальный идентификатор приложения
+  /// The database id, set if the object has been inserted into the
+  /// database or if it has been fetched from the database. Otherwise,
+  /// the id will be null.
   _i1.UuidValue? id;
 
-  /// Уникальный идентификатор в формате обратной доменной нотации (например, com.example.app)
   String namespace;
 
-  /// Название приложения (3-50 символов)
   String name;
 
-  /// Описание приложения (10-500 символов)
   String description;
 
-  /// URL иконки приложения
   String? iconUrl;
 
-  /// Массив поддерживаемых платформ (минимум 1)
   List<_i2.PlatformType> platforms;
 
-  /// Тип владельца (user или team)
   _i3.OwnerType ownerType;
 
   _i1.UuidValue? ownerUserId;
 
-  /// Владелец-пользователь (если личное приложение, связь с AuthUser из auth модуля)
-  _i4.AuthUser? ownerUser;
+  _i4.User? ownerUser;
 
   _i1.UuidValue? ownerTeamId;
 
-  /// Владелец-команда (если командное приложение)
   _i5.Team? ownerTeam;
 
-  /// Ссылки на магазины приложений
   List<_i6.StoreLink>? storeLinks;
 
-  /// Версии приложения
   List<_i7.Version>? versions;
 
-  /// Логи проверки версий
   List<_i8.VersionCheckLog>? checkLogs;
 
-  /// Активно ли приложение
   bool isActive;
 
-  /// Хеш API ключа приложения для аутентификации
   String apiKeyHash;
 
-  /// Дата создания API ключа
   DateTime apiKeyCreatedAt;
 
-  /// Дата последней регенерации API ключа
   DateTime? apiKeyLastRegeneratedAt;
 
-  /// Дата создания приложения
   DateTime createdAt;
 
-  /// Дата последнего обновления приложения
   DateTime updatedAt;
 
   /// Returns a shallow copy of this [Application]
@@ -214,7 +198,7 @@ abstract class Application implements _i1.SerializableModel {
     List<_i2.PlatformType>? platforms,
     _i3.OwnerType? ownerType,
     _i1.UuidValue? ownerUserId,
-    _i4.AuthUser? ownerUser,
+    _i4.User? ownerUser,
     _i1.UuidValue? ownerTeamId,
     _i5.Team? ownerTeam,
     List<_i6.StoreLink>? storeLinks,
@@ -276,7 +260,7 @@ class _ApplicationImpl extends Application {
     required List<_i2.PlatformType> platforms,
     required _i3.OwnerType ownerType,
     _i1.UuidValue? ownerUserId,
-    _i4.AuthUser? ownerUser,
+    _i4.User? ownerUser,
     _i1.UuidValue? ownerTeamId,
     _i5.Team? ownerTeam,
     List<_i6.StoreLink>? storeLinks,
@@ -348,7 +332,7 @@ class _ApplicationImpl extends Application {
       ownerUserId: ownerUserId is _i1.UuidValue?
           ? ownerUserId
           : this.ownerUserId,
-      ownerUser: ownerUser is _i4.AuthUser?
+      ownerUser: ownerUser is _i4.User?
           ? ownerUser
           : this.ownerUser?.copyWith(),
       ownerTeamId: ownerTeamId is _i1.UuidValue?

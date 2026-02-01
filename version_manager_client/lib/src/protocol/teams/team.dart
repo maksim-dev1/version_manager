@@ -11,13 +11,12 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
-import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
-    as _i2;
-import 'team_member.dart' as _i3;
-import 'application.dart' as _i4;
+import '../auth/user.dart' as _i2;
+import '../teams/team_member.dart' as _i3;
+import '../apps/application.dart' as _i4;
 import 'package:version_manager_client/src/protocol/protocol.dart' as _i5;
 
-/// Команда пользователей для совместного управления приложениями
+/// Команда пользователей
 abstract class Team implements _i1.SerializableModel {
   Team._({
     this.id,
@@ -37,7 +36,7 @@ abstract class Team implements _i1.SerializableModel {
     required String name,
     String? description,
     required _i1.UuidValue ownerId,
-    _i2.AuthUser? owner,
+    _i2.User? owner,
     List<_i3.TeamMember>? members,
     List<_i4.Application>? applications,
     DateTime? createdAt,
@@ -56,9 +55,7 @@ abstract class Team implements _i1.SerializableModel {
       ),
       owner: jsonSerialization['owner'] == null
           ? null
-          : _i5.Protocol().deserialize<_i2.AuthUser>(
-              jsonSerialization['owner'],
-            ),
+          : _i5.Protocol().deserialize<_i2.User>(jsonSerialization['owner']),
       members: jsonSerialization['members'] == null
           ? null
           : _i5.Protocol().deserialize<List<_i3.TeamMember>>(
@@ -78,30 +75,25 @@ abstract class Team implements _i1.SerializableModel {
     );
   }
 
-  /// Уникальный идентификатор команды
+  /// The database id, set if the object has been inserted into the
+  /// database or if it has been fetched from the database. Otherwise,
+  /// the id will be null.
   _i1.UuidValue? id;
 
-  /// Название команды (3-50 символов)
   String name;
 
-  /// Описание команды
   String? description;
 
   _i1.UuidValue ownerId;
 
-  /// Владелец команды (связь с AuthUser из auth модуля)
-  _i2.AuthUser? owner;
+  _i2.User? owner;
 
-  /// Участники команды
   List<_i3.TeamMember>? members;
 
-  /// Приложения, принадлежащие команде
   List<_i4.Application>? applications;
 
-  /// Дата создания команды
   DateTime createdAt;
 
-  /// Дата последнего обновления команды
   DateTime updatedAt;
 
   /// Returns a shallow copy of this [Team]
@@ -112,7 +104,7 @@ abstract class Team implements _i1.SerializableModel {
     String? name,
     String? description,
     _i1.UuidValue? ownerId,
-    _i2.AuthUser? owner,
+    _i2.User? owner,
     List<_i3.TeamMember>? members,
     List<_i4.Application>? applications,
     DateTime? createdAt,
@@ -150,7 +142,7 @@ class _TeamImpl extends Team {
     required String name,
     String? description,
     required _i1.UuidValue ownerId,
-    _i2.AuthUser? owner,
+    _i2.User? owner,
     List<_i3.TeamMember>? members,
     List<_i4.Application>? applications,
     DateTime? createdAt,
@@ -187,7 +179,7 @@ class _TeamImpl extends Team {
       name: name ?? this.name,
       description: description is String? ? description : this.description,
       ownerId: ownerId ?? this.ownerId,
-      owner: owner is _i2.AuthUser? ? owner : this.owner?.copyWith(),
+      owner: owner is _i2.User? ? owner : this.owner?.copyWith(),
       members: members is List<_i3.TeamMember>?
           ? members
           : this.members?.map((e0) => e0.copyWith()).toList(),

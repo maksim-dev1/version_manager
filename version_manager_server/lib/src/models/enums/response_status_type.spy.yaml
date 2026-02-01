@@ -1,4 +1,4 @@
-### Статус ответа при проверке версии
+### Статус ответа check-version
 enum: ResponseStatusType
 serialized: byName
 default: active

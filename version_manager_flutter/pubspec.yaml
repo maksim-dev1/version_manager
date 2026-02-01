@@ -37,7 +37,6 @@ dependencies:
   bloc: ^9.2.0
   flutter_bloc: ^9.1.1
   shared_preferences: ^2.5.4
-  serverpod_auth_idp_flutter: ^3.2.3
   url_launcher: ^6.3.1
 
 dev_dependencies:

@@ -2,9 +2,6 @@ import 'dart:io';
 
 import 'package:serverpod/protocol.dart';
 import 'package:serverpod/serverpod.dart';
-import 'package:serverpod_auth_idp_server/core.dart';
-import 'package:serverpod_auth_idp_server/providers/email.dart';
-import 'package:version_manager_server/src/services/email_service.dart';
 
 import 'src/generated/endpoints.dart';
 import 'src/web/routes/app_config_route.dart';
@@ -13,50 +10,7 @@ import 'src/web/routes/root.dart';
 /// The starting point of the Serverpod server.
 void run(List<String> args) async {
   // Initialize Serverpod and connect it with your generated code.
-  final pod = Serverpod(args, Protocol(), Endpoints());
-
-  final emailService = EmailService(provider: EmailProvider.google);
-
-  pod.initializeAuthServices(
-    tokenManagerBuilders: [JwtConfigFromPasswords()],
-    identityProviderBuilders: [
-      EmailIdpConfig(
-        secretHashPepper: pod.getPassword('emailSecretHashPepper')!,
-
-        // Письмо с кодом регистрации
-        sendRegistrationVerificationCode:
-            (
-              session, {
-              required accountRequestId,
-              required email,
-              required transaction,
-              required verificationCode,
-            }) async {
-              await emailService.sendVerificationEmail(
-                email,
-                verificationCode,
-                appName: 'Version Manager',
-              );
-            },
-
-        // Письмо со сбросом пароля
-        sendPasswordResetVerificationCode:
-            (
-              session, {
-              required email,
-              required passwordResetRequestId,
-              required transaction,
-              required verificationCode,
-            }) async {
-              await emailService.sendPasswordResetEmail(
-                email,
-                verificationCode,
-                appName: 'Version Manager',
-              );
-            },
-      ),
-    ],
-  );
+  final pod = Serverpod(args, Protocol(), Endpoints());  
 
   // Setup a default page at the web root.
   // These are used by the default page.

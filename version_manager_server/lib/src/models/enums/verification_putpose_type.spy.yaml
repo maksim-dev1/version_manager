@@ -1,0 +1,8 @@
+### Назначение OTP/кода
+enum: VerificationPurposeType
+serialized: byName
+values:
+  - sign_up
+  - login
+  - reset_password
+  - change_email
