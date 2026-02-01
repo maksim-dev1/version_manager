@@ -11,8 +11,7 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
-import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
-    as _i2;
+import 'user.dart' as _i2;
 import 'team_member.dart' as _i3;
 import 'application.dart' as _i4;
 import 'package:version_manager_client/src/protocol/protocol.dart' as _i5;
@@ -36,8 +35,8 @@ abstract class Team implements _i1.SerializableModel {
     _i1.UuidValue? id,
     required String name,
     String? description,
-    required _i1.UuidValue ownerId,
-    _i2.AuthUser? owner,
+    required int ownerId,
+    _i2.User? owner,
     List<_i3.TeamMember>? members,
     List<_i4.Application>? applications,
     DateTime? createdAt,
@@ -51,14 +50,10 @@ abstract class Team implements _i1.SerializableModel {
           : _i1.UuidValueJsonExtension.fromJson(jsonSerialization['id']),
       name: jsonSerialization['name'] as String,
       description: jsonSerialization['description'] as String?,
-      ownerId: _i1.UuidValueJsonExtension.fromJson(
-        jsonSerialization['ownerId'],
-      ),
+      ownerId: jsonSerialization['ownerId'] as int,
       owner: jsonSerialization['owner'] == null
           ? null
-          : _i5.Protocol().deserialize<_i2.AuthUser>(
-              jsonSerialization['owner'],
-            ),
+          : _i5.Protocol().deserialize<_i2.User>(jsonSerialization['owner']),
       members: jsonSerialization['members'] == null
           ? null
           : _i5.Protocol().deserialize<List<_i3.TeamMember>>(
@@ -87,10 +82,10 @@ abstract class Team implements _i1.SerializableModel {
   /// Описание команды
   String? description;
 
-  _i1.UuidValue ownerId;
+  int ownerId;
 
-  /// Владелец команды (связь с AuthUser из auth модуля)
-  _i2.AuthUser? owner;
+  /// Владелец команды
+  _i2.User? owner;
 
   /// Участники команды
   List<_i3.TeamMember>? members;
@@ -111,8 +106,8 @@ abstract class Team implements _i1.SerializableModel {
     _i1.UuidValue? id,
     String? name,
     String? description,
-    _i1.UuidValue? ownerId,
-    _i2.AuthUser? owner,
+    int? ownerId,
+    _i2.User? owner,
     List<_i3.TeamMember>? members,
     List<_i4.Application>? applications,
     DateTime? createdAt,
@@ -125,7 +120,7 @@ abstract class Team implements _i1.SerializableModel {
       if (id != null) 'id': id?.toJson(),
       'name': name,
       if (description != null) 'description': description,
-      'ownerId': ownerId.toJson(),
+      'ownerId': ownerId,
       if (owner != null) 'owner': owner?.toJson(),
       if (members != null)
         'members': members?.toJson(valueToJson: (v) => v.toJson()),
@@ -149,8 +144,8 @@ class _TeamImpl extends Team {
     _i1.UuidValue? id,
     required String name,
     String? description,
-    required _i1.UuidValue ownerId,
-    _i2.AuthUser? owner,
+    required int ownerId,
+    _i2.User? owner,
     List<_i3.TeamMember>? members,
     List<_i4.Application>? applications,
     DateTime? createdAt,
@@ -175,7 +170,7 @@ class _TeamImpl extends Team {
     Object? id = _Undefined,
     String? name,
     Object? description = _Undefined,
-    _i1.UuidValue? ownerId,
+    int? ownerId,
     Object? owner = _Undefined,
     Object? members = _Undefined,
     Object? applications = _Undefined,
@@ -187,7 +182,7 @@ class _TeamImpl extends Team {
       name: name ?? this.name,
       description: description is String? ? description : this.description,
       ownerId: ownerId ?? this.ownerId,
-      owner: owner is _i2.AuthUser? ? owner : this.owner?.copyWith(),
+      owner: owner is _i2.User? ? owner : this.owner?.copyWith(),
       members: members is List<_i3.TeamMember>?
           ? members
           : this.members?.map((e0) => e0.copyWith()).toList(),

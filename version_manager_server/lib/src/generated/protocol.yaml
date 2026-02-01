@@ -1,12 +1,16 @@
-emailIdp:
-  - login:
+auth:
+  - checkEmail:
   - startRegistration:
-  - verifyRegistrationCode:
-  - finishRegistration:
+  - completeRegistration:
+  - login:
   - startPasswordReset:
-  - verifyPasswordResetCode:
-  - finishPasswordReset:
+  - completePasswordReset:
+  - validateToken:
+  - refreshToken:
+  - logout:
+  - logoutAll:
 profile:
-  - getUser:
+  - getProfile:
+  - updateProfile:
 greeting:
   - hello:

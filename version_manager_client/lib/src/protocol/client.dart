@@ -10,234 +10,224 @@
 // ignore_for_file: invalid_use_of_internal_member
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:serverpod_auth_idp_client/serverpod_auth_idp_client.dart'
-    as _i1;
-import 'package:serverpod_client/serverpod_client.dart' as _i2;
-import 'dart:async' as _i3;
-import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
+import 'package:serverpod_client/serverpod_client.dart' as _i1;
+import 'dart:async' as _i2;
+import 'package:version_manager_client/src/protocol/dto/email_check_result.dart'
+    as _i3;
+import 'package:version_manager_client/src/protocol/dto/verification_code_sent_result.dart'
     as _i4;
-import 'package:version_manager_client/src/protocol/greetings/greeting.dart'
+import 'package:version_manager_client/src/protocol/dto/auth_response.dart'
     as _i5;
-import 'protocol.dart' as _i6;
+import 'package:version_manager_client/src/protocol/user.dart' as _i6;
+import 'package:version_manager_client/src/protocol/greetings/greeting.dart'
+    as _i7;
+import 'protocol.dart' as _i8;
 
+/// Endpoint для авторизации пользователей.
+///
+/// Поддерживает:
+/// - Регистрацию через email с кодом подтверждения
+/// - Вход по email и паролю
+/// - Сброс пароля
+/// - Управление сессиями
 /// {@category Endpoint}
-class EndpointEmailIdp extends _i1.EndpointEmailIdpBase {
-  EndpointEmailIdp(_i2.EndpointCaller caller) : super(caller);
+class EndpointAuth extends _i1.EndpointRef {
+  EndpointAuth(_i1.EndpointCaller caller) : super(caller);
 
   @override
-  String get name => 'emailIdp';
+  String get name => 'auth';
 
-  /// Logs in the user and returns a new session.
+  /// Проверяет существование email в системе.
   ///
-  /// Throws an [EmailAccountLoginException] in case of errors, with reason:
-  /// - [EmailAccountLoginExceptionReason.invalidCredentials] if the email or
-  ///   password is incorrect.
-  /// - [EmailAccountLoginExceptionReason.tooManyAttempts] if there have been
-  ///   too many failed login attempts.
-  ///
-  /// Throws an [AuthUserBlockedException] if the auth user is blocked.
-  @override
-  _i3.Future<_i4.AuthSuccess> login({
-    required String email,
-    required String password,
-  }) => caller.callServerEndpoint<_i4.AuthSuccess>(
-    'emailIdp',
-    'login',
-    {
-      'email': email,
-      'password': password,
-    },
-  );
+  /// Возвращает:
+  /// - exists: true если email уже зарегистрирован
+  /// - canResendCode: true если можно отправить код (прошел cooldown)
+  /// - resendAvailableAt: когда можно будет отправить код повторно
+  _i2.Future<_i3.EmailCheckResult> checkEmail(String email) =>
+      caller.callServerEndpoint<_i3.EmailCheckResult>(
+        'auth',
+        'checkEmail',
+        {'email': email},
+      );
 
-  /// Starts the registration for a new user account with an email-based login
-  /// associated to it.
+  /// Начинает процесс регистрации.
   ///
-  /// Upon successful completion of this method, an email will have been
-  /// sent to [email] with a verification link, which the user must open to
-  /// complete the registration.
+  /// Отправляет код подтверждения на указанный email.
+  /// Код действителен 10 минут, максимум 5 попыток ввода.
   ///
-  /// Always returns a account request ID, which can be used to complete the
-  /// registration. If the email is already registered, the returned ID will not
-  /// be valid.
-  @override
-  _i3.Future<_i2.UuidValue> startRegistration({required String email}) =>
-      caller.callServerEndpoint<_i2.UuidValue>(
-        'emailIdp',
+  /// Throws InvalidDataException если:
+  /// - email невалидный
+  /// - email уже зарегистрирован
+  /// - не прошел cooldown (1 минута)
+  _i2.Future<_i4.VerificationCodeSentResult> startRegistration(String email) =>
+      caller.callServerEndpoint<_i4.VerificationCodeSentResult>(
+        'auth',
         'startRegistration',
         {'email': email},
       );
 
-  /// Verifies an account request code and returns a token
-  /// that can be used to complete the account creation.
+  /// Завершает регистрацию.
   ///
-  /// Throws an [EmailAccountRequestException] in case of errors, with reason:
-  /// - [EmailAccountRequestExceptionReason.expired] if the account request has
-  ///   already expired.
-  /// - [EmailAccountRequestExceptionReason.policyViolation] if the password
-  ///   does not comply with the password policy.
-  /// - [EmailAccountRequestExceptionReason.invalid] if no request exists
-  ///   for the given [accountRequestId] or [verificationCode] is invalid.
-  @override
-  _i3.Future<String> verifyRegistrationCode({
-    required _i2.UuidValue accountRequestId,
-    required String verificationCode,
-  }) => caller.callServerEndpoint<String>(
-    'emailIdp',
-    'verifyRegistrationCode',
-    {
-      'accountRequestId': accountRequestId,
-      'verificationCode': verificationCode,
-    },
-  );
-
-  /// Completes a new account registration, creating a new auth user with a
-  /// profile and attaching the given email account to it.
+  /// Проверяет код и создает нового пользователя.
+  /// При успехе возвращает токены авторизации.
   ///
-  /// Throws an [EmailAccountRequestException] in case of errors, with reason:
-  /// - [EmailAccountRequestExceptionReason.expired] if the account request has
-  ///   already expired.
-  /// - [EmailAccountRequestExceptionReason.policyViolation] if the password
-  ///   does not comply with the password policy.
-  /// - [EmailAccountRequestExceptionReason.invalid] if the [registrationToken]
-  ///   is invalid.
-  ///
-  /// Throws an [AuthUserBlockedException] if the auth user is blocked.
-  ///
-  /// Returns a session for the newly created user.
-  @override
-  _i3.Future<_i4.AuthSuccess> finishRegistration({
-    required String registrationToken,
+  /// [verificationId] - ID из startRegistration
+  /// [code] - 6-значный код из email
+  /// [password] - пароль (минимум 8 символов, буквы и цифры)
+  _i2.Future<_i5.AuthResponse> completeRegistration({
+    required int verificationId,
+    required String code,
     required String password,
-  }) => caller.callServerEndpoint<_i4.AuthSuccess>(
-    'emailIdp',
-    'finishRegistration',
+  }) => caller.callServerEndpoint<_i5.AuthResponse>(
+    'auth',
+    'completeRegistration',
     {
-      'registrationToken': registrationToken,
+      'verificationId': verificationId,
+      'code': code,
       'password': password,
     },
   );
 
-  /// Requests a password reset for [email].
+  /// Вход по email и паролю.
   ///
-  /// If the email address is registered, an email with reset instructions will
-  /// be send out. If the email is unknown, this method will have no effect.
+  /// При успехе возвращает токены авторизации.
+  _i2.Future<_i5.AuthResponse> login({
+    required String email,
+    required String password,
+    String? deviceInfo,
+  }) => caller.callServerEndpoint<_i5.AuthResponse>(
+    'auth',
+    'login',
+    {
+      'email': email,
+      'password': password,
+      'deviceInfo': deviceInfo,
+    },
+  );
+
+  /// Начинает процесс сброса пароля.
   ///
-  /// Always returns a password reset request ID, which can be used to complete
-  /// the reset. If the email is not registered, the returned ID will not be
-  /// valid.
-  ///
-  /// Throws an [EmailAccountPasswordResetException] in case of errors, with reason:
-  /// - [EmailAccountPasswordResetExceptionReason.tooManyAttempts] if the user has
-  ///   made too many attempts trying to request a password reset.
-  ///
-  @override
-  _i3.Future<_i2.UuidValue> startPasswordReset({required String email}) =>
-      caller.callServerEndpoint<_i2.UuidValue>(
-        'emailIdp',
+  /// Отправляет код на email для сброса пароля.
+  _i2.Future<_i4.VerificationCodeSentResult> startPasswordReset(String email) =>
+      caller.callServerEndpoint<_i4.VerificationCodeSentResult>(
+        'auth',
         'startPasswordReset',
         {'email': email},
       );
 
-  /// Verifies a password reset code and returns a finishPasswordResetToken
-  /// that can be used to finish the password reset.
+  /// Завершает сброс пароля.
   ///
-  /// Throws an [EmailAccountPasswordResetException] in case of errors, with reason:
-  /// - [EmailAccountPasswordResetExceptionReason.expired] if the password reset
-  ///   request has already expired.
-  /// - [EmailAccountPasswordResetExceptionReason.tooManyAttempts] if the user has
-  ///   made too many attempts trying to verify the password reset.
-  /// - [EmailAccountPasswordResetExceptionReason.invalid] if no request exists
-  ///   for the given [passwordResetRequestId] or [verificationCode] is invalid.
-  ///
-  /// If multiple steps are required to complete the password reset, this endpoint
-  /// should be overridden to return credentials for the next step instead
-  /// of the credentials for setting the password.
-  @override
-  _i3.Future<String> verifyPasswordResetCode({
-    required _i2.UuidValue passwordResetRequestId,
-    required String verificationCode,
-  }) => caller.callServerEndpoint<String>(
-    'emailIdp',
-    'verifyPasswordResetCode',
-    {
-      'passwordResetRequestId': passwordResetRequestId,
-      'verificationCode': verificationCode,
-    },
-  );
-
-  /// Completes a password reset request by setting a new password.
-  ///
-  /// The [verificationCode] returned from [verifyPasswordResetCode] is used to
-  /// validate the password reset request.
-  ///
-  /// Throws an [EmailAccountPasswordResetException] in case of errors, with reason:
-  /// - [EmailAccountPasswordResetExceptionReason.expired] if the password reset
-  ///   request has already expired.
-  /// - [EmailAccountPasswordResetExceptionReason.policyViolation] if the new
-  ///   password does not comply with the password policy.
-  /// - [EmailAccountPasswordResetExceptionReason.invalid] if no request exists
-  ///   for the given [passwordResetRequestId] or [verificationCode] is invalid.
-  ///
-  /// Throws an [AuthUserBlockedException] if the auth user is blocked.
-  @override
-  _i3.Future<void> finishPasswordReset({
-    required String finishPasswordResetToken,
+  /// Устанавливает новый пароль и возвращает новые токены.
+  /// Все старые сессии будут деактивированы.
+  _i2.Future<_i5.AuthResponse> completePasswordReset({
+    required int verificationId,
+    required String code,
     required String newPassword,
-  }) => caller.callServerEndpoint<void>(
-    'emailIdp',
-    'finishPasswordReset',
+  }) => caller.callServerEndpoint<_i5.AuthResponse>(
+    'auth',
+    'completePasswordReset',
     {
-      'finishPasswordResetToken': finishPasswordResetToken,
+      'verificationId': verificationId,
+      'code': code,
       'newPassword': newPassword,
     },
   );
+
+  /// Проверяет токен и возвращает текущего пользователя.
+  ///
+  /// Используется для проверки авторизации на клиенте.
+  _i2.Future<_i6.User?> validateToken(String token) =>
+      caller.callServerEndpoint<_i6.User?>(
+        'auth',
+        'validateToken',
+        {'token': token},
+      );
+
+  /// Обновляет токен используя refresh token.
+  ///
+  /// Возвращает новую пару токенов.
+  _i2.Future<_i5.AuthResponse> refreshToken(String refreshToken) =>
+      caller.callServerEndpoint<_i5.AuthResponse>(
+        'auth',
+        'refreshToken',
+        {'refreshToken': refreshToken},
+      );
+
+  /// Выход из системы.
+  ///
+  /// Деактивирует текущую сессию.
+  _i2.Future<void> logout(String token) => caller.callServerEndpoint<void>(
+    'auth',
+    'logout',
+    {'token': token},
+  );
+
+  /// Выход со всех устройств.
+  ///
+  /// Деактивирует все сессии текущего пользователя.
+  _i2.Future<void> logoutAll(String token) => caller.callServerEndpoint<void>(
+    'auth',
+    'logoutAll',
+    {'token': token},
+  );
 }
 
+/// Эндпоинт для управления профилем пользователя.
+/// Требует валидной сессии авторизации.
 /// {@category Endpoint}
-class EndpointProfile extends _i2.EndpointRef {
-  EndpointProfile(_i2.EndpointCaller caller) : super(caller);
+class EndpointProfile extends _i1.EndpointRef {
+  EndpointProfile(_i1.EndpointCaller caller) : super(caller);
 
   @override
   String get name => 'profile';
 
-  _i3.Future<_i4.UserProfileModel> getUser() =>
-      caller.callServerEndpoint<_i4.UserProfileModel>(
+  /// Получить профиль текущего пользователя по токену.
+  _i2.Future<_i6.User?> getProfile(String token) =>
+      caller.callServerEndpoint<_i6.User?>(
         'profile',
-        'getUser',
-        {},
+        'getProfile',
+        {'token': token},
       );
+
+  /// Обновить профиль текущего пользователя.
+  _i2.Future<_i6.User> updateProfile(
+    String token, {
+    String? firstName,
+    String? lastName,
+    String? displayName,
+    String? phone,
+  }) => caller.callServerEndpoint<_i6.User>(
+    'profile',
+    'updateProfile',
+    {
+      'token': token,
+      'firstName': firstName,
+      'lastName': lastName,
+      'displayName': displayName,
+      'phone': phone,
+    },
+  );
 }
 
 /// This is an example endpoint that returns a greeting message through
 /// its [hello] method.
 /// {@category Endpoint}
-class EndpointGreeting extends _i2.EndpointRef {
-  EndpointGreeting(_i2.EndpointCaller caller) : super(caller);
+class EndpointGreeting extends _i1.EndpointRef {
+  EndpointGreeting(_i1.EndpointCaller caller) : super(caller);
 
   @override
   String get name => 'greeting';
 
   /// Returns a personalized greeting message: "Hello {name}".
-  _i3.Future<_i5.Greeting> hello(String name) =>
-      caller.callServerEndpoint<_i5.Greeting>(
+  _i2.Future<_i7.Greeting> hello(String name) =>
+      caller.callServerEndpoint<_i7.Greeting>(
         'greeting',
         'hello',
         {'name': name},
       );
 }
 
-class Modules {
-  Modules(Client client) {
-    serverpod_auth_idp = _i1.Caller(client);
-    serverpod_auth_core = _i4.Caller(client);
-  }
-
-  late final _i1.Caller serverpod_auth_idp;
-
-  late final _i4.Caller serverpod_auth_core;
-}
-
-class Client extends _i2.ServerpodClientShared {
+class Client extends _i1.ServerpodClientShared {
   Client(
     String host, {
     dynamic securityContext,
@@ -248,16 +238,16 @@ class Client extends _i2.ServerpodClientShared {
     Duration? streamingConnectionTimeout,
     Duration? connectionTimeout,
     Function(
-      _i2.MethodCallContext,
+      _i1.MethodCallContext,
       Object,
       StackTrace,
     )?
     onFailedCall,
-    Function(_i2.MethodCallContext)? onSucceededCall,
+    Function(_i1.MethodCallContext)? onSucceededCall,
     bool? disconnectStreamsOnLostInternetConnection,
   }) : super(
          host,
-         _i6.Protocol(),
+         _i8.Protocol(),
          securityContext: securityContext,
          streamingConnectionTimeout: streamingConnectionTimeout,
          connectionTimeout: connectionTimeout,
@@ -266,30 +256,24 @@ class Client extends _i2.ServerpodClientShared {
          disconnectStreamsOnLostInternetConnection:
              disconnectStreamsOnLostInternetConnection,
        ) {
-    emailIdp = EndpointEmailIdp(this);
+    auth = EndpointAuth(this);
     profile = EndpointProfile(this);
     greeting = EndpointGreeting(this);
-    modules = Modules(this);
   }
 
-  late final EndpointEmailIdp emailIdp;
+  late final EndpointAuth auth;
 
   late final EndpointProfile profile;
 
   late final EndpointGreeting greeting;
 
-  late final Modules modules;
-
   @override
-  Map<String, _i2.EndpointRef> get endpointRefLookup => {
-    'emailIdp': emailIdp,
+  Map<String, _i1.EndpointRef> get endpointRefLookup => {
+    'auth': auth,
     'profile': profile,
     'greeting': greeting,
   };
 
   @override
-  Map<String, _i2.ModuleEndpointCaller> get moduleLookup => {
-    'serverpod_auth_idp': modules.serverpod_auth_idp,
-    'serverpod_auth_core': modules.serverpod_auth_core,
-  };
+  Map<String, _i1.ModuleEndpointCaller> get moduleLookup => {};
 }

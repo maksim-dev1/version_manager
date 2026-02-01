@@ -1,0 +1,32 @@
+# Код верификации (для регистрации и сброса пароля)
+class: VerificationCode
+table: verification_codes
+fields:
+  # Связь с пользователем (null для регистрации нового)
+  userId: int?
+  
+  # Email для которого создан код
+  email: String
+  
+  # Сам код (6 цифр)
+  code: String
+  
+  # Тип кода
+  type: VerificationCodeType
+  
+  # Контроль попыток
+  attempts: int, default=0
+  maxAttempts: int, default=5
+  
+  # Время жизни
+  expiresAt: DateTime
+  createdAt: DateTime, default=now
+  
+  # Использован ли код
+  isUsed: bool, default=false
+
+indexes:
+  verification_code_email_idx:
+    fields: email
+  verification_code_expires_idx:
+    fields: expiresAt

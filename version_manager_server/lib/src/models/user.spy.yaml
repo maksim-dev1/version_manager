@@ -1,0 +1,28 @@
+# Пользователь системы
+class: User
+table: users
+fields:
+  # Основные данные
+  email: String
+  passwordHash: String
+  
+  # Профиль (опционально, заполняется позже)
+  firstName: String?
+  lastName: String?
+  displayName: String?
+  avatarUrl: String?
+  phone: String?
+  
+  # Статус аккаунта
+  isEmailVerified: bool, default=false
+  isActive: bool, default=true
+  
+  # Метаданные
+  lastLoginAt: DateTime?
+  createdAt: DateTime, default=now
+  updatedAt: DateTime?
+
+indexes:
+  user_email_idx:
+    fields: email
+    unique: true

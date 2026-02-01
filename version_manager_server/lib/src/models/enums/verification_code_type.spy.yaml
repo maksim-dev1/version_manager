@@ -1,0 +1,5 @@
+# Тип кода верификации
+enum: VerificationCodeType
+values:
+  - registration    # Код для регистрации
+  - passwordReset   # Код для сброса пароля

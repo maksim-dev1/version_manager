@@ -14,8 +14,7 @@
 import 'package:serverpod/serverpod.dart' as _i1;
 import 'enums/platform_type.dart' as _i2;
 import 'enums/owner_type.dart' as _i3;
-import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
-    as _i4;
+import 'user.dart' as _i4;
 import 'team.dart' as _i5;
 import 'store_link.dart' as _i6;
 import 'version.dart' as _i7;
@@ -59,8 +58,8 @@ abstract class Application
     String? iconUrl,
     required List<_i2.PlatformType> platforms,
     required _i3.OwnerType ownerType,
-    _i1.UuidValue? ownerUserId,
-    _i4.AuthUser? ownerUser,
+    int? ownerUserId,
+    _i4.User? ownerUser,
     _i1.UuidValue? ownerTeamId,
     _i5.Team? ownerTeam,
     List<_i6.StoreLink>? storeLinks,
@@ -89,14 +88,10 @@ abstract class Application
       ownerType: _i3.OwnerType.fromJson(
         (jsonSerialization['ownerType'] as String),
       ),
-      ownerUserId: jsonSerialization['ownerUserId'] == null
-          ? null
-          : _i1.UuidValueJsonExtension.fromJson(
-              jsonSerialization['ownerUserId'],
-            ),
+      ownerUserId: jsonSerialization['ownerUserId'] as int?,
       ownerUser: jsonSerialization['ownerUser'] == null
           ? null
-          : _i9.Protocol().deserialize<_i4.AuthUser>(
+          : _i9.Protocol().deserialize<_i4.User>(
               jsonSerialization['ownerUser'],
             ),
       ownerTeamId: jsonSerialization['ownerTeamId'] == null
@@ -171,10 +166,10 @@ abstract class Application
   /// Тип владельца (user или team)
   _i3.OwnerType ownerType;
 
-  _i1.UuidValue? ownerUserId;
+  int? ownerUserId;
 
-  /// Владелец-пользователь (если личное приложение, связь с AuthUser из auth модуля)
-  _i4.AuthUser? ownerUser;
+  /// Владелец-пользователь (если личное приложение)
+  _i4.User? ownerUser;
 
   _i1.UuidValue? ownerTeamId;
 
@@ -222,8 +217,8 @@ abstract class Application
     String? iconUrl,
     List<_i2.PlatformType>? platforms,
     _i3.OwnerType? ownerType,
-    _i1.UuidValue? ownerUserId,
-    _i4.AuthUser? ownerUser,
+    int? ownerUserId,
+    _i4.User? ownerUser,
     _i1.UuidValue? ownerTeamId,
     _i5.Team? ownerTeam,
     List<_i6.StoreLink>? storeLinks,
@@ -247,7 +242,7 @@ abstract class Application
       if (iconUrl != null) 'iconUrl': iconUrl,
       'platforms': platforms.toJson(valueToJson: (v) => v.toJson()),
       'ownerType': ownerType.toJson(),
-      if (ownerUserId != null) 'ownerUserId': ownerUserId?.toJson(),
+      if (ownerUserId != null) 'ownerUserId': ownerUserId,
       if (ownerUser != null) 'ownerUser': ownerUser?.toJson(),
       if (ownerTeamId != null) 'ownerTeamId': ownerTeamId?.toJson(),
       if (ownerTeam != null) 'ownerTeam': ownerTeam?.toJson(),
@@ -278,7 +273,7 @@ abstract class Application
       if (iconUrl != null) 'iconUrl': iconUrl,
       'platforms': platforms.toJson(valueToJson: (v) => v.toJson()),
       'ownerType': ownerType.toJson(),
-      if (ownerUserId != null) 'ownerUserId': ownerUserId?.toJson(),
+      if (ownerUserId != null) 'ownerUserId': ownerUserId,
       if (ownerUser != null) 'ownerUser': ownerUser?.toJsonForProtocol(),
       if (ownerTeamId != null) 'ownerTeamId': ownerTeamId?.toJson(),
       if (ownerTeam != null) 'ownerTeam': ownerTeam?.toJsonForProtocol(),
@@ -303,7 +298,7 @@ abstract class Application
   }
 
   static ApplicationInclude include({
-    _i4.AuthUserInclude? ownerUser,
+    _i4.UserInclude? ownerUser,
     _i5.TeamInclude? ownerTeam,
     _i6.StoreLinkIncludeList? storeLinks,
     _i7.VersionIncludeList? versions,
@@ -355,8 +350,8 @@ class _ApplicationImpl extends Application {
     String? iconUrl,
     required List<_i2.PlatformType> platforms,
     required _i3.OwnerType ownerType,
-    _i1.UuidValue? ownerUserId,
-    _i4.AuthUser? ownerUser,
+    int? ownerUserId,
+    _i4.User? ownerUser,
     _i1.UuidValue? ownerTeamId,
     _i5.Team? ownerTeam,
     List<_i6.StoreLink>? storeLinks,
@@ -425,10 +420,8 @@ class _ApplicationImpl extends Application {
       iconUrl: iconUrl is String? ? iconUrl : this.iconUrl,
       platforms: platforms ?? this.platforms.map((e0) => e0).toList(),
       ownerType: ownerType ?? this.ownerType,
-      ownerUserId: ownerUserId is _i1.UuidValue?
-          ? ownerUserId
-          : this.ownerUserId,
-      ownerUser: ownerUser is _i4.AuthUser?
+      ownerUserId: ownerUserId is int? ? ownerUserId : this.ownerUserId,
+      ownerUser: ownerUser is _i4.User?
           ? ownerUser
           : this.ownerUser?.copyWith(),
       ownerTeamId: ownerTeamId is _i1.UuidValue?
@@ -495,9 +488,7 @@ class ApplicationUpdateTable extends _i1.UpdateTable<ApplicationTable> {
     value,
   );
 
-  _i1.ColumnValue<_i1.UuidValue, _i1.UuidValue> ownerUserId(
-    _i1.UuidValue? value,
-  ) => _i1.ColumnValue(
+  _i1.ColumnValue<int, int> ownerUserId(int? value) => _i1.ColumnValue(
     table.ownerUserId,
     value,
   );
@@ -573,7 +564,7 @@ class ApplicationTable extends _i1.Table<_i1.UuidValue?> {
       this,
       _i1.EnumSerialization.byName,
     );
-    ownerUserId = _i1.ColumnUuid(
+    ownerUserId = _i1.ColumnInt(
       'ownerUserId',
       this,
     );
@@ -631,10 +622,10 @@ class ApplicationTable extends _i1.Table<_i1.UuidValue?> {
   /// Тип владельца (user или team)
   late final _i1.ColumnEnum<_i3.OwnerType> ownerType;
 
-  late final _i1.ColumnUuid ownerUserId;
+  late final _i1.ColumnInt ownerUserId;
 
-  /// Владелец-пользователь (если личное приложение, связь с AuthUser из auth модуля)
-  _i4.AuthUserTable? _ownerUser;
+  /// Владелец-пользователь (если личное приложение)
+  _i4.UserTable? _ownerUser;
 
   late final _i1.ColumnUuid ownerTeamId;
 
@@ -677,15 +668,15 @@ class ApplicationTable extends _i1.Table<_i1.UuidValue?> {
   /// Дата последнего обновления приложения
   late final _i1.ColumnDateTime updatedAt;
 
-  _i4.AuthUserTable get ownerUser {
+  _i4.UserTable get ownerUser {
     if (_ownerUser != null) return _ownerUser!;
     _ownerUser = _i1.createRelationTable(
       relationFieldName: 'ownerUser',
       field: Application.t.ownerUserId,
-      foreignField: _i4.AuthUser.t.id,
+      foreignField: _i4.User.t.id,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i4.AuthUserTable(tableRelation: foreignTableRelation),
+          _i4.UserTable(tableRelation: foreignTableRelation),
     );
     return _ownerUser!;
   }
@@ -841,7 +832,7 @@ class ApplicationTable extends _i1.Table<_i1.UuidValue?> {
 
 class ApplicationInclude extends _i1.IncludeObject {
   ApplicationInclude._({
-    _i4.AuthUserInclude? ownerUser,
+    _i4.UserInclude? ownerUser,
     _i5.TeamInclude? ownerTeam,
     _i6.StoreLinkIncludeList? storeLinks,
     _i7.VersionIncludeList? versions,
@@ -854,7 +845,7 @@ class ApplicationInclude extends _i1.IncludeObject {
     _checkLogs = checkLogs;
   }
 
-  _i4.AuthUserInclude? _ownerUser;
+  _i4.UserInclude? _ownerUser;
 
   _i5.TeamInclude? _ownerTeam;
 
@@ -1246,12 +1237,12 @@ class ApplicationAttachRepository {
 class ApplicationAttachRowRepository {
   const ApplicationAttachRowRepository._();
 
-  /// Creates a relation between the given [Application] and [AuthUser]
-  /// by setting the [Application]'s foreign key `ownerUserId` to refer to the [AuthUser].
+  /// Creates a relation between the given [Application] and [User]
+  /// by setting the [Application]'s foreign key `ownerUserId` to refer to the [User].
   Future<void> ownerUser(
     _i1.Session session,
     Application application,
-    _i4.AuthUser ownerUser, {
+    _i4.User ownerUser, {
     _i1.Transaction? transaction,
   }) async {
     if (application.id == null) {
@@ -1441,7 +1432,7 @@ class ApplicationDetachRepository {
 class ApplicationDetachRowRepository {
   const ApplicationDetachRowRepository._();
 
-  /// Detaches the relation between this [Application] and the [AuthUser] set in `ownerUser`
+  /// Detaches the relation between this [Application] and the [User] set in `ownerUser`
   /// by setting the [Application]'s foreign key `ownerUserId` to `null`.
   ///
   /// This removes the association between the two models without deleting

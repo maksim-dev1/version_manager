@@ -1,0 +1,34 @@
+# Разрешения (permissions) для действий в системе
+enum: Permission
+values:
+  # Команда
+  - viewTeam            # Просмотр информации о команде
+  - editTeam            # Редактирование настроек команды
+  - deleteTeam          # Удаление команды
+  - transferOwnership   # Передача владения командой
+  
+  # Участники команды
+  - viewMembers         # Просмотр списка участников
+  - inviteMembers       # Приглашение новых участников
+  - removeMembers       # Удаление участников из команды
+  - changeRoles         # Изменение ролей участников
+  
+  # Приложения
+  - viewApps            # Просмотр приложений
+  - createApps          # Создание приложений
+  - editApps            # Редактирование приложений
+  - deleteApps          # Удаление приложений
+  
+  # Версии
+  - viewVersions        # Просмотр версий
+  - createVersions      # Создание версий
+  - editVersions        # Редактирование версий
+  - blockVersions       # Блокировка версий
+  - deleteVersions      # Удаление версий
+  
+  # API ключи
+  - viewApiKeys         # Просмотр API ключей
+  - manageApiKeys       # Создание/удаление API ключей
+  
+  # Статистика
+  - viewStats           # Просмотр статистики

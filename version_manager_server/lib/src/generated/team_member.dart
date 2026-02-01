@@ -14,8 +14,7 @@
 import 'package:serverpod/serverpod.dart' as _i1;
 import 'enums/team_member_status_type.dart' as _i2;
 import 'team.dart' as _i3;
-import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
-    as _i4;
+import 'user.dart' as _i4;
 import 'enums/team_role_type.dart' as _i5;
 import 'package:version_manager_server/src/generated/protocol.dart' as _i6;
 
@@ -42,12 +41,12 @@ abstract class TeamMember
     _i1.UuidValue? id,
     required _i1.UuidValue teamId,
     _i3.Team? team,
-    required _i1.UuidValue userId,
-    _i4.AuthUser? user,
+    required int userId,
+    _i4.User? user,
     required _i5.TeamRoleType role,
     _i2.TeamMemberStatusType? status,
-    _i1.UuidValue? invitedById,
-    _i4.AuthUser? invitedBy,
+    int? invitedById,
+    _i4.User? invitedBy,
     DateTime? invitedAt,
     DateTime? joinedAt,
     DateTime? invitationExpiresAt,
@@ -62,24 +61,20 @@ abstract class TeamMember
       team: jsonSerialization['team'] == null
           ? null
           : _i6.Protocol().deserialize<_i3.Team>(jsonSerialization['team']),
-      userId: _i1.UuidValueJsonExtension.fromJson(jsonSerialization['userId']),
+      userId: jsonSerialization['userId'] as int,
       user: jsonSerialization['user'] == null
           ? null
-          : _i6.Protocol().deserialize<_i4.AuthUser>(jsonSerialization['user']),
+          : _i6.Protocol().deserialize<_i4.User>(jsonSerialization['user']),
       role: _i5.TeamRoleType.fromJson((jsonSerialization['role'] as String)),
       status: jsonSerialization['status'] == null
           ? null
           : _i2.TeamMemberStatusType.fromJson(
               (jsonSerialization['status'] as String),
             ),
-      invitedById: jsonSerialization['invitedById'] == null
-          ? null
-          : _i1.UuidValueJsonExtension.fromJson(
-              jsonSerialization['invitedById'],
-            ),
+      invitedById: jsonSerialization['invitedById'] as int?,
       invitedBy: jsonSerialization['invitedBy'] == null
           ? null
-          : _i6.Protocol().deserialize<_i4.AuthUser>(
+          : _i6.Protocol().deserialize<_i4.User>(
               jsonSerialization['invitedBy'],
             ),
       invitedAt: jsonSerialization['invitedAt'] == null
@@ -108,10 +103,10 @@ abstract class TeamMember
   /// Команда
   _i3.Team? team;
 
-  _i1.UuidValue userId;
+  int userId;
 
-  /// Пользователь (связь с AuthUser из auth модуля)
-  _i4.AuthUser? user;
+  /// Пользователь
+  _i4.User? user;
 
   /// Роль участника в команде (owner, admin, developer, observer)
   _i5.TeamRoleType role;
@@ -119,10 +114,10 @@ abstract class TeamMember
   /// Статус участника (invited, active)
   _i2.TeamMemberStatusType status;
 
-  _i1.UuidValue? invitedById;
+  int? invitedById;
 
   /// Пользователь, который пригласил (NULL для owner)
-  _i4.AuthUser? invitedBy;
+  _i4.User? invitedBy;
 
   /// Дата приглашения
   DateTime invitedAt;
@@ -143,12 +138,12 @@ abstract class TeamMember
     _i1.UuidValue? id,
     _i1.UuidValue? teamId,
     _i3.Team? team,
-    _i1.UuidValue? userId,
-    _i4.AuthUser? user,
+    int? userId,
+    _i4.User? user,
     _i5.TeamRoleType? role,
     _i2.TeamMemberStatusType? status,
-    _i1.UuidValue? invitedById,
-    _i4.AuthUser? invitedBy,
+    int? invitedById,
+    _i4.User? invitedBy,
     DateTime? invitedAt,
     DateTime? joinedAt,
     DateTime? invitationExpiresAt,
@@ -160,11 +155,11 @@ abstract class TeamMember
       if (id != null) 'id': id?.toJson(),
       'teamId': teamId.toJson(),
       if (team != null) 'team': team?.toJson(),
-      'userId': userId.toJson(),
+      'userId': userId,
       if (user != null) 'user': user?.toJson(),
       'role': role.toJson(),
       'status': status.toJson(),
-      if (invitedById != null) 'invitedById': invitedById?.toJson(),
+      if (invitedById != null) 'invitedById': invitedById,
       if (invitedBy != null) 'invitedBy': invitedBy?.toJson(),
       'invitedAt': invitedAt.toJson(),
       if (joinedAt != null) 'joinedAt': joinedAt?.toJson(),
@@ -180,11 +175,11 @@ abstract class TeamMember
       if (id != null) 'id': id?.toJson(),
       'teamId': teamId.toJson(),
       if (team != null) 'team': team?.toJsonForProtocol(),
-      'userId': userId.toJson(),
+      'userId': userId,
       if (user != null) 'user': user?.toJsonForProtocol(),
       'role': role.toJson(),
       'status': status.toJson(),
-      if (invitedById != null) 'invitedById': invitedById?.toJson(),
+      if (invitedById != null) 'invitedById': invitedById,
       if (invitedBy != null) 'invitedBy': invitedBy?.toJsonForProtocol(),
       'invitedAt': invitedAt.toJson(),
       if (joinedAt != null) 'joinedAt': joinedAt?.toJson(),
@@ -195,8 +190,8 @@ abstract class TeamMember
 
   static TeamMemberInclude include({
     _i3.TeamInclude? team,
-    _i4.AuthUserInclude? user,
-    _i4.AuthUserInclude? invitedBy,
+    _i4.UserInclude? user,
+    _i4.UserInclude? invitedBy,
   }) {
     return TeamMemberInclude._(
       team: team,
@@ -238,12 +233,12 @@ class _TeamMemberImpl extends TeamMember {
     _i1.UuidValue? id,
     required _i1.UuidValue teamId,
     _i3.Team? team,
-    required _i1.UuidValue userId,
-    _i4.AuthUser? user,
+    required int userId,
+    _i4.User? user,
     required _i5.TeamRoleType role,
     _i2.TeamMemberStatusType? status,
-    _i1.UuidValue? invitedById,
-    _i4.AuthUser? invitedBy,
+    int? invitedById,
+    _i4.User? invitedBy,
     DateTime? invitedAt,
     DateTime? joinedAt,
     DateTime? invitationExpiresAt,
@@ -270,7 +265,7 @@ class _TeamMemberImpl extends TeamMember {
     Object? id = _Undefined,
     _i1.UuidValue? teamId,
     Object? team = _Undefined,
-    _i1.UuidValue? userId,
+    int? userId,
     Object? user = _Undefined,
     _i5.TeamRoleType? role,
     _i2.TeamMemberStatusType? status,
@@ -285,13 +280,11 @@ class _TeamMemberImpl extends TeamMember {
       teamId: teamId ?? this.teamId,
       team: team is _i3.Team? ? team : this.team?.copyWith(),
       userId: userId ?? this.userId,
-      user: user is _i4.AuthUser? ? user : this.user?.copyWith(),
+      user: user is _i4.User? ? user : this.user?.copyWith(),
       role: role ?? this.role,
       status: status ?? this.status,
-      invitedById: invitedById is _i1.UuidValue?
-          ? invitedById
-          : this.invitedById,
-      invitedBy: invitedBy is _i4.AuthUser?
+      invitedById: invitedById is int? ? invitedById : this.invitedById,
+      invitedBy: invitedBy is _i4.User?
           ? invitedBy
           : this.invitedBy?.copyWith(),
       invitedAt: invitedAt ?? this.invitedAt,
@@ -312,11 +305,10 @@ class TeamMemberUpdateTable extends _i1.UpdateTable<TeamMemberTable> {
         value,
       );
 
-  _i1.ColumnValue<_i1.UuidValue, _i1.UuidValue> userId(_i1.UuidValue value) =>
-      _i1.ColumnValue(
-        table.userId,
-        value,
-      );
+  _i1.ColumnValue<int, int> userId(int value) => _i1.ColumnValue(
+    table.userId,
+    value,
+  );
 
   _i1.ColumnValue<_i5.TeamRoleType, _i5.TeamRoleType> role(
     _i5.TeamRoleType value,
@@ -332,9 +324,7 @@ class TeamMemberUpdateTable extends _i1.UpdateTable<TeamMemberTable> {
     value,
   );
 
-  _i1.ColumnValue<_i1.UuidValue, _i1.UuidValue> invitedById(
-    _i1.UuidValue? value,
-  ) => _i1.ColumnValue(
+  _i1.ColumnValue<int, int> invitedById(int? value) => _i1.ColumnValue(
     table.invitedById,
     value,
   );
@@ -365,7 +355,7 @@ class TeamMemberTable extends _i1.Table<_i1.UuidValue?> {
       'teamId',
       this,
     );
-    userId = _i1.ColumnUuid(
+    userId = _i1.ColumnInt(
       'userId',
       this,
     );
@@ -380,7 +370,7 @@ class TeamMemberTable extends _i1.Table<_i1.UuidValue?> {
       _i1.EnumSerialization.byName,
       hasDefault: true,
     );
-    invitedById = _i1.ColumnUuid(
+    invitedById = _i1.ColumnInt(
       'invitedById',
       this,
     );
@@ -406,10 +396,10 @@ class TeamMemberTable extends _i1.Table<_i1.UuidValue?> {
   /// Команда
   _i3.TeamTable? _team;
 
-  late final _i1.ColumnUuid userId;
+  late final _i1.ColumnInt userId;
 
-  /// Пользователь (связь с AuthUser из auth модуля)
-  _i4.AuthUserTable? _user;
+  /// Пользователь
+  _i4.UserTable? _user;
 
   /// Роль участника в команде (owner, admin, developer, observer)
   late final _i1.ColumnEnum<_i5.TeamRoleType> role;
@@ -417,10 +407,10 @@ class TeamMemberTable extends _i1.Table<_i1.UuidValue?> {
   /// Статус участника (invited, active)
   late final _i1.ColumnEnum<_i2.TeamMemberStatusType> status;
 
-  late final _i1.ColumnUuid invitedById;
+  late final _i1.ColumnInt invitedById;
 
   /// Пользователь, который пригласил (NULL для owner)
-  _i4.AuthUserTable? _invitedBy;
+  _i4.UserTable? _invitedBy;
 
   /// Дата приглашения
   late final _i1.ColumnDateTime invitedAt;
@@ -444,28 +434,28 @@ class TeamMemberTable extends _i1.Table<_i1.UuidValue?> {
     return _team!;
   }
 
-  _i4.AuthUserTable get user {
+  _i4.UserTable get user {
     if (_user != null) return _user!;
     _user = _i1.createRelationTable(
       relationFieldName: 'user',
       field: TeamMember.t.userId,
-      foreignField: _i4.AuthUser.t.id,
+      foreignField: _i4.User.t.id,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i4.AuthUserTable(tableRelation: foreignTableRelation),
+          _i4.UserTable(tableRelation: foreignTableRelation),
     );
     return _user!;
   }
 
-  _i4.AuthUserTable get invitedBy {
+  _i4.UserTable get invitedBy {
     if (_invitedBy != null) return _invitedBy!;
     _invitedBy = _i1.createRelationTable(
       relationFieldName: 'invitedBy',
       field: TeamMember.t.invitedById,
-      foreignField: _i4.AuthUser.t.id,
+      foreignField: _i4.User.t.id,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i4.AuthUserTable(tableRelation: foreignTableRelation),
+          _i4.UserTable(tableRelation: foreignTableRelation),
     );
     return _invitedBy!;
   }
@@ -501,8 +491,8 @@ class TeamMemberTable extends _i1.Table<_i1.UuidValue?> {
 class TeamMemberInclude extends _i1.IncludeObject {
   TeamMemberInclude._({
     _i3.TeamInclude? team,
-    _i4.AuthUserInclude? user,
-    _i4.AuthUserInclude? invitedBy,
+    _i4.UserInclude? user,
+    _i4.UserInclude? invitedBy,
   }) {
     _team = team;
     _user = user;
@@ -511,9 +501,9 @@ class TeamMemberInclude extends _i1.IncludeObject {
 
   _i3.TeamInclude? _team;
 
-  _i4.AuthUserInclude? _user;
+  _i4.UserInclude? _user;
 
-  _i4.AuthUserInclude? _invitedBy;
+  _i4.UserInclude? _invitedBy;
 
   @override
   Map<String, _i1.Include?> get includes => {
@@ -835,12 +825,12 @@ class TeamMemberAttachRowRepository {
     );
   }
 
-  /// Creates a relation between the given [TeamMember] and [AuthUser]
-  /// by setting the [TeamMember]'s foreign key `userId` to refer to the [AuthUser].
+  /// Creates a relation between the given [TeamMember] and [User]
+  /// by setting the [TeamMember]'s foreign key `userId` to refer to the [User].
   Future<void> user(
     _i1.Session session,
     TeamMember teamMember,
-    _i4.AuthUser user, {
+    _i4.User user, {
     _i1.Transaction? transaction,
   }) async {
     if (teamMember.id == null) {
@@ -858,12 +848,12 @@ class TeamMemberAttachRowRepository {
     );
   }
 
-  /// Creates a relation between the given [TeamMember] and [AuthUser]
-  /// by setting the [TeamMember]'s foreign key `invitedById` to refer to the [AuthUser].
+  /// Creates a relation between the given [TeamMember] and [User]
+  /// by setting the [TeamMember]'s foreign key `invitedById` to refer to the [User].
   Future<void> invitedBy(
     _i1.Session session,
     TeamMember teamMember,
-    _i4.AuthUser invitedBy, {
+    _i4.User invitedBy, {
     _i1.Transaction? transaction,
   }) async {
     if (teamMember.id == null) {
@@ -885,7 +875,7 @@ class TeamMemberAttachRowRepository {
 class TeamMemberDetachRowRepository {
   const TeamMemberDetachRowRepository._();
 
-  /// Detaches the relation between this [TeamMember] and the [AuthUser] set in `invitedBy`
+  /// Detaches the relation between this [TeamMember] and the [User] set in `invitedBy`
   /// by setting the [TeamMember]'s foreign key `invitedById` to `null`.
   ///
   /// This removes the association between the two models without deleting

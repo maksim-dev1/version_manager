@@ -12,8 +12,7 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
-import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
-    as _i2;
+import 'user.dart' as _i2;
 import 'team_member.dart' as _i3;
 import 'application.dart' as _i4;
 import 'package:version_manager_server/src/generated/protocol.dart' as _i5;
@@ -38,8 +37,8 @@ abstract class Team
     _i1.UuidValue? id,
     required String name,
     String? description,
-    required _i1.UuidValue ownerId,
-    _i2.AuthUser? owner,
+    required int ownerId,
+    _i2.User? owner,
     List<_i3.TeamMember>? members,
     List<_i4.Application>? applications,
     DateTime? createdAt,
@@ -53,14 +52,10 @@ abstract class Team
           : _i1.UuidValueJsonExtension.fromJson(jsonSerialization['id']),
       name: jsonSerialization['name'] as String,
       description: jsonSerialization['description'] as String?,
-      ownerId: _i1.UuidValueJsonExtension.fromJson(
-        jsonSerialization['ownerId'],
-      ),
+      ownerId: jsonSerialization['ownerId'] as int,
       owner: jsonSerialization['owner'] == null
           ? null
-          : _i5.Protocol().deserialize<_i2.AuthUser>(
-              jsonSerialization['owner'],
-            ),
+          : _i5.Protocol().deserialize<_i2.User>(jsonSerialization['owner']),
       members: jsonSerialization['members'] == null
           ? null
           : _i5.Protocol().deserialize<List<_i3.TeamMember>>(
@@ -93,10 +88,10 @@ abstract class Team
   /// Описание команды
   String? description;
 
-  _i1.UuidValue ownerId;
+  int ownerId;
 
-  /// Владелец команды (связь с AuthUser из auth модуля)
-  _i2.AuthUser? owner;
+  /// Владелец команды
+  _i2.User? owner;
 
   /// Участники команды
   List<_i3.TeamMember>? members;
@@ -120,8 +115,8 @@ abstract class Team
     _i1.UuidValue? id,
     String? name,
     String? description,
-    _i1.UuidValue? ownerId,
-    _i2.AuthUser? owner,
+    int? ownerId,
+    _i2.User? owner,
     List<_i3.TeamMember>? members,
     List<_i4.Application>? applications,
     DateTime? createdAt,
@@ -134,7 +129,7 @@ abstract class Team
       if (id != null) 'id': id?.toJson(),
       'name': name,
       if (description != null) 'description': description,
-      'ownerId': ownerId.toJson(),
+      'ownerId': ownerId,
       if (owner != null) 'owner': owner?.toJson(),
       if (members != null)
         'members': members?.toJson(valueToJson: (v) => v.toJson()),
@@ -152,7 +147,7 @@ abstract class Team
       if (id != null) 'id': id?.toJson(),
       'name': name,
       if (description != null) 'description': description,
-      'ownerId': ownerId.toJson(),
+      'ownerId': ownerId,
       if (owner != null) 'owner': owner?.toJsonForProtocol(),
       if (members != null)
         'members': members?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
@@ -166,7 +161,7 @@ abstract class Team
   }
 
   static TeamInclude include({
-    _i2.AuthUserInclude? owner,
+    _i2.UserInclude? owner,
     _i3.TeamMemberIncludeList? members,
     _i4.ApplicationIncludeList? applications,
   }) {
@@ -210,8 +205,8 @@ class _TeamImpl extends Team {
     _i1.UuidValue? id,
     required String name,
     String? description,
-    required _i1.UuidValue ownerId,
-    _i2.AuthUser? owner,
+    required int ownerId,
+    _i2.User? owner,
     List<_i3.TeamMember>? members,
     List<_i4.Application>? applications,
     DateTime? createdAt,
@@ -236,7 +231,7 @@ class _TeamImpl extends Team {
     Object? id = _Undefined,
     String? name,
     Object? description = _Undefined,
-    _i1.UuidValue? ownerId,
+    int? ownerId,
     Object? owner = _Undefined,
     Object? members = _Undefined,
     Object? applications = _Undefined,
@@ -248,7 +243,7 @@ class _TeamImpl extends Team {
       name: name ?? this.name,
       description: description is String? ? description : this.description,
       ownerId: ownerId ?? this.ownerId,
-      owner: owner is _i2.AuthUser? ? owner : this.owner?.copyWith(),
+      owner: owner is _i2.User? ? owner : this.owner?.copyWith(),
       members: members is List<_i3.TeamMember>?
           ? members
           : this.members?.map((e0) => e0.copyWith()).toList(),
@@ -274,11 +269,10 @@ class TeamUpdateTable extends _i1.UpdateTable<TeamTable> {
     value,
   );
 
-  _i1.ColumnValue<_i1.UuidValue, _i1.UuidValue> ownerId(_i1.UuidValue value) =>
-      _i1.ColumnValue(
-        table.ownerId,
-        value,
-      );
+  _i1.ColumnValue<int, int> ownerId(int value) => _i1.ColumnValue(
+    table.ownerId,
+    value,
+  );
 
   _i1.ColumnValue<DateTime, DateTime> createdAt(DateTime value) =>
       _i1.ColumnValue(
@@ -304,7 +298,7 @@ class TeamTable extends _i1.Table<_i1.UuidValue?> {
       'description',
       this,
     );
-    ownerId = _i1.ColumnUuid(
+    ownerId = _i1.ColumnInt(
       'ownerId',
       this,
     );
@@ -328,10 +322,10 @@ class TeamTable extends _i1.Table<_i1.UuidValue?> {
   /// Описание команды
   late final _i1.ColumnString description;
 
-  late final _i1.ColumnUuid ownerId;
+  late final _i1.ColumnInt ownerId;
 
-  /// Владелец команды (связь с AuthUser из auth модуля)
-  _i2.AuthUserTable? _owner;
+  /// Владелец команды
+  _i2.UserTable? _owner;
 
   /// Участники команды
   _i3.TeamMemberTable? ___members;
@@ -351,15 +345,15 @@ class TeamTable extends _i1.Table<_i1.UuidValue?> {
   /// Дата последнего обновления команды
   late final _i1.ColumnDateTime updatedAt;
 
-  _i2.AuthUserTable get owner {
+  _i2.UserTable get owner {
     if (_owner != null) return _owner!;
     _owner = _i1.createRelationTable(
       relationFieldName: 'owner',
       field: Team.t.ownerId,
-      foreignField: _i2.AuthUser.t.id,
+      foreignField: _i2.User.t.id,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i2.AuthUserTable(tableRelation: foreignTableRelation),
+          _i2.UserTable(tableRelation: foreignTableRelation),
     );
     return _owner!;
   }
@@ -455,7 +449,7 @@ class TeamTable extends _i1.Table<_i1.UuidValue?> {
 
 class TeamInclude extends _i1.IncludeObject {
   TeamInclude._({
-    _i2.AuthUserInclude? owner,
+    _i2.UserInclude? owner,
     _i3.TeamMemberIncludeList? members,
     _i4.ApplicationIncludeList? applications,
   }) {
@@ -464,7 +458,7 @@ class TeamInclude extends _i1.IncludeObject {
     _applications = applications;
   }
 
-  _i2.AuthUserInclude? _owner;
+  _i2.UserInclude? _owner;
 
   _i3.TeamMemberIncludeList? _members;
 
@@ -825,12 +819,12 @@ class TeamAttachRepository {
 class TeamAttachRowRepository {
   const TeamAttachRowRepository._();
 
-  /// Creates a relation between the given [Team] and [AuthUser]
-  /// by setting the [Team]'s foreign key `ownerId` to refer to the [AuthUser].
+  /// Creates a relation between the given [Team] and [User]
+  /// by setting the [Team]'s foreign key `ownerId` to refer to the [User].
   Future<void> owner(
     _i1.Session session,
     Team team,
-    _i2.AuthUser owner, {
+    _i2.User owner, {
     _i1.Transaction? transaction,
   }) async {
     if (team.id == null) {

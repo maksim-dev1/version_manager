@@ -13,8 +13,7 @@
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
 import 'enums/platform_type.dart' as _i2;
 import 'enums/owner_type.dart' as _i3;
-import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
-    as _i4;
+import 'user.dart' as _i4;
 import 'team.dart' as _i5;
 import 'store_link.dart' as _i6;
 import 'version.dart' as _i7;
@@ -57,8 +56,8 @@ abstract class Application implements _i1.SerializableModel {
     String? iconUrl,
     required List<_i2.PlatformType> platforms,
     required _i3.OwnerType ownerType,
-    _i1.UuidValue? ownerUserId,
-    _i4.AuthUser? ownerUser,
+    int? ownerUserId,
+    _i4.User? ownerUser,
     _i1.UuidValue? ownerTeamId,
     _i5.Team? ownerTeam,
     List<_i6.StoreLink>? storeLinks,
@@ -87,14 +86,10 @@ abstract class Application implements _i1.SerializableModel {
       ownerType: _i3.OwnerType.fromJson(
         (jsonSerialization['ownerType'] as String),
       ),
-      ownerUserId: jsonSerialization['ownerUserId'] == null
-          ? null
-          : _i1.UuidValueJsonExtension.fromJson(
-              jsonSerialization['ownerUserId'],
-            ),
+      ownerUserId: jsonSerialization['ownerUserId'] as int?,
       ownerUser: jsonSerialization['ownerUser'] == null
           ? null
-          : _i9.Protocol().deserialize<_i4.AuthUser>(
+          : _i9.Protocol().deserialize<_i4.User>(
               jsonSerialization['ownerUser'],
             ),
       ownerTeamId: jsonSerialization['ownerTeamId'] == null
@@ -165,10 +160,10 @@ abstract class Application implements _i1.SerializableModel {
   /// Тип владельца (user или team)
   _i3.OwnerType ownerType;
 
-  _i1.UuidValue? ownerUserId;
+  int? ownerUserId;
 
-  /// Владелец-пользователь (если личное приложение, связь с AuthUser из auth модуля)
-  _i4.AuthUser? ownerUser;
+  /// Владелец-пользователь (если личное приложение)
+  _i4.User? ownerUser;
 
   _i1.UuidValue? ownerTeamId;
 
@@ -213,8 +208,8 @@ abstract class Application implements _i1.SerializableModel {
     String? iconUrl,
     List<_i2.PlatformType>? platforms,
     _i3.OwnerType? ownerType,
-    _i1.UuidValue? ownerUserId,
-    _i4.AuthUser? ownerUser,
+    int? ownerUserId,
+    _i4.User? ownerUser,
     _i1.UuidValue? ownerTeamId,
     _i5.Team? ownerTeam,
     List<_i6.StoreLink>? storeLinks,
@@ -238,7 +233,7 @@ abstract class Application implements _i1.SerializableModel {
       if (iconUrl != null) 'iconUrl': iconUrl,
       'platforms': platforms.toJson(valueToJson: (v) => v.toJson()),
       'ownerType': ownerType.toJson(),
-      if (ownerUserId != null) 'ownerUserId': ownerUserId?.toJson(),
+      if (ownerUserId != null) 'ownerUserId': ownerUserId,
       if (ownerUser != null) 'ownerUser': ownerUser?.toJson(),
       if (ownerTeamId != null) 'ownerTeamId': ownerTeamId?.toJson(),
       if (ownerTeam != null) 'ownerTeam': ownerTeam?.toJson(),
@@ -275,8 +270,8 @@ class _ApplicationImpl extends Application {
     String? iconUrl,
     required List<_i2.PlatformType> platforms,
     required _i3.OwnerType ownerType,
-    _i1.UuidValue? ownerUserId,
-    _i4.AuthUser? ownerUser,
+    int? ownerUserId,
+    _i4.User? ownerUser,
     _i1.UuidValue? ownerTeamId,
     _i5.Team? ownerTeam,
     List<_i6.StoreLink>? storeLinks,
@@ -345,10 +340,8 @@ class _ApplicationImpl extends Application {
       iconUrl: iconUrl is String? ? iconUrl : this.iconUrl,
       platforms: platforms ?? this.platforms.map((e0) => e0).toList(),
       ownerType: ownerType ?? this.ownerType,
-      ownerUserId: ownerUserId is _i1.UuidValue?
-          ? ownerUserId
-          : this.ownerUserId,
-      ownerUser: ownerUser is _i4.AuthUser?
+      ownerUserId: ownerUserId is int? ? ownerUserId : this.ownerUserId,
+      ownerUser: ownerUser is _i4.User?
           ? ownerUser
           : this.ownerUser?.copyWith(),
       ownerTeamId: ownerTeamId is _i1.UuidValue?

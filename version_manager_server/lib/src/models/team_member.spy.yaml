@@ -8,8 +8,8 @@ fields:
   ### Команда
   team: Team?, relation(name=team_members_relation, onDelete=Cascade)
   
-  ### Пользователь (связь с AuthUser из auth модуля)
-  user: module:serverpod_auth_core:AuthUser?, relation(onDelete=Cascade)
+  ### Пользователь
+  user: User?, relation(onDelete=Cascade)
   
   ### Роль участника в команде (owner, admin, developer, observer)
   role: TeamRoleType
@@ -18,7 +18,7 @@ fields:
   status: TeamMemberStatusType, default=invited
   
   ### Пользователь, который пригласил (NULL для owner)
-  invitedBy: module:serverpod_auth_core:AuthUser?, relation(optional, onDelete=SetNull)
+  invitedBy: User?, relation(optional, onDelete=SetNull)
   
   ### Дата приглашения
   invitedAt: DateTime, default=now

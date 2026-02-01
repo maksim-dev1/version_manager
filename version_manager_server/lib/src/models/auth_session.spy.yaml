@@ -1,0 +1,38 @@
+# Сессия авторизации пользователя
+class: AuthSession
+table: auth_sessions
+fields:
+  # Связь с пользователем
+  userId: int, relation(parent=users)
+  
+  # Токен сессии (случайная строка)
+  token: String
+  
+  # Refresh токен для обновления сессии
+  refreshToken: String
+  
+  # Информация об устройстве
+  deviceInfo: String?
+  ipAddress: String?
+  userAgent: String?
+  
+  # Время жизни
+  expiresAt: DateTime
+  refreshExpiresAt: DateTime
+  createdAt: DateTime, default=now
+  lastActivityAt: DateTime?
+  
+  # Активна ли сессия
+  isActive: bool, default=true
+
+indexes:
+  auth_session_token_idx:
+    fields: token
+    unique: true
+  auth_session_refresh_token_idx:
+    fields: refreshToken
+    unique: true
+  auth_session_user_idx:
+    fields: userId
+  auth_session_expires_idx:
+    fields: expiresAt

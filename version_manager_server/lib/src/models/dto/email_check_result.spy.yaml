@@ -1,0 +1,6 @@
+# Результат проверки email
+class: EmailCheckResult
+fields:
+  exists: bool
+  canResendCode: bool
+  resendAvailableAt: DateTime?

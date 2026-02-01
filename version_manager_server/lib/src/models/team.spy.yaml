@@ -11,8 +11,8 @@ fields:
   ### Описание команды
   description: String?
   
-  ### Владелец команды (связь с AuthUser из auth модуля)
-  owner: module:serverpod_auth_core:AuthUser?, relation(onDelete=Cascade)
+  ### Владелец команды
+  owner: User?, relation(onDelete=Cascade)
   
   ### Участники команды
   members: List<TeamMember>?, relation(name=team_members_relation)

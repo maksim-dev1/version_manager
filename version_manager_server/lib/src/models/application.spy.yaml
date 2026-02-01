@@ -23,8 +23,8 @@ fields:
   ### Тип владельца (user или team)
   ownerType: OwnerType
   
-  ### Владелец-пользователь (если личное приложение, связь с AuthUser из auth модуля)
-  ownerUser: module:serverpod_auth_core:AuthUser?, relation(optional, onDelete=Cascade)
+  ### Владелец-пользователь (если личное приложение)
+  ownerUser: User?, relation(optional, onDelete=Cascade)
   
   ### Владелец-команда (если командное приложение)
   ownerTeam: Team?, relation(name=team_applications, optional, onDelete=Cascade)

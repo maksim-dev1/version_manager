@@ -13,8 +13,7 @@
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
 import 'enums/team_member_status_type.dart' as _i2;
 import 'team.dart' as _i3;
-import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
-    as _i4;
+import 'user.dart' as _i4;
 import 'enums/team_role_type.dart' as _i5;
 import 'package:version_manager_client/src/protocol/protocol.dart' as _i6;
 
@@ -40,12 +39,12 @@ abstract class TeamMember implements _i1.SerializableModel {
     _i1.UuidValue? id,
     required _i1.UuidValue teamId,
     _i3.Team? team,
-    required _i1.UuidValue userId,
-    _i4.AuthUser? user,
+    required int userId,
+    _i4.User? user,
     required _i5.TeamRoleType role,
     _i2.TeamMemberStatusType? status,
-    _i1.UuidValue? invitedById,
-    _i4.AuthUser? invitedBy,
+    int? invitedById,
+    _i4.User? invitedBy,
     DateTime? invitedAt,
     DateTime? joinedAt,
     DateTime? invitationExpiresAt,
@@ -60,24 +59,20 @@ abstract class TeamMember implements _i1.SerializableModel {
       team: jsonSerialization['team'] == null
           ? null
           : _i6.Protocol().deserialize<_i3.Team>(jsonSerialization['team']),
-      userId: _i1.UuidValueJsonExtension.fromJson(jsonSerialization['userId']),
+      userId: jsonSerialization['userId'] as int,
       user: jsonSerialization['user'] == null
           ? null
-          : _i6.Protocol().deserialize<_i4.AuthUser>(jsonSerialization['user']),
+          : _i6.Protocol().deserialize<_i4.User>(jsonSerialization['user']),
       role: _i5.TeamRoleType.fromJson((jsonSerialization['role'] as String)),
       status: jsonSerialization['status'] == null
           ? null
           : _i2.TeamMemberStatusType.fromJson(
               (jsonSerialization['status'] as String),
             ),
-      invitedById: jsonSerialization['invitedById'] == null
-          ? null
-          : _i1.UuidValueJsonExtension.fromJson(
-              jsonSerialization['invitedById'],
-            ),
+      invitedById: jsonSerialization['invitedById'] as int?,
       invitedBy: jsonSerialization['invitedBy'] == null
           ? null
-          : _i6.Protocol().deserialize<_i4.AuthUser>(
+          : _i6.Protocol().deserialize<_i4.User>(
               jsonSerialization['invitedBy'],
             ),
       invitedAt: jsonSerialization['invitedAt'] == null
@@ -102,10 +97,10 @@ abstract class TeamMember implements _i1.SerializableModel {
   /// Команда
   _i3.Team? team;
 
-  _i1.UuidValue userId;
+  int userId;
 
-  /// Пользователь (связь с AuthUser из auth модуля)
-  _i4.AuthUser? user;
+  /// Пользователь
+  _i4.User? user;
 
   /// Роль участника в команде (owner, admin, developer, observer)
   _i5.TeamRoleType role;
@@ -113,10 +108,10 @@ abstract class TeamMember implements _i1.SerializableModel {
   /// Статус участника (invited, active)
   _i2.TeamMemberStatusType status;
 
-  _i1.UuidValue? invitedById;
+  int? invitedById;
 
   /// Пользователь, который пригласил (NULL для owner)
-  _i4.AuthUser? invitedBy;
+  _i4.User? invitedBy;
 
   /// Дата приглашения
   DateTime invitedAt;
@@ -134,12 +129,12 @@ abstract class TeamMember implements _i1.SerializableModel {
     _i1.UuidValue? id,
     _i1.UuidValue? teamId,
     _i3.Team? team,
-    _i1.UuidValue? userId,
-    _i4.AuthUser? user,
+    int? userId,
+    _i4.User? user,
     _i5.TeamRoleType? role,
     _i2.TeamMemberStatusType? status,
-    _i1.UuidValue? invitedById,
-    _i4.AuthUser? invitedBy,
+    int? invitedById,
+    _i4.User? invitedBy,
     DateTime? invitedAt,
     DateTime? joinedAt,
     DateTime? invitationExpiresAt,
@@ -151,11 +146,11 @@ abstract class TeamMember implements _i1.SerializableModel {
       if (id != null) 'id': id?.toJson(),
       'teamId': teamId.toJson(),
       if (team != null) 'team': team?.toJson(),
-      'userId': userId.toJson(),
+      'userId': userId,
       if (user != null) 'user': user?.toJson(),
       'role': role.toJson(),
       'status': status.toJson(),
-      if (invitedById != null) 'invitedById': invitedById?.toJson(),
+      if (invitedById != null) 'invitedById': invitedById,
       if (invitedBy != null) 'invitedBy': invitedBy?.toJson(),
       'invitedAt': invitedAt.toJson(),
       if (joinedAt != null) 'joinedAt': joinedAt?.toJson(),
@@ -177,12 +172,12 @@ class _TeamMemberImpl extends TeamMember {
     _i1.UuidValue? id,
     required _i1.UuidValue teamId,
     _i3.Team? team,
-    required _i1.UuidValue userId,
-    _i4.AuthUser? user,
+    required int userId,
+    _i4.User? user,
     required _i5.TeamRoleType role,
     _i2.TeamMemberStatusType? status,
-    _i1.UuidValue? invitedById,
-    _i4.AuthUser? invitedBy,
+    int? invitedById,
+    _i4.User? invitedBy,
     DateTime? invitedAt,
     DateTime? joinedAt,
     DateTime? invitationExpiresAt,
@@ -209,7 +204,7 @@ class _TeamMemberImpl extends TeamMember {
     Object? id = _Undefined,
     _i1.UuidValue? teamId,
     Object? team = _Undefined,
-    _i1.UuidValue? userId,
+    int? userId,
     Object? user = _Undefined,
     _i5.TeamRoleType? role,
     _i2.TeamMemberStatusType? status,
@@ -224,13 +219,11 @@ class _TeamMemberImpl extends TeamMember {
       teamId: teamId ?? this.teamId,
       team: team is _i3.Team? ? team : this.team?.copyWith(),
       userId: userId ?? this.userId,
-      user: user is _i4.AuthUser? ? user : this.user?.copyWith(),
+      user: user is _i4.User? ? user : this.user?.copyWith(),
       role: role ?? this.role,
       status: status ?? this.status,
-      invitedById: invitedById is _i1.UuidValue?
-          ? invitedById
-          : this.invitedById,
-      invitedBy: invitedBy is _i4.AuthUser?
+      invitedById: invitedById is int? ? invitedById : this.invitedById,
+      invitedBy: invitedBy is _i4.User?
           ? invitedBy
           : this.invitedBy?.copyWith(),
       invitedAt: invitedAt ?? this.invitedAt,

@@ -1,0 +1,9 @@
+# Результат отправки кода верификации
+class: VerificationCodeSentResult
+fields:
+  # ID для отслеживания (не сам код!)
+  verificationId: int
+  email: String
+  expiresAt: DateTime
+  # Сколько осталось попыток
+  attemptsLeft: int

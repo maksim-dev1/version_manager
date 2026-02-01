@@ -12,34 +12,46 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
 import 'package:serverpod/protocol.dart' as _i2;
-import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
-    as _i3;
-import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
-    as _i4;
-import 'application.dart' as _i5;
-import 'enums/owner_type.dart' as _i6;
-import 'enums/platform_type.dart' as _i7;
-import 'enums/response_status_type.dart' as _i8;
-import 'enums/team_member_status_type.dart' as _i9;
-import 'enums/team_role_type.dart' as _i10;
-import 'exceptions/invalid_data_exception.dart' as _i11;
-import 'greetings/greeting.dart' as _i12;
-import 'store_link.dart' as _i13;
-import 'team.dart' as _i14;
-import 'team_member.dart' as _i15;
-import 'version.dart' as _i16;
-import 'version_check_log.dart' as _i17;
+import 'application.dart' as _i3;
+import 'auth_session.dart' as _i4;
+import 'dto/auth_response.dart' as _i5;
+import 'dto/email_check_result.dart' as _i6;
+import 'dto/verification_code_sent_result.dart' as _i7;
+import 'enums/owner_type.dart' as _i8;
+import 'enums/permission.dart' as _i9;
+import 'enums/platform_type.dart' as _i10;
+import 'enums/response_status_type.dart' as _i11;
+import 'enums/team_member_status_type.dart' as _i12;
+import 'enums/team_role_type.dart' as _i13;
+import 'enums/verification_code_type.dart' as _i14;
+import 'exceptions/invalid_data_exception.dart' as _i15;
+import 'greetings/greeting.dart' as _i16;
+import 'store_link.dart' as _i17;
+import 'team.dart' as _i18;
+import 'team_member.dart' as _i19;
+import 'user.dart' as _i20;
+import 'verification_code.dart' as _i21;
+import 'version.dart' as _i22;
+import 'version_check_log.dart' as _i23;
 export 'application.dart';
+export 'auth_session.dart';
+export 'dto/auth_response.dart';
+export 'dto/email_check_result.dart';
+export 'dto/verification_code_sent_result.dart';
 export 'enums/owner_type.dart';
+export 'enums/permission.dart';
 export 'enums/platform_type.dart';
 export 'enums/response_status_type.dart';
 export 'enums/team_member_status_type.dart';
 export 'enums/team_role_type.dart';
+export 'enums/verification_code_type.dart';
 export 'exceptions/invalid_data_exception.dart';
 export 'greetings/greeting.dart';
 export 'store_link.dart';
 export 'team.dart';
 export 'team_member.dart';
+export 'user.dart';
+export 'verification_code.dart';
 export 'version.dart';
 export 'version_check_log.dart';
 
@@ -102,9 +114,9 @@ class Protocol extends _i1.SerializationManagerServer {
         ),
         _i2.ColumnDefinition(
           name: 'ownerUserId',
-          columnType: _i2.ColumnType.uuid,
+          columnType: _i2.ColumnType.bigint,
           isNullable: true,
-          dartType: 'UuidValue?',
+          dartType: 'int?',
         ),
         _i2.ColumnDefinition(
           name: 'ownerTeamId',
@@ -157,7 +169,7 @@ class Protocol extends _i1.SerializationManagerServer {
         _i2.ForeignKeyDefinition(
           constraintName: 'applications_fk_0',
           columns: ['ownerUserId'],
-          referenceTable: 'serverpod_auth_core_user',
+          referenceTable: 'users',
           referenceTableSchema: 'public',
           referenceColumns: ['id'],
           onUpdate: _i2.ForeignKeyAction.noAction,
@@ -235,6 +247,169 @@ class Protocol extends _i1.SerializationManagerServer {
             _i2.IndexElementDefinition(
               type: _i2.IndexElementDefinitionType.column,
               definition: 'apiKeyHash',
+            ),
+          ],
+          type: 'btree',
+          isUnique: false,
+          isPrimary: false,
+        ),
+      ],
+      managed: true,
+    ),
+    _i2.TableDefinition(
+      name: 'auth_sessions',
+      dartName: 'AuthSession',
+      schema: 'public',
+      module: 'version_manager',
+      columns: [
+        _i2.ColumnDefinition(
+          name: 'id',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int?',
+          columnDefault: 'nextval(\'auth_sessions_id_seq\'::regclass)',
+        ),
+        _i2.ColumnDefinition(
+          name: 'userId',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+        _i2.ColumnDefinition(
+          name: 'token',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'refreshToken',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'deviceInfo',
+          columnType: _i2.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+        _i2.ColumnDefinition(
+          name: 'ipAddress',
+          columnType: _i2.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+        _i2.ColumnDefinition(
+          name: 'userAgent',
+          columnType: _i2.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+        _i2.ColumnDefinition(
+          name: 'expiresAt',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+        ),
+        _i2.ColumnDefinition(
+          name: 'refreshExpiresAt',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+        ),
+        _i2.ColumnDefinition(
+          name: 'createdAt',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+          columnDefault: 'CURRENT_TIMESTAMP',
+        ),
+        _i2.ColumnDefinition(
+          name: 'lastActivityAt',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: true,
+          dartType: 'DateTime?',
+        ),
+        _i2.ColumnDefinition(
+          name: 'isActive',
+          columnType: _i2.ColumnType.boolean,
+          isNullable: false,
+          dartType: 'bool',
+          columnDefault: 'true',
+        ),
+      ],
+      foreignKeys: [
+        _i2.ForeignKeyDefinition(
+          constraintName: 'auth_sessions_fk_0',
+          columns: ['userId'],
+          referenceTable: 'users',
+          referenceTableSchema: 'public',
+          referenceColumns: ['id'],
+          onUpdate: _i2.ForeignKeyAction.noAction,
+          onDelete: _i2.ForeignKeyAction.noAction,
+          matchType: null,
+        ),
+      ],
+      indexes: [
+        _i2.IndexDefinition(
+          indexName: 'auth_sessions_pkey',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'id',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: true,
+        ),
+        _i2.IndexDefinition(
+          indexName: 'auth_session_token_idx',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'token',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: false,
+        ),
+        _i2.IndexDefinition(
+          indexName: 'auth_session_refresh_token_idx',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'refreshToken',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: false,
+        ),
+        _i2.IndexDefinition(
+          indexName: 'auth_session_user_idx',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'userId',
+            ),
+          ],
+          type: 'btree',
+          isUnique: false,
+          isPrimary: false,
+        ),
+        _i2.IndexDefinition(
+          indexName: 'auth_session_expires_idx',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'expiresAt',
             ),
           ],
           type: 'btree',
@@ -372,9 +547,9 @@ class Protocol extends _i1.SerializationManagerServer {
         ),
         _i2.ColumnDefinition(
           name: 'userId',
-          columnType: _i2.ColumnType.uuid,
+          columnType: _i2.ColumnType.bigint,
           isNullable: false,
-          dartType: 'UuidValue',
+          dartType: 'int',
         ),
         _i2.ColumnDefinition(
           name: 'role',
@@ -391,9 +566,9 @@ class Protocol extends _i1.SerializationManagerServer {
         ),
         _i2.ColumnDefinition(
           name: 'invitedById',
-          columnType: _i2.ColumnType.uuid,
+          columnType: _i2.ColumnType.bigint,
           isNullable: true,
-          dartType: 'UuidValue?',
+          dartType: 'int?',
         ),
         _i2.ColumnDefinition(
           name: 'invitedAt',
@@ -429,7 +604,7 @@ class Protocol extends _i1.SerializationManagerServer {
         _i2.ForeignKeyDefinition(
           constraintName: 'team_members_fk_1',
           columns: ['userId'],
-          referenceTable: 'serverpod_auth_core_user',
+          referenceTable: 'users',
           referenceTableSchema: 'public',
           referenceColumns: ['id'],
           onUpdate: _i2.ForeignKeyAction.noAction,
@@ -439,7 +614,7 @@ class Protocol extends _i1.SerializationManagerServer {
         _i2.ForeignKeyDefinition(
           constraintName: 'team_members_fk_2',
           columns: ['invitedById'],
-          referenceTable: 'serverpod_auth_core_user',
+          referenceTable: 'users',
           referenceTableSchema: 'public',
           referenceColumns: ['id'],
           onUpdate: _i2.ForeignKeyAction.noAction,
@@ -560,9 +735,9 @@ class Protocol extends _i1.SerializationManagerServer {
         ),
         _i2.ColumnDefinition(
           name: 'ownerId',
-          columnType: _i2.ColumnType.uuid,
+          columnType: _i2.ColumnType.bigint,
           isNullable: false,
-          dartType: 'UuidValue',
+          dartType: 'int',
         ),
         _i2.ColumnDefinition(
           name: 'createdAt',
@@ -583,7 +758,7 @@ class Protocol extends _i1.SerializationManagerServer {
         _i2.ForeignKeyDefinition(
           constraintName: 'teams_fk_0',
           columns: ['ownerId'],
-          referenceTable: 'serverpod_auth_core_user',
+          referenceTable: 'users',
           referenceTableSchema: 'public',
           referenceColumns: ['id'],
           onUpdate: _i2.ForeignKeyAction.noAction,
@@ -612,6 +787,242 @@ class Protocol extends _i1.SerializationManagerServer {
             _i2.IndexElementDefinition(
               type: _i2.IndexElementDefinitionType.column,
               definition: 'ownerId',
+            ),
+          ],
+          type: 'btree',
+          isUnique: false,
+          isPrimary: false,
+        ),
+      ],
+      managed: true,
+    ),
+    _i2.TableDefinition(
+      name: 'users',
+      dartName: 'User',
+      schema: 'public',
+      module: 'version_manager',
+      columns: [
+        _i2.ColumnDefinition(
+          name: 'id',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int?',
+          columnDefault: 'nextval(\'users_id_seq\'::regclass)',
+        ),
+        _i2.ColumnDefinition(
+          name: 'email',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'passwordHash',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'firstName',
+          columnType: _i2.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+        _i2.ColumnDefinition(
+          name: 'lastName',
+          columnType: _i2.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+        _i2.ColumnDefinition(
+          name: 'displayName',
+          columnType: _i2.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+        _i2.ColumnDefinition(
+          name: 'avatarUrl',
+          columnType: _i2.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+        _i2.ColumnDefinition(
+          name: 'phone',
+          columnType: _i2.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+        _i2.ColumnDefinition(
+          name: 'isEmailVerified',
+          columnType: _i2.ColumnType.boolean,
+          isNullable: false,
+          dartType: 'bool',
+          columnDefault: 'false',
+        ),
+        _i2.ColumnDefinition(
+          name: 'isActive',
+          columnType: _i2.ColumnType.boolean,
+          isNullable: false,
+          dartType: 'bool',
+          columnDefault: 'true',
+        ),
+        _i2.ColumnDefinition(
+          name: 'lastLoginAt',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: true,
+          dartType: 'DateTime?',
+        ),
+        _i2.ColumnDefinition(
+          name: 'createdAt',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+          columnDefault: 'CURRENT_TIMESTAMP',
+        ),
+        _i2.ColumnDefinition(
+          name: 'updatedAt',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: true,
+          dartType: 'DateTime?',
+        ),
+      ],
+      foreignKeys: [],
+      indexes: [
+        _i2.IndexDefinition(
+          indexName: 'users_pkey',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'id',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: true,
+        ),
+        _i2.IndexDefinition(
+          indexName: 'user_email_idx',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'email',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: false,
+        ),
+      ],
+      managed: true,
+    ),
+    _i2.TableDefinition(
+      name: 'verification_codes',
+      dartName: 'VerificationCode',
+      schema: 'public',
+      module: 'version_manager',
+      columns: [
+        _i2.ColumnDefinition(
+          name: 'id',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int?',
+          columnDefault: 'nextval(\'verification_codes_id_seq\'::regclass)',
+        ),
+        _i2.ColumnDefinition(
+          name: 'userId',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: true,
+          dartType: 'int?',
+        ),
+        _i2.ColumnDefinition(
+          name: 'email',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'code',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'type',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'protocol:VerificationCodeType',
+        ),
+        _i2.ColumnDefinition(
+          name: 'attempts',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+          columnDefault: '0',
+        ),
+        _i2.ColumnDefinition(
+          name: 'maxAttempts',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+          columnDefault: '5',
+        ),
+        _i2.ColumnDefinition(
+          name: 'expiresAt',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+        ),
+        _i2.ColumnDefinition(
+          name: 'createdAt',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+          columnDefault: 'CURRENT_TIMESTAMP',
+        ),
+        _i2.ColumnDefinition(
+          name: 'isUsed',
+          columnType: _i2.ColumnType.boolean,
+          isNullable: false,
+          dartType: 'bool',
+          columnDefault: 'false',
+        ),
+      ],
+      foreignKeys: [],
+      indexes: [
+        _i2.IndexDefinition(
+          indexName: 'verification_codes_pkey',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'id',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: true,
+        ),
+        _i2.IndexDefinition(
+          indexName: 'verification_code_email_idx',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'email',
+            ),
+          ],
+          type: 'btree',
+          isUnique: false,
+          isPrimary: false,
+        ),
+        _i2.IndexDefinition(
+          indexName: 'verification_code_expires_idx',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'expiresAt',
             ),
           ],
           type: 'btree',
@@ -1050,8 +1461,6 @@ class Protocol extends _i1.SerializationManagerServer {
       ],
       managed: true,
     ),
-    ..._i3.Protocol.targetTableDefinitions,
-    ..._i4.Protocol.targetTableDefinitions,
     ..._i2.Protocol.targetTableDefinitions,
   ];
 
@@ -1082,158 +1491,205 @@ class Protocol extends _i1.SerializationManagerServer {
       }
     }
 
-    if (t == _i5.Application) {
-      return _i5.Application.fromJson(data) as T;
+    if (t == _i3.Application) {
+      return _i3.Application.fromJson(data) as T;
     }
-    if (t == _i6.OwnerType) {
-      return _i6.OwnerType.fromJson(data) as T;
+    if (t == _i4.AuthSession) {
+      return _i4.AuthSession.fromJson(data) as T;
     }
-    if (t == _i7.PlatformType) {
-      return _i7.PlatformType.fromJson(data) as T;
+    if (t == _i5.AuthResponse) {
+      return _i5.AuthResponse.fromJson(data) as T;
     }
-    if (t == _i8.ResponseStatusType) {
-      return _i8.ResponseStatusType.fromJson(data) as T;
+    if (t == _i6.EmailCheckResult) {
+      return _i6.EmailCheckResult.fromJson(data) as T;
     }
-    if (t == _i9.TeamMemberStatusType) {
-      return _i9.TeamMemberStatusType.fromJson(data) as T;
+    if (t == _i7.VerificationCodeSentResult) {
+      return _i7.VerificationCodeSentResult.fromJson(data) as T;
     }
-    if (t == _i10.TeamRoleType) {
-      return _i10.TeamRoleType.fromJson(data) as T;
+    if (t == _i8.OwnerType) {
+      return _i8.OwnerType.fromJson(data) as T;
     }
-    if (t == _i11.InvalidDataException) {
-      return _i11.InvalidDataException.fromJson(data) as T;
+    if (t == _i9.Permission) {
+      return _i9.Permission.fromJson(data) as T;
     }
-    if (t == _i12.Greeting) {
-      return _i12.Greeting.fromJson(data) as T;
+    if (t == _i10.PlatformType) {
+      return _i10.PlatformType.fromJson(data) as T;
     }
-    if (t == _i13.StoreLink) {
-      return _i13.StoreLink.fromJson(data) as T;
+    if (t == _i11.ResponseStatusType) {
+      return _i11.ResponseStatusType.fromJson(data) as T;
     }
-    if (t == _i14.Team) {
-      return _i14.Team.fromJson(data) as T;
+    if (t == _i12.TeamMemberStatusType) {
+      return _i12.TeamMemberStatusType.fromJson(data) as T;
     }
-    if (t == _i15.TeamMember) {
-      return _i15.TeamMember.fromJson(data) as T;
+    if (t == _i13.TeamRoleType) {
+      return _i13.TeamRoleType.fromJson(data) as T;
     }
-    if (t == _i16.Version) {
-      return _i16.Version.fromJson(data) as T;
+    if (t == _i14.VerificationCodeType) {
+      return _i14.VerificationCodeType.fromJson(data) as T;
     }
-    if (t == _i17.VersionCheckLog) {
-      return _i17.VersionCheckLog.fromJson(data) as T;
+    if (t == _i15.InvalidDataException) {
+      return _i15.InvalidDataException.fromJson(data) as T;
     }
-    if (t == _i1.getType<_i5.Application?>()) {
-      return (data != null ? _i5.Application.fromJson(data) : null) as T;
+    if (t == _i16.Greeting) {
+      return _i16.Greeting.fromJson(data) as T;
     }
-    if (t == _i1.getType<_i6.OwnerType?>()) {
-      return (data != null ? _i6.OwnerType.fromJson(data) : null) as T;
+    if (t == _i17.StoreLink) {
+      return _i17.StoreLink.fromJson(data) as T;
     }
-    if (t == _i1.getType<_i7.PlatformType?>()) {
-      return (data != null ? _i7.PlatformType.fromJson(data) : null) as T;
+    if (t == _i18.Team) {
+      return _i18.Team.fromJson(data) as T;
     }
-    if (t == _i1.getType<_i8.ResponseStatusType?>()) {
-      return (data != null ? _i8.ResponseStatusType.fromJson(data) : null) as T;
+    if (t == _i19.TeamMember) {
+      return _i19.TeamMember.fromJson(data) as T;
     }
-    if (t == _i1.getType<_i9.TeamMemberStatusType?>()) {
-      return (data != null ? _i9.TeamMemberStatusType.fromJson(data) : null)
+    if (t == _i20.User) {
+      return _i20.User.fromJson(data) as T;
+    }
+    if (t == _i21.VerificationCode) {
+      return _i21.VerificationCode.fromJson(data) as T;
+    }
+    if (t == _i22.Version) {
+      return _i22.Version.fromJson(data) as T;
+    }
+    if (t == _i23.VersionCheckLog) {
+      return _i23.VersionCheckLog.fromJson(data) as T;
+    }
+    if (t == _i1.getType<_i3.Application?>()) {
+      return (data != null ? _i3.Application.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i4.AuthSession?>()) {
+      return (data != null ? _i4.AuthSession.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i5.AuthResponse?>()) {
+      return (data != null ? _i5.AuthResponse.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i6.EmailCheckResult?>()) {
+      return (data != null ? _i6.EmailCheckResult.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i7.VerificationCodeSentResult?>()) {
+      return (data != null
+              ? _i7.VerificationCodeSentResult.fromJson(data)
+              : null)
           as T;
     }
-    if (t == _i1.getType<_i10.TeamRoleType?>()) {
-      return (data != null ? _i10.TeamRoleType.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i8.OwnerType?>()) {
+      return (data != null ? _i8.OwnerType.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i11.InvalidDataException?>()) {
-      return (data != null ? _i11.InvalidDataException.fromJson(data) : null)
+    if (t == _i1.getType<_i9.Permission?>()) {
+      return (data != null ? _i9.Permission.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i10.PlatformType?>()) {
+      return (data != null ? _i10.PlatformType.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i11.ResponseStatusType?>()) {
+      return (data != null ? _i11.ResponseStatusType.fromJson(data) : null)
           as T;
     }
-    if (t == _i1.getType<_i12.Greeting?>()) {
-      return (data != null ? _i12.Greeting.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i12.TeamMemberStatusType?>()) {
+      return (data != null ? _i12.TeamMemberStatusType.fromJson(data) : null)
+          as T;
     }
-    if (t == _i1.getType<_i13.StoreLink?>()) {
-      return (data != null ? _i13.StoreLink.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i13.TeamRoleType?>()) {
+      return (data != null ? _i13.TeamRoleType.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i14.Team?>()) {
-      return (data != null ? _i14.Team.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i14.VerificationCodeType?>()) {
+      return (data != null ? _i14.VerificationCodeType.fromJson(data) : null)
+          as T;
     }
-    if (t == _i1.getType<_i15.TeamMember?>()) {
-      return (data != null ? _i15.TeamMember.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i15.InvalidDataException?>()) {
+      return (data != null ? _i15.InvalidDataException.fromJson(data) : null)
+          as T;
     }
-    if (t == _i1.getType<_i16.Version?>()) {
-      return (data != null ? _i16.Version.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i16.Greeting?>()) {
+      return (data != null ? _i16.Greeting.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i17.VersionCheckLog?>()) {
-      return (data != null ? _i17.VersionCheckLog.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i17.StoreLink?>()) {
+      return (data != null ? _i17.StoreLink.fromJson(data) : null) as T;
     }
-    if (t == List<_i7.PlatformType>) {
+    if (t == _i1.getType<_i18.Team?>()) {
+      return (data != null ? _i18.Team.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i19.TeamMember?>()) {
+      return (data != null ? _i19.TeamMember.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i20.User?>()) {
+      return (data != null ? _i20.User.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i21.VerificationCode?>()) {
+      return (data != null ? _i21.VerificationCode.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i22.Version?>()) {
+      return (data != null ? _i22.Version.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i23.VersionCheckLog?>()) {
+      return (data != null ? _i23.VersionCheckLog.fromJson(data) : null) as T;
+    }
+    if (t == List<_i10.PlatformType>) {
       return (data as List)
-              .map((e) => deserialize<_i7.PlatformType>(e))
+              .map((e) => deserialize<_i10.PlatformType>(e))
               .toList()
           as T;
     }
-    if (t == List<_i13.StoreLink>) {
-      return (data as List).map((e) => deserialize<_i13.StoreLink>(e)).toList()
+    if (t == List<_i17.StoreLink>) {
+      return (data as List).map((e) => deserialize<_i17.StoreLink>(e)).toList()
           as T;
     }
-    if (t == _i1.getType<List<_i13.StoreLink>?>()) {
+    if (t == _i1.getType<List<_i17.StoreLink>?>()) {
       return (data != null
               ? (data as List)
-                    .map((e) => deserialize<_i13.StoreLink>(e))
+                    .map((e) => deserialize<_i17.StoreLink>(e))
                     .toList()
               : null)
           as T;
     }
-    if (t == List<_i16.Version>) {
-      return (data as List).map((e) => deserialize<_i16.Version>(e)).toList()
+    if (t == List<_i22.Version>) {
+      return (data as List).map((e) => deserialize<_i22.Version>(e)).toList()
           as T;
     }
-    if (t == _i1.getType<List<_i16.Version>?>()) {
+    if (t == _i1.getType<List<_i22.Version>?>()) {
       return (data != null
-              ? (data as List).map((e) => deserialize<_i16.Version>(e)).toList()
+              ? (data as List).map((e) => deserialize<_i22.Version>(e)).toList()
               : null)
           as T;
     }
-    if (t == List<_i17.VersionCheckLog>) {
+    if (t == List<_i23.VersionCheckLog>) {
       return (data as List)
-              .map((e) => deserialize<_i17.VersionCheckLog>(e))
+              .map((e) => deserialize<_i23.VersionCheckLog>(e))
               .toList()
           as T;
     }
-    if (t == _i1.getType<List<_i17.VersionCheckLog>?>()) {
+    if (t == _i1.getType<List<_i23.VersionCheckLog>?>()) {
       return (data != null
               ? (data as List)
-                    .map((e) => deserialize<_i17.VersionCheckLog>(e))
+                    .map((e) => deserialize<_i23.VersionCheckLog>(e))
                     .toList()
               : null)
           as T;
     }
-    if (t == List<_i15.TeamMember>) {
-      return (data as List).map((e) => deserialize<_i15.TeamMember>(e)).toList()
+    if (t == List<_i19.TeamMember>) {
+      return (data as List).map((e) => deserialize<_i19.TeamMember>(e)).toList()
           as T;
     }
-    if (t == _i1.getType<List<_i15.TeamMember>?>()) {
+    if (t == _i1.getType<List<_i19.TeamMember>?>()) {
       return (data != null
               ? (data as List)
-                    .map((e) => deserialize<_i15.TeamMember>(e))
+                    .map((e) => deserialize<_i19.TeamMember>(e))
                     .toList()
               : null)
           as T;
     }
-    if (t == List<_i5.Application>) {
-      return (data as List).map((e) => deserialize<_i5.Application>(e)).toList()
+    if (t == List<_i3.Application>) {
+      return (data as List).map((e) => deserialize<_i3.Application>(e)).toList()
           as T;
     }
-    if (t == _i1.getType<List<_i5.Application>?>()) {
+    if (t == _i1.getType<List<_i3.Application>?>()) {
       return (data != null
               ? (data as List)
-                    .map((e) => deserialize<_i5.Application>(e))
+                    .map((e) => deserialize<_i3.Application>(e))
                     .toList()
               : null)
           as T;
     }
-    try {
-      return _i3.Protocol().deserialize<T>(data, t);
-    } on _i1.DeserializationTypeNotFoundException catch (_) {}
-    try {
-      return _i4.Protocol().deserialize<T>(data, t);
-    } on _i1.DeserializationTypeNotFoundException catch (_) {}
     try {
       return _i2.Protocol().deserialize<T>(data, t);
     } on _i1.DeserializationTypeNotFoundException catch (_) {}
@@ -1242,19 +1698,27 @@ class Protocol extends _i1.SerializationManagerServer {
 
   static String? getClassNameForType(Type type) {
     return switch (type) {
-      _i5.Application => 'Application',
-      _i6.OwnerType => 'OwnerType',
-      _i7.PlatformType => 'PlatformType',
-      _i8.ResponseStatusType => 'ResponseStatusType',
-      _i9.TeamMemberStatusType => 'TeamMemberStatusType',
-      _i10.TeamRoleType => 'TeamRoleType',
-      _i11.InvalidDataException => 'InvalidDataException',
-      _i12.Greeting => 'Greeting',
-      _i13.StoreLink => 'StoreLink',
-      _i14.Team => 'Team',
-      _i15.TeamMember => 'TeamMember',
-      _i16.Version => 'Version',
-      _i17.VersionCheckLog => 'VersionCheckLog',
+      _i3.Application => 'Application',
+      _i4.AuthSession => 'AuthSession',
+      _i5.AuthResponse => 'AuthResponse',
+      _i6.EmailCheckResult => 'EmailCheckResult',
+      _i7.VerificationCodeSentResult => 'VerificationCodeSentResult',
+      _i8.OwnerType => 'OwnerType',
+      _i9.Permission => 'Permission',
+      _i10.PlatformType => 'PlatformType',
+      _i11.ResponseStatusType => 'ResponseStatusType',
+      _i12.TeamMemberStatusType => 'TeamMemberStatusType',
+      _i13.TeamRoleType => 'TeamRoleType',
+      _i14.VerificationCodeType => 'VerificationCodeType',
+      _i15.InvalidDataException => 'InvalidDataException',
+      _i16.Greeting => 'Greeting',
+      _i17.StoreLink => 'StoreLink',
+      _i18.Team => 'Team',
+      _i19.TeamMember => 'TeamMember',
+      _i20.User => 'User',
+      _i21.VerificationCode => 'VerificationCode',
+      _i22.Version => 'Version',
+      _i23.VersionCheckLog => 'VersionCheckLog',
       _ => null,
     };
   }
@@ -1272,44 +1736,52 @@ class Protocol extends _i1.SerializationManagerServer {
     }
 
     switch (data) {
-      case _i5.Application():
+      case _i3.Application():
         return 'Application';
-      case _i6.OwnerType():
+      case _i4.AuthSession():
+        return 'AuthSession';
+      case _i5.AuthResponse():
+        return 'AuthResponse';
+      case _i6.EmailCheckResult():
+        return 'EmailCheckResult';
+      case _i7.VerificationCodeSentResult():
+        return 'VerificationCodeSentResult';
+      case _i8.OwnerType():
         return 'OwnerType';
-      case _i7.PlatformType():
+      case _i9.Permission():
+        return 'Permission';
+      case _i10.PlatformType():
         return 'PlatformType';
-      case _i8.ResponseStatusType():
+      case _i11.ResponseStatusType():
         return 'ResponseStatusType';
-      case _i9.TeamMemberStatusType():
+      case _i12.TeamMemberStatusType():
         return 'TeamMemberStatusType';
-      case _i10.TeamRoleType():
+      case _i13.TeamRoleType():
         return 'TeamRoleType';
-      case _i11.InvalidDataException():
+      case _i14.VerificationCodeType():
+        return 'VerificationCodeType';
+      case _i15.InvalidDataException():
         return 'InvalidDataException';
-      case _i12.Greeting():
+      case _i16.Greeting():
         return 'Greeting';
-      case _i13.StoreLink():
+      case _i17.StoreLink():
         return 'StoreLink';
-      case _i14.Team():
+      case _i18.Team():
         return 'Team';
-      case _i15.TeamMember():
+      case _i19.TeamMember():
         return 'TeamMember';
-      case _i16.Version():
+      case _i20.User():
+        return 'User';
+      case _i21.VerificationCode():
+        return 'VerificationCode';
+      case _i22.Version():
         return 'Version';
-      case _i17.VersionCheckLog():
+      case _i23.VersionCheckLog():
         return 'VersionCheckLog';
     }
     className = _i2.Protocol().getClassNameForObject(data);
     if (className != null) {
       return 'serverpod.$className';
-    }
-    className = _i3.Protocol().getClassNameForObject(data);
-    if (className != null) {
-      return 'serverpod_auth_idp.$className';
-    }
-    className = _i4.Protocol().getClassNameForObject(data);
-    if (className != null) {
-      return 'serverpod_auth_core.$className';
     }
     return null;
   }
@@ -1321,55 +1793,71 @@ class Protocol extends _i1.SerializationManagerServer {
       return super.deserializeByClassName(data);
     }
     if (dataClassName == 'Application') {
-      return deserialize<_i5.Application>(data['data']);
+      return deserialize<_i3.Application>(data['data']);
+    }
+    if (dataClassName == 'AuthSession') {
+      return deserialize<_i4.AuthSession>(data['data']);
+    }
+    if (dataClassName == 'AuthResponse') {
+      return deserialize<_i5.AuthResponse>(data['data']);
+    }
+    if (dataClassName == 'EmailCheckResult') {
+      return deserialize<_i6.EmailCheckResult>(data['data']);
+    }
+    if (dataClassName == 'VerificationCodeSentResult') {
+      return deserialize<_i7.VerificationCodeSentResult>(data['data']);
     }
     if (dataClassName == 'OwnerType') {
-      return deserialize<_i6.OwnerType>(data['data']);
+      return deserialize<_i8.OwnerType>(data['data']);
+    }
+    if (dataClassName == 'Permission') {
+      return deserialize<_i9.Permission>(data['data']);
     }
     if (dataClassName == 'PlatformType') {
-      return deserialize<_i7.PlatformType>(data['data']);
+      return deserialize<_i10.PlatformType>(data['data']);
     }
     if (dataClassName == 'ResponseStatusType') {
-      return deserialize<_i8.ResponseStatusType>(data['data']);
+      return deserialize<_i11.ResponseStatusType>(data['data']);
     }
     if (dataClassName == 'TeamMemberStatusType') {
-      return deserialize<_i9.TeamMemberStatusType>(data['data']);
+      return deserialize<_i12.TeamMemberStatusType>(data['data']);
     }
     if (dataClassName == 'TeamRoleType') {
-      return deserialize<_i10.TeamRoleType>(data['data']);
+      return deserialize<_i13.TeamRoleType>(data['data']);
+    }
+    if (dataClassName == 'VerificationCodeType') {
+      return deserialize<_i14.VerificationCodeType>(data['data']);
     }
     if (dataClassName == 'InvalidDataException') {
-      return deserialize<_i11.InvalidDataException>(data['data']);
+      return deserialize<_i15.InvalidDataException>(data['data']);
     }
     if (dataClassName == 'Greeting') {
-      return deserialize<_i12.Greeting>(data['data']);
+      return deserialize<_i16.Greeting>(data['data']);
     }
     if (dataClassName == 'StoreLink') {
-      return deserialize<_i13.StoreLink>(data['data']);
+      return deserialize<_i17.StoreLink>(data['data']);
     }
     if (dataClassName == 'Team') {
-      return deserialize<_i14.Team>(data['data']);
+      return deserialize<_i18.Team>(data['data']);
     }
     if (dataClassName == 'TeamMember') {
-      return deserialize<_i15.TeamMember>(data['data']);
+      return deserialize<_i19.TeamMember>(data['data']);
+    }
+    if (dataClassName == 'User') {
+      return deserialize<_i20.User>(data['data']);
+    }
+    if (dataClassName == 'VerificationCode') {
+      return deserialize<_i21.VerificationCode>(data['data']);
     }
     if (dataClassName == 'Version') {
-      return deserialize<_i16.Version>(data['data']);
+      return deserialize<_i22.Version>(data['data']);
     }
     if (dataClassName == 'VersionCheckLog') {
-      return deserialize<_i17.VersionCheckLog>(data['data']);
+      return deserialize<_i23.VersionCheckLog>(data['data']);
     }
     if (dataClassName.startsWith('serverpod.')) {
       data['className'] = dataClassName.substring(10);
       return _i2.Protocol().deserializeByClassName(data);
-    }
-    if (dataClassName.startsWith('serverpod_auth_idp.')) {
-      data['className'] = dataClassName.substring(19);
-      return _i3.Protocol().deserializeByClassName(data);
-    }
-    if (dataClassName.startsWith('serverpod_auth_core.')) {
-      data['className'] = dataClassName.substring(20);
-      return _i4.Protocol().deserializeByClassName(data);
     }
     return super.deserializeByClassName(data);
   }
@@ -1377,36 +1865,30 @@ class Protocol extends _i1.SerializationManagerServer {
   @override
   _i1.Table? getTableForType(Type t) {
     {
-      var table = _i3.Protocol().getTableForType(t);
-      if (table != null) {
-        return table;
-      }
-    }
-    {
-      var table = _i4.Protocol().getTableForType(t);
-      if (table != null) {
-        return table;
-      }
-    }
-    {
       var table = _i2.Protocol().getTableForType(t);
       if (table != null) {
         return table;
       }
     }
     switch (t) {
-      case _i5.Application:
-        return _i5.Application.t;
-      case _i13.StoreLink:
-        return _i13.StoreLink.t;
-      case _i14.Team:
-        return _i14.Team.t;
-      case _i15.TeamMember:
-        return _i15.TeamMember.t;
-      case _i16.Version:
-        return _i16.Version.t;
-      case _i17.VersionCheckLog:
-        return _i17.VersionCheckLog.t;
+      case _i3.Application:
+        return _i3.Application.t;
+      case _i4.AuthSession:
+        return _i4.AuthSession.t;
+      case _i17.StoreLink:
+        return _i17.StoreLink.t;
+      case _i18.Team:
+        return _i18.Team.t;
+      case _i19.TeamMember:
+        return _i19.TeamMember.t;
+      case _i20.User:
+        return _i20.User.t;
+      case _i21.VerificationCode:
+        return _i21.VerificationCode.t;
+      case _i22.Version:
+        return _i22.Version.t;
+      case _i23.VersionCheckLog:
+        return _i23.VersionCheckLog.t;
     }
     return null;
   }
@@ -1428,10 +1910,7 @@ class Protocol extends _i1.SerializationManagerServer {
       return null;
     }
     try {
-      return _i3.Protocol().mapRecordToJson(record);
-    } catch (_) {}
-    try {
-      return _i4.Protocol().mapRecordToJson(record);
+      return _i2.Protocol().mapRecordToJson(record);
     } catch (_) {}
     throw Exception('Unsupported record type ${record.runtimeType}');
   }
