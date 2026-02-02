@@ -3,117 +3,108 @@ import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
-/// Сервис для безопасного хеширования и проверки паролей
+/// Сервис для безопасного хеширования и проверки паролей.
+///
+/// Реализует алгоритм **PBKDF2** (Password-Based Key Derivation Function 2)
+/// с **SHA-256** для защиты от атак перебора и радужных таблиц.
+///
+/// ## Особенности безопасности
+/// - **100,000 итераций** — замедляет атаки перебора
+/// - **32-байтовая соль** — предотвращает атаки радужных таблиц
+/// - **Constant-time сравнение** — защита от timing-атак
+/// - **Криптографически стойкий генератор случайных чисел**
+///
+/// ## Формат хранения
+/// Хэш сохраняется в формате: `iterations$salt$hash`
+/// - `iterations` — количество итераций PBKDF2
+/// - `salt` — соль в Base64URL кодировке
+/// - `hash` — результирующий хэш в Base64URL кодировке
+///
+/// ### Пример использования
+/// ```dart
+/// final service = PasswordService();
+///
+/// // Хеширование при регистрации
+/// final hash = service.hashPassword('userPassword123');
+///
+/// // Проверка при входе
+/// final isValid = service.verifyPassword('userPassword123', hash);
+/// ```
 class PasswordService {
   static const int _iterations = 100000;
   static const int _saltLength = 32;
-  static const int _hashLength = 32;
 
-  /// Хеширует пароль с автоматической генерацией соли
-  /// Формат: iterations$salt$hash
+  /// Хеширует пароль с автоматической генерацией криптографически стойкой соли.
+  ///
+  /// Генерирует уникальную 32-байтовую соль для каждого пароля и применяет
+  /// PBKDF2 с 100,000 итерациями для создания стойкого к атакам хэша.
+  ///
+  /// ### Параметры
+  /// - [password] — исходный пароль пользователя
+  ///
+  /// ### Возвращает
+  /// Строку в формате `iterations$salt$hash`, где:
+  /// - `iterations` — количество итераций (100,000)
+  /// - `salt` — Base64URL-кодированная соль
+  /// - `hash` — Base64URL-кодированный результирующий хэш
+  ///
+  /// ### Пример
+  /// ```dart
+  /// final hash = service.hashPassword('mySecurePassword');
+  /// // Результат: "100000$abc123$xyz789"
+  /// ```
   String hashPassword(String password) {
-    print('[PasswordService] === HASHING PASSWORD ===');
-    print('[PasswordService] Password length: ${password.length} chars');
-    print('[PasswordService] Iterations: $_iterations');
-    print('[PasswordService] Salt length: $_saltLength bytes');
-    print('[PasswordService] Expected hash length: $_hashLength bytes');
-    
-    try {
-      print('[PasswordService] Step 1: Generating salt...');
-      final salt = _generateSalt();
-      print('[PasswordService] Salt generated: ${salt.length} bytes');
-      
-      print('[PasswordService] Step 2: Running PBKDF2...');
-      final startTime = DateTime.now();
-      final hash = _pbkdf2(password, salt);
-      final duration = DateTime.now().difference(startTime);
-      
-      print('[PasswordService] PBKDF2 complete in ${duration.inMilliseconds}ms');
-      print('[PasswordService] Hash generated: ${hash.length} bytes');
-      
-      print('[PasswordService] Step 3: Encoding to base64url...');
-      final saltEncoded = base64Url.encode(salt);
-      final hashEncoded = base64Url.encode(hash);
-      
-      print('[PasswordService] Salt encoded: ${saltEncoded.length} chars');
-      print('[PasswordService] Hash encoded: ${hashEncoded.length} chars');
-      
-      final result = '$_iterations\$${saltEncoded}\$${hashEncoded}';
-      print('[PasswordService] Final hash: ${result.length} chars total');
-      print('[PasswordService] ✅ Password hashed successfully');
-      print('[PasswordService] ========================');
-      
-      return result;
-    } catch (e, stackTrace) {
-      print('[PasswordService] ❌ ERROR hashing password!');
-      print('[PasswordService] Error: $e');
-      print('[PasswordService] StackTrace: $stackTrace');
-      print('[PasswordService] ========================');
-      rethrow;
-    }
+    final salt = _generateSalt();
+    final hash = _pbkdf2(password, salt);
+    final saltEncoded = base64Url.encode(salt);
+    final hashEncoded = base64Url.encode(hash);
+    return '$_iterations\$${saltEncoded}\$${hashEncoded}';
   }
 
-  /// Проверяет пароль против хеша
+  /// Проверяет соответствие пароля сохранённому хэшу.
+  ///
+  /// Извлекает параметры из сохранённого хэша (итерации, соль) и применяет
+  /// тот же алгоритм хэширования к проверяемому паролю. Сравнение результатов
+  /// выполняется в постоянном времени для защиты от timing-атак.
+  ///
+  /// ### Параметры
+  /// - [password] — пароль для проверки
+  /// - [storedHash] — сохранённый хэш в формате `iterations$salt$hash`
+  ///
+  /// ### Возвращает
+  /// `true` если пароль соответствует хэшу, `false` в противном случае.
+  /// Также возвращает `false` при некорректном формате хэша или ошибках парсинга.
+  ///
+  /// ### Безопасность
+  /// - Использует constant-time сравнение для предотвращения timing-атак
+  /// - Graceful обработка некорректных форматов без выброса исключений
+  ///
+  /// ### Пример
+  /// ```dart
+  /// final isValid = service.verifyPassword('userPassword', storedHash);
+  /// if (isValid) {
+  ///   // Пароль верный, можно авторизовать
+  /// }
+  /// ```
   bool verifyPassword(String password, String storedHash) {
-    print('[PasswordService] === VERIFYING PASSWORD ===');
-    print('[PasswordService] Password length: ${password.length} chars');
-    print('[PasswordService] Stored hash length: ${storedHash.length} chars');
-    
     try {
-      print('[PasswordService] Step 1: Parsing stored hash...');
       final parts = storedHash.split('\$');
-      print('[PasswordService] Hash parts count: ${parts.length} (expected: 3)');
-      
-      if (parts.length != 3) {
-        print('[PasswordService] ❌ Invalid hash format!');
-        print('[PasswordService] ========================');
-        return false;
-      }
+      if (parts.length != 3) return false;
 
-      print('[PasswordService] Step 2: Decoding hash components...');
       final iterations = int.parse(parts[0]);
-      print('[PasswordService] Iterations: $iterations');
-      
       final salt = base64Url.decode(parts[1]);
-      print('[PasswordService] Salt decoded: ${salt.length} bytes');
-      
       final hash = base64Url.decode(parts[2]);
-      print('[PasswordService] Hash decoded: ${hash.length} bytes');
-
-      print('[PasswordService] Step 3: Hashing input password with same salt...');
-      final startTime = DateTime.now();
       final testHash = _pbkdf2(password, salt, iterations: iterations);
-      final duration = DateTime.now().difference(startTime);
-      
-      print('[PasswordService] Test hash generated in ${duration.inMilliseconds}ms');
-      print('[PasswordService] Test hash length: ${testHash.length} bytes');
-      
-      print('[PasswordService] Step 4: Constant-time comparison...');
-      final isMatch = _constantTimeCompare(hash, testHash);
-      
-      if (isMatch) {
-        print('[PasswordService] ✅ Password verified successfully');
-      } else {
-        print('[PasswordService] ❌ Password verification failed');
-      }
-      print('[PasswordService] ========================');
-      
-      return isMatch;
-    } catch (e, stackTrace) {
-      print('[PasswordService] ❌ ERROR verifying password!');
-      print('[PasswordService] Error: $e');
-      print('[PasswordService] StackTrace: $stackTrace');
-      print('[PasswordService] ========================');
+
+      return _constantTimeCompare(hash, testHash);
+    } catch (_) {
       return false;
     }
   }
 
   List<int> _generateSalt() {
-    print('[PasswordService]   Generating ${_saltLength} random bytes...');
     final random = Random.secure();
-    final salt = List<int>.generate(_saltLength, (_) => random.nextInt(256));
-    print('[PasswordService]   Salt first 8 bytes: ${salt.sublist(0, 8)}');
-    return salt;
+    return List<int>.generate(_saltLength, (_) => random.nextInt(256));
   }
 
   List<int> _pbkdf2(
@@ -122,65 +113,44 @@ class PasswordService {
     int? iterations,
   }) {
     iterations ??= _iterations;
-    
-    print('[PasswordService]   PBKDF2 starting...');
-    print('[PasswordService]   - Password length: ${password.length}');
-    print('[PasswordService]   - Salt length: ${salt.length}');
-    print('[PasswordService]   - Iterations: $iterations');
-    
     final passwordBytes = utf8.encode(password);
-    print('[PasswordService]   - Password encoded to ${passwordBytes.length} bytes');
-    
+
     // Начальное значение: HMAC(password, salt || INT(1))
     final blockBytes = Uint8List.fromList([...salt, 0, 0, 0, 1]);
-    print('[PasswordService]   - Block bytes length: ${blockBytes.length}');
-    
     var u = Hmac(sha256, passwordBytes).convert(blockBytes).bytes;
-    print('[PasswordService]   - Initial U length: ${u.length}');
-    
     var result = List<int>.from(u);
-    print('[PasswordService]   - Running $iterations iterations...');
-    
-    // Логируем прогресс каждые 20000 итераций
+
     for (var i = 1; i < iterations; i++) {
-      if (i % 20000 == 0) {
-        final progress = (i / iterations * 100).toStringAsFixed(1);
-        print('[PasswordService]   - Progress: $progress% ($i/$iterations)');
-      }
-      
       u = Hmac(sha256, passwordBytes).convert(u).bytes;
-      
-      // XOR текущего результата с новым U
       for (var j = 0; j < result.length; j++) {
         result[j] ^= u[j];
       }
     }
-    
-    print('[PasswordService]   - PBKDF2 iterations complete');
-    print('[PasswordService]   - Result length: ${result.length} bytes');
-    print('[PasswordService]   - Result first 8 bytes: ${result.sublist(0, 8)}');
-    
+
     return result;
   }
 
+  /// Сравнивает два массива байт в постоянном времени.
+  ///
+  /// Предотвращает timing-атаки, при которых злоумышленник может
+  /// определить корректность пароля по времени выполнения сравнения.
+  /// Время выполнения не зависит от позиции первого различающегося байта.
+  ///
+  /// ### Параметры
+  /// - [a] — первый массив для сравнения
+  /// - [b] — второй массив для сравнения
+  ///
+  /// ### Возвращает
+  /// `true` если массивы идентичны, `false` в противном случае.
+  /// Возвращает `false` если длины массивов различаются.
   bool _constantTimeCompare(List<int> a, List<int> b) {
-    print('[PasswordService]   Comparing hashes...');
-    print('[PasswordService]   - Hash A length: ${a.length}');
-    print('[PasswordService]   - Hash B length: ${b.length}');
-    
-    if (a.length != b.length) {
-      print('[PasswordService]   - Length mismatch!');
-      return false;
-    }
-    
+    if (a.length != b.length) return false;
+
     var result = 0;
     for (var i = 0; i < a.length; i++) {
       result |= a[i] ^ b[i];
     }
-    
-    final isMatch = result == 0;
-    print('[PasswordService]   - XOR result: $result (match: $isMatch)');
-    
-    return isMatch;
+
+    return result == 0;
   }
 }

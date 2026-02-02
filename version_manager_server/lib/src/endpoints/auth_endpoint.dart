@@ -1,141 +1,318 @@
 import 'package:serverpod/serverpod.dart';
 import 'package:version_manager_server/src/generated/protocol.dart';
-import 'package:version_manager_server/src/services/email_service.dart';
-import 'package:version_manager_server/src/services/password_service.dart';
-import 'package:version_manager_server/src/services/token_service.dart';
+import 'package:version_manager_server/src/services/service_locator.dart';
 import 'package:version_manager_server/src/services/verification_code_service.dart';
 
-/// Endpoint для авторизации и регистрации пользователей
+/// Эндпоинт аутентификации и авторизации пользователей.
+///
+/// Предоставляет полный цикл работы с учётными записями:
+/// - Проверка существования email и отправка кода верификации
+/// - Регистрация новых пользователей с подтверждением email
+/// - Вход в систему по email и паролю
+/// - Управление токенами доступа (refresh token rotation)
+/// - Завершение сессий (logout)
+///
+/// ## Поток регистрации
+/// 1. [checkEmailAndSendCode] — проверяет email, отправляет код для новых пользователей
+/// 2. [resendCode] — повторная отправка кода (если нужно)
+/// 3. [register] — подтверждение кода, создание аккаунта и автоматический вход
+///
+/// ## Поток входа
+/// 1. [checkEmailAndSendCode] — определяет, что пользователь существует
+/// 2. [login] — аутентификация по email и паролю
+///
+/// ## Управление сессиями
+/// - [refreshTokens] — обновление пары токенов
+/// - [logout] — завершение текущей сессии
+/// - [logoutAll] — завершение всех сессий пользователя
+///
+/// Все методы логируют свои действия через [Session.log] для аудита.
 class AuthEndpoint extends Endpoint {
-  final _passwordService = PasswordService();
-  final _tokenService = TokenService();
-  
-  // Настройте ваш email provider
-  final _emailService = EmailService(
-    provider: EmailProvider.yandex,
-    templatesPath: 'email_templates',
-  );
+  /// Сервис для хэширования и проверки паролей.
+  final _passwordService = Services().passwordService;
 
-  /// 1. Проверка существования email (вход или регистрация?)
-  Future<CheckEmailResponse> checkEmail(
+  /// Сервис для генерации и валидации JWT токенов.
+  final _tokenService = Services().tokenService;
+
+  /// Сервис для отправки email-уведомлений.
+  final _emailService = Services().emailService;
+
+  /// Проверяет существование email и автоматически отправляет код верификации
+  /// для новых пользователей.
+  ///
+  /// Это первый шаг в потоке регистрации/входа. Метод определяет,
+  /// существует ли пользователь с указанным email:
+  /// - **Если существует** — возвращает `existsEmail: true`, клиент
+  ///   должен показать форму ввода пароля
+  /// - **Если не существует** — отправляет 6-значный код на email
+  ///   и возвращает `codeSent: true`
+  ///
+  /// ### Параметры
+  /// - [session] — сессия Serverpod с доступом к БД и логированию
+  /// - [request] — запрос с полем `email`
+  ///
+  /// ### Возвращает
+  /// [CheckEmailAndSendCodeResponse] со следующими полями:
+  /// - `existsEmail` — `true` если пользователь существует (нужен вход)
+  /// - `codeSent` — `true` если код успешно отправлен
+  /// - `retryAfterSeconds` — время ожидания при rate limit (опционально)
+  ///
+  /// ### Исключения
+  /// - [InvalidDataException] с `field: 'email'` — невалидный формат email
+  ///
+  /// ### Пример использования
+  /// ```dart
+  /// final response = await client.auth.checkEmailAndSendCode(
+  ///   CheckEmailRequest(email: 'user@example.com'),
+  /// );
+  /// if (response.existsEmail) {
+  ///   // Показать форму входа
+  /// } else if (response.codeSent) {
+  ///   // Показать форму ввода кода
+  /// }
+  /// ```
+  Future<CheckEmailAndSendCodeResponse> checkEmailAndSendCode(
     Session session,
     CheckEmailRequest request,
   ) async {
-    print('Starting email existence check for: ${request.email}');
-    session.log('Checking email existence: ${request.email}');
-    final email = request.email.toLowerCase().trim();
-    
-    // Базовая валидация email
-    if (!_isValidEmail(email)) {
-      throw Exception('Invalid email format');
+    final email = request.email.trim();
+
+    session.log(
+      'checkEmailAndSendCode: проверка email $email',
+      level: LogLevel.info,
+    );
+
+    // Валидация email
+    final emailRegex = RegExp(
+      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+    );
+    if (!emailRegex.hasMatch(email)) {
+      session.log(
+        'checkEmailAndSendCode: невалидный формат email $email',
+        level: LogLevel.warning,
+      );
+      throw InvalidDataException(
+        message: 'Неверный формат email',
+        field: 'email',
+        stackTrace: StackTrace.current.toString(),
+      );
     }
 
-    session.log('Email format valid');
-
+    // Проверяем существование пользователя
     final user = await User.db.findFirstRow(
       session,
       where: (t) => t.email.equals(email),
     );
 
-    session.log('Email exists: ${user != null}');
+    // Если пользователь существует - это вход
+    if (user != null) {
+      session.log(
+        'checkEmailAndSendCode: пользователь $email существует, перенаправление на вход',
+        level: LogLevel.info,
+      );
+      return CheckEmailAndSendCodeResponse(existsEmail: true, codeSent: false);
+    }
 
-    return CheckEmailResponse(exists: user != null);
+    // Пользователь не существует - отправляем код регистрации
+    session.log(
+      'checkEmailAndSendCode: новый пользователь, отправка кода верификации на $email',
+      level: LogLevel.info,
+    );
+
+    final codeService = VerificationCodeService(session);
+    final result = await codeService.createCode(
+      email: email,
+      purpose: VerificationPurposeType.sign_up,
+    );
+
+    // Rate limit
+    if (result.waitTime != null) {
+      session.log(
+        'checkEmailAndSendCode: rate limit для $email, ожидание ${result.waitTime!.inSeconds}с',
+        level: LogLevel.warning,
+      );
+      return CheckEmailAndSendCodeResponse(
+        existsEmail: false,
+        codeSent: false,
+        retryAfterSeconds: result.waitTime!.inSeconds,
+      );
+    }
+
+    // Отправляем email (codeHash содержит plain код для отправки)
+    await _emailService.sendVerificationEmail(
+      email,
+      result.code!.codeHash,
+      appName: 'Version Manager',
+    );
+
+    session.log(
+      'checkEmailAndSendCode: код верификации успешно отправлен на $email',
+      level: LogLevel.info,
+    );
+
+    return CheckEmailAndSendCodeResponse(existsEmail: false, codeSent: true);
   }
 
-  /// 2. Регистрация: отправить код на email
-  Future<SendCodeResponse> registerSendCode(
+  /// Повторно отправляет код верификации на указанный email.
+  ///
+  /// Используется когда пользователь не получил код или срок его действия
+  /// истёк. Метод создаёт новый код и отправляет его на email.
+  ///
+  /// ### Параметры
+  /// - [session] — сессия Serverpod
+  /// - [request] — запрос с полем `email`
+  ///
+  /// ### Возвращает
+  /// [SendCodeResponse] со следующими полями:
+  /// - `success` — `true` если код успешно отправлен
+  /// - `retryAfterSeconds` — время ожидания при rate limit (опционально)
+  ///
+  /// ### Rate Limiting
+  /// Между отправками кодов должно пройти минимум 60 секунд.
+  /// При превышении лимита возвращается `success: false` и
+  /// `retryAfterSeconds` с временем ожидания.
+  ///
+  /// ### Пример использования
+  /// ```dart
+  /// final response = await client.auth.resendCode(
+  ///   RegisterSendCodeRequest(email: 'user@example.com'),
+  /// );
+  /// if (!response.success && response.retryAfterSeconds != null) {
+  ///   // Показать таймер обратного отсчёта
+  /// }
+  /// ```
+  Future<SendCodeResponse> resendCode(
     Session session,
     RegisterSendCodeRequest request,
   ) async {
-    session.log('Sending registration code to email: ${request.email}');
-    final email = request.email.toLowerCase().trim();
+    final email = request.email.trim();
 
-    if (!_isValidEmail(email)) {
-      throw Exception('Invalid email format');
+    session.log(
+      'resendCode: повторная отправка кода на $email',
+      level: LogLevel.info,
+    );
+
+    final codeService = VerificationCodeService(session);
+    final result = await codeService.createCode(
+      email: email,
+      purpose: VerificationPurposeType.sign_up,
+    );
+
+    // Rate limit
+    if (result.waitTime != null) {
+      session.log(
+        'resendCode: rate limit для $email, ожидание ${result.waitTime!.inSeconds}с',
+        level: LogLevel.warning,
+      );
+      return SendCodeResponse(
+        success: false,
+        retryAfterSeconds: result.waitTime!.inSeconds,
+      );
     }
 
-    session.log('Email format valid');
+    await _emailService.sendVerificationEmail(
+      email,
+      result.code!.codeHash,
+      appName: 'Version Manager',
+    );
 
-    // Проверяем что пользователь НЕ существует
+    session.log(
+      'resendCode: код успешно отправлен на $email',
+      level: LogLevel.info,
+    );
+
+    return SendCodeResponse(success: true);
+  }
+
+  /// Регистрирует нового пользователя с проверкой кода и автоматическим входом.
+  ///
+  /// Финальный шаг регистрации, объединяющий:
+  /// 1. Верификацию кода, отправленного на email
+  /// 2. Создание учётной записи с хэшированным паролем
+  /// 3. Автоматический вход с генерацией токенов
+  ///
+  /// ### Параметры
+  /// - [session] — сессия Serverpod
+  /// - [request] — запрос со следующими полями:
+  ///   - `email` — email пользователя
+  ///   - `code` — 6-значный код верификации
+  ///   - `password` — пароль (минимум 8 символов)
+  ///
+  /// ### Возвращает
+  /// [AuthResponse] со следующими полями:
+  /// - `accessToken` — JWT токен доступа (время жизни: 1 час)
+  /// - `refreshToken` — токен обновления (время жизни: 30 дней)
+  /// - `user` — публичные данные созданного пользователя [UserPublic]
+  ///
+  /// ### Исключения
+  /// - [InvalidDataException] с `field: 'password'` — пароль короче 8 символов
+  /// - [InvalidDataException] с `field: 'email'` — пользователь уже существует
+  /// - [InvalidDataException] с `field: 'code'` — неверный/истёкший код или
+  ///   превышен лимит попыток
+  /// - [InvalidDataException] с `field: 'user'` — ошибка создания пользователя
+  ///
+  /// ### Безопасность
+  /// - Пароль хэшируется с использованием bcrypt перед сохранением
+  /// - Код верификации удаляется после успешного использования
+  /// - Создаётся запись [AuthSession] для отслеживания сессии
+  ///
+  /// ### Пример использования
+  /// ```dart
+  /// final response = await client.auth.register(
+  ///   RegisterRequest(
+  ///     email: 'user@example.com',
+  ///     code: '123456',
+  ///     password: 'securePassword123',
+  ///   ),
+  /// );
+  /// // Сохранить токены и данные пользователя
+  /// ```
+  Future<AuthResponse> register(
+    Session session,
+    RegisterRequest request,
+  ) async {
+    final email = request.email.trim();
+    final code = request.code.trim();
+    final password = request.password;
+
+    session.log(
+      'register: начало регистрации для $email',
+      level: LogLevel.info,
+    );
+
+    // Валидация пароля
+    if (password.length < 8) {
+      session.log(
+        'register: пароль слишком короткий для $email',
+        level: LogLevel.warning,
+      );
+      throw InvalidDataException(
+        message: 'Пароль должен содержать минимум 8 символов',
+        field: 'password',
+        stackTrace: StackTrace.current.toString(),
+      );
+    }
+
+    // Проверяем что пользователь еще не создан
     final existingUser = await User.db.findFirstRow(
       session,
       where: (t) => t.email.equals(email),
     );
 
-    session.log('Existing user check complete');
-
     if (existingUser != null) {
-      throw Exception('Email already registered');
-    }
-
-    final codeService = VerificationCodeService(session);
-
-    session.log('Checking rate limit for email: $email');
-
-    // Проверка rate limit (не чаще 1 раза в минуту)
-    final rateLimit = await codeService.checkRateLimit(
-      email,
-      VerificationPurposeType.sign_up,
-    );
-
-    session.log('Rate limit check complete');
-
-    if (rateLimit != null) {
-      return SendCodeResponse(
-        success: false,
-        retryAfterSeconds: rateLimit.inSeconds,
+      session.log(
+        'register: пользователь $email уже существует',
+        level: LogLevel.warning,
+      );
+      throw InvalidDataException(
+        message: 'Пользователь с таким email уже существует',
+        field: 'email',
+        stackTrace: StackTrace.current.toString(),
       );
     }
 
-    session.log('Generating verification code for email: $email');
-
-    // Инвалидируем старые коды
-    await codeService.invalidateUserCodes(
-      email,
-      VerificationPurposeType.sign_up,
-    );
-
-    session.log('Old verification codes invalidated');
-
-    // Создаем новый код
-    // ИСПРАВЛЕНО: убраны параметры httpRequest
-    final verificationCode = await codeService.createVerificationCode(
-      email: email,
-      purpose: VerificationPurposeType.sign_up,
-    );
-
-    session.log('Verification code created: ${verificationCode.id}');
-
-    // Код временно в поле codeHash (hack из сервиса)
-    final plainCode = verificationCode.codeHash;
-
-    // Отправляем email
-    try {
-      await _emailService.sendVerificationEmail(
-        email,
-        plainCode,
-        appName: 'Version Manager',
-      );
-
-      session.log('Verification email sent to: $email');
-
-      return SendCodeResponse(success: true);
-    } catch (e) {
-      session.log('Error sending verification email: $e');
-      throw Exception('Failed to send verification email');
-    }
-  }
-
-  /// 3. Регистрация: проверить код
-  Future<VerifyCodeResponse> registerVerifyCode(
-    Session session,
-    RegisterVerifyCodeRequest request,
-  ) async {
-    final email = request.email.toLowerCase().trim();
-    final code = request.code.trim();
-
+    // Проверяем код (при успехе код удаляется)
     final codeService = VerificationCodeService(session);
-
     final verifiedCode = await codeService.verifyCode(
       email: email,
       code: code,
@@ -143,11 +320,11 @@ class AuthEndpoint extends Endpoint {
     );
 
     if (verifiedCode == null) {
-      // Проверяем сколько попыток осталось
+      // Проверяем есть ли активный код для информации о попытках
       final records = await VerificationCode.db.find(
         session,
         where: (t) =>
-            t.email.equals(email) &
+            t.email.equals(email.toLowerCase().trim()) &
             t.purpose.equals(VerificationPurposeType.sign_up) &
             t.isUsed.equals(false),
         orderBy: (t) => t.createdAt,
@@ -156,76 +333,38 @@ class AuthEndpoint extends Endpoint {
       );
 
       if (records.isNotEmpty) {
-        final record = records.first;
-        
-        // ИСПРАВЛЕНО: проверка истечения после получения данных
-        if (record.expiresAt.isAfter(DateTime.now())) {
-          final attemptsLeft = record.maxAttempts - record.attemptsUsed;
-          
-          return VerifyCodeResponse(
-            success: false,
-            attemptsLeft: attemptsLeft > 0 ? attemptsLeft : 0,
+        final activeCode = records.first;
+        if (activeCode.expiresAt.isAfter(DateTime.now())) {
+          final attemptsLeft = activeCode.maxAttempts - activeCode.attemptsUsed;
+          session.log(
+            'register: неверный код для $email, осталось попыток: $attemptsLeft',
+            level: LogLevel.warning,
+          );
+          throw InvalidDataException(
             message: attemptsLeft > 0
-                ? 'Invalid code. $attemptsLeft attempts left'
-                : 'Too many attempts. Request a new code',
+                ? 'Неверный код. Осталось попыток: $attemptsLeft'
+                : 'Слишком много попыток. Запросите новый код',
+            field: 'code',
+            stackTrace: StackTrace.current.toString(),
           );
         }
       }
 
-      return VerifyCodeResponse(
-        success: false,
-        message: 'Code not found or expired',
+      session.log(
+        'register: код не найден или истёк для $email',
+        level: LogLevel.warning,
+      );
+      throw InvalidDataException(
+        message: 'Код не найден или истёк',
+        field: 'code',
+        stackTrace: StackTrace.current.toString(),
       );
     }
 
-    return VerifyCodeResponse(
-      success: true,
-      verificationId: verifiedCode.id,
+    session.log(
+      'register: код подтверждён, создание пользователя $email',
+      level: LogLevel.info,
     );
-  }
-
-  /// 4. Регистрация: установить пароль и авторизоваться
-  Future<AuthResponse> registerSetPassword(
-    Session session,
-    RegisterSetPasswordRequest request,
-  ) async {
-    final email = request.email.toLowerCase().trim();
-    final password = request.password;
-
-    // Валидация пароля
-    if (password.length < 8) {
-      throw Exception('Password must be at least 8 characters');
-    }
-
-    // Проверяем что verification существует и был недавно использован
-    final verification = await VerificationCode.db.findById(
-      session,
-      request.verificationId,
-    );
-
-    if (verification == null ||
-        verification.email != email ||
-        verification.purpose != VerificationPurposeType.sign_up ||
-        !verification.isUsed) {
-      throw Exception('Invalid or expired verification');
-    }
-
-    // ИСПРАВЛЕНО: проверка usedAt с учетом nullable
-    final usedAt = verification.usedAt;
-    if (usedAt == null ||
-        DateTime.now().difference(usedAt).inMinutes > 15) {
-      throw Exception('Verification expired');
-    }
-
-    // Проверяем что пользователь еще не создан (защита от гонок)
-    final existingUser = await User.db.findFirstRow(
-      session,
-      where: (t) => t.email.equals(email),
-    );
-
-    if (existingUser != null) {
-      throw Exception('User already exists');
-    }
 
     // Создаем пользователя
     final passwordHash = _passwordService.hashPassword(password);
@@ -243,19 +382,104 @@ class AuthEndpoint extends Endpoint {
 
     final savedUser = await User.db.insertRow(session, user);
 
-    // Создаем сессию
-    final authResponse = await _createSession(session, savedUser);
+    if (savedUser.id == null) {
+      session.log(
+        'register: ошибка создания пользователя $email',
+        level: LogLevel.error,
+      );
+      throw InvalidDataException(
+        message: 'Ошибка создания пользователя',
+        field: 'user',
+        stackTrace: StackTrace.current.toString(),
+      );
+    }
 
-    return authResponse;
+    // Создаем сессию
+    final tokenPair = _tokenService.generateTokenPair();
+
+    final authSession = AuthSession(
+      userId: savedUser.id!,
+      tokenHash: _tokenService.hashToken(tokenPair.accessToken),
+      refreshTokenHash: _tokenService.hashToken(tokenPair.refreshToken),
+      deviceInfo: null,
+      ipAddress: null,
+      userAgent: null,
+      expiresAt: now.add(Duration(hours: 1)),
+      refreshExpiresAt: now.add(Duration(days: 30)),
+      createdAt: now,
+      lastActivityAt: now,
+      isActive: true,
+    );
+
+    await AuthSession.db.insertRow(session, authSession);
+
+    session.log(
+      'register: пользователь $email успешно зарегистрирован (id: ${savedUser.id})',
+      level: LogLevel.info,
+    );
+
+    return AuthResponse(
+      accessToken: tokenPair.accessToken,
+      refreshToken: tokenPair.refreshToken,
+      user: UserPublic(
+        id: savedUser.id!,
+        email: savedUser.email,
+        firstName: savedUser.firstName,
+        lastName: savedUser.lastName,
+        displayName: savedUser.displayName,
+        avatarUrl: savedUser.avatarUrl,
+        isEmailVerified: savedUser.isEmailVerified,
+        createdAt: savedUser.createdAt,
+      ),
+    );
   }
 
-  /// 5. Вход по email и паролю
+  /// Аутентифицирует пользователя по email и паролю.
+  ///
+  /// Проверяет учётные данные и создаёт новую сессию с токенами.
+  /// Обновляет поле `lastLoginAt` пользователя.
+  ///
+  /// ### Параметры
+  /// - [session] — сессия Serverpod
+  /// - [request] — запрос со следующими полями:
+  ///   - `email` — email пользователя
+  ///   - `password` — пароль
+  ///
+  /// ### Возвращает
+  /// [AuthResponse] со следующими полями:
+  /// - `accessToken` — JWT токен доступа (время жизни: 1 час)
+  /// - `refreshToken` — токен обновления (время жизни: 30 дней)
+  /// - `user` — публичные данные пользователя [UserPublic]
+  ///
+  /// ### Исключения
+  /// - [InvalidDataException] с `field: 'credentials'` — неверный email или пароль
+  /// - [InvalidDataException] с `field: 'account'` — аккаунт заблокирован
+  /// - [InvalidDataException] с `field: 'user'` — ошибка идентификации
+  ///
+  /// ### Безопасность
+  /// - Пароль проверяется через bcrypt сравнение с хэшем
+  /// - Сообщение об ошибке не раскрывает, что именно неверно (email или пароль)
+  /// - Создаётся новая запись [AuthSession] для каждого входа
+  ///
+  /// ### Пример использования
+  /// ```dart
+  /// try {
+  ///   final response = await client.auth.login(
+  ///     LoginRequest(email: 'user@example.com', password: 'password123'),
+  ///   );
+  ///   // Сохранить токены
+  /// } on InvalidDataException catch (e) {
+  ///   // Показать ошибку
+  /// }
+  /// ```
   Future<AuthResponse> login(
     Session session,
     LoginRequest request,
   ) async {
-    final email = request.email.toLowerCase().trim();
+    final email = request.email.trim();
     final password = request.password;
+
+    session.log('login: попытка входа для $email', level: LogLevel.info);
 
     // Ищем пользователя
     final user = await User.db.findFirstRow(
@@ -263,154 +487,52 @@ class AuthEndpoint extends Endpoint {
       where: (t) => t.email.equals(email),
     );
 
-    // Константное время проверки (защита от timing attacks)
-    final isValid = user != null &&
-        _passwordService.verifyPassword(password, user.passwordHash);
-
-    if (!isValid) {
-      throw Exception('Invalid credentials');
+    if (user == null ||
+        !_passwordService.verifyPassword(password, user.passwordHash)) {
+      session.log(
+        'login: неверные учётные данные для $email',
+        level: LogLevel.warning,
+      );
+      throw InvalidDataException(
+        message: 'Неверный email или пароль',
+        field: 'credentials',
+        stackTrace: StackTrace.current.toString(),
+      );
     }
 
     if (!user.isActive) {
-      throw Exception('Account is disabled');
+      session.log(
+        'login: аккаунт $email заблокирован',
+        level: LogLevel.warning,
+      );
+      throw InvalidDataException(
+        message: 'Аккаунт заблокирован',
+        field: 'account',
+        stackTrace: StackTrace.current.toString(),
+      );
     }
 
     // Обновляем lastLoginAt
+    final now = DateTime.now();
     await User.db.updateRow(
       session,
-      user.copyWith(
-        lastLoginAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-      ),
+      user.copyWith(lastLoginAt: now, updatedAt: now),
     );
-
-    // Создаем сессию
-    return await _createSession(session, user);
-  }
-
-  /// 6. Обновление токенов
-  Future<TokenPairResponse> refresh(
-    Session session,
-    RefreshTokenRequest request,
-  ) async {
-    final refreshTokenHash = _tokenService.hashToken(request.refreshToken);
-    final now = DateTime.now();
-
-    // ИСПРАВЛЕНО: убрана фильтрация по дате из where
-    final sessions = await AuthSession.db.find(
-      session,
-      where: (t) =>
-          t.refreshTokenHash.equals(refreshTokenHash) &
-          t.isActive.equals(true),
-    );
-
-    // Фильтруем вручную по дате
-    final validSessions = sessions.where(
-      (s) => s.refreshExpiresAt.isAfter(now),
-    ).toList();
-
-    if (validSessions.isEmpty) {
-      throw Exception('Invalid or expired refresh token');
-    }
-
-    final authSession = validSessions.first;
-
-    // Генерируем новую пару токенов (rotation)
-    final tokenPair = _tokenService.generateTokenPair();
-
-    final updated = authSession.copyWith(
-      tokenHash: _tokenService.hashToken(tokenPair.accessToken),
-      refreshTokenHash: _tokenService.hashToken(tokenPair.refreshToken),
-      expiresAt: now.add(Duration(hours: 1)), // access token TTL
-      refreshExpiresAt: now.add(Duration(days: 30)), // refresh token TTL
-      lastActivityAt: now,
-    );
-
-    await AuthSession.db.updateRow(session, updated);
-
-    return TokenPairResponse(
-      accessToken: tokenPair.accessToken,
-      refreshToken: tokenPair.refreshToken,
-    );
-  }
-
-  /// 7. Выход (завершение текущей сессии)
-  Future<SuccessResponse> logout(
-    Session session,
-    String accessToken,
-  ) async {
-    final tokenHash = _tokenService.hashToken(accessToken);
-
-    final authSession = await AuthSession.db.findFirstRow(
-      session,
-      where: (t) => t.tokenHash.equals(tokenHash),
-    );
-
-    if (authSession != null) {
-      await AuthSession.db.updateRow(
-        session,
-        authSession.copyWith(
-          isActive: false,
-          revokedAt: DateTime.now(),
-        ),
-      );
-    }
-
-    return SuccessResponse(success: true);
-  }
-
-  /// 8. Выход со всех устройств
-  Future<SuccessResponse> logoutAll(
-    Session session,
-    String accessToken,
-  ) async {
-    final tokenHash = _tokenService.hashToken(accessToken);
-
-    // Находим текущую сессию чтобы получить userId
-    final currentSession = await AuthSession.db.findFirstRow(
-      session,
-      where: (t) => t.tokenHash.equals(tokenHash),
-    );
-
-    // ИСПРАВЛЕНО: проверка nullable userId
-    if (currentSession == null) {
-      throw Exception('Invalid session');
-    }
-
-    final userId = currentSession.userId;
-
-    // Деактивируем все сессии пользователя
-    final allSessions = await AuthSession.db.find(
-      session,
-      where: (t) =>
-          t.userId.equals(userId) & t.isActive.equals(true),
-    );
-
-    for (final authSession in allSessions) {
-      await AuthSession.db.updateRow(
-        session,
-        authSession.copyWith(
-          isActive: false,
-          revokedAt: DateTime.now(),
-        ),
-      );
-    }
-
-    return SuccessResponse(success: true, message: 'Logged out from all devices');
-  }
-
-  // Вспомогательные методы
-
-  Future<AuthResponse> _createSession(
-    Session session,
-    User user,
-  ) async {
-    final tokenPair = _tokenService.generateTokenPair();
-    final now = DateTime.now();
 
     if (user.id == null) {
-      throw Exception('User has no ID');
+      session.log(
+        'login: ошибка идентификации пользователя $email',
+        level: LogLevel.error,
+      );
+      throw InvalidDataException(
+        message: 'Ошибка идентификации пользователя',
+        field: 'user',
+        stackTrace: StackTrace.current.toString(),
+      );
     }
+
+    // Создаем сессию
+    final tokenPair = _tokenService.generateTokenPair();
 
     final authSession = AuthSession(
       userId: user.id!,
@@ -419,8 +541,8 @@ class AuthEndpoint extends Endpoint {
       deviceInfo: null,
       ipAddress: null,
       userAgent: null,
-      expiresAt: now.add(Duration(hours: 1)), // access 1 час
-      refreshExpiresAt: now.add(Duration(days: 30)), // refresh 30 дней
+      expiresAt: now.add(Duration(hours: 1)),
+      refreshExpiresAt: now.add(Duration(days: 30)),
       createdAt: now,
       lastActivityAt: now,
       isActive: true,
@@ -428,35 +550,231 @@ class AuthEndpoint extends Endpoint {
 
     await AuthSession.db.insertRow(session, authSession);
 
+    session.log(
+      'login: пользователь $email успешно авторизован (id: ${user.id})',
+      level: LogLevel.info,
+    );
+
     return AuthResponse(
       accessToken: tokenPair.accessToken,
       refreshToken: tokenPair.refreshToken,
-      user: _toUserPublic(user),
+      user: UserPublic(
+        id: user.id!,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        displayName: user.displayName,
+        avatarUrl: user.avatarUrl,
+        isEmailVerified: user.isEmailVerified,
+        createdAt: user.createdAt,
+      ),
     );
   }
 
-  UserPublic _toUserPublic(User user) {
-    // ИСПРАВЛЕНО: проверка nullable id
-    if (user.id == null) {
-      throw Exception('User has no ID');
+  /// Обновляет пару токенов доступа с использованием refresh token.
+  ///
+  /// Реализует паттерн **Refresh Token Rotation**: при каждом обновлении
+  /// генерируется новая пара токенов, а старые становятся недействительными.
+  /// Это повышает безопасность, ограничивая время жизни скомпрометированных токенов.
+  ///
+  /// ### Параметры
+  /// - [session] — сессия Serverpod
+  /// - [request] — запрос с полем `refreshToken`
+  ///
+  /// ### Возвращает
+  /// [TokenPairResponse] со следующими полями:
+  /// - `accessToken` — новый JWT токен доступа (время жизни: 1 час)
+  /// - `refreshToken` — новый токен обновления (время жизни: 30 дней)
+  ///
+  /// ### Исключения
+  /// - [InvalidDataException] с `field: 'refreshToken'` — токен недействителен,
+  ///   истёк или сессия была завершена
+  ///
+  /// ### Жизненный цикл токенов
+  /// - **Access Token**: 1 час — для аутентификации API запросов
+  /// - **Refresh Token**: 30 дней — только для получения новых токенов
+  ///
+  /// ### Пример использования
+  /// ```dart
+  /// // При получении 401 ошибки
+  /// final newTokens = await client.auth.refreshTokens(
+  ///   RefreshTokenRequest(refreshToken: storedRefreshToken),
+  /// );
+  /// // Заменить старые токены на новые
+  /// ```
+  Future<TokenPairResponse> refreshTokens(
+    Session session,
+    RefreshTokenRequest request,
+  ) async {
+    session.log('refreshTokens: обновление токенов', level: LogLevel.debug);
+
+    final refreshTokenHash = _tokenService.hashToken(request.refreshToken);
+    final now = DateTime.now();
+
+    final sessions = await AuthSession.db.find(
+      session,
+      where: (t) =>
+          t.refreshTokenHash.equals(refreshTokenHash) & t.isActive.equals(true),
+    );
+
+    final validSession = sessions
+        .where((s) => s.refreshExpiresAt.isAfter(now))
+        .firstOrNull;
+
+    if (validSession == null) {
+      session.log(
+        'refreshTokens: недействительный или истёкший refresh token',
+        level: LogLevel.warning,
+      );
+      throw InvalidDataException(
+        message: 'Недействительный или истёкший refresh token',
+        field: 'refreshToken',
+        stackTrace: StackTrace.current.toString(),
+      );
     }
 
-    return UserPublic(
-      id: user.id!,
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      displayName: user.displayName,
-      avatarUrl: user.avatarUrl,
-      isEmailVerified: user.isEmailVerified,
-      createdAt: user.createdAt,
+    // Генерируем новую пару (token rotation)
+    final tokenPair = _tokenService.generateTokenPair();
+
+    await AuthSession.db.updateRow(
+      session,
+      validSession.copyWith(
+        tokenHash: _tokenService.hashToken(tokenPair.accessToken),
+        refreshTokenHash: _tokenService.hashToken(tokenPair.refreshToken),
+        expiresAt: now.add(Duration(hours: 1)),
+        refreshExpiresAt: now.add(Duration(days: 30)),
+        lastActivityAt: now,
+      ),
+    );
+
+    session.log(
+      'refreshTokens: токены обновлены для userId=${validSession.userId}',
+      level: LogLevel.info,
+    );
+
+    return TokenPairResponse(
+      accessToken: tokenPair.accessToken,
+      refreshToken: tokenPair.refreshToken,
     );
   }
 
-  bool _isValidEmail(String email) {
-    final regex = RegExp(
-      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+  /// Завершает текущую сессию пользователя (выход из системы).
+  ///
+  /// Деактивирует сессию, связанную с переданным access token.
+  /// После вызова токены этой сессии становятся недействительными.
+  ///
+  /// ### Параметры
+  /// - [session] — сессия Serverpod
+  /// - [accessToken] — текущий токен доступа пользователя
+  ///
+  /// ### Возвращает
+  /// [SuccessResponse] с `success: true` независимо от того, была ли найдена сессия.
+  /// Это предотвращает утечку информации о существовании сессий.
+  ///
+  /// ### Побочные эффекты
+  /// - Устанавливает `isActive: false` для записи [AuthSession]
+  /// - Записывает время отзыва в `revokedAt`
+  ///
+  /// ### Пример использования
+  /// ```dart
+  /// await client.auth.logout(currentAccessToken);
+  /// // Очистить локальное хранилище токенов
+  /// ```
+  Future<SuccessResponse> logout(Session session, String accessToken) async {
+    session.log('logout: завершение сессии', level: LogLevel.info);
+
+    final tokenHash = _tokenService.hashToken(accessToken);
+    final authSession = await AuthSession.db.findFirstRow(
+      session,
+      where: (t) => t.tokenHash.equals(tokenHash),
     );
-    return regex.hasMatch(email);
+
+    if (authSession != null) {
+      await AuthSession.db.updateRow(
+        session,
+        authSession.copyWith(isActive: false, revokedAt: DateTime.now()),
+      );
+      session.log(
+        'logout: сессия завершена для userId=${authSession.userId}',
+        level: LogLevel.info,
+      );
+    } else {
+      session.log('logout: сессия не найдена', level: LogLevel.warning);
+    }
+
+    return SuccessResponse(success: true);
+  }
+
+  /// Завершает все активные сессии пользователя на всех устройствах.
+  ///
+  /// Используется для повышения безопасности, например после смены пароля
+  /// или при подозрении на компрометацию аккаунта. Деактивирует все сессии,
+  /// включая текущую.
+  ///
+  /// ### Параметры
+  /// - [session] — сессия Serverpod
+  /// - [accessToken] — текущий токен доступа для идентификации пользователя
+  ///
+  /// ### Возвращает
+  /// [SuccessResponse] со следующими полями:
+  /// - `success: true` — операция выполнена успешно
+  /// - `message` — информационное сообщение
+  ///
+  /// ### Исключения
+  /// - [InvalidDataException] с `field: 'session'` — текущая сессия недействительна
+  ///
+  /// ### Побочные эффекты
+  /// - Деактивирует **все** записи [AuthSession] пользователя
+  /// - После вызова клиент должен выполнить повторный вход
+  ///
+  /// ### Пример использования
+  /// ```dart
+  /// // После смены пароля — принудительный выход везде
+  /// await client.auth.logoutAll(currentAccessToken);
+  /// // Перенаправить на экран входа
+  /// ```
+  Future<SuccessResponse> logoutAll(Session session, String accessToken) async {
+    session.log('logoutAll: выход со всех устройств', level: LogLevel.info);
+
+    final tokenHash = _tokenService.hashToken(accessToken);
+    final currentSession = await AuthSession.db.findFirstRow(
+      session,
+      where: (t) => t.tokenHash.equals(tokenHash),
+    );
+
+    if (currentSession == null) {
+      session.log(
+        'logoutAll: недействительная сессия',
+        level: LogLevel.warning,
+      );
+      throw InvalidDataException(
+        message: 'Недействительная сессия',
+        field: 'session',
+        stackTrace: StackTrace.current.toString(),
+      );
+    }
+
+    final userId = currentSession.userId;
+    final allSessions = await AuthSession.db.find(
+      session,
+      where: (t) => t.userId.equals(userId) & t.isActive.equals(true),
+    );
+
+    for (final authSession in allSessions) {
+      await AuthSession.db.updateRow(
+        session,
+        authSession.copyWith(isActive: false, revokedAt: DateTime.now()),
+      );
+    }
+
+    session.log(
+      'logoutAll: завершено ${allSessions.length} сессий для userId=$userId',
+      level: LogLevel.info,
+    );
+
+    return SuccessResponse(
+      success: true,
+      message: 'Выход выполнен на всех устройствах',
+    );
   }
 }

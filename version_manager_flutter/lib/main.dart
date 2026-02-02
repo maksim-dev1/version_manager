@@ -14,9 +14,9 @@ void main() async {
 
   // await client.auth.initialize();
 
-  runApp(MaterialApp(
-    home: AuthScreen(client: client),
-  ));
+  // runApp(MaterialApp(
+  //   home: AuthScreen(client: client),
+  // ));
 
 }
 

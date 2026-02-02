@@ -1,0 +1,5 @@
+class: RegisterRequest
+fields:
+  email: String
+  code: String
+  password: String

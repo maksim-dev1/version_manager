@@ -4,47 +4,111 @@ import 'package:mailer/smtp_server.dart';
 import 'package:serverpod/serverpod.dart';
 import 'package:version_manager_server/src/generated/protocol.dart';
 
+/// Поддерживаемые провайдеры email-сервисов.
+///
+/// Каждый провайдер имеет свои SMTP настройки и требования к аутентификации.
 enum EmailProvider {
+  /// Gmail SMTP сервис.
+  ///
+  /// **Требования:**
+  /// - Включить 2FA в аккаунте Google
+  /// - Создать App Password для приложения
+  /// - Настроить пароли в Serverpod: `gmailSmtpEmail` и `gmailSmtpAppPassword`
+  ///
+  /// **SMTP параметры:**
+  /// - Хост: smtp.gmail.com
+  /// - Порт: 465 (SSL) или 587 (TLS)
   google,
+
+  /// Яндекс.Почта SMTP сервис.
+  ///
+  /// **Требования:**
+  /// - Включить IMAP/SMTP в настройках почты
+  /// - Использовать пароль приложения (если включена 2FA)
+  /// - Настроить пароли в Serverpod: `yandexSmtpEmail` и `yandexSmtpAppPassword`
+  ///
+  /// **SMTP параметры:**
+  /// - Хост: smtp.yandex.com
+  /// - Порт: 465 (SSL)
   yandex,
 }
 
+/// Сервис для отправки email-уведомлений с поддержкой HTML-шаблонов.
+///
+/// Предоставляет единый интерфейс для работы с различными SMTP-провайдерами
+/// и автоматическую обработку HTML-шаблонов с переменными и условными блоками.
+///
+/// ## Поддерживаемые провайдеры
+/// - **Gmail** — Google SMTP с поддержкой App Passwords
+/// - **Яндекс.Почта** — Яндекс SMTP с SSL
+///
+/// ## Система шаблонов
+/// Сервис поддерживает HTML-шаблоны с:
+/// - **Переменными**: `{{VARIABLE_NAME}}` — заменяются на значения
+/// - **Условными блоками**: `{{#variable}}content{{/variable}}` — отображаются только при наличии переменной
+///
+/// ## Встроенные шаблоны
+/// - `verification.html` — для кодов подтверждения email
+/// - `password_reset.html` — для кодов восстановления пароля
+/// - `notification.html` — для общих уведомлений
+///
+/// ### Пример использования
+/// ```dart
+/// final service = EmailService(provider: EmailProvider.google);
+///
+/// // Отправка кода верификации
+/// await service.sendVerificationEmail(
+///   'user@example.com',
+///   '123456',
+///   appName: 'MyApp',
+/// );
+/// ```
 class EmailService {
+  /// SMTP провайдер для отправки email.
   final EmailProvider provider;
+
+  /// Путь к папке с HTML-шаблонами.
+  ///
+  /// По умолчанию: `email_templates`
   final String templatesPath;
 
+  /// Создаёт экземпляр сервиса email-уведомлений.
+  ///
+  /// ### Параметры
+  /// - [provider] — SMTP провайдер ([EmailProvider.google] или [EmailProvider.yandex])
+  /// - [templatesPath] — путь к папке с HTML-шаблонами (по умолчанию: `email_templates`)
+  ///
+  /// ### Требования к настройке
+  /// Перед использованием необходимо настроить пароли в Serverpod:
+  ///
+  /// **Для Gmail:**
+  /// ```yaml
+  /// # config/passwords.yaml
+  /// gmailSmtpEmail: 'your-email@gmail.com'
+  /// gmailSmtpAppPassword: 'your-app-password'
+  /// ```
+  ///
+  /// **Для Яндекс:**
+  /// ```yaml
+  /// # config/passwords.yaml
+  /// yandexSmtpEmail: 'your-email@yandex.com'
+  /// yandexSmtpAppPassword: 'your-password'
+  /// ```
   EmailService({
     required this.provider,
     this.templatesPath = 'email_templates',
   });
 
   Map<String, String> _getCredentials() {
-    print('[EmailService] Getting credentials for provider: $provider');
-    
     switch (provider) {
       case EmailProvider.google:
         final username = Serverpod.instance.getPassword('gmailSmtpEmail');
         final password = Serverpod.instance.getPassword('gmailSmtpAppPassword');
 
-        print('[EmailService] Gmail credentials check:');
-        print('  - Username exists: ${username != null}');
-        print('  - Password exists: ${password != null}');
-        
-        if (username != null) {
-          print('  - Username: $username');
-        }
-        if (password != null) {
-          // Показываем только первые и последние 3 символа для безопасности
-          final masked = password.length > 6
-              ? '${password.substring(0, 3)}...${password.substring(password.length - 3)}'
-              : '***';
-          print('  - Password (masked): $masked (length: ${password.length})');
-        }
-
         if (username == null || password == null) {
-          print('[EmailService] ERROR: Missing Gmail credentials!');
           throw InvalidDataException(
-            message: 'Email или пароль Gmail не настроены в Serverpod passwords.',
+            message:
+                'Email или пароль Gmail не настроены в Serverpod passwords.',
             field: 'Gmail SMTP',
             stackTrace: StackTrace.current.toString(),
           );
@@ -53,26 +117,14 @@ class EmailService {
 
       case EmailProvider.yandex:
         final username = Serverpod.instance.getPassword('yandexSmtpEmail');
-        final password = Serverpod.instance.getPassword('yandexSmtpAppPassword');
-
-        print('[EmailService] Yandex credentials check:');
-        print('  - Username exists: ${username != null}');
-        print('  - Password exists: ${password != null}');
-        
-        if (username != null) {
-          print('  - Username: $username');
-        }
-        if (password != null) {
-          final masked = password.length > 6
-              ? '${password.substring(0, 3)}...${password.substring(password.length - 3)}'
-              : '***';
-          print('  - Password (masked): $masked (length: ${password.length})');
-        }
+        final password = Serverpod.instance.getPassword(
+          'yandexSmtpAppPassword',
+        );
 
         if (username == null || password == null) {
-          print('[EmailService] ERROR: Missing Yandex credentials!');
           throw InvalidDataException(
-            message: 'Email или пароль Яндекс не настроены в Serverpod passwords.',
+            message:
+                'Email или пароль Яндекс не настроены в Serverpod passwords.',
             field: 'Yandex SMTP',
             stackTrace: StackTrace.current.toString(),
           );
@@ -82,25 +134,13 @@ class EmailService {
   }
 
   SmtpServer _getSmtpServer() {
-    print('[EmailService] Creating SMTP server for provider: $provider');
     final credentials = _getCredentials();
 
     switch (provider) {
       case EmailProvider.google:
-        print('[EmailService] Gmail SMTP configuration:');
-        print('  - Host: smtp.gmail.com');
-        print('  - Port: 587 (STARTTLS)');
-        print('  - Username: ${credentials['username']}');
-        
         return gmail(credentials['username']!, credentials['password']!);
 
       case EmailProvider.yandex:
-        print('[EmailService] Yandex SMTP configuration:');
-        print('  - Host: smtp.yandex.com');
-        print('  - Port: 465');
-        print('  - SSL: true');
-        print('  - Username: ${credentials['username']}');
-        
         return SmtpServer(
           'smtp.yandex.com',
           port: 465,
@@ -111,61 +151,61 @@ class EmailService {
     }
   }
 
+  /// Загружает HTML-шаблон и обрабатывает переменные и условные блоки.
+  ///
+  /// ### Система шаблонов
+  ///
+  /// **Переменные:** `{{VARIABLE_NAME}}`
+  /// - Заменяются на соответствующие значения из [variables]
+  /// - Если переменная не найдена, остаётся как есть
+  ///
+  /// **Условные блоки:** `{{#variable}}content{{/variable}}`
+  /// - Контент отображается только если переменная существует в [variables]
+  /// - Внутри блока `{{variable}}` заменяется на значение
+  /// - Поддерживается вложенность
+  ///
+  /// ### Параметры
+  /// - [templateName] — имя файла шаблона (например, 'verification.html')
+  /// - [variables] — map переменных для подстановки
+  ///
+  /// ### Возвращает
+  /// Обработанный HTML-код готовый для отправки.
+  ///
+  /// ### Исключения
+  /// - [InvalidDataException] — файл шаблона не найден
   String _loadTemplate(String templateName, Map<String, String> variables) {
-    print('[EmailService] Loading template: $templateName');
-    print('[EmailService] Template variables: ${variables.keys.join(', ')}');
-    
-    try {
-      final templateFile = File('$templatesPath/$templateName');
-      final absolutePath = templateFile.absolute.path;
-      
-      print('[EmailService] Template path: $absolutePath');
-      print('[EmailService] Template exists: ${templateFile.existsSync()}');
+    final templateFile = File('\$templatesPath/\$templateName');
 
-      if (!templateFile.existsSync()) {
-        print('[EmailService] ERROR: Template file not found!');
-        print('[EmailService] Current directory: ${Directory.current.path}');
-        print('[EmailService] Looking in: $templatesPath/');
-        
-        throw InvalidDataException(
-          message: 'HTML-шаблон не найден: $templatesPath/$templateName',
-          field: 'Email Template',
-          stackTrace: StackTrace.current.toString(),
-        );
-      }
-
-      var html = templateFile.readAsStringSync();
-      print('[EmailService] Template loaded successfully (${html.length} chars)');
-
-      // Замена переменных
-      variables.forEach((key, value) {
-        html = html.replaceAll('{{$key}}', value);
-      });
-
-      // Обработка условных блоков
-      html = html.replaceAllMapped(
-        RegExp(r'\{\{#(\w+)\}\}(.*?)\{\{/\1\}\}', dotAll: true),
-        (match) {
-          final varName = match.group(1)!;
-          final content = match.group(2)!;
-
-          if (variables.containsKey(varName)) {
-            return content.replaceAll('{{$varName}}', variables[varName]!);
-          }
-          return '';
-        },
-      );
-
-      print('[EmailService] Template processed successfully');
-      return html;
-    } catch (e) {
-      print('[EmailService] ERROR loading template: $e');
+    if (!templateFile.existsSync()) {
       throw InvalidDataException(
-        message: 'Ошибка при загрузке шаблона $templateName: $e',
+        message: 'HTML-шаблон не найден: \$templatesPath/\$templateName',
         field: 'Email Template',
         stackTrace: StackTrace.current.toString(),
       );
     }
+
+    var html = templateFile.readAsStringSync();
+
+    // Замена переменных
+    variables.forEach((key, value) {
+      html = html.replaceAll('{{\$key}}', value);
+    });
+
+    // Обработка условных блоков
+    html = html.replaceAllMapped(
+      RegExp(r'\{\{#(\w+)\}\}(.*?)\{\{/\1\}\}', dotAll: true),
+      (match) {
+        final varName = match.group(1)!;
+        final content = match.group(2)!;
+
+        if (variables.containsKey(varName)) {
+          return content.replaceAll('{{\$varName}}', variables[varName]!);
+        }
+        return '';
+      },
+    );
+
+    return html;
   }
 
   Future<bool> _sendEmail({
@@ -174,20 +214,10 @@ class EmailService {
     required String htmlBody,
     String? textBody,
   }) async {
-    print('[EmailService] ========== SENDING EMAIL ==========');
-    print('[EmailService] To: $recipientEmail');
-    print('[EmailService] Subject: $subject');
-    print('[EmailService] HTML body length: ${htmlBody.length} chars');
-    print('[EmailService] Text body: ${textBody != null ? textBody.substring(0, textBody.length > 50 ? 50 : textBody.length) : 'none'}');
-    
     try {
-      print('[EmailService] Step 1: Getting SMTP server configuration...');
       final smtpServer = _getSmtpServer();
-      
-      print('[EmailService] Step 2: Getting credentials...');
       final credentials = _getCredentials();
 
-      print('[EmailService] Step 3: Creating email message...');
       final message = mailer.Message()
         ..from = mailer.Address(credentials['username']!)
         ..recipients.add(recipientEmail)
@@ -195,47 +225,15 @@ class EmailService {
         ..text = textBody
         ..html = htmlBody;
 
-      print('[EmailService] Message created:');
-      print('  - From: ${message.from}');
-      print('  - To: ${message.recipients}');
-      print('  - Subject: ${message.subject}');
-
-      print('[EmailService] Step 4: Connecting to SMTP server and sending...');
-      print('[EmailService] This may take up to 60 seconds...');
-      
-      final startTime = DateTime.now();
-      final sendReport = await mailer.send(message, smtpServer);
-      final duration = DateTime.now().difference(startTime);
-      
-      print('[EmailService] ✅ Email sent successfully!');
-      print('[EmailService] Duration: ${duration.inMilliseconds}ms');
-      print('[EmailService] Send report: $sendReport');
-      print('[EmailService] ====================================');
-      
+      await mailer.send(message, smtpServer);
       return true;
     } on mailer.MailerException catch (e) {
-      print('[EmailService] ❌ MailerException occurred!');
-      print('[EmailService] Type: ${e.runtimeType}');
-      print('[EmailService] Message: ${e.message}');
-      print('[EmailService] Problems:');
-      for (var problem in e.problems) {
-        print('  - Code: ${problem.code}');
-        print('    Message: ${problem.msg}');
-      }
-      print('[EmailService] ====================================');
-      
       throw InvalidDataException(
         message: 'Ошибка при отправке email: ${e.message}',
         field: 'Email Service',
         stackTrace: StackTrace.current.toString(),
       );
     } catch (e, stackTrace) {
-      print('[EmailService] ❌ Unexpected error!');
-      print('[EmailService] Type: ${e.runtimeType}');
-      print('[EmailService] Error: $e');
-      print('[EmailService] StackTrace: $stackTrace');
-      print('[EmailService] ====================================');
-      
       throw InvalidDataException(
         message: 'Неожиданная ошибка при отправке email: $e',
         field: 'Email Service',
@@ -244,16 +242,39 @@ class EmailService {
     }
   }
 
+  /// Отправляет email с кодом верификации на указанный адрес.
+  ///
+  /// Использует HTML-шаблон `verification.html` для красивого оформления сообщения.
+  /// Код верификации отображается крупным шрифтом для удобства ввода.
+  ///
+  /// ### Параметры
+  /// - [email] — адрес получателя
+  /// - [code] — 6-значный код верификации (обычно генерируется [VerificationCodeService])
+  /// - [appName] — название приложения для персонализации (по умолчанию: 'YourApp')
+  ///
+  /// ### Возвращает
+  /// `true` если email успешно отправлен, иначе выбрасывает [InvalidDataException].
+  ///
+  /// ### Шаблон переменных
+  /// - `{{CODE}}` — код верификации
+  /// - `{{APP_NAME}}` — название приложения
+  ///
+  /// ### Исключения
+  /// - [InvalidDataException] — ошибка отправки или отсутствующий шаблон
+  ///
+  /// ### Пример
+  /// ```dart
+  /// await emailService.sendVerificationEmail(
+  ///   'user@example.com',
+  ///   '123456',
+  ///   appName: 'Version Manager',
+  /// );
+  /// ```
   Future<bool> sendVerificationEmail(
     String email,
     String code, {
     String appName = 'YourApp',
   }) async {
-    print('[EmailService] === VERIFICATION EMAIL ===');
-    print('[EmailService] Email: $email');
-    print('[EmailService] Code: $code');
-    print('[EmailService] App: $appName');
-    
     final html = _loadTemplate('verification.html', {
       'CODE': code,
       'APP_NAME': appName,
@@ -263,20 +284,44 @@ class EmailService {
       recipientEmail: email,
       subject: 'Подтверждение email',
       htmlBody: html,
-      textBody: 'Ваш код подтверждения: $code',
+      textBody: 'Ваш код подтверждения: \$code',
     );
   }
 
+  /// Отправляет email с кодом восстановления пароля.
+  ///
+  /// Использует HTML-шаблон `password_reset.html` с персонализированным обращением
+  /// и инструкциями по восстановлению пароля.
+  ///
+  /// ### Параметры
+  /// - [email] — адрес получателя
+  /// - [code] — код восстановления пароля
+  /// - [username] — имя пользователя для персонализации (опционально)
+  /// - [appName] — название приложения (по умолчанию: 'YourApp')
+  ///
+  /// ### Возвращает
+  /// `true` если email успешно отправлен.
+  ///
+  /// ### Шаблон переменных
+  /// - `{{RESET_CODE}}` — код восстановления
+  /// - `{{APP_NAME}}` — название приложения
+  /// - `{{#USERNAME}}{{USERNAME}}{{/USERNAME}}` — условный блок с именем пользователя
+  ///
+  /// ### Пример
+  /// ```dart
+  /// await emailService.sendPasswordResetEmail(
+  ///   'user@example.com',
+  ///   'RESET123',
+  ///   username: 'Иван',
+  ///   appName: 'MyApp',
+  /// );
+  /// ```
   Future<bool> sendPasswordResetEmail(
     String email,
     String code, {
     String? username,
     String appName = 'YourApp',
   }) async {
-    print('[EmailService] === PASSWORD RESET EMAIL ===');
-    print('[EmailService] Email: $email');
-    print('[EmailService] Code: $code');
-    
     final variables = {
       'RESET_CODE': code,
       'APP_NAME': appName,
@@ -292,10 +337,56 @@ class EmailService {
       recipientEmail: email,
       subject: 'Восстановление пароля',
       htmlBody: html,
-      textBody: 'Код восстановления пароля: $code',
+      textBody: 'Код восстановления пароля: \$code',
     );
   }
 
+  /// Отправляет персонализированное уведомление с поддержкой множества параметров.
+  ///
+  /// Самый гибкий метод для отправки различных типов уведомлений:
+  /// информационных сообщений, приглашений, напоминаний и др.
+  /// Использует шаблон `notification.html` с полной поддержкой кастомизации.
+  ///
+  /// ### Обязательные параметры
+  /// - [email] — адрес получателя
+  /// - [title] — заголовок уведомления (используется также как subject)
+  /// - [message] — основной текст сообщения
+  ///
+  /// ### Опциональные параметры
+  /// - [icon] — emoji-иконка для заголовка (по умолчанию: '📬')
+  /// - [appName] — название приложения (по умолчанию: 'YourApp')
+  /// - [username] — имя получателя для персонализации
+  /// - [ctaUrl] — ссылка для Call-To-Action кнопки
+  /// - [ctaText] — текст CTA кнопки (по умолчанию: 'Перейти')
+  /// - [infoMessage] — дополнительная информация
+  /// - [supportUrl] — ссылка на поддержку
+  /// - [unsubscribeUrl] — ссылка отписки от уведомлений
+  ///
+  /// ### Возвращает
+  /// `true` если уведомление успешно отправлено.
+  ///
+  /// ### Шаблон переменных
+  /// - `{{TITLE}}`, `{{MESSAGE}}`, `{{ICON}}`, `{{APP_NAME}}`, `{{TIMESTAMP}}`
+  /// - Условные блоки: `{{#USERNAME}}`, `{{#CTA_URL}}`, `{{#INFO_MESSAGE}}`, и др.
+  ///
+  /// ### Примеры использования
+  /// ```dart
+  /// // Простое уведомление
+  /// await emailService.sendNotification(
+  ///   email: 'user@example.com',
+  ///   title: 'Добро пожаловать!',
+  ///   message: 'Ваш аккаунт успешно создан.',
+  /// );
+  ///
+  /// // Уведомление с CTA
+  /// await emailService.sendNotification(
+  ///   email: 'user@example.com',
+  ///   title: 'Подтвердите действие',
+  ///   message: 'Нажмите кнопку для подтверждения.',
+  ///   ctaUrl: 'https://app.com/confirm/123',
+  ///   ctaText: 'Подтвердить',
+  /// );
+  /// ```
   Future<bool> sendNotification({
     required String email,
     required String title,
@@ -309,10 +400,6 @@ class EmailService {
     String? supportUrl,
     String? unsubscribeUrl,
   }) async {
-    print('[EmailService] === NOTIFICATION EMAIL ===');
-    print('[EmailService] Email: $email');
-    print('[EmailService] Title: $title');
-    
     final variables = {
       'TITLE': title,
       'MESSAGE': message,

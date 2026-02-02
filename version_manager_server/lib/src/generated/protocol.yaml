@@ -1,10 +1,9 @@
 auth:
-  - checkEmail:
-  - registerSendCode:
-  - registerVerifyCode:
-  - registerSetPassword:
+  - checkEmailAndSendCode:
+  - resendCode:
+  - register:
   - login:
-  - refresh:
+  - refreshTokens:
   - logout:
   - logoutAll:
 greeting:

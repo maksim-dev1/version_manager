@@ -12,7 +12,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
 import 'dart:async' as _i2;
-import 'package:version_manager_client/src/protocol/auth/check_email_response.dart'
+import 'package:version_manager_client/src/protocol/auth/check_email_and_send_code_response.dart'
     as _i3;
 import 'package:version_manager_client/src/protocol/auth/check_email.dart'
     as _i4;
@@ -20,24 +20,19 @@ import 'package:version_manager_client/src/protocol/auth/send_code_response.dart
     as _i5;
 import 'package:version_manager_client/src/protocol/auth/register_send_code.dart'
     as _i6;
-import 'package:version_manager_client/src/protocol/auth/verify_code_response.dart'
-    as _i7;
-import 'package:version_manager_client/src/protocol/auth/register_verify_code.dart'
-    as _i8;
 import 'package:version_manager_client/src/protocol/auth/auth_response.dart'
-    as _i9;
-import 'package:version_manager_client/src/protocol/auth/register_set_password.dart'
-    as _i10;
-import 'package:version_manager_client/src/protocol/auth/login.dart' as _i11;
+    as _i7;
+import 'package:version_manager_client/src/protocol/auth/register.dart' as _i8;
+import 'package:version_manager_client/src/protocol/auth/login.dart' as _i9;
 import 'package:version_manager_client/src/protocol/auth/token_pair_response.dart'
-    as _i12;
+    as _i10;
 import 'package:version_manager_client/src/protocol/auth/refresh_token.dart'
-    as _i13;
+    as _i11;
 import 'package:version_manager_client/src/protocol/auth/common_success.dart'
-    as _i14;
+    as _i12;
 import 'package:version_manager_client/src/protocol/greetings/greeting.dart'
-    as _i15;
-import 'protocol.dart' as _i16;
+    as _i13;
+import 'protocol.dart' as _i14;
 
 /// Endpoint для авторизации и регистрации пользователей
 /// {@category Endpoint}
@@ -47,70 +42,61 @@ class EndpointAuth extends _i1.EndpointRef {
   @override
   String get name => 'auth';
 
-  /// 1. Проверка существования email (вход или регистрация?)
-  _i2.Future<_i3.CheckEmailResponse> checkEmail(
+  /// 1. Проверяет email и автоматически отправляет код если нужна регистрация
+  _i2.Future<_i3.CheckEmailAndSendCodeResponse> checkEmailAndSendCode(
     _i4.CheckEmailRequest request,
-  ) => caller.callServerEndpoint<_i3.CheckEmailResponse>(
+  ) => caller.callServerEndpoint<_i3.CheckEmailAndSendCodeResponse>(
     'auth',
-    'checkEmail',
+    'checkEmailAndSendCode',
     {'request': request},
   );
 
-  /// 2. Регистрация: отправить код на email
-  _i2.Future<_i5.SendCodeResponse> registerSendCode(
+  /// 2. Повторная отправка кода
+  _i2.Future<_i5.SendCodeResponse> resendCode(
     _i6.RegisterSendCodeRequest request,
   ) => caller.callServerEndpoint<_i5.SendCodeResponse>(
     'auth',
-    'registerSendCode',
+    'resendCode',
     {'request': request},
   );
 
-  /// 3. Регистрация: проверить код
-  _i2.Future<_i7.VerifyCodeResponse> registerVerifyCode(
-    _i8.RegisterVerifyCodeRequest request,
-  ) => caller.callServerEndpoint<_i7.VerifyCodeResponse>(
-    'auth',
-    'registerVerifyCode',
-    {'request': request},
-  );
+  /// 3. Регистрация: проверка кода + установка пароля + автоматический вход
+  /// Объединяет verifyCode и setPasswordAndLogin в один вызов
+  _i2.Future<_i7.AuthResponse> register(_i8.RegisterRequest request) =>
+      caller.callServerEndpoint<_i7.AuthResponse>(
+        'auth',
+        'register',
+        {'request': request},
+      );
 
-  /// 4. Регистрация: установить пароль и авторизоваться
-  _i2.Future<_i9.AuthResponse> registerSetPassword(
-    _i10.RegisterSetPasswordRequest request,
-  ) => caller.callServerEndpoint<_i9.AuthResponse>(
-    'auth',
-    'registerSetPassword',
-    {'request': request},
-  );
-
-  /// 5. Вход по email и паролю
-  _i2.Future<_i9.AuthResponse> login(_i11.LoginRequest request) =>
-      caller.callServerEndpoint<_i9.AuthResponse>(
+  /// 4. Вход по email и паролю
+  _i2.Future<_i7.AuthResponse> login(_i9.LoginRequest request) =>
+      caller.callServerEndpoint<_i7.AuthResponse>(
         'auth',
         'login',
         {'request': request},
       );
 
-  /// 6. Обновление токенов
-  _i2.Future<_i12.TokenPairResponse> refresh(
-    _i13.RefreshTokenRequest request,
-  ) => caller.callServerEndpoint<_i12.TokenPairResponse>(
+  /// 5. Обновление токенов
+  _i2.Future<_i10.TokenPairResponse> refreshTokens(
+    _i11.RefreshTokenRequest request,
+  ) => caller.callServerEndpoint<_i10.TokenPairResponse>(
     'auth',
-    'refresh',
+    'refreshTokens',
     {'request': request},
   );
 
-  /// 7. Выход (завершение текущей сессии)
-  _i2.Future<_i14.SuccessResponse> logout(String accessToken) =>
-      caller.callServerEndpoint<_i14.SuccessResponse>(
+  /// 6. Выход (завершение текущей сессии)
+  _i2.Future<_i12.SuccessResponse> logout(String accessToken) =>
+      caller.callServerEndpoint<_i12.SuccessResponse>(
         'auth',
         'logout',
         {'accessToken': accessToken},
       );
 
-  /// 8. Выход со всех устройств
-  _i2.Future<_i14.SuccessResponse> logoutAll(String accessToken) =>
-      caller.callServerEndpoint<_i14.SuccessResponse>(
+  /// 7. Выход со всех устройств
+  _i2.Future<_i12.SuccessResponse> logoutAll(String accessToken) =>
+      caller.callServerEndpoint<_i12.SuccessResponse>(
         'auth',
         'logoutAll',
         {'accessToken': accessToken},
@@ -127,8 +113,8 @@ class EndpointGreeting extends _i1.EndpointRef {
   String get name => 'greeting';
 
   /// Returns a personalized greeting message: "Hello {name}".
-  _i2.Future<_i15.Greeting> hello(String name) =>
-      caller.callServerEndpoint<_i15.Greeting>(
+  _i2.Future<_i13.Greeting> hello(String name) =>
+      caller.callServerEndpoint<_i13.Greeting>(
         'greeting',
         'hello',
         {'name': name},
@@ -155,7 +141,7 @@ class Client extends _i1.ServerpodClientShared {
     bool? disconnectStreamsOnLostInternetConnection,
   }) : super(
          host,
-         _i16.Protocol(),
+         _i14.Protocol(),
          securityContext: securityContext,
          streamingConnectionTimeout: streamingConnectionTimeout,
          connectionTimeout: connectionTimeout,

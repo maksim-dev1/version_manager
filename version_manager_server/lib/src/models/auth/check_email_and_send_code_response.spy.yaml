@@ -1,0 +1,5 @@
+class: CheckEmailAndSendCodeResponse
+fields:
+  existsEmail: bool
+  codeSent: bool
+  retryAfterSeconds: int?

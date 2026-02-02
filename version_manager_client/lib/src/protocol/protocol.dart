@@ -17,41 +17,43 @@ import 'apps/version.dart' as _i4;
 import 'auth/auth_response.dart' as _i5;
 import 'auth/auth_session.dart' as _i6;
 import 'auth/check_email.dart' as _i7;
-import 'auth/check_email_response.dart' as _i8;
+import 'auth/check_email_and_send_code_response.dart' as _i8;
 import 'auth/common.dart' as _i9;
 import 'auth/common_success.dart' as _i10;
 import 'auth/login.dart' as _i11;
 import 'auth/refresh_token.dart' as _i12;
-import 'auth/register_send_code.dart' as _i13;
-import 'auth/register_set_password.dart' as _i14;
-import 'auth/register_verify_code.dart' as _i15;
-import 'auth/send_code_response.dart' as _i16;
-import 'auth/token_pair_response.dart' as _i17;
-import 'auth/user.dart' as _i18;
-import 'auth/verification_code.dart' as _i19;
-import 'auth/verify_code_response.dart' as _i20;
-import 'enums/owner_type.dart' as _i21;
-import 'enums/platform_type.dart' as _i22;
-import 'enums/response_status_type.dart' as _i23;
-import 'enums/team_member_status_type.dart' as _i24;
-import 'enums/team_role_type.dart' as _i25;
-import 'enums/verification_putpose_type.dart' as _i26;
-import 'exceptions/invalid_data_exception.dart' as _i27;
-import 'greetings/greeting.dart' as _i28;
-import 'logs/version_check_log.dart' as _i29;
-import 'teams/team.dart' as _i30;
-import 'teams/team_member.dart' as _i31;
+import 'auth/register.dart' as _i13;
+import 'auth/register_send_code.dart' as _i14;
+import 'auth/register_set_password.dart' as _i15;
+import 'auth/register_verify_code.dart' as _i16;
+import 'auth/send_code_response.dart' as _i17;
+import 'auth/token_pair_response.dart' as _i18;
+import 'auth/user.dart' as _i19;
+import 'auth/verification_code.dart' as _i20;
+import 'auth/verify_code_response.dart' as _i21;
+import 'enums/owner_type.dart' as _i22;
+import 'enums/platform_type.dart' as _i23;
+import 'enums/response_status_type.dart' as _i24;
+import 'enums/team_member_status_type.dart' as _i25;
+import 'enums/team_role_type.dart' as _i26;
+import 'enums/verification_putpose_type.dart' as _i27;
+import 'exceptions/invalid_data_exception.dart' as _i28;
+import 'greetings/greeting.dart' as _i29;
+import 'logs/version_check_log.dart' as _i30;
+import 'teams/team.dart' as _i31;
+import 'teams/team_member.dart' as _i32;
 export 'apps/application.dart';
 export 'apps/store_link.dart';
 export 'apps/version.dart';
 export 'auth/auth_response.dart';
 export 'auth/auth_session.dart';
 export 'auth/check_email.dart';
-export 'auth/check_email_response.dart';
+export 'auth/check_email_and_send_code_response.dart';
 export 'auth/common.dart';
 export 'auth/common_success.dart';
 export 'auth/login.dart';
 export 'auth/refresh_token.dart';
+export 'auth/register.dart';
 export 'auth/register_send_code.dart';
 export 'auth/register_set_password.dart';
 export 'auth/register_verify_code.dart';
@@ -125,8 +127,8 @@ class Protocol extends _i1.SerializationManager {
     if (t == _i7.CheckEmailRequest) {
       return _i7.CheckEmailRequest.fromJson(data) as T;
     }
-    if (t == _i8.CheckEmailResponse) {
-      return _i8.CheckEmailResponse.fromJson(data) as T;
+    if (t == _i8.CheckEmailAndSendCodeResponse) {
+      return _i8.CheckEmailAndSendCodeResponse.fromJson(data) as T;
     }
     if (t == _i9.UserPublic) {
       return _i9.UserPublic.fromJson(data) as T;
@@ -140,62 +142,65 @@ class Protocol extends _i1.SerializationManager {
     if (t == _i12.RefreshTokenRequest) {
       return _i12.RefreshTokenRequest.fromJson(data) as T;
     }
-    if (t == _i13.RegisterSendCodeRequest) {
-      return _i13.RegisterSendCodeRequest.fromJson(data) as T;
+    if (t == _i13.RegisterRequest) {
+      return _i13.RegisterRequest.fromJson(data) as T;
     }
-    if (t == _i14.RegisterSetPasswordRequest) {
-      return _i14.RegisterSetPasswordRequest.fromJson(data) as T;
+    if (t == _i14.RegisterSendCodeRequest) {
+      return _i14.RegisterSendCodeRequest.fromJson(data) as T;
     }
-    if (t == _i15.RegisterVerifyCodeRequest) {
-      return _i15.RegisterVerifyCodeRequest.fromJson(data) as T;
+    if (t == _i15.RegisterSetPasswordRequest) {
+      return _i15.RegisterSetPasswordRequest.fromJson(data) as T;
     }
-    if (t == _i16.SendCodeResponse) {
-      return _i16.SendCodeResponse.fromJson(data) as T;
+    if (t == _i16.RegisterVerifyCodeRequest) {
+      return _i16.RegisterVerifyCodeRequest.fromJson(data) as T;
     }
-    if (t == _i17.TokenPairResponse) {
-      return _i17.TokenPairResponse.fromJson(data) as T;
+    if (t == _i17.SendCodeResponse) {
+      return _i17.SendCodeResponse.fromJson(data) as T;
     }
-    if (t == _i18.User) {
-      return _i18.User.fromJson(data) as T;
+    if (t == _i18.TokenPairResponse) {
+      return _i18.TokenPairResponse.fromJson(data) as T;
     }
-    if (t == _i19.VerificationCode) {
-      return _i19.VerificationCode.fromJson(data) as T;
+    if (t == _i19.User) {
+      return _i19.User.fromJson(data) as T;
     }
-    if (t == _i20.VerifyCodeResponse) {
-      return _i20.VerifyCodeResponse.fromJson(data) as T;
+    if (t == _i20.VerificationCode) {
+      return _i20.VerificationCode.fromJson(data) as T;
     }
-    if (t == _i21.OwnerType) {
-      return _i21.OwnerType.fromJson(data) as T;
+    if (t == _i21.VerifyCodeResponse) {
+      return _i21.VerifyCodeResponse.fromJson(data) as T;
     }
-    if (t == _i22.PlatformType) {
-      return _i22.PlatformType.fromJson(data) as T;
+    if (t == _i22.OwnerType) {
+      return _i22.OwnerType.fromJson(data) as T;
     }
-    if (t == _i23.ResponseStatusType) {
-      return _i23.ResponseStatusType.fromJson(data) as T;
+    if (t == _i23.PlatformType) {
+      return _i23.PlatformType.fromJson(data) as T;
     }
-    if (t == _i24.TeamMemberStatusType) {
-      return _i24.TeamMemberStatusType.fromJson(data) as T;
+    if (t == _i24.ResponseStatusType) {
+      return _i24.ResponseStatusType.fromJson(data) as T;
     }
-    if (t == _i25.TeamRoleType) {
-      return _i25.TeamRoleType.fromJson(data) as T;
+    if (t == _i25.TeamMemberStatusType) {
+      return _i25.TeamMemberStatusType.fromJson(data) as T;
     }
-    if (t == _i26.VerificationPurposeType) {
-      return _i26.VerificationPurposeType.fromJson(data) as T;
+    if (t == _i26.TeamRoleType) {
+      return _i26.TeamRoleType.fromJson(data) as T;
     }
-    if (t == _i27.InvalidDataException) {
-      return _i27.InvalidDataException.fromJson(data) as T;
+    if (t == _i27.VerificationPurposeType) {
+      return _i27.VerificationPurposeType.fromJson(data) as T;
     }
-    if (t == _i28.Greeting) {
-      return _i28.Greeting.fromJson(data) as T;
+    if (t == _i28.InvalidDataException) {
+      return _i28.InvalidDataException.fromJson(data) as T;
     }
-    if (t == _i29.VersionCheckLog) {
-      return _i29.VersionCheckLog.fromJson(data) as T;
+    if (t == _i29.Greeting) {
+      return _i29.Greeting.fromJson(data) as T;
     }
-    if (t == _i30.Team) {
-      return _i30.Team.fromJson(data) as T;
+    if (t == _i30.VersionCheckLog) {
+      return _i30.VersionCheckLog.fromJson(data) as T;
     }
-    if (t == _i31.TeamMember) {
-      return _i31.TeamMember.fromJson(data) as T;
+    if (t == _i31.Team) {
+      return _i31.Team.fromJson(data) as T;
+    }
+    if (t == _i32.TeamMember) {
+      return _i32.TeamMember.fromJson(data) as T;
     }
     if (t == _i1.getType<_i2.Application?>()) {
       return (data != null ? _i2.Application.fromJson(data) : null) as T;
@@ -215,8 +220,11 @@ class Protocol extends _i1.SerializationManager {
     if (t == _i1.getType<_i7.CheckEmailRequest?>()) {
       return (data != null ? _i7.CheckEmailRequest.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i8.CheckEmailResponse?>()) {
-      return (data != null ? _i8.CheckEmailResponse.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i8.CheckEmailAndSendCodeResponse?>()) {
+      return (data != null
+              ? _i8.CheckEmailAndSendCodeResponse.fromJson(data)
+              : null)
+          as T;
     }
     if (t == _i1.getType<_i9.UserPublic?>()) {
       return (data != null ? _i9.UserPublic.fromJson(data) : null) as T;
@@ -231,78 +239,81 @@ class Protocol extends _i1.SerializationManager {
       return (data != null ? _i12.RefreshTokenRequest.fromJson(data) : null)
           as T;
     }
-    if (t == _i1.getType<_i13.RegisterSendCodeRequest?>()) {
-      return (data != null ? _i13.RegisterSendCodeRequest.fromJson(data) : null)
+    if (t == _i1.getType<_i13.RegisterRequest?>()) {
+      return (data != null ? _i13.RegisterRequest.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i14.RegisterSendCodeRequest?>()) {
+      return (data != null ? _i14.RegisterSendCodeRequest.fromJson(data) : null)
           as T;
     }
-    if (t == _i1.getType<_i14.RegisterSetPasswordRequest?>()) {
+    if (t == _i1.getType<_i15.RegisterSetPasswordRequest?>()) {
       return (data != null
-              ? _i14.RegisterSetPasswordRequest.fromJson(data)
+              ? _i15.RegisterSetPasswordRequest.fromJson(data)
               : null)
           as T;
     }
-    if (t == _i1.getType<_i15.RegisterVerifyCodeRequest?>()) {
+    if (t == _i1.getType<_i16.RegisterVerifyCodeRequest?>()) {
       return (data != null
-              ? _i15.RegisterVerifyCodeRequest.fromJson(data)
+              ? _i16.RegisterVerifyCodeRequest.fromJson(data)
               : null)
           as T;
     }
-    if (t == _i1.getType<_i16.SendCodeResponse?>()) {
-      return (data != null ? _i16.SendCodeResponse.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i17.SendCodeResponse?>()) {
+      return (data != null ? _i17.SendCodeResponse.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i17.TokenPairResponse?>()) {
-      return (data != null ? _i17.TokenPairResponse.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i18.TokenPairResponse?>()) {
+      return (data != null ? _i18.TokenPairResponse.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i18.User?>()) {
-      return (data != null ? _i18.User.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i19.User?>()) {
+      return (data != null ? _i19.User.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i19.VerificationCode?>()) {
-      return (data != null ? _i19.VerificationCode.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i20.VerificationCode?>()) {
+      return (data != null ? _i20.VerificationCode.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i20.VerifyCodeResponse?>()) {
-      return (data != null ? _i20.VerifyCodeResponse.fromJson(data) : null)
+    if (t == _i1.getType<_i21.VerifyCodeResponse?>()) {
+      return (data != null ? _i21.VerifyCodeResponse.fromJson(data) : null)
           as T;
     }
-    if (t == _i1.getType<_i21.OwnerType?>()) {
-      return (data != null ? _i21.OwnerType.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i22.OwnerType?>()) {
+      return (data != null ? _i22.OwnerType.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i22.PlatformType?>()) {
-      return (data != null ? _i22.PlatformType.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i23.PlatformType?>()) {
+      return (data != null ? _i23.PlatformType.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i23.ResponseStatusType?>()) {
-      return (data != null ? _i23.ResponseStatusType.fromJson(data) : null)
+    if (t == _i1.getType<_i24.ResponseStatusType?>()) {
+      return (data != null ? _i24.ResponseStatusType.fromJson(data) : null)
           as T;
     }
-    if (t == _i1.getType<_i24.TeamMemberStatusType?>()) {
-      return (data != null ? _i24.TeamMemberStatusType.fromJson(data) : null)
+    if (t == _i1.getType<_i25.TeamMemberStatusType?>()) {
+      return (data != null ? _i25.TeamMemberStatusType.fromJson(data) : null)
           as T;
     }
-    if (t == _i1.getType<_i25.TeamRoleType?>()) {
-      return (data != null ? _i25.TeamRoleType.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i26.TeamRoleType?>()) {
+      return (data != null ? _i26.TeamRoleType.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i26.VerificationPurposeType?>()) {
-      return (data != null ? _i26.VerificationPurposeType.fromJson(data) : null)
+    if (t == _i1.getType<_i27.VerificationPurposeType?>()) {
+      return (data != null ? _i27.VerificationPurposeType.fromJson(data) : null)
           as T;
     }
-    if (t == _i1.getType<_i27.InvalidDataException?>()) {
-      return (data != null ? _i27.InvalidDataException.fromJson(data) : null)
+    if (t == _i1.getType<_i28.InvalidDataException?>()) {
+      return (data != null ? _i28.InvalidDataException.fromJson(data) : null)
           as T;
     }
-    if (t == _i1.getType<_i28.Greeting?>()) {
-      return (data != null ? _i28.Greeting.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i29.Greeting?>()) {
+      return (data != null ? _i29.Greeting.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i29.VersionCheckLog?>()) {
-      return (data != null ? _i29.VersionCheckLog.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i30.VersionCheckLog?>()) {
+      return (data != null ? _i30.VersionCheckLog.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i30.Team?>()) {
-      return (data != null ? _i30.Team.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i31.Team?>()) {
+      return (data != null ? _i31.Team.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i31.TeamMember?>()) {
-      return (data != null ? _i31.TeamMember.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i32.TeamMember?>()) {
+      return (data != null ? _i32.TeamMember.fromJson(data) : null) as T;
     }
-    if (t == List<_i22.PlatformType>) {
+    if (t == List<_i23.PlatformType>) {
       return (data as List)
-              .map((e) => deserialize<_i22.PlatformType>(e))
+              .map((e) => deserialize<_i23.PlatformType>(e))
               .toList()
           as T;
     }
@@ -328,16 +339,16 @@ class Protocol extends _i1.SerializationManager {
               : null)
           as T;
     }
-    if (t == List<_i29.VersionCheckLog>) {
+    if (t == List<_i30.VersionCheckLog>) {
       return (data as List)
-              .map((e) => deserialize<_i29.VersionCheckLog>(e))
+              .map((e) => deserialize<_i30.VersionCheckLog>(e))
               .toList()
           as T;
     }
-    if (t == _i1.getType<List<_i29.VersionCheckLog>?>()) {
+    if (t == _i1.getType<List<_i30.VersionCheckLog>?>()) {
       return (data != null
               ? (data as List)
-                    .map((e) => deserialize<_i29.VersionCheckLog>(e))
+                    .map((e) => deserialize<_i30.VersionCheckLog>(e))
                     .toList()
               : null)
           as T;
@@ -354,37 +365,37 @@ class Protocol extends _i1.SerializationManager {
               : null)
           as T;
     }
-    if (t == List<_i19.VerificationCode>) {
+    if (t == List<_i20.VerificationCode>) {
       return (data as List)
-              .map((e) => deserialize<_i19.VerificationCode>(e))
+              .map((e) => deserialize<_i20.VerificationCode>(e))
               .toList()
           as T;
     }
-    if (t == _i1.getType<List<_i19.VerificationCode>?>()) {
+    if (t == _i1.getType<List<_i20.VerificationCode>?>()) {
       return (data != null
               ? (data as List)
-                    .map((e) => deserialize<_i19.VerificationCode>(e))
+                    .map((e) => deserialize<_i20.VerificationCode>(e))
                     .toList()
               : null)
           as T;
     }
-    if (t == List<_i30.Team>) {
-      return (data as List).map((e) => deserialize<_i30.Team>(e)).toList() as T;
+    if (t == List<_i31.Team>) {
+      return (data as List).map((e) => deserialize<_i31.Team>(e)).toList() as T;
     }
-    if (t == _i1.getType<List<_i30.Team>?>()) {
+    if (t == _i1.getType<List<_i31.Team>?>()) {
       return (data != null
-              ? (data as List).map((e) => deserialize<_i30.Team>(e)).toList()
+              ? (data as List).map((e) => deserialize<_i31.Team>(e)).toList()
               : null)
           as T;
     }
-    if (t == List<_i31.TeamMember>) {
-      return (data as List).map((e) => deserialize<_i31.TeamMember>(e)).toList()
+    if (t == List<_i32.TeamMember>) {
+      return (data as List).map((e) => deserialize<_i32.TeamMember>(e)).toList()
           as T;
     }
-    if (t == _i1.getType<List<_i31.TeamMember>?>()) {
+    if (t == _i1.getType<List<_i32.TeamMember>?>()) {
       return (data != null
               ? (data as List)
-                    .map((e) => deserialize<_i31.TeamMember>(e))
+                    .map((e) => deserialize<_i32.TeamMember>(e))
                     .toList()
               : null)
           as T;
@@ -412,30 +423,31 @@ class Protocol extends _i1.SerializationManager {
       _i5.AuthResponse => 'AuthResponse',
       _i6.AuthSession => 'AuthSession',
       _i7.CheckEmailRequest => 'CheckEmailRequest',
-      _i8.CheckEmailResponse => 'CheckEmailResponse',
+      _i8.CheckEmailAndSendCodeResponse => 'CheckEmailAndSendCodeResponse',
       _i9.UserPublic => 'UserPublic',
       _i10.SuccessResponse => 'SuccessResponse',
       _i11.LoginRequest => 'LoginRequest',
       _i12.RefreshTokenRequest => 'RefreshTokenRequest',
-      _i13.RegisterSendCodeRequest => 'RegisterSendCodeRequest',
-      _i14.RegisterSetPasswordRequest => 'RegisterSetPasswordRequest',
-      _i15.RegisterVerifyCodeRequest => 'RegisterVerifyCodeRequest',
-      _i16.SendCodeResponse => 'SendCodeResponse',
-      _i17.TokenPairResponse => 'TokenPairResponse',
-      _i18.User => 'User',
-      _i19.VerificationCode => 'VerificationCode',
-      _i20.VerifyCodeResponse => 'VerifyCodeResponse',
-      _i21.OwnerType => 'OwnerType',
-      _i22.PlatformType => 'PlatformType',
-      _i23.ResponseStatusType => 'ResponseStatusType',
-      _i24.TeamMemberStatusType => 'TeamMemberStatusType',
-      _i25.TeamRoleType => 'TeamRoleType',
-      _i26.VerificationPurposeType => 'VerificationPurposeType',
-      _i27.InvalidDataException => 'InvalidDataException',
-      _i28.Greeting => 'Greeting',
-      _i29.VersionCheckLog => 'VersionCheckLog',
-      _i30.Team => 'Team',
-      _i31.TeamMember => 'TeamMember',
+      _i13.RegisterRequest => 'RegisterRequest',
+      _i14.RegisterSendCodeRequest => 'RegisterSendCodeRequest',
+      _i15.RegisterSetPasswordRequest => 'RegisterSetPasswordRequest',
+      _i16.RegisterVerifyCodeRequest => 'RegisterVerifyCodeRequest',
+      _i17.SendCodeResponse => 'SendCodeResponse',
+      _i18.TokenPairResponse => 'TokenPairResponse',
+      _i19.User => 'User',
+      _i20.VerificationCode => 'VerificationCode',
+      _i21.VerifyCodeResponse => 'VerifyCodeResponse',
+      _i22.OwnerType => 'OwnerType',
+      _i23.PlatformType => 'PlatformType',
+      _i24.ResponseStatusType => 'ResponseStatusType',
+      _i25.TeamMemberStatusType => 'TeamMemberStatusType',
+      _i26.TeamRoleType => 'TeamRoleType',
+      _i27.VerificationPurposeType => 'VerificationPurposeType',
+      _i28.InvalidDataException => 'InvalidDataException',
+      _i29.Greeting => 'Greeting',
+      _i30.VersionCheckLog => 'VersionCheckLog',
+      _i31.Team => 'Team',
+      _i32.TeamMember => 'TeamMember',
       _ => null,
     };
   }
@@ -465,8 +477,8 @@ class Protocol extends _i1.SerializationManager {
         return 'AuthSession';
       case _i7.CheckEmailRequest():
         return 'CheckEmailRequest';
-      case _i8.CheckEmailResponse():
-        return 'CheckEmailResponse';
+      case _i8.CheckEmailAndSendCodeResponse():
+        return 'CheckEmailAndSendCodeResponse';
       case _i9.UserPublic():
         return 'UserPublic';
       case _i10.SuccessResponse():
@@ -475,43 +487,45 @@ class Protocol extends _i1.SerializationManager {
         return 'LoginRequest';
       case _i12.RefreshTokenRequest():
         return 'RefreshTokenRequest';
-      case _i13.RegisterSendCodeRequest():
+      case _i13.RegisterRequest():
+        return 'RegisterRequest';
+      case _i14.RegisterSendCodeRequest():
         return 'RegisterSendCodeRequest';
-      case _i14.RegisterSetPasswordRequest():
+      case _i15.RegisterSetPasswordRequest():
         return 'RegisterSetPasswordRequest';
-      case _i15.RegisterVerifyCodeRequest():
+      case _i16.RegisterVerifyCodeRequest():
         return 'RegisterVerifyCodeRequest';
-      case _i16.SendCodeResponse():
+      case _i17.SendCodeResponse():
         return 'SendCodeResponse';
-      case _i17.TokenPairResponse():
+      case _i18.TokenPairResponse():
         return 'TokenPairResponse';
-      case _i18.User():
+      case _i19.User():
         return 'User';
-      case _i19.VerificationCode():
+      case _i20.VerificationCode():
         return 'VerificationCode';
-      case _i20.VerifyCodeResponse():
+      case _i21.VerifyCodeResponse():
         return 'VerifyCodeResponse';
-      case _i21.OwnerType():
+      case _i22.OwnerType():
         return 'OwnerType';
-      case _i22.PlatformType():
+      case _i23.PlatformType():
         return 'PlatformType';
-      case _i23.ResponseStatusType():
+      case _i24.ResponseStatusType():
         return 'ResponseStatusType';
-      case _i24.TeamMemberStatusType():
+      case _i25.TeamMemberStatusType():
         return 'TeamMemberStatusType';
-      case _i25.TeamRoleType():
+      case _i26.TeamRoleType():
         return 'TeamRoleType';
-      case _i26.VerificationPurposeType():
+      case _i27.VerificationPurposeType():
         return 'VerificationPurposeType';
-      case _i27.InvalidDataException():
+      case _i28.InvalidDataException():
         return 'InvalidDataException';
-      case _i28.Greeting():
+      case _i29.Greeting():
         return 'Greeting';
-      case _i29.VersionCheckLog():
+      case _i30.VersionCheckLog():
         return 'VersionCheckLog';
-      case _i30.Team():
+      case _i31.Team():
         return 'Team';
-      case _i31.TeamMember():
+      case _i32.TeamMember():
         return 'TeamMember';
     }
     return null;
@@ -541,8 +555,8 @@ class Protocol extends _i1.SerializationManager {
     if (dataClassName == 'CheckEmailRequest') {
       return deserialize<_i7.CheckEmailRequest>(data['data']);
     }
-    if (dataClassName == 'CheckEmailResponse') {
-      return deserialize<_i8.CheckEmailResponse>(data['data']);
+    if (dataClassName == 'CheckEmailAndSendCodeResponse') {
+      return deserialize<_i8.CheckEmailAndSendCodeResponse>(data['data']);
     }
     if (dataClassName == 'UserPublic') {
       return deserialize<_i9.UserPublic>(data['data']);
@@ -556,62 +570,65 @@ class Protocol extends _i1.SerializationManager {
     if (dataClassName == 'RefreshTokenRequest') {
       return deserialize<_i12.RefreshTokenRequest>(data['data']);
     }
+    if (dataClassName == 'RegisterRequest') {
+      return deserialize<_i13.RegisterRequest>(data['data']);
+    }
     if (dataClassName == 'RegisterSendCodeRequest') {
-      return deserialize<_i13.RegisterSendCodeRequest>(data['data']);
+      return deserialize<_i14.RegisterSendCodeRequest>(data['data']);
     }
     if (dataClassName == 'RegisterSetPasswordRequest') {
-      return deserialize<_i14.RegisterSetPasswordRequest>(data['data']);
+      return deserialize<_i15.RegisterSetPasswordRequest>(data['data']);
     }
     if (dataClassName == 'RegisterVerifyCodeRequest') {
-      return deserialize<_i15.RegisterVerifyCodeRequest>(data['data']);
+      return deserialize<_i16.RegisterVerifyCodeRequest>(data['data']);
     }
     if (dataClassName == 'SendCodeResponse') {
-      return deserialize<_i16.SendCodeResponse>(data['data']);
+      return deserialize<_i17.SendCodeResponse>(data['data']);
     }
     if (dataClassName == 'TokenPairResponse') {
-      return deserialize<_i17.TokenPairResponse>(data['data']);
+      return deserialize<_i18.TokenPairResponse>(data['data']);
     }
     if (dataClassName == 'User') {
-      return deserialize<_i18.User>(data['data']);
+      return deserialize<_i19.User>(data['data']);
     }
     if (dataClassName == 'VerificationCode') {
-      return deserialize<_i19.VerificationCode>(data['data']);
+      return deserialize<_i20.VerificationCode>(data['data']);
     }
     if (dataClassName == 'VerifyCodeResponse') {
-      return deserialize<_i20.VerifyCodeResponse>(data['data']);
+      return deserialize<_i21.VerifyCodeResponse>(data['data']);
     }
     if (dataClassName == 'OwnerType') {
-      return deserialize<_i21.OwnerType>(data['data']);
+      return deserialize<_i22.OwnerType>(data['data']);
     }
     if (dataClassName == 'PlatformType') {
-      return deserialize<_i22.PlatformType>(data['data']);
+      return deserialize<_i23.PlatformType>(data['data']);
     }
     if (dataClassName == 'ResponseStatusType') {
-      return deserialize<_i23.ResponseStatusType>(data['data']);
+      return deserialize<_i24.ResponseStatusType>(data['data']);
     }
     if (dataClassName == 'TeamMemberStatusType') {
-      return deserialize<_i24.TeamMemberStatusType>(data['data']);
+      return deserialize<_i25.TeamMemberStatusType>(data['data']);
     }
     if (dataClassName == 'TeamRoleType') {
-      return deserialize<_i25.TeamRoleType>(data['data']);
+      return deserialize<_i26.TeamRoleType>(data['data']);
     }
     if (dataClassName == 'VerificationPurposeType') {
-      return deserialize<_i26.VerificationPurposeType>(data['data']);
+      return deserialize<_i27.VerificationPurposeType>(data['data']);
     }
     if (dataClassName == 'InvalidDataException') {
-      return deserialize<_i27.InvalidDataException>(data['data']);
+      return deserialize<_i28.InvalidDataException>(data['data']);
     }
     if (dataClassName == 'Greeting') {
-      return deserialize<_i28.Greeting>(data['data']);
+      return deserialize<_i29.Greeting>(data['data']);
     }
     if (dataClassName == 'VersionCheckLog') {
-      return deserialize<_i29.VersionCheckLog>(data['data']);
+      return deserialize<_i30.VersionCheckLog>(data['data']);
     }
     if (dataClassName == 'Team') {
-      return deserialize<_i30.Team>(data['data']);
+      return deserialize<_i31.Team>(data['data']);
     }
     if (dataClassName == 'TeamMember') {
-      return deserialize<_i31.TeamMember>(data['data']);
+      return deserialize<_i32.TeamMember>(data['data']);
     }
     return super.deserializeByClassName(data);
   }

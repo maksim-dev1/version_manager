@@ -1,6 +1,9 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:serverpod/serverpod.dart';
+import 'package:version_manager_server/src/services/email_service.dart';
+import 'package:version_manager_server/src/services/service_locator.dart';
 
 import 'src/generated/endpoints.dart';
 import 'src/generated/protocol.dart';
@@ -9,6 +12,13 @@ import 'src/web/routes/root.dart';
 
 /// The starting point of the Serverpod server.
 void run(List<String> args) async {
+
+  // Инициализация сервисов
+  Services().initialize(
+    emailProvider: EmailProvider.yandex,
+    emailTemplatesPath: 'version_manager_server/email_templates',
+  );
+
   // Initialize Serverpod and connect it with your generated code.
   final pod = Serverpod(args, Protocol(), Endpoints());
 
