@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:serverpod_flutter/serverpod_flutter.dart';
 import 'package:version_manager_client/version_manager_client.dart';
+import 'package:version_manager_flutter/shared/services/client_service.dart';
 import 'package:version_manager_flutter/theme/snow_ui/snow_theme.dart';
 import 'package:version_manager_flutter/screens/home_screen.dart';
 
@@ -9,15 +11,14 @@ void main() async {
 
   final serverUrl = _getServerUrl();
 
-  final client = Client(serverUrl)
-    ..connectivityMonitor = FlutterConnectivityMonitor();
+  final clientService = ClientService()..initializeClient(serverUrl);
 
-  runApp(const VersionManagerApp());
-}
-
-String _getServerUrl() {
-  final urlFromEnv = const String.fromEnvironment('SERVER_URL');
-  return urlFromEnv.isNotEmpty ? urlFromEnv : 'http://localhost:8080/';
+  runApp(
+    Provider<ClientService>(
+      create: (context) => clientService,
+      child: const VersionManagerApp(),
+    ),
+  );
 }
 
 class VersionManagerApp extends StatefulWidget {
@@ -28,15 +29,13 @@ class VersionManagerApp extends StatefulWidget {
 }
 
 class _VersionManagerAppState extends State<VersionManagerApp> {
-  ThemeMode _themeMode = ThemeMode.system;
+  ThemeMode _themeMode = ThemeMode.dark;
 
   void _toggleTheme() {
     setState(() {
-      _themeMode = switch (_themeMode) {
-        ThemeMode.light => ThemeMode.dark,
-        ThemeMode.dark => ThemeMode.system,
-        ThemeMode.system => ThemeMode.light,
-      };
+      _themeMode = _themeMode == ThemeMode.light
+          ? ThemeMode.dark
+          : ThemeMode.light;
     });
   }
 
@@ -54,4 +53,10 @@ class _VersionManagerAppState extends State<VersionManagerApp> {
       ),
     );
   }
+}
+
+/// Получает URL сервера из переменных окружения или возвращает значение по умолчанию.
+String _getServerUrl() {
+  final urlFromEnv = const String.fromEnvironment('SERVER_URL');
+  return urlFromEnv.isNotEmpty ? urlFromEnv : 'http://localhost:8080/';
 }

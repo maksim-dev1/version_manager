@@ -72,9 +72,9 @@ class AuthEndpoint extends Endpoint {
   /// }
   /// ```
   Future<CheckEmailAndSendCodeResponse> checkEmailAndSendCode(
-    Session session,
-    CheckEmailRequest request,
-  ) async {
+    Session session, {
+    required CheckEmailRequest request,
+  }) async {
     final email = request.email.trim();
 
     session.log(
@@ -182,9 +182,9 @@ class AuthEndpoint extends Endpoint {
   /// }
   /// ```
   Future<SendCodeResponse> resendCode(
-    Session session,
-    RegisterSendCodeRequest request,
-  ) async {
+    Session session, {
+    required RegisterSendCodeRequest request,
+  }) async {
     final email = request.email.trim();
 
     session.log(
@@ -234,8 +234,8 @@ class AuthEndpoint extends Endpoint {
   /// ### Параметры
   /// - [session] — сессия Serverpod
   /// - [request] — запрос со следующими полями:
-  ///   - `email` — email пользователя
-  ///   - `code` — 6-значный код верификации
+  ///   - `email` — email пользователя`
+  ///   - `code` — 6-значный код верификации`. `
   ///   - `password` — пароль (минимум 8 символов)
   ///
   /// ### Возвращает
@@ -268,9 +268,9 @@ class AuthEndpoint extends Endpoint {
   /// // Сохранить токены и данные пользователя
   /// ```
   Future<AuthResponse> register(
-    Session session,
-    RegisterRequest request,
-  ) async {
+    Session session, {
+    required RegisterRequest request,
+  }) async {
     final email = request.email.trim();
     final code = request.code.trim();
     final password = request.password;
@@ -473,9 +473,9 @@ class AuthEndpoint extends Endpoint {
   /// }
   /// ```
   Future<AuthResponse> login(
-    Session session,
-    LoginRequest request,
-  ) async {
+    Session session, {
+    required LoginRequest request,
+  }) async {
     final email = request.email.trim();
     final password = request.password;
 
@@ -603,9 +603,9 @@ class AuthEndpoint extends Endpoint {
   /// // Заменить старые токены на новые
   /// ```
   Future<TokenPairResponse> refreshTokens(
-    Session session,
-    RefreshTokenRequest request,
-  ) async {
+    Session session, {
+    required RefreshTokenRequest request,
+  }) async {
     session.log('refreshTokens: обновление токенов', level: LogLevel.debug);
 
     final refreshTokenHash = _tokenService.hashToken(request.refreshToken);
@@ -733,7 +733,10 @@ class AuthEndpoint extends Endpoint {
   /// await client.auth.logoutAll(currentAccessToken);
   /// // Перенаправить на экран входа
   /// ```
-  Future<SuccessResponse> logoutAll(Session session, String accessToken) async {
+  Future<SuccessResponse> logoutAll(
+    Session session, {
+    required String accessToken,
+  }) async {
     session.log('logoutAll: выход со всех устройств', level: LogLevel.info);
 
     final tokenHash = _tokenService.hashToken(accessToken);
