@@ -22,6 +22,25 @@ abstract interface class RegistrationRepository {
     required String email,
   });
 
+  /// Проверяет код верификации перед регистрацией.
+  ///
+  /// Этот метод следует вызывать до перехода к экрану создания пароля,
+  /// чтобы убедиться, что введенный код корректен.
+  ///
+  /// ### Параметры
+  /// - [email] — адрес электронной почты
+  /// - [code] — 6-значный код верификации
+  ///
+  /// ### Возвращает
+  /// [SuccessResponse] с `success: true` если код верен
+  ///
+  /// ### Исключения
+  /// - [InvalidDataException] с `field: 'code'` — неверный или истекший код
+  Future<SuccessResponse> verifyCode({
+    required String email,
+    required String code,
+  });
+
   /// Регистрирует нового пользователя.
   ///
   /// Проверяет код верификации, создаёт аккаунт и выполняет автовход.
@@ -40,7 +59,6 @@ abstract interface class RegistrationRepository {
   /// - [InvalidDataException] с `field: 'email'` — email уже занят
   Future<AuthResponse> register({
     required String email,
-    required String code,
     required String password,
   });
 }

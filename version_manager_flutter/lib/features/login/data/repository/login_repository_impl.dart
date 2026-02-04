@@ -18,7 +18,7 @@ class LoginRepositoryImpl implements LoginRepository {
     required String password,
   }) async {
     final response = await _authEndpoint.login(
-      LoginRequest(email: email, password: password),
+      request: LoginRequest(email: email, password: password),
     );
 
     // Сохраняем токены после успешного логина

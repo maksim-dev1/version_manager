@@ -14,33 +14,199 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$RegistrationEvent {
 
-
+ String get email;
+/// Create a copy of RegistrationEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$RegistrationEventCopyWith<RegistrationEvent> get copyWith => _$RegistrationEventCopyWithImpl<RegistrationEvent>(this as RegistrationEvent, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is RegistrationEvent);
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is RegistrationEvent&&(identical(other.email, email) || other.email == email));
 }
 
 
 @override
-int get hashCode => runtimeType.hashCode;
+int get hashCode => Object.hash(runtimeType,email);
 
 @override
 String toString() {
-  return 'RegistrationEvent()';
+  return 'RegistrationEvent(email: $email)';
 }
 
 
 }
 
 /// @nodoc
-class $RegistrationEventCopyWith<$Res>  {
-$RegistrationEventCopyWith(RegistrationEvent _, $Res Function(RegistrationEvent) __);
+abstract mixin class $RegistrationEventCopyWith<$Res>  {
+  factory $RegistrationEventCopyWith(RegistrationEvent value, $Res Function(RegistrationEvent) _then) = _$RegistrationEventCopyWithImpl;
+@useResult
+$Res call({
+ String email
+});
+
+
+
+
+}
+/// @nodoc
+class _$RegistrationEventCopyWithImpl<$Res>
+    implements $RegistrationEventCopyWith<$Res> {
+  _$RegistrationEventCopyWithImpl(this._self, this._then);
+
+  final RegistrationEvent _self;
+  final $Res Function(RegistrationEvent) _then;
+
+/// Create a copy of RegistrationEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? email = null,}) {
+  return _then(_self.copyWith(
+email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
 }
 
 
+/// Adds pattern-matching-related methods to [RegistrationEvent].
+extension RegistrationEventPatterns on RegistrationEvent {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _VerifyCode value)?  verifyCode,TResult Function( _ResendCode value)?  resendCode,TResult Function( _Register value)?  register,required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _VerifyCode() when verifyCode != null:
+return verifyCode(_that);case _ResendCode() when resendCode != null:
+return resendCode(_that);case _Register() when register != null:
+return register(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _VerifyCode value)  verifyCode,required TResult Function( _ResendCode value)  resendCode,required TResult Function( _Register value)  register,}){
+final _that = this;
+switch (_that) {
+case _VerifyCode():
+return verifyCode(_that);case _ResendCode():
+return resendCode(_that);case _Register():
+return register(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _VerifyCode value)?  verifyCode,TResult? Function( _ResendCode value)?  resendCode,TResult? Function( _Register value)?  register,}){
+final _that = this;
+switch (_that) {
+case _VerifyCode() when verifyCode != null:
+return verifyCode(_that);case _ResendCode() when resendCode != null:
+return resendCode(_that);case _Register() when register != null:
+return register(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String email,  String code)?  verifyCode,TResult Function( String email)?  resendCode,TResult Function( String email,  String password)?  register,required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _VerifyCode() when verifyCode != null:
+return verifyCode(_that.email,_that.code);case _ResendCode() when resendCode != null:
+return resendCode(_that.email);case _Register() when register != null:
+return register(_that.email,_that.password);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String email,  String code)  verifyCode,required TResult Function( String email)  resendCode,required TResult Function( String email,  String password)  register,}) {final _that = this;
+switch (_that) {
+case _VerifyCode():
+return verifyCode(_that.email,_that.code);case _ResendCode():
+return resendCode(_that.email);case _Register():
+return register(_that.email,_that.password);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String email,  String code)?  verifyCode,TResult? Function( String email)?  resendCode,TResult? Function( String email,  String password)?  register,}) {final _that = this;
+switch (_that) {
+case _VerifyCode() when verifyCode != null:
+return verifyCode(_that.email,_that.code);case _ResendCode() when resendCode != null:
+return resendCode(_that.email);case _Register() when register != null:
+return register(_that.email,_that.password);case _:
+  return null;
+
+}
+}
+
+}
 
 /// @nodoc
 
@@ -49,12 +215,12 @@ class _VerifyCode implements RegistrationEvent {
   const _VerifyCode({required this.email, required this.code});
   
 
- final  String email;
+@override final  String email;
  final  String code;
 
 /// Create a copy of RegistrationEvent
 /// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
+@override @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
 _$VerifyCodeCopyWith<_VerifyCode> get copyWith => __$VerifyCodeCopyWithImpl<_VerifyCode>(this, _$identity);
 
@@ -71,7 +237,7 @@ int get hashCode => Object.hash(runtimeType,email,code);
 
 @override
 String toString() {
-  return 'RegistrationEvent._verifyCode(email: $email, code: $code)';
+  return 'RegistrationEvent.verifyCode(email: $email, code: $code)';
 }
 
 
@@ -80,7 +246,7 @@ String toString() {
 /// @nodoc
 abstract mixin class _$VerifyCodeCopyWith<$Res> implements $RegistrationEventCopyWith<$Res> {
   factory _$VerifyCodeCopyWith(_VerifyCode value, $Res Function(_VerifyCode) _then) = __$VerifyCodeCopyWithImpl;
-@useResult
+@override @useResult
 $Res call({
  String email, String code
 });
@@ -99,7 +265,7 @@ class __$VerifyCodeCopyWithImpl<$Res>
 
 /// Create a copy of RegistrationEvent
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? email = null,Object? code = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? email = null,Object? code = null,}) {
   return _then(_VerifyCode(
 email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,code: null == code ? _self.code : code // ignore: cast_nullable_to_non_nullable
@@ -117,11 +283,11 @@ class _ResendCode implements RegistrationEvent {
   const _ResendCode({required this.email});
   
 
- final  String email;
+@override final  String email;
 
 /// Create a copy of RegistrationEvent
 /// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
+@override @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
 _$ResendCodeCopyWith<_ResendCode> get copyWith => __$ResendCodeCopyWithImpl<_ResendCode>(this, _$identity);
 
@@ -138,7 +304,7 @@ int get hashCode => Object.hash(runtimeType,email);
 
 @override
 String toString() {
-  return 'RegistrationEvent._resendCode(email: $email)';
+  return 'RegistrationEvent.resendCode(email: $email)';
 }
 
 
@@ -147,7 +313,7 @@ String toString() {
 /// @nodoc
 abstract mixin class _$ResendCodeCopyWith<$Res> implements $RegistrationEventCopyWith<$Res> {
   factory _$ResendCodeCopyWith(_ResendCode value, $Res Function(_ResendCode) _then) = __$ResendCodeCopyWithImpl;
-@useResult
+@override @useResult
 $Res call({
  String email
 });
@@ -166,7 +332,7 @@ class __$ResendCodeCopyWithImpl<$Res>
 
 /// Create a copy of RegistrationEvent
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? email = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? email = null,}) {
   return _then(_ResendCode(
 email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,
@@ -180,16 +346,15 @@ as String,
 
 
 class _Register implements RegistrationEvent {
-  const _Register({required this.email, required this.code, required this.password});
+  const _Register({required this.email, required this.password});
   
 
- final  String email;
- final  String code;
+@override final  String email;
  final  String password;
 
 /// Create a copy of RegistrationEvent
 /// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
+@override @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
 _$RegisterCopyWith<_Register> get copyWith => __$RegisterCopyWithImpl<_Register>(this, _$identity);
 
@@ -197,16 +362,16 @@ _$RegisterCopyWith<_Register> get copyWith => __$RegisterCopyWithImpl<_Register>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Register&&(identical(other.email, email) || other.email == email)&&(identical(other.code, code) || other.code == code)&&(identical(other.password, password) || other.password == password));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Register&&(identical(other.email, email) || other.email == email)&&(identical(other.password, password) || other.password == password));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,email,code,password);
+int get hashCode => Object.hash(runtimeType,email,password);
 
 @override
 String toString() {
-  return 'RegistrationEvent._register(email: $email, code: $code, password: $password)';
+  return 'RegistrationEvent.register(email: $email, password: $password)';
 }
 
 
@@ -215,9 +380,9 @@ String toString() {
 /// @nodoc
 abstract mixin class _$RegisterCopyWith<$Res> implements $RegistrationEventCopyWith<$Res> {
   factory _$RegisterCopyWith(_Register value, $Res Function(_Register) _then) = __$RegisterCopyWithImpl;
-@useResult
+@override @useResult
 $Res call({
- String email, String code, String password
+ String email, String password
 });
 
 
@@ -234,10 +399,9 @@ class __$RegisterCopyWithImpl<$Res>
 
 /// Create a copy of RegistrationEvent
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? email = null,Object? code = null,Object? password = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? email = null,Object? password = null,}) {
   return _then(_Register(
 email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
-as String,code: null == code ? _self.code : code // ignore: cast_nullable_to_non_nullable
 as String,password: null == password ? _self.password : password // ignore: cast_nullable_to_non_nullable
 as String,
   ));
@@ -245,38 +409,6 @@ as String,
 
 
 }
-
-/// @nodoc
-
-
-class _Reset implements RegistrationEvent {
-  const _Reset();
-  
-
-
-
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Reset);
-}
-
-
-@override
-int get hashCode => runtimeType.hashCode;
-
-@override
-String toString() {
-  return 'RegistrationEvent._reset()';
-}
-
-
-}
-
-
-
 
 /// @nodoc
 mixin _$RegistrationState {
@@ -322,14 +454,16 @@ extension RegistrationStatePatterns on RegistrationState {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Initial value)?  initial,TResult Function( _Loading value)?  loading,TResult Function( _Success value)?  success,TResult Function( _RegistrationError value)?  error,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Initial value)?  initial,TResult Function( RegistrationLoading value)?  registrationLoading,TResult Function( RegistrationSuccess value)?  registrationsuccess,TResult Function( CodeConfirmated value)?  codeConfirmated,TResult Function( AttemptsExhausted value)?  attemptsExhausted,TResult Function( RegistrationError value)?  registrationError,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
-return initial(_that);case _Loading() when loading != null:
-return loading(_that);case _Success() when success != null:
-return success(_that);case _RegistrationError() when error != null:
-return error(_that);case _:
+return initial(_that);case RegistrationLoading() when registrationLoading != null:
+return registrationLoading(_that);case RegistrationSuccess() when registrationsuccess != null:
+return registrationsuccess(_that);case CodeConfirmated() when codeConfirmated != null:
+return codeConfirmated(_that);case AttemptsExhausted() when attemptsExhausted != null:
+return attemptsExhausted(_that);case RegistrationError() when registrationError != null:
+return registrationError(_that);case _:
   return orElse();
 
 }
@@ -347,14 +481,16 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Initial value)  initial,required TResult Function( _Loading value)  loading,required TResult Function( _Success value)  success,required TResult Function( _RegistrationError value)  error,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Initial value)  initial,required TResult Function( RegistrationLoading value)  registrationLoading,required TResult Function( RegistrationSuccess value)  registrationsuccess,required TResult Function( CodeConfirmated value)  codeConfirmated,required TResult Function( AttemptsExhausted value)  attemptsExhausted,required TResult Function( RegistrationError value)  registrationError,}){
 final _that = this;
 switch (_that) {
 case _Initial():
-return initial(_that);case _Loading():
-return loading(_that);case _Success():
-return success(_that);case _RegistrationError():
-return error(_that);}
+return initial(_that);case RegistrationLoading():
+return registrationLoading(_that);case RegistrationSuccess():
+return registrationsuccess(_that);case CodeConfirmated():
+return codeConfirmated(_that);case AttemptsExhausted():
+return attemptsExhausted(_that);case RegistrationError():
+return registrationError(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -368,14 +504,16 @@ return error(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Initial value)?  initial,TResult? Function( _Loading value)?  loading,TResult? Function( _Success value)?  success,TResult? Function( _RegistrationError value)?  error,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Initial value)?  initial,TResult? Function( RegistrationLoading value)?  registrationLoading,TResult? Function( RegistrationSuccess value)?  registrationsuccess,TResult? Function( CodeConfirmated value)?  codeConfirmated,TResult? Function( AttemptsExhausted value)?  attemptsExhausted,TResult? Function( RegistrationError value)?  registrationError,}){
 final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
-return initial(_that);case _Loading() when loading != null:
-return loading(_that);case _Success() when success != null:
-return success(_that);case _RegistrationError() when error != null:
-return error(_that);case _:
+return initial(_that);case RegistrationLoading() when registrationLoading != null:
+return registrationLoading(_that);case RegistrationSuccess() when registrationsuccess != null:
+return registrationsuccess(_that);case CodeConfirmated() when codeConfirmated != null:
+return codeConfirmated(_that);case AttemptsExhausted() when attemptsExhausted != null:
+return attemptsExhausted(_that);case RegistrationError() when registrationError != null:
+return registrationError(_that);case _:
   return null;
 
 }
@@ -392,13 +530,15 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String? email,  String? verifiedCode,  bool codeResent,  int? retryAfterSeconds)?  initial,TResult Function()?  loading,TResult Function( UserPublic user,  String accessToken,  String refreshToken)?  success,TResult Function( String message,  String? field,  String? email,  String? verifiedCode)?  error,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  registrationLoading,TResult Function( UserPublic user,  String accessToken,  String refreshToken)?  registrationsuccess,TResult Function( String email)?  codeConfirmated,TResult Function( String message)?  attemptsExhausted,TResult Function( String message,  String? field)?  registrationError,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
-return initial(_that.email,_that.verifiedCode,_that.codeResent,_that.retryAfterSeconds);case _Loading() when loading != null:
-return loading();case _Success() when success != null:
-return success(_that.user,_that.accessToken,_that.refreshToken);case _RegistrationError() when error != null:
-return error(_that.message,_that.field,_that.email,_that.verifiedCode);case _:
+return initial();case RegistrationLoading() when registrationLoading != null:
+return registrationLoading();case RegistrationSuccess() when registrationsuccess != null:
+return registrationsuccess(_that.user,_that.accessToken,_that.refreshToken);case CodeConfirmated() when codeConfirmated != null:
+return codeConfirmated(_that.email);case AttemptsExhausted() when attemptsExhausted != null:
+return attemptsExhausted(_that.message);case RegistrationError() when registrationError != null:
+return registrationError(_that.message,_that.field);case _:
   return orElse();
 
 }
@@ -416,13 +556,15 @@ return error(_that.message,_that.field,_that.email,_that.verifiedCode);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String? email,  String? verifiedCode,  bool codeResent,  int? retryAfterSeconds)  initial,required TResult Function()  loading,required TResult Function( UserPublic user,  String accessToken,  String refreshToken)  success,required TResult Function( String message,  String? field,  String? email,  String? verifiedCode)  error,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  registrationLoading,required TResult Function( UserPublic user,  String accessToken,  String refreshToken)  registrationsuccess,required TResult Function( String email)  codeConfirmated,required TResult Function( String message)  attemptsExhausted,required TResult Function( String message,  String? field)  registrationError,}) {final _that = this;
 switch (_that) {
 case _Initial():
-return initial(_that.email,_that.verifiedCode,_that.codeResent,_that.retryAfterSeconds);case _Loading():
-return loading();case _Success():
-return success(_that.user,_that.accessToken,_that.refreshToken);case _RegistrationError():
-return error(_that.message,_that.field,_that.email,_that.verifiedCode);}
+return initial();case RegistrationLoading():
+return registrationLoading();case RegistrationSuccess():
+return registrationsuccess(_that.user,_that.accessToken,_that.refreshToken);case CodeConfirmated():
+return codeConfirmated(_that.email);case AttemptsExhausted():
+return attemptsExhausted(_that.message);case RegistrationError():
+return registrationError(_that.message,_that.field);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -436,13 +578,15 @@ return error(_that.message,_that.field,_that.email,_that.verifiedCode);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String? email,  String? verifiedCode,  bool codeResent,  int? retryAfterSeconds)?  initial,TResult? Function()?  loading,TResult? Function( UserPublic user,  String accessToken,  String refreshToken)?  success,TResult? Function( String message,  String? field,  String? email,  String? verifiedCode)?  error,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  registrationLoading,TResult? Function( UserPublic user,  String accessToken,  String refreshToken)?  registrationsuccess,TResult? Function( String email)?  codeConfirmated,TResult? Function( String message)?  attemptsExhausted,TResult? Function( String message,  String? field)?  registrationError,}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
-return initial(_that.email,_that.verifiedCode,_that.codeResent,_that.retryAfterSeconds);case _Loading() when loading != null:
-return loading();case _Success() when success != null:
-return success(_that.user,_that.accessToken,_that.refreshToken);case _RegistrationError() when error != null:
-return error(_that.message,_that.field,_that.email,_that.verifiedCode);case _:
+return initial();case RegistrationLoading() when registrationLoading != null:
+return registrationLoading();case RegistrationSuccess() when registrationsuccess != null:
+return registrationsuccess(_that.user,_that.accessToken,_that.refreshToken);case CodeConfirmated() when codeConfirmated != null:
+return codeConfirmated(_that.email);case AttemptsExhausted() when attemptsExhausted != null:
+return attemptsExhausted(_that.message);case RegistrationError() when registrationError != null:
+return registrationError(_that.message,_that.field);case _:
   return null;
 
 }
@@ -454,83 +598,7 @@ return error(_that.message,_that.field,_that.email,_that.verifiedCode);case _:
 
 
 class _Initial implements RegistrationState {
-  const _Initial({this.email, this.verifiedCode, this.codeResent = false, this.retryAfterSeconds});
-  
-
-/// Email пользователя
- final  String? email;
-/// Проверенный код (если код уже введён)
- final  String? verifiedCode;
-/// Был ли код повторно отправлен
-@JsonKey() final  bool codeResent;
-/// Время ожидания при rate limit
- final  int? retryAfterSeconds;
-
-/// Create a copy of RegistrationState
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-_$InitialCopyWith<_Initial> get copyWith => __$InitialCopyWithImpl<_Initial>(this, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Initial&&(identical(other.email, email) || other.email == email)&&(identical(other.verifiedCode, verifiedCode) || other.verifiedCode == verifiedCode)&&(identical(other.codeResent, codeResent) || other.codeResent == codeResent)&&(identical(other.retryAfterSeconds, retryAfterSeconds) || other.retryAfterSeconds == retryAfterSeconds));
-}
-
-
-@override
-int get hashCode => Object.hash(runtimeType,email,verifiedCode,codeResent,retryAfterSeconds);
-
-@override
-String toString() {
-  return 'RegistrationState.initial(email: $email, verifiedCode: $verifiedCode, codeResent: $codeResent, retryAfterSeconds: $retryAfterSeconds)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class _$InitialCopyWith<$Res> implements $RegistrationStateCopyWith<$Res> {
-  factory _$InitialCopyWith(_Initial value, $Res Function(_Initial) _then) = __$InitialCopyWithImpl;
-@useResult
-$Res call({
- String? email, String? verifiedCode, bool codeResent, int? retryAfterSeconds
-});
-
-
-
-
-}
-/// @nodoc
-class __$InitialCopyWithImpl<$Res>
-    implements _$InitialCopyWith<$Res> {
-  __$InitialCopyWithImpl(this._self, this._then);
-
-  final _Initial _self;
-  final $Res Function(_Initial) _then;
-
-/// Create a copy of RegistrationState
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? email = freezed,Object? verifiedCode = freezed,Object? codeResent = null,Object? retryAfterSeconds = freezed,}) {
-  return _then(_Initial(
-email: freezed == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
-as String?,verifiedCode: freezed == verifiedCode ? _self.verifiedCode : verifiedCode // ignore: cast_nullable_to_non_nullable
-as String?,codeResent: null == codeResent ? _self.codeResent : codeResent // ignore: cast_nullable_to_non_nullable
-as bool,retryAfterSeconds: freezed == retryAfterSeconds ? _self.retryAfterSeconds : retryAfterSeconds // ignore: cast_nullable_to_non_nullable
-as int?,
-  ));
-}
-
-
-}
-
-/// @nodoc
-
-
-class _Loading implements RegistrationState {
-  const _Loading();
+  const _Initial();
   
 
 
@@ -540,7 +608,7 @@ class _Loading implements RegistrationState {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Loading);
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Initial);
 }
 
 
@@ -549,7 +617,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'RegistrationState.loading()';
+  return 'RegistrationState.initial()';
 }
 
 
@@ -561,8 +629,40 @@ String toString() {
 /// @nodoc
 
 
-class _Success implements RegistrationState {
-  const _Success({required this.user, required this.accessToken, required this.refreshToken});
+class RegistrationLoading implements RegistrationState {
+  const RegistrationLoading();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is RegistrationLoading);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'RegistrationState.registrationLoading()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class RegistrationSuccess implements RegistrationState {
+  const RegistrationSuccess({required this.user, required this.accessToken, required this.refreshToken});
   
 
  final  UserPublic user;
@@ -573,13 +673,13 @@ class _Success implements RegistrationState {
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-_$SuccessCopyWith<_Success> get copyWith => __$SuccessCopyWithImpl<_Success>(this, _$identity);
+$RegistrationSuccessCopyWith<RegistrationSuccess> get copyWith => _$RegistrationSuccessCopyWithImpl<RegistrationSuccess>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Success&&(identical(other.user, user) || other.user == user)&&(identical(other.accessToken, accessToken) || other.accessToken == accessToken)&&(identical(other.refreshToken, refreshToken) || other.refreshToken == refreshToken));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is RegistrationSuccess&&(identical(other.user, user) || other.user == user)&&(identical(other.accessToken, accessToken) || other.accessToken == accessToken)&&(identical(other.refreshToken, refreshToken) || other.refreshToken == refreshToken));
 }
 
 
@@ -588,15 +688,15 @@ int get hashCode => Object.hash(runtimeType,user,accessToken,refreshToken);
 
 @override
 String toString() {
-  return 'RegistrationState.success(user: $user, accessToken: $accessToken, refreshToken: $refreshToken)';
+  return 'RegistrationState.registrationsuccess(user: $user, accessToken: $accessToken, refreshToken: $refreshToken)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class _$SuccessCopyWith<$Res> implements $RegistrationStateCopyWith<$Res> {
-  factory _$SuccessCopyWith(_Success value, $Res Function(_Success) _then) = __$SuccessCopyWithImpl;
+abstract mixin class $RegistrationSuccessCopyWith<$Res> implements $RegistrationStateCopyWith<$Res> {
+  factory $RegistrationSuccessCopyWith(RegistrationSuccess value, $Res Function(RegistrationSuccess) _then) = _$RegistrationSuccessCopyWithImpl;
 @useResult
 $Res call({
  UserPublic user, String accessToken, String refreshToken
@@ -607,17 +707,17 @@ $Res call({
 
 }
 /// @nodoc
-class __$SuccessCopyWithImpl<$Res>
-    implements _$SuccessCopyWith<$Res> {
-  __$SuccessCopyWithImpl(this._self, this._then);
+class _$RegistrationSuccessCopyWithImpl<$Res>
+    implements $RegistrationSuccessCopyWith<$Res> {
+  _$RegistrationSuccessCopyWithImpl(this._self, this._then);
 
-  final _Success _self;
-  final $Res Function(_Success) _then;
+  final RegistrationSuccess _self;
+  final $Res Function(RegistrationSuccess) _then;
 
 /// Create a copy of RegistrationState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') $Res call({Object? user = null,Object? accessToken = null,Object? refreshToken = null,}) {
-  return _then(_Success(
+  return _then(RegistrationSuccess(
 user: null == user ? _self.user : user // ignore: cast_nullable_to_non_nullable
 as UserPublic,accessToken: null == accessToken ? _self.accessToken : accessToken // ignore: cast_nullable_to_non_nullable
 as String,refreshToken: null == refreshToken ? _self.refreshToken : refreshToken // ignore: cast_nullable_to_non_nullable
@@ -631,47 +731,43 @@ as String,
 /// @nodoc
 
 
-class _RegistrationError implements RegistrationState {
-  const _RegistrationError({required this.message, this.field, this.email, this.verifiedCode});
+class CodeConfirmated implements RegistrationState {
+  const CodeConfirmated({required this.email});
   
 
- final  String message;
- final  String? field;
-/// Предыдущие данные для восстановления состояния
- final  String? email;
- final  String? verifiedCode;
+ final  String email;
 
 /// Create a copy of RegistrationState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-_$RegistrationErrorCopyWith<_RegistrationError> get copyWith => __$RegistrationErrorCopyWithImpl<_RegistrationError>(this, _$identity);
+$CodeConfirmatedCopyWith<CodeConfirmated> get copyWith => _$CodeConfirmatedCopyWithImpl<CodeConfirmated>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RegistrationError&&(identical(other.message, message) || other.message == message)&&(identical(other.field, field) || other.field == field)&&(identical(other.email, email) || other.email == email)&&(identical(other.verifiedCode, verifiedCode) || other.verifiedCode == verifiedCode));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CodeConfirmated&&(identical(other.email, email) || other.email == email));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,message,field,email,verifiedCode);
+int get hashCode => Object.hash(runtimeType,email);
 
 @override
 String toString() {
-  return 'RegistrationState.error(message: $message, field: $field, email: $email, verifiedCode: $verifiedCode)';
+  return 'RegistrationState.codeConfirmated(email: $email)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class _$RegistrationErrorCopyWith<$Res> implements $RegistrationStateCopyWith<$Res> {
-  factory _$RegistrationErrorCopyWith(_RegistrationError value, $Res Function(_RegistrationError) _then) = __$RegistrationErrorCopyWithImpl;
+abstract mixin class $CodeConfirmatedCopyWith<$Res> implements $RegistrationStateCopyWith<$Res> {
+  factory $CodeConfirmatedCopyWith(CodeConfirmated value, $Res Function(CodeConfirmated) _then) = _$CodeConfirmatedCopyWithImpl;
 @useResult
 $Res call({
- String message, String? field, String? email, String? verifiedCode
+ String email
 });
 
 
@@ -679,21 +775,152 @@ $Res call({
 
 }
 /// @nodoc
-class __$RegistrationErrorCopyWithImpl<$Res>
-    implements _$RegistrationErrorCopyWith<$Res> {
-  __$RegistrationErrorCopyWithImpl(this._self, this._then);
+class _$CodeConfirmatedCopyWithImpl<$Res>
+    implements $CodeConfirmatedCopyWith<$Res> {
+  _$CodeConfirmatedCopyWithImpl(this._self, this._then);
 
-  final _RegistrationError _self;
-  final $Res Function(_RegistrationError) _then;
+  final CodeConfirmated _self;
+  final $Res Function(CodeConfirmated) _then;
 
 /// Create a copy of RegistrationState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? message = null,Object? field = freezed,Object? email = freezed,Object? verifiedCode = freezed,}) {
-  return _then(_RegistrationError(
+@pragma('vm:prefer-inline') $Res call({Object? email = null,}) {
+  return _then(CodeConfirmated(
+email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class AttemptsExhausted implements RegistrationState {
+  const AttemptsExhausted({required this.message});
+  
+
+ final  String message;
+
+/// Create a copy of RegistrationState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$AttemptsExhaustedCopyWith<AttemptsExhausted> get copyWith => _$AttemptsExhaustedCopyWithImpl<AttemptsExhausted>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AttemptsExhausted&&(identical(other.message, message) || other.message == message));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,message);
+
+@override
+String toString() {
+  return 'RegistrationState.attemptsExhausted(message: $message)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $AttemptsExhaustedCopyWith<$Res> implements $RegistrationStateCopyWith<$Res> {
+  factory $AttemptsExhaustedCopyWith(AttemptsExhausted value, $Res Function(AttemptsExhausted) _then) = _$AttemptsExhaustedCopyWithImpl;
+@useResult
+$Res call({
+ String message
+});
+
+
+
+
+}
+/// @nodoc
+class _$AttemptsExhaustedCopyWithImpl<$Res>
+    implements $AttemptsExhaustedCopyWith<$Res> {
+  _$AttemptsExhaustedCopyWithImpl(this._self, this._then);
+
+  final AttemptsExhausted _self;
+  final $Res Function(AttemptsExhausted) _then;
+
+/// Create a copy of RegistrationState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? message = null,}) {
+  return _then(AttemptsExhausted(
+message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class RegistrationError implements RegistrationState {
+  const RegistrationError({required this.message, this.field});
+  
+
+ final  String message;
+ final  String? field;
+
+/// Create a copy of RegistrationState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$RegistrationErrorCopyWith<RegistrationError> get copyWith => _$RegistrationErrorCopyWithImpl<RegistrationError>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is RegistrationError&&(identical(other.message, message) || other.message == message)&&(identical(other.field, field) || other.field == field));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,message,field);
+
+@override
+String toString() {
+  return 'RegistrationState.registrationError(message: $message, field: $field)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $RegistrationErrorCopyWith<$Res> implements $RegistrationStateCopyWith<$Res> {
+  factory $RegistrationErrorCopyWith(RegistrationError value, $Res Function(RegistrationError) _then) = _$RegistrationErrorCopyWithImpl;
+@useResult
+$Res call({
+ String message, String? field
+});
+
+
+
+
+}
+/// @nodoc
+class _$RegistrationErrorCopyWithImpl<$Res>
+    implements $RegistrationErrorCopyWith<$Res> {
+  _$RegistrationErrorCopyWithImpl(this._self, this._then);
+
+  final RegistrationError _self;
+  final $Res Function(RegistrationError) _then;
+
+/// Create a copy of RegistrationState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? message = null,Object? field = freezed,}) {
+  return _then(RegistrationError(
 message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String,field: freezed == field ? _self.field : field // ignore: cast_nullable_to_non_nullable
-as String?,email: freezed == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
-as String?,verifiedCode: freezed == verifiedCode ? _self.verifiedCode : verifiedCode // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }

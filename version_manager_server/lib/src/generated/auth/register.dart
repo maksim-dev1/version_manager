@@ -16,27 +16,22 @@ abstract class RegisterRequest
     implements _i1.SerializableModel, _i1.ProtocolSerialization {
   RegisterRequest._({
     required this.email,
-    required this.code,
     required this.password,
   });
 
   factory RegisterRequest({
     required String email,
-    required String code,
     required String password,
   }) = _RegisterRequestImpl;
 
   factory RegisterRequest.fromJson(Map<String, dynamic> jsonSerialization) {
     return RegisterRequest(
       email: jsonSerialization['email'] as String,
-      code: jsonSerialization['code'] as String,
       password: jsonSerialization['password'] as String,
     );
   }
 
   String email;
-
-  String code;
 
   String password;
 
@@ -45,7 +40,6 @@ abstract class RegisterRequest
   @_i1.useResult
   RegisterRequest copyWith({
     String? email,
-    String? code,
     String? password,
   });
   @override
@@ -53,7 +47,6 @@ abstract class RegisterRequest
     return {
       '__className__': 'RegisterRequest',
       'email': email,
-      'code': code,
       'password': password,
     };
   }
@@ -63,7 +56,6 @@ abstract class RegisterRequest
     return {
       '__className__': 'RegisterRequest',
       'email': email,
-      'code': code,
       'password': password,
     };
   }
@@ -77,11 +69,9 @@ abstract class RegisterRequest
 class _RegisterRequestImpl extends RegisterRequest {
   _RegisterRequestImpl({
     required String email,
-    required String code,
     required String password,
   }) : super._(
          email: email,
-         code: code,
          password: password,
        );
 
@@ -91,12 +81,10 @@ class _RegisterRequestImpl extends RegisterRequest {
   @override
   RegisterRequest copyWith({
     String? email,
-    String? code,
     String? password,
   }) {
     return RegisterRequest(
       email: email ?? this.email,
-      code: code ?? this.code,
       password: password ?? this.password,
     );
   }

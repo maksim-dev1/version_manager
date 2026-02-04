@@ -12,19 +12,7 @@ sealed class RegistrationState with _$RegistrationState {
   /// Состояние: начальное
   ///
   /// Может содержать данные о текущем этапе регистрации.
-  const factory RegistrationState.initial({
-    /// Email пользователя
-    String? email,
-
-    /// Проверенный код (если код уже введён)
-    String? verifiedCode,
-
-    /// Был ли код повторно отправлен
-    @Default(false) bool codeResent,
-
-    /// Время ожидания при rate limit
-    int? retryAfterSeconds,
-  }) = _Initial;
+  const factory RegistrationState.initial() = _Initial;
 
   /// Состояние: загрузка
   ///
@@ -32,7 +20,7 @@ sealed class RegistrationState with _$RegistrationState {
   /// - Проверке кода
   /// - Повторной отправке кода
   /// - Регистрации
-  const factory RegistrationState.loading() = _Loading;
+  const factory RegistrationState.registrationLoading() = RegistrationLoading;
 
   /// Состояние: успешная регистрация
   ///
@@ -40,19 +28,26 @@ sealed class RegistrationState with _$RegistrationState {
   /// После получения этого состояния UI должен:
   /// 1. Обновить AuthBloc состояние
   /// 2. Перенаправить на главную страницу
-  const factory RegistrationState.success({
+  const factory RegistrationState.registrationsuccess({
     required UserPublic user,
     required String accessToken,
     required String refreshToken,
-  }) = _Success;
+  }) = RegistrationSuccess;
+
+  const factory RegistrationState.codeConfirmated({
+    required String email,
+  }) = CodeConfirmated;
+
+  /// Состояние: попытки ввода кода исчерпаны
+  ///
+  /// Блокирует ввод кода до повторной отправки.
+  const factory RegistrationState.attemptsExhausted({
+    required String message,
+  }) = AttemptsExhausted;
 
   /// Состояние: ошибка
-  const factory RegistrationState.error({
+  const factory RegistrationState.registrationError({
     required String message,
     String? field,
-
-    /// Предыдущие данные для восстановления состояния
-    String? email,
-    String? verifiedCode,
-  }) = _RegistrationError;
+  }) = RegistrationError;
 }

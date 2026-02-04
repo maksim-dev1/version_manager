@@ -17,10 +17,12 @@ import 'package:version_manager_server/src/generated/auth/check_email.dart'
     as _i4;
 import 'package:version_manager_server/src/generated/auth/register_send_code.dart'
     as _i5;
-import 'package:version_manager_server/src/generated/auth/register.dart' as _i6;
-import 'package:version_manager_server/src/generated/auth/login.dart' as _i7;
+import 'package:version_manager_server/src/generated/auth/register_verify_code.dart'
+    as _i6;
+import 'package:version_manager_server/src/generated/auth/register.dart' as _i7;
+import 'package:version_manager_server/src/generated/auth/login.dart' as _i8;
 import 'package:version_manager_server/src/generated/auth/refresh_token.dart'
-    as _i8;
+    as _i9;
 
 class Endpoints extends _i1.EndpointDispatch {
   @override
@@ -59,7 +61,7 @@ class Endpoints extends _i1.EndpointDispatch {
               ) async =>
                   (endpoints['auth'] as _i2.AuthEndpoint).checkEmailAndSendCode(
                     session,
-                    params['request'],
+                    request: params['request'],
                   ),
         ),
         'resendCode': _i1.MethodConnector(
@@ -77,15 +79,34 @@ class Endpoints extends _i1.EndpointDispatch {
                 Map<String, dynamic> params,
               ) async => (endpoints['auth'] as _i2.AuthEndpoint).resendCode(
                 session,
-                params['request'],
+                request: params['request'],
               ),
+        ),
+        'verifyRegisterCode': _i1.MethodConnector(
+          name: 'verifyRegisterCode',
+          params: {
+            'request': _i1.ParameterDescription(
+              name: 'request',
+              type: _i1.getType<_i6.RegisterVerifyCodeRequest>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['auth'] as _i2.AuthEndpoint).verifyRegisterCode(
+                    session,
+                    request: params['request'],
+                  ),
         ),
         'register': _i1.MethodConnector(
           name: 'register',
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i6.RegisterRequest>(),
+              type: _i1.getType<_i7.RegisterRequest>(),
               nullable: false,
             ),
           },
@@ -95,7 +116,7 @@ class Endpoints extends _i1.EndpointDispatch {
                 Map<String, dynamic> params,
               ) async => (endpoints['auth'] as _i2.AuthEndpoint).register(
                 session,
-                params['request'],
+                request: params['request'],
               ),
         ),
         'login': _i1.MethodConnector(
@@ -103,7 +124,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i7.LoginRequest>(),
+              type: _i1.getType<_i8.LoginRequest>(),
               nullable: false,
             ),
           },
@@ -113,7 +134,7 @@ class Endpoints extends _i1.EndpointDispatch {
                 Map<String, dynamic> params,
               ) async => (endpoints['auth'] as _i2.AuthEndpoint).login(
                 session,
-                params['request'],
+                request: params['request'],
               ),
         ),
         'refreshTokens': _i1.MethodConnector(
@@ -121,7 +142,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i8.RefreshTokenRequest>(),
+              type: _i1.getType<_i9.RefreshTokenRequest>(),
               nullable: false,
             ),
           },
@@ -131,7 +152,7 @@ class Endpoints extends _i1.EndpointDispatch {
                 Map<String, dynamic> params,
               ) async => (endpoints['auth'] as _i2.AuthEndpoint).refreshTokens(
                 session,
-                params['request'],
+                request: params['request'],
               ),
         ),
         'logout': _i1.MethodConnector(
@@ -167,7 +188,7 @@ class Endpoints extends _i1.EndpointDispatch {
                 Map<String, dynamic> params,
               ) async => (endpoints['auth'] as _i2.AuthEndpoint).logoutAll(
                 session,
-                params['accessToken'],
+                accessToken: params['accessToken'],
               ),
         ),
       },

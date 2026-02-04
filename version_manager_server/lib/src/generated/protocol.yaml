@@ -1,6 +1,7 @@
 auth:
   - checkEmailAndSendCode:
   - resendCode:
+  - verifyRegisterCode:
   - register:
   - login:
   - refreshTokens:

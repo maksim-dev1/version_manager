@@ -11,12 +11,12 @@ part 'auth_state.dart';
 ///
 /// Отвечает за:
 /// - Проверку авторизации пользователя (наличие токенов)
-/// - Проверку существования email в системе
+/// - Установку состояния авторизации после входа/регистрации
 /// - Обновление токенов (refresh)
 /// - Выход из системы (logout/logoutAll)
 ///
-/// ВАЖНО: Блоки не должны общаться друг с другом напрямую.
-/// События блока приватные (с префиксом _).
+/// ВАЖНО: Блок управляет только состоянием авторизован/не авторизован.
+/// Логика проверки email, входа и регистрации вынесена в отдельные фичи.
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository _authRepository;
 
@@ -29,13 +29,23 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       (event, emit) => switch (event) {
         // Событие: проверка авторизации при запуске
         _CheckAuth() => _onCheckAuth(emit: emit),
-        // Событие: проверка существования email
-        _CheckEmail(:final email) => _onCheckEmail(email: email, emit: emit),
-        // Событие: обновление токенов
-        _RefreshTokens(:final refreshToken) => _onRefreshTokens(
-          refreshToken: refreshToken,
-          emit: emit,
-        ),
+        // Событие: установка авторизованного состояния
+        // _SetAuthenticated(
+        //   :final user,
+        //   :final accessToken,
+        //   :final refreshToken,
+        // ) =>
+        //   _onSetAuthenticated(
+        //     user: user,
+        //     accessToken: accessToken,
+        //     refreshToken: refreshToken,
+        //     emit: emit,
+        //   ),
+        // // Событие: обновление токенов
+        // _RefreshTokens(:final refreshToken) => _onRefreshTokens(
+        //   refreshToken: refreshToken,
+        //   emit: emit,
+        // ),
         // Событие: выход из текущей сессии
         _Logout(:final accessToken) => _onLogout(
           accessToken: accessToken,
@@ -63,96 +73,74 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final isAuth = await _authRepository.checkAuth();
 
       if (isAuth) {
-        // Получаем сохранённые токены
-        final tokens = await _authRepository.getSavedTokens();
-        if (tokens != null) {
-          emit(
-            AuthState.authenticated(
-              // TODO: Получить данные пользователя из токена или с сервера
-              user: UserPublic(
-                id: UuidValue.fromString(
-                  '00000000-0000-0000-0000-000000000000',
-                ),
-                email: '',
-                isEmailVerified: true,
-                createdAt: DateTime.now(),
-              ),
-              accessToken: tokens.accessToken,
-              refreshToken: tokens.refreshToken,
-            ),
-          );
-        } else {
-          emit(const AuthState.unauthenticated());
-        }
+        emit(
+          AuthState.authenticated(),
+        );
       } else {
         emit(const AuthState.unauthenticated());
       }
     } catch (e) {
-      emit(AuthState.error(message: 'Ошибка проверки авторизации: $e'));
+      // При ошибке считаем пользователя не авторизованным
+      emit(const AuthState.unauthenticated());
     }
   }
 
-  /// Метод: проверка существования email в системе
+  /// Метод: установка авторизованного состояния
   ///
-  /// Отправляет запрос на сервер для проверки email:
-  /// - Если email существует → `emailChecked` с emailExists: true (направить на вход)
-  /// - Если email не существует → `emailChecked` с emailExists: false (направить на регистрацию)
-  Future<void> _onCheckEmail({
-    required String email,
-    required Emitter<AuthState> emit,
-  }) async {
-    emit(const AuthState.loading());
-    try {
-      final response = await _authRepository.checkEmail(email: email);
+  /// Вызывается после успешного входа или регистрации.
+  /// Сохраняет токены и устанавливает состояние authenticated.
+  // Future<void> _onSetAuthenticated({
+  //   required UserPublic user,
+  //   required String accessToken,
+  //   required String refreshToken,
+  //   required Emitter<AuthState> emit,
+  // }) async {
+  //   try {
+  //     // Сохраняем токены в хранилище
+  //     await _authRepository.saveTokens(
+  //       accessToken: accessToken,
+  //       refreshToken: refreshToken,
+  //     );
 
-      // Возвращаем emailChecked с информацией о результате проверки email
-      emit(
-        AuthState.emailChecked(
-          email: email,
-          emailExists: response.existsEmail,
-          codeSent: response.codeSent,
-          retryAfterSeconds: response.retryAfterSeconds,
-        ),
-      );
-    } on InvalidDataException catch (e) {
-      emit(AuthState.error(message: e.message, field: e.field));
-    } catch (e) {
-      emit(AuthState.error(message: 'Ошибка проверки email: $e'));
-    }
-  }
+  //     emit(
+  //       AuthState.authenticated(
+
+  //       ),
+  //     );
+  //   } catch (e) {
+  //     emit(const AuthState.unauthenticated());
+  //   }
+  // }
 
   /// Метод: обновление токенов
   ///
   /// Использует refresh token для получения новой пары токенов.
   /// При успехе обновляет состояние с новыми токенами.
-  Future<void> _onRefreshTokens({
-    required String refreshToken,
-    required Emitter<AuthState> emit,
-  }) async {
-    try {
-      final response = await _authRepository.refreshTokens(
-        refreshToken: refreshToken,
-      );
+  // Future<void> _onRefreshTokens({
+  //   required String refreshToken,
+  //   required Emitter<AuthState> emit,
+  // }) async {
+  //   try {
+  //     final response = await _authRepository.refreshTokens(
+  //       refreshToken: refreshToken,
+  //     );
 
-      // Сохраняем текущего пользователя, обновляем только токены
-      final currentState = state;
-      if (currentState is _Authenticated) {
-        emit(
-          AuthState.authenticated(
-            user: currentState.user,
-            accessToken: response.accessToken,
-            refreshToken: response.refreshToken,
-          ),
-        );
-      }
-    } on InvalidDataException catch (e) {
-      // Refresh token недействителен - разлогиниваем
-      emit(const AuthState.unauthenticated());
-      emit(AuthState.error(message: e.message, field: e.field));
-    } catch (e) {
-      emit(AuthState.error(message: 'Ошибка обновления токенов: $e'));
-    }
-  }
+  //     // Сохраняем текущего пользователя, обновляем только токены
+  //     final currentState = state;
+  //     if (currentState is Authenticated) {
+  //       emit(
+  //         AuthState.authenticated(
+  //           user: currentState.user,
+  //           accessToken: response.accessToken,
+  //           refreshToken: response.refreshToken,
+  //         ),
+  //       );
+  //     }
+  //   } catch (e) {
+  //     // Refresh token недействителен - разлогиниваем
+  //     emit(const AuthState.unauthenticated());
+  //   }
+  // }
 
   /// Метод: выход из текущей сессии
   ///
@@ -168,7 +156,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       emit(const AuthState.unauthenticated());
     } catch (e) {
-      emit(AuthState.error(message: 'Ошибка выхода: $e'));
+      // Даже при ошибке разлогиниваем локально
+      emit(const AuthState.unauthenticated());
     }
   }
 
@@ -186,7 +175,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       emit(const AuthState.unauthenticated());
     } catch (e) {
-      emit(AuthState.error(message: 'Ошибка выхода: $e'));
+      // Даже при ошибке разлогиниваем локально
+      emit(const AuthState.unauthenticated());
     }
   }
 }

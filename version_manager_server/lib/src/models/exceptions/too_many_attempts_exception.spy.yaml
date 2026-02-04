@@ -1,0 +1,5 @@
+exception: TooManyAttemptsException
+fields:
+  message: String
+  retryAfterSeconds: int?
+  stackTrace: String?

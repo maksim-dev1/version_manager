@@ -22,18 +22,21 @@ import 'package:version_manager_server/src/generated/auth/send_code_response.dar
     as _i6;
 import 'package:version_manager_server/src/generated/auth/register_send_code.dart'
     as _i7;
-import 'package:version_manager_server/src/generated/auth/auth_response.dart'
-    as _i8;
-import 'package:version_manager_server/src/generated/auth/register.dart' as _i9;
-import 'package:version_manager_server/src/generated/auth/login.dart' as _i10;
-import 'package:version_manager_server/src/generated/auth/token_pair_response.dart'
-    as _i11;
-import 'package:version_manager_server/src/generated/auth/refresh_token.dart'
-    as _i12;
 import 'package:version_manager_server/src/generated/auth/common_success.dart'
+    as _i8;
+import 'package:version_manager_server/src/generated/auth/register_verify_code.dart'
+    as _i9;
+import 'package:version_manager_server/src/generated/auth/auth_response.dart'
+    as _i10;
+import 'package:version_manager_server/src/generated/auth/register.dart'
+    as _i11;
+import 'package:version_manager_server/src/generated/auth/login.dart' as _i12;
+import 'package:version_manager_server/src/generated/auth/token_pair_response.dart'
     as _i13;
-import 'package:version_manager_server/src/generated/greetings/greeting.dart'
+import 'package:version_manager_server/src/generated/auth/refresh_token.dart'
     as _i14;
+import 'package:version_manager_server/src/generated/greetings/greeting.dart'
+    as _i15;
 import 'package:version_manager_server/src/generated/protocol.dart';
 import 'package:version_manager_server/src/generated/endpoints.dart';
 export 'package:serverpod_test/serverpod_test_public_exports.dart';
@@ -175,9 +178,9 @@ class _AuthEndpoint {
   final _i2.SerializationManager _serializationManager;
 
   _i3.Future<_i4.CheckEmailAndSendCodeResponse> checkEmailAndSendCode(
-    _i1.TestSessionBuilder sessionBuilder,
-    _i5.CheckEmailRequest request,
-  ) async {
+    _i1.TestSessionBuilder sessionBuilder, {
+    required _i5.CheckEmailRequest request,
+  }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
@@ -206,9 +209,9 @@ class _AuthEndpoint {
   }
 
   _i3.Future<_i6.SendCodeResponse> resendCode(
-    _i1.TestSessionBuilder sessionBuilder,
-    _i7.RegisterSendCodeRequest request,
-  ) async {
+    _i1.TestSessionBuilder sessionBuilder, {
+    required _i7.RegisterSendCodeRequest request,
+  }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
@@ -236,10 +239,41 @@ class _AuthEndpoint {
     });
   }
 
-  _i3.Future<_i8.AuthResponse> register(
-    _i1.TestSessionBuilder sessionBuilder,
-    _i9.RegisterRequest request,
-  ) async {
+  _i3.Future<_i8.SuccessResponse> verifyRegisterCode(
+    _i1.TestSessionBuilder sessionBuilder, {
+    required _i9.RegisterVerifyCodeRequest request,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'auth',
+            method: 'verifyRegisterCode',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'auth',
+          methodName: 'verifyRegisterCode',
+          parameters: _i1.testObjectToJson({'request': request}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i8.SuccessResponse>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i10.AuthResponse> register(
+    _i1.TestSessionBuilder sessionBuilder, {
+    required _i11.RegisterRequest request,
+  }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
@@ -259,7 +293,7 @@ class _AuthEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i8.AuthResponse>);
+                as _i3.Future<_i10.AuthResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -267,10 +301,10 @@ class _AuthEndpoint {
     });
   }
 
-  _i3.Future<_i8.AuthResponse> login(
-    _i1.TestSessionBuilder sessionBuilder,
-    _i10.LoginRequest request,
-  ) async {
+  _i3.Future<_i10.AuthResponse> login(
+    _i1.TestSessionBuilder sessionBuilder, {
+    required _i12.LoginRequest request,
+  }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
@@ -290,7 +324,7 @@ class _AuthEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i8.AuthResponse>);
+                as _i3.Future<_i10.AuthResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -298,10 +332,10 @@ class _AuthEndpoint {
     });
   }
 
-  _i3.Future<_i11.TokenPairResponse> refreshTokens(
-    _i1.TestSessionBuilder sessionBuilder,
-    _i12.RefreshTokenRequest request,
-  ) async {
+  _i3.Future<_i13.TokenPairResponse> refreshTokens(
+    _i1.TestSessionBuilder sessionBuilder, {
+    required _i14.RefreshTokenRequest request,
+  }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
@@ -321,7 +355,7 @@ class _AuthEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i11.TokenPairResponse>);
+                as _i3.Future<_i13.TokenPairResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -329,7 +363,7 @@ class _AuthEndpoint {
     });
   }
 
-  _i3.Future<_i13.SuccessResponse> logout(
+  _i3.Future<_i8.SuccessResponse> logout(
     _i1.TestSessionBuilder sessionBuilder,
     String accessToken,
   ) async {
@@ -352,7 +386,7 @@ class _AuthEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i13.SuccessResponse>);
+                as _i3.Future<_i8.SuccessResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -360,10 +394,10 @@ class _AuthEndpoint {
     });
   }
 
-  _i3.Future<_i13.SuccessResponse> logoutAll(
-    _i1.TestSessionBuilder sessionBuilder,
-    String accessToken,
-  ) async {
+  _i3.Future<_i8.SuccessResponse> logoutAll(
+    _i1.TestSessionBuilder sessionBuilder, {
+    required String accessToken,
+  }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
@@ -383,7 +417,7 @@ class _AuthEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i13.SuccessResponse>);
+                as _i3.Future<_i8.SuccessResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -402,7 +436,7 @@ class _GreetingEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i14.Greeting> hello(
+  _i3.Future<_i15.Greeting> hello(
     _i1.TestSessionBuilder sessionBuilder,
     String name,
   ) async {
@@ -425,7 +459,7 @@ class _GreetingEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i14.Greeting>);
+                as _i3.Future<_i15.Greeting>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();

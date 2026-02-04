@@ -38,14 +38,11 @@ class RegistrationBloc extends Bloc<RegistrationEvent, RegistrationState> {
         // Событие: повторная отправка кода
         _ResendCode(:final email) => _onResendCode(email: email, emit: emit),
         // Событие: регистрация с созданием пароля
-        _Register(:final email, :final code, :final password) => _onRegister(
+        _Register(:final email, :final password) => _onRegister(
           email: email,
-          code: code,
           password: password,
           emit: emit,
         ),
-        // Событие: сброс состояния
-        _Reset() => _onReset(emit: emit),
       },
     );
   }
@@ -54,36 +51,52 @@ class RegistrationBloc extends Bloc<RegistrationEvent, RegistrationState> {
 
   /// Метод: проверка введённого кода верификации
   ///
-  /// Проверяет код локально (формат) и отмечает его как проверенный.
-  /// Полная верификация происходит на сервере при регистрации.
+  /// Отправляет код на сервер для проверки.
+  /// При успехе переходит в initial состояние (готово к созданию пароля).
   Future<void> _onVerifyCode({
     required String email,
     required String code,
     required Emitter<RegistrationState> emit,
   }) async {
     try {
-      emit(const RegistrationState.loading());
+      emit(const RegistrationState.registrationLoading());
 
-      // Локальная проверка формата кода (6 цифр)
-      final codeRegex = RegExp(r'^\d{6}$');
-      if (!codeRegex.hasMatch(code)) {
+      // Отправляем код на проверку
+      final response = await _registrationRepository.verifyCode(
+        email: email,
+        code: code,
+      );
+
+      if (response.success) {
         emit(
-          RegistrationState.error(
-            message: 'Код должен содержать 6 цифр',
-            field: 'code',
+          RegistrationState.codeConfirmated(
             email: email,
           ),
         );
-        return;
+      } else {
+        emit(
+          RegistrationState.registrationError(
+            message: 'Неверный код',
+          ),
+        );
       }
-
-      // Код прошёл локальную проверку → можно переходить к созданию пароля
-      emit(RegistrationState.initial(email: email, verifiedCode: code));
+    } on TooManyAttemptsException catch (e) {
+      emit(
+        RegistrationState.attemptsExhausted(
+          message: e.message,
+        ),
+      );
+    } on InvalidDataException catch (e) {
+      emit(
+        RegistrationState.registrationError(
+          message: e.message,
+          field: e.field,
+        ),
+      );
     } catch (e) {
       emit(
-        RegistrationState.error(
+        RegistrationState.registrationError(
           message: 'Ошибка проверки кода: $e',
-          email: email,
         ),
       );
     }
@@ -98,46 +111,35 @@ class RegistrationBloc extends Bloc<RegistrationEvent, RegistrationState> {
     required Emitter<RegistrationState> emit,
   }) async {
     try {
-      emit(const RegistrationState.loading());
-
       final response = await _registrationRepository.resendCode(email: email);
 
       // Rate limit
       if (response.retryAfterSeconds != null) {
-        emit(
-          RegistrationState.initial(
-            email: email,
-            retryAfterSeconds: response.retryAfterSeconds,
-          ),
-        );
         return;
       }
 
-      // Код успешно отправлен
+      // Код успешно отправлен - сбрасываем состояние для разблокировки ввода
       if (response.success) {
-        emit(RegistrationState.initial(email: email, codeResent: true));
+        emit(const RegistrationState.initial());
         return;
       }
 
       emit(
-        RegistrationState.error(
+        RegistrationState.registrationError(
           message: 'Не удалось отправить код',
-          email: email,
         ),
       );
     } on InvalidDataException catch (e) {
       emit(
-        RegistrationState.error(
+        RegistrationState.registrationError(
           message: e.message,
           field: e.field,
-          email: email,
         ),
       );
     } catch (e) {
       emit(
-        RegistrationState.error(
+        RegistrationState.registrationError(
           message: 'Ошибка отправки кода: $e',
-          email: email,
         ),
       );
     }
@@ -149,21 +151,20 @@ class RegistrationBloc extends Bloc<RegistrationEvent, RegistrationState> {
   /// При успехе возвращает данные пользователя и токены (автовход).
   Future<void> _onRegister({
     required String email,
-    required String code,
     required String password,
     required Emitter<RegistrationState> emit,
   }) async {
     try {
-      emit(const RegistrationState.loading());
+      emit(const RegistrationState.registrationLoading());
 
       final response = await _registrationRepository.register(
         email: email,
-        code: code,
+
         password: password,
       );
 
       emit(
-        RegistrationState.success(
+        RegistrationState.registrationsuccess(
           user: response.user,
           accessToken: response.accessToken,
           refreshToken: response.refreshToken,
@@ -171,29 +172,17 @@ class RegistrationBloc extends Bloc<RegistrationEvent, RegistrationState> {
       );
     } on InvalidDataException catch (e) {
       emit(
-        RegistrationState.error(
+        RegistrationState.registrationError(
           message: e.message,
           field: e.field,
-          email: email,
-          verifiedCode: code,
         ),
       );
     } catch (e) {
       emit(
-        RegistrationState.error(
+        RegistrationState.registrationError(
           message: 'Ошибка регистрации: $e',
-          email: email,
-          verifiedCode: code,
         ),
       );
     }
-  }
-
-  /// Метод: сброс состояния
-  ///
-  /// Возвращает блок в начальное состояние.
-  /// Используется при возврате на предыдущий экран.
-  Future<void> _onReset({required Emitter<RegistrationState> emit}) async {
-    emit(const RegistrationState.initial());
   }
 }

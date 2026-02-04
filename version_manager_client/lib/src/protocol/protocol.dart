@@ -38,10 +38,11 @@ import 'enums/team_member_status_type.dart' as _i25;
 import 'enums/team_role_type.dart' as _i26;
 import 'enums/verification_putpose_type.dart' as _i27;
 import 'exceptions/invalid_data_exception.dart' as _i28;
-import 'greetings/greeting.dart' as _i29;
-import 'logs/version_check_log.dart' as _i30;
-import 'teams/team.dart' as _i31;
-import 'teams/team_member.dart' as _i32;
+import 'exceptions/too_many_attempts_exception.dart' as _i29;
+import 'greetings/greeting.dart' as _i30;
+import 'logs/version_check_log.dart' as _i31;
+import 'teams/team.dart' as _i32;
+import 'teams/team_member.dart' as _i33;
 export 'apps/application.dart';
 export 'apps/store_link.dart';
 export 'apps/version.dart';
@@ -69,6 +70,7 @@ export 'enums/team_member_status_type.dart';
 export 'enums/team_role_type.dart';
 export 'enums/verification_putpose_type.dart';
 export 'exceptions/invalid_data_exception.dart';
+export 'exceptions/too_many_attempts_exception.dart';
 export 'greetings/greeting.dart';
 export 'logs/version_check_log.dart';
 export 'teams/team.dart';
@@ -190,17 +192,20 @@ class Protocol extends _i1.SerializationManager {
     if (t == _i28.InvalidDataException) {
       return _i28.InvalidDataException.fromJson(data) as T;
     }
-    if (t == _i29.Greeting) {
-      return _i29.Greeting.fromJson(data) as T;
+    if (t == _i29.TooManyAttemptsException) {
+      return _i29.TooManyAttemptsException.fromJson(data) as T;
     }
-    if (t == _i30.VersionCheckLog) {
-      return _i30.VersionCheckLog.fromJson(data) as T;
+    if (t == _i30.Greeting) {
+      return _i30.Greeting.fromJson(data) as T;
     }
-    if (t == _i31.Team) {
-      return _i31.Team.fromJson(data) as T;
+    if (t == _i31.VersionCheckLog) {
+      return _i31.VersionCheckLog.fromJson(data) as T;
     }
-    if (t == _i32.TeamMember) {
-      return _i32.TeamMember.fromJson(data) as T;
+    if (t == _i32.Team) {
+      return _i32.Team.fromJson(data) as T;
+    }
+    if (t == _i33.TeamMember) {
+      return _i33.TeamMember.fromJson(data) as T;
     }
     if (t == _i1.getType<_i2.Application?>()) {
       return (data != null ? _i2.Application.fromJson(data) : null) as T;
@@ -299,17 +304,23 @@ class Protocol extends _i1.SerializationManager {
       return (data != null ? _i28.InvalidDataException.fromJson(data) : null)
           as T;
     }
-    if (t == _i1.getType<_i29.Greeting?>()) {
-      return (data != null ? _i29.Greeting.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i29.TooManyAttemptsException?>()) {
+      return (data != null
+              ? _i29.TooManyAttemptsException.fromJson(data)
+              : null)
+          as T;
     }
-    if (t == _i1.getType<_i30.VersionCheckLog?>()) {
-      return (data != null ? _i30.VersionCheckLog.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i30.Greeting?>()) {
+      return (data != null ? _i30.Greeting.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i31.Team?>()) {
-      return (data != null ? _i31.Team.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i31.VersionCheckLog?>()) {
+      return (data != null ? _i31.VersionCheckLog.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i32.TeamMember?>()) {
-      return (data != null ? _i32.TeamMember.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i32.Team?>()) {
+      return (data != null ? _i32.Team.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i33.TeamMember?>()) {
+      return (data != null ? _i33.TeamMember.fromJson(data) : null) as T;
     }
     if (t == List<_i23.PlatformType>) {
       return (data as List)
@@ -339,16 +350,16 @@ class Protocol extends _i1.SerializationManager {
               : null)
           as T;
     }
-    if (t == List<_i30.VersionCheckLog>) {
+    if (t == List<_i31.VersionCheckLog>) {
       return (data as List)
-              .map((e) => deserialize<_i30.VersionCheckLog>(e))
+              .map((e) => deserialize<_i31.VersionCheckLog>(e))
               .toList()
           as T;
     }
-    if (t == _i1.getType<List<_i30.VersionCheckLog>?>()) {
+    if (t == _i1.getType<List<_i31.VersionCheckLog>?>()) {
       return (data != null
               ? (data as List)
-                    .map((e) => deserialize<_i30.VersionCheckLog>(e))
+                    .map((e) => deserialize<_i31.VersionCheckLog>(e))
                     .toList()
               : null)
           as T;
@@ -379,23 +390,23 @@ class Protocol extends _i1.SerializationManager {
               : null)
           as T;
     }
-    if (t == List<_i31.Team>) {
-      return (data as List).map((e) => deserialize<_i31.Team>(e)).toList() as T;
+    if (t == List<_i32.Team>) {
+      return (data as List).map((e) => deserialize<_i32.Team>(e)).toList() as T;
     }
-    if (t == _i1.getType<List<_i31.Team>?>()) {
+    if (t == _i1.getType<List<_i32.Team>?>()) {
       return (data != null
-              ? (data as List).map((e) => deserialize<_i31.Team>(e)).toList()
+              ? (data as List).map((e) => deserialize<_i32.Team>(e)).toList()
               : null)
           as T;
     }
-    if (t == List<_i32.TeamMember>) {
-      return (data as List).map((e) => deserialize<_i32.TeamMember>(e)).toList()
+    if (t == List<_i33.TeamMember>) {
+      return (data as List).map((e) => deserialize<_i33.TeamMember>(e)).toList()
           as T;
     }
-    if (t == _i1.getType<List<_i32.TeamMember>?>()) {
+    if (t == _i1.getType<List<_i33.TeamMember>?>()) {
       return (data != null
               ? (data as List)
-                    .map((e) => deserialize<_i32.TeamMember>(e))
+                    .map((e) => deserialize<_i33.TeamMember>(e))
                     .toList()
               : null)
           as T;
@@ -444,10 +455,11 @@ class Protocol extends _i1.SerializationManager {
       _i26.TeamRoleType => 'TeamRoleType',
       _i27.VerificationPurposeType => 'VerificationPurposeType',
       _i28.InvalidDataException => 'InvalidDataException',
-      _i29.Greeting => 'Greeting',
-      _i30.VersionCheckLog => 'VersionCheckLog',
-      _i31.Team => 'Team',
-      _i32.TeamMember => 'TeamMember',
+      _i29.TooManyAttemptsException => 'TooManyAttemptsException',
+      _i30.Greeting => 'Greeting',
+      _i31.VersionCheckLog => 'VersionCheckLog',
+      _i32.Team => 'Team',
+      _i33.TeamMember => 'TeamMember',
       _ => null,
     };
   }
@@ -519,13 +531,15 @@ class Protocol extends _i1.SerializationManager {
         return 'VerificationPurposeType';
       case _i28.InvalidDataException():
         return 'InvalidDataException';
-      case _i29.Greeting():
+      case _i29.TooManyAttemptsException():
+        return 'TooManyAttemptsException';
+      case _i30.Greeting():
         return 'Greeting';
-      case _i30.VersionCheckLog():
+      case _i31.VersionCheckLog():
         return 'VersionCheckLog';
-      case _i31.Team():
+      case _i32.Team():
         return 'Team';
-      case _i32.TeamMember():
+      case _i33.TeamMember():
         return 'TeamMember';
     }
     return null;
@@ -618,17 +632,20 @@ class Protocol extends _i1.SerializationManager {
     if (dataClassName == 'InvalidDataException') {
       return deserialize<_i28.InvalidDataException>(data['data']);
     }
+    if (dataClassName == 'TooManyAttemptsException') {
+      return deserialize<_i29.TooManyAttemptsException>(data['data']);
+    }
     if (dataClassName == 'Greeting') {
-      return deserialize<_i29.Greeting>(data['data']);
+      return deserialize<_i30.Greeting>(data['data']);
     }
     if (dataClassName == 'VersionCheckLog') {
-      return deserialize<_i30.VersionCheckLog>(data['data']);
+      return deserialize<_i31.VersionCheckLog>(data['data']);
     }
     if (dataClassName == 'Team') {
-      return deserialize<_i31.Team>(data['data']);
+      return deserialize<_i32.Team>(data['data']);
     }
     if (dataClassName == 'TeamMember') {
-      return deserialize<_i32.TeamMember>(data['data']);
+      return deserialize<_i33.TeamMember>(data['data']);
     }
     return super.deserializeByClassName(data);
   }

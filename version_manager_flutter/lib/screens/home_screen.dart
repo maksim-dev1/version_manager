@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:version_manager_flutter/shared/services/notification_service.dart';
 import 'package:version_manager_flutter/theme/snow_ui/snow_spacing.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -476,14 +477,9 @@ class HomeScreen extends StatelessWidget {
   }
 
   void _showSnackBar(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('This is a SnackBar message'),
-        action: SnackBarAction(
-          label: 'Undo',
-          onPressed: () {},
-        ),
-      ),
+    NotificationService.showInfo(
+      context,
+      'This is a SnackBar message',
     );
   }
 

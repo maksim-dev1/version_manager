@@ -1,8 +1,9 @@
-import 'dart:io';
 import 'package:mailer/mailer.dart' as mailer;
 import 'package:mailer/smtp_server.dart';
 import 'package:serverpod/serverpod.dart';
+import 'package:version_manager_server/email_templates.dart';
 import 'package:version_manager_server/src/generated/protocol.dart';
+
 
 /// Поддерживаемые провайдеры email-сервисов.
 ///
@@ -20,6 +21,7 @@ enum EmailProvider {
   /// - Порт: 465 (SSL) или 587 (TLS)
   google,
 
+
   /// Яндекс.Почта SMTP сервис.
   ///
   /// **Требования:**
@@ -32,6 +34,7 @@ enum EmailProvider {
   /// - Порт: 465 (SSL)
   yandex,
 }
+
 
 /// Сервис для отправки email-уведомлений с поддержкой HTML-шаблонов.
 ///
@@ -48,9 +51,9 @@ enum EmailProvider {
 /// - **Условными блоками**: `{{#variable}}content{{/variable}}` — отображаются только при наличии переменной
 ///
 /// ## Встроенные шаблоны
-/// - `verification.html` — для кодов подтверждения email
-/// - `password_reset.html` — для кодов восстановления пароля
-/// - `notification.html` — для общих уведомлений
+/// - `verification` — для кодов подтверждения email
+/// - `passwordReset` — для кодов восстановления пароля
+/// - `notification` — для общих уведомлений
 ///
 /// ### Пример использования
 /// ```dart
@@ -67,16 +70,11 @@ class EmailService {
   /// SMTP провайдер для отправки email.
   final EmailProvider provider;
 
-  /// Путь к папке с HTML-шаблонами.
-  ///
-  /// По умолчанию: `email_templates`
-  final String templatesPath;
 
   /// Создаёт экземпляр сервиса email-уведомлений.
   ///
   /// ### Параметры
   /// - [provider] — SMTP провайдер ([EmailProvider.google] или [EmailProvider.yandex])
-  /// - [templatesPath] — путь к папке с HTML-шаблонами (по умолчанию: `email_templates`)
   ///
   /// ### Требования к настройке
   /// Перед использованием необходимо настроить пароли в Serverpod:
@@ -96,14 +94,15 @@ class EmailService {
   /// ```
   EmailService({
     required this.provider,
-    this.templatesPath = 'email_templates',
   });
+
 
   Map<String, String> _getCredentials() {
     switch (provider) {
       case EmailProvider.google:
         final username = Serverpod.instance.getPassword('gmailSmtpEmail');
         final password = Serverpod.instance.getPassword('gmailSmtpAppPassword');
+
 
         if (username == null || password == null) {
           throw InvalidDataException(
@@ -115,11 +114,13 @@ class EmailService {
         }
         return {'username': username, 'password': password};
 
+
       case EmailProvider.yandex:
         final username = Serverpod.instance.getPassword('yandexSmtpEmail');
         final password = Serverpod.instance.getPassword(
           'yandexSmtpAppPassword',
         );
+
 
         if (username == null || password == null) {
           throw InvalidDataException(
@@ -133,12 +134,15 @@ class EmailService {
     }
   }
 
+
   SmtpServer _getSmtpServer() {
     final credentials = _getCredentials();
+
 
     switch (provider) {
       case EmailProvider.google:
         return gmail(credentials['username']!, credentials['password']!);
+
 
       case EmailProvider.yandex:
         return SmtpServer(
@@ -151,7 +155,8 @@ class EmailService {
     }
   }
 
-  /// Загружает HTML-шаблон и обрабатывает переменные и условные блоки.
+
+  /// Обрабатывает HTML-шаблон и заменяет переменные и условные блоки.
   ///
   /// ### Система шаблонов
   ///
@@ -165,31 +170,20 @@ class EmailService {
   /// - Поддерживается вложенность
   ///
   /// ### Параметры
-  /// - [templateName] — имя файла шаблона (например, 'verification.html')
+  /// - [template] — HTML-шаблон из EmailTemplates
   /// - [variables] — map переменных для подстановки
   ///
   /// ### Возвращает
   /// Обработанный HTML-код готовый для отправки.
-  ///
-  /// ### Исключения
-  /// - [InvalidDataException] — файл шаблона не найден
-  String _loadTemplate(String templateName, Map<String, String> variables) {
-    final templateFile = File('\$templatesPath/\$templateName');
+  String _loadTemplate(String template, Map<String, String> variables) {
+    var html = template;
 
-    if (!templateFile.existsSync()) {
-      throw InvalidDataException(
-        message: 'HTML-шаблон не найден: \$templatesPath/\$templateName',
-        field: 'Email Template',
-        stackTrace: StackTrace.current.toString(),
-      );
-    }
-
-    var html = templateFile.readAsStringSync();
 
     // Замена переменных
     variables.forEach((key, value) {
-      html = html.replaceAll('{{\$key}}', value);
+      html = html.replaceAll('{{$key}}', value);
     });
+
 
     // Обработка условных блоков
     html = html.replaceAllMapped(
@@ -198,15 +192,18 @@ class EmailService {
         final varName = match.group(1)!;
         final content = match.group(2)!;
 
+
         if (variables.containsKey(varName)) {
-          return content.replaceAll('{{\$varName}}', variables[varName]!);
+          return content.replaceAll('{{$varName}}', variables[varName]!);
         }
         return '';
       },
     );
 
+
     return html;
   }
+
 
   Future<bool> _sendEmail({
     required String recipientEmail,
@@ -218,12 +215,14 @@ class EmailService {
       final smtpServer = _getSmtpServer();
       final credentials = _getCredentials();
 
+
       final message = mailer.Message()
         ..from = mailer.Address(credentials['username']!)
         ..recipients.add(recipientEmail)
         ..subject = subject
         ..text = textBody
         ..html = htmlBody;
+
 
       await mailer.send(message, smtpServer);
       return true;
@@ -242,9 +241,10 @@ class EmailService {
     }
   }
 
+
   /// Отправляет email с кодом верификации на указанный адрес.
   ///
-  /// Использует HTML-шаблон `verification.html` для красивого оформления сообщения.
+  /// Использует HTML-шаблон `EmailTemplates.verification` для красивого оформления сообщения.
   /// Код верификации отображается крупным шрифтом для удобства ввода.
   ///
   /// ### Параметры
@@ -260,7 +260,7 @@ class EmailService {
   /// - `{{APP_NAME}}` — название приложения
   ///
   /// ### Исключения
-  /// - [InvalidDataException] — ошибка отправки или отсутствующий шаблон
+  /// - [InvalidDataException] — ошибка отправки
   ///
   /// ### Пример
   /// ```dart
@@ -275,22 +275,24 @@ class EmailService {
     String code, {
     String appName = 'YourApp',
   }) async {
-    final html = _loadTemplate('verification.html', {
+    final html = _loadTemplate(verificationCodeTemplate, {
       'CODE': code,
       'APP_NAME': appName,
     });
+
 
     return await _sendEmail(
       recipientEmail: email,
       subject: 'Подтверждение email',
       htmlBody: html,
-      textBody: 'Ваш код подтверждения: \$code',
+      textBody: 'Ваш код подтверждения: $code',
     );
   }
 
+
   /// Отправляет email с кодом восстановления пароля.
   ///
-  /// Использует HTML-шаблон `password_reset.html` с персонализированным обращением
+  /// Использует HTML-шаблон `EmailTemplates.passwordReset` с персонализированным обращением
   /// и инструкциями по восстановлению пароля.
   ///
   /// ### Параметры
@@ -327,25 +329,29 @@ class EmailService {
       'APP_NAME': appName,
     };
 
+
     if (username != null) {
       variables['USERNAME'] = username;
     }
 
-    final html = _loadTemplate('password_reset.html', variables);
+
+    final html = _loadTemplate(passwordResetTemplate, variables);
+
 
     return await _sendEmail(
       recipientEmail: email,
       subject: 'Восстановление пароля',
       htmlBody: html,
-      textBody: 'Код восстановления пароля: \$code',
+      textBody: 'Код восстановления пароля: $code',
     );
   }
+
 
   /// Отправляет персонализированное уведомление с поддержкой множества параметров.
   ///
   /// Самый гибкий метод для отправки различных типов уведомлений:
   /// информационных сообщений, приглашений, напоминаний и др.
-  /// Использует шаблон `notification.html` с полной поддержкой кастомизации.
+  /// Использует шаблон `EmailTemplates.notification` с полной поддержкой кастомизации.
   ///
   /// ### Обязательные параметры
   /// - [email] — адрес получателя
@@ -408,6 +414,7 @@ class EmailService {
       'TIMESTAMP': DateTime.now().toLocal().toString().substring(0, 16),
     };
 
+
     if (username != null) variables['USERNAME'] = username;
     if (ctaUrl != null) {
       variables['CTA_URL'] = ctaUrl;
@@ -417,7 +424,9 @@ class EmailService {
     if (supportUrl != null) variables['SUPPORT_URL'] = supportUrl;
     if (unsubscribeUrl != null) variables['UNSUBSCRIBE_URL'] = unsubscribeUrl;
 
-    final html = _loadTemplate('notification.html', variables);
+
+    final html = _loadTemplate(notificationTemplate, variables);
+
 
     return await _sendEmail(
       recipientEmail: email,

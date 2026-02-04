@@ -18,18 +18,27 @@ class RegistrationRepositoryImpl implements RegistrationRepository {
     required String email,
   }) async {
     return await _authEndpoint.resendCode(
-      RegisterSendCodeRequest(email: email),
+      request: RegisterSendCodeRequest(email: email),
+    );
+  }
+
+  @override
+  Future<SuccessResponse> verifyCode({
+    required String email,
+    required String code,
+  }) async {
+    return await _authEndpoint.verifyRegisterCode(
+      request: RegisterVerifyCodeRequest(email: email, code: code),
     );
   }
 
   @override
   Future<AuthResponse> register({
     required String email,
-    required String code,
     required String password,
   }) async {
     final response = await _authEndpoint.register(
-      RegisterRequest(email: email, code: code, password: password),
+      request: RegisterRequest(email: email, password: password),
     );
 
     // Сохраняем токены после успешной регистрации (автовход)

@@ -65,33 +65,61 @@ class SnowColors {
 ColorScheme snowUILightColorScheme() {
   return ColorScheme(
     brightness: Brightness.light,
+    // Основной цвет приложения (кнопки, активные элементы)
     primary: SnowColors.blue,
+    // Текст/иконки на primary цвете
     onPrimary: SnowColors.white100,
+    // Контейнеры с primary контентом (менее заметные элементы)
     primaryContainer: SnowColors.light,
+    // Текст/иконки на primaryContainer
     onPrimaryContainer: SnowColors.black100,
+    // Вторичный цвет (FAB, чипсы, переключатели)
     secondary: SnowColors.purple,
+    // Текст/иконки на secondary цвете
     onSecondary: SnowColors.white100,
+    // Контейнеры с secondary контентом
     secondaryContainer: SnowColors.purple50,
+    // Текст/иконки на secondaryContainer
     onSecondaryContainer: SnowColors.black80,
+    // Третичный цвет (акценты, выделения)
     tertiary: SnowColors.greenA,
+    // Текст/иконки на tertiary цвете
     onTertiary: SnowColors.white100,
+    // Контейнеры с tertiary контентом
     tertiaryContainer: SnowColors.white5,
+    // Текст/иконки на tertiaryContainer
     onTertiaryContainer: SnowColors.black80,
+    // Цвет ошибок (предупреждения, критические действия)
     error: SnowColors.red,
+    // Текст/иконки на error цвете
     onError: SnowColors.white100,
+    // Контейнеры с error контентом
     errorContainer: Color(0xFFFFE5E5),
+    // Текст/иконки на errorContainer
     onErrorContainer: Color(0xFF8B0000),
+    // Основной фон поверхностей (карточки, диалоги)
     surface: SnowColors.white100,
+    // Текст/иконки на surface
     onSurface: SnowColors.black100,
+    // Приподнятые поверхности (app bar, bottom sheets)
     surfaceContainerHighest: SnowColors.white5,
+    // Второстепенный текст/иконки на поверхностях
     onSurfaceVariant: SnowColors.black40,
+    // Границы элементов (borders, dividers)
     outline: SnowColors.black20,
+    // Более тонкие границы
     outlineVariant: SnowColors.black10,
+    // Тени элементов
     shadow: SnowColors.black100,
+    // Затемнение фона (модальные окна)
     scrim: SnowColors.black100,
+    // Инверсный фон (для dark mode элементов в light theme)
     inverseSurface: SnowColors.backgroundDark1,
+    // Текст на inverseSurface
     onInverseSurface: SnowColors.white100,
+    // Инверсный primary цвет
     inversePrimary: SnowColors.blue,
+    // Оттенок для поверхностей с primary акцентом
     surfaceTint: SnowColors.blue,
   );
 }
@@ -100,33 +128,61 @@ ColorScheme snowUILightColorScheme() {
 ColorScheme snowUIDarkColorScheme() {
   return ColorScheme(
     brightness: Brightness.dark,
+    // Основной цвет приложения (кнопки, активные элементы)
     primary: SnowColors.blue,
+    // Текст/иконки на primary цвете
     onPrimary: SnowColors.white100,
+    // Контейнеры с primary контентом (менее заметные элементы)
     primaryContainer: SnowColors.backgroundDark3,
+    // Текст/иконки на primaryContainer
     onPrimaryContainer: SnowColors.white100,
+    // Вторичный цвет (FAB, чипсы, переключатели)
     secondary: SnowColors.purple,
+    // Текст/иконки на secondary цвете
     onSecondary: SnowColors.white100,
+    // Контейнеры с secondary контентом
     secondaryContainer: SnowColors.backgroundDark3,
+    // Текст/иконки на secondaryContainer
     onSecondaryContainer: SnowColors.white80,
+    // Третичный цвет (акценты, выделения)
     tertiary: SnowColors.greenA,
+    // Текст/иконки на tertiary цвете
     onTertiary: SnowColors.white100,
+    // Контейнеры с tertiary контентом
     tertiaryContainer: SnowColors.backgroundDark3,
+    // Текст/иконки на tertiaryContainer
     onTertiaryContainer: SnowColors.white80,
+    // Цвет ошибок (предупреждения, критические действия)
     error: SnowColors.red,
+    // Текст/иконки на error цвете
     onError: SnowColors.white100,
+    // Контейнеры с error контентом
     errorContainer: SnowColors.backgroundDark3,
+    // Текст/иконки на errorContainer
     onErrorContainer: SnowColors.red,
+    // Основной фон поверхностей (карточки, диалоги)
     surface: SnowColors.backgroundDark1,
+    // Текст/иконки на surface
     onSurface: SnowColors.white100,
+    // Приподнятые поверхности (app bar, bottom sheets)
     surfaceContainerHighest: SnowColors.backgroundDark2,
+    // Второстепенный текст/иконки на поверхностях
     onSurfaceVariant: SnowColors.white40,
+    // Границы элементов (borders, dividers)
     outline: SnowColors.backgroundDark4,
+    // Более тонкие границы
     outlineVariant: SnowColors.backgroundDark3,
+    // Тени элементов
     shadow: SnowColors.black100,
+    // Затемнение фона (модальные окна)
     scrim: SnowColors.black100,
+    // Инверсный фон (для light mode элементов в dark theme)
     inverseSurface: SnowColors.white100,
+    // Текст на inverseSurface
     onInverseSurface: SnowColors.black100,
+    // Инверсный primary цвет
     inversePrimary: SnowColors.blue,
+    // Оттенок для поверхностей с primary акцентом
     surfaceTint: SnowColors.blue,
   );
 }

@@ -224,6 +224,100 @@ class AuthEndpoint extends Endpoint {
     return SendCodeResponse(success: true);
   }
 
+  /// Проверяет код регистрации без создания аккаунта.
+  ///
+  /// Полезно для отдельного шага в UI, когда нужно подтвердить код
+  /// перед переходом к созданию пароля.
+  ///
+  /// ### Параметры
+  /// - [session] — сессия Serverpod
+  /// - [request] — запрос с полями `email` и `code`
+  ///
+  /// ### Возвращает
+  /// [SuccessResponse] с `success: true` при успешной проверке
+  ///
+  /// ### Исключения
+  /// - [InvalidDataException] с `field: 'code'` — неверный/истёкший код или
+  ///   превышен лимит попыток
+  Future<SuccessResponse> verifyRegisterCode(
+    Session session, {
+    required RegisterVerifyCodeRequest request,
+  }) async {
+    final email = request.email.trim();
+    final code = request.code.trim();
+
+    session.log(
+      'verifyRegisterCode: проверка кода для $email',
+      level: LogLevel.info,
+    );
+
+    final codeService = VerificationCodeService(session);
+    final verifiedCode = await codeService.verifyCode(
+      email: email,
+      code: code,
+      purpose: VerificationPurposeType.sign_up,
+    );
+
+    if (verifiedCode == null) {
+      // Проверяем есть ли активный код для информации о попытках
+      final records = await VerificationCode.db.find(
+        session,
+        where: (t) =>
+            t.email.equals(email.toLowerCase().trim()) &
+            t.purpose.equals(VerificationPurposeType.sign_up) &
+            t.isUsed.equals(false),
+        orderBy: (t) => t.createdAt,
+        orderDescending: true,
+        limit: 1,
+      );
+
+      if (records.isNotEmpty) {
+        final activeCode = records.first;
+        if (activeCode.expiresAt.isAfter(DateTime.now())) {
+          final attemptsLeft = activeCode.maxAttempts - activeCode.attemptsUsed;
+
+          if (attemptsLeft <= 0) {
+            session.log(
+              'verifyRegisterCode: попытки исчерпаны для $email',
+              level: LogLevel.warning,
+            );
+            throw TooManyAttemptsException(
+              message: 'Слишком много попыток. Запросите новый код',
+              stackTrace: StackTrace.current.toString(),
+            );
+          }
+
+          session.log(
+            'verifyRegisterCode: неверный код для $email, осталось попыток: $attemptsLeft',
+            level: LogLevel.warning,
+          );
+          throw InvalidDataException(
+            message: 'Неверный код. Осталось попыток: $attemptsLeft',
+            field: 'code',
+            stackTrace: StackTrace.current.toString(),
+          );
+        }
+      }
+
+      session.log(
+        'verifyRegisterCode: код не найден или истёк для $email',
+        level: LogLevel.warning,
+      );
+      throw InvalidDataException(
+        message: 'Код не найден или истёк',
+        field: 'code',
+        stackTrace: StackTrace.current.toString(),
+      );
+    }
+
+    session.log(
+      'verifyRegisterCode: код успешно проверен для $email',
+      level: LogLevel.info,
+    );
+
+    return SuccessResponse(success: true);
+  }
+
   /// Регистрирует нового пользователя с проверкой кода и автоматическим входом.
   ///
   /// Финальный шаг регистрации, объединяющий:
@@ -272,7 +366,6 @@ class AuthEndpoint extends Endpoint {
     required RegisterRequest request,
   }) async {
     final email = request.email.trim();
-    final code = request.code.trim();
     final password = request.password;
 
     session.log(
@@ -311,55 +404,9 @@ class AuthEndpoint extends Endpoint {
       );
     }
 
-    // Проверяем код (при успехе код удаляется)
-    final codeService = VerificationCodeService(session);
-    final verifiedCode = await codeService.verifyCode(
-      email: email,
-      code: code,
-      purpose: VerificationPurposeType.sign_up,
-    );
-
-    if (verifiedCode == null) {
-      // Проверяем есть ли активный код для информации о попытках
-      final records = await VerificationCode.db.find(
-        session,
-        where: (t) =>
-            t.email.equals(email.toLowerCase().trim()) &
-            t.purpose.equals(VerificationPurposeType.sign_up) &
-            t.isUsed.equals(false),
-        orderBy: (t) => t.createdAt,
-        orderDescending: true,
-        limit: 1,
-      );
-
-      if (records.isNotEmpty) {
-        final activeCode = records.first;
-        if (activeCode.expiresAt.isAfter(DateTime.now())) {
-          final attemptsLeft = activeCode.maxAttempts - activeCode.attemptsUsed;
-          session.log(
-            'register: неверный код для $email, осталось попыток: $attemptsLeft',
-            level: LogLevel.warning,
-          );
-          throw InvalidDataException(
-            message: attemptsLeft > 0
-                ? 'Неверный код. Осталось попыток: $attemptsLeft'
-                : 'Слишком много попыток. Запросите новый код',
-            field: 'code',
-            stackTrace: StackTrace.current.toString(),
-          );
-        }
-      }
-
-      session.log(
-        'register: код не найден или истёк для $email',
-        level: LogLevel.warning,
-      );
-      throw InvalidDataException(
-        message: 'Код не найден или истёк',
-        field: 'code',
-        stackTrace: StackTrace.current.toString(),
-      );
-    }
+    // Код уже проверён на предыдущем шаге (верификация кода происходит
+    // до перехода к экрану создания пароля), поэтому здесь дополнительная
+    // проверка не требуется.
 
     session.log(
       'register: код подтверждён, создание пользователя $email',

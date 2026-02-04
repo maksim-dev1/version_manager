@@ -119,7 +119,6 @@ class Services {
     _tokenService = TokenService();
     _emailService = EmailService(
       provider: emailProvider,
-      templatesPath: emailTemplatesPath,
     );
   }
 

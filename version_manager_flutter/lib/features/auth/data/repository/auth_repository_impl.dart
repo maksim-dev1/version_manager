@@ -18,43 +18,45 @@ class AuthRepositoryImpl implements AuthRepository {
     return _storageService.hasTokens();
   }
 
-  @override
-  Future<({String accessToken, String refreshToken})?> getSavedTokens() async {
-    final accessToken = _storageService.getAccessToken();
-    final refreshToken = _storageService.getRefreshToken();
+  // @override
+  // Future<({String accessToken, String refreshToken})?> getSavedTokens() async {
+  //   final accessToken = _storageService.getAccessToken();
+  //   final refreshToken = _storageService.getRefreshToken();
 
-    if (accessToken == null || refreshToken == null) {
-      return null;
-    }
+  //   if (accessToken == null || refreshToken == null) {
+  //     return null;
+  //   }
 
-    return (accessToken: accessToken, refreshToken: refreshToken);
-  }
+  //   return (accessToken: accessToken, refreshToken: refreshToken);
+  // }
 
-  @override
-  Future<CheckEmailAndSendCodeResponse> checkEmail({
-    required String email,
-  }) async {
-    return await _authEndpoint.checkEmailAndSendCode(
-      CheckEmailRequest(email: email),
-    );
-  }
+  // @override
+  // Future<void> saveTokens({
+  //   required String accessToken,
+  //   required String refreshToken,
+  // }) async {
+  //   await _storageService.saveTokens(
+  //     accessToken: accessToken,
+  //     refreshToken: refreshToken,
+  //   );
+  // }
 
-  @override
-  Future<TokenPairResponse> refreshTokens({
-    required String refreshToken,
-  }) async {
-    final response = await _authEndpoint.refreshTokens(
-      RefreshTokenRequest(refreshToken: refreshToken),
-    );
+  // @override
+  // Future<TokenPairResponse> refreshTokens({
+  //   required String refreshToken,
+  // }) async {
+  //   final response = await _authEndpoint.refreshTokens(
+  //     RefreshTokenRequest(refreshToken: refreshToken),
+  //   );
 
-    // Обновляем токены после успешного refresh
-    await _storageService.saveTokens(
-      accessToken: response.accessToken,
-      refreshToken: response.refreshToken,
-    );
+  //   // Обновляем токены после успешного refresh
+  //   await _storageService.saveTokens(
+  //     accessToken: response.accessToken,
+  //     refreshToken: response.refreshToken,
+  //   );
 
-    return response;
-  }
+  //   return response;
+  // }
 
   @override
   Future<SuccessResponse> logout({
@@ -72,7 +74,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<SuccessResponse> logoutAll({
     required String accessToken,
   }) async {
-    final response = await _authEndpoint.logoutAll(accessToken);
+    final response = await _authEndpoint.logoutAll(accessToken: accessToken);
 
     // Удаляем токены после успешного logoutAll
     await _storageService.clearTokens();
