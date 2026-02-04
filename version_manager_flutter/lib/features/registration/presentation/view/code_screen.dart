@@ -126,18 +126,6 @@ class _CodeScreenState extends State<CodeScreen> {
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            // Кнопка назад
-                            // Align(
-                            //   alignment: Alignment.centerLeft,
-                            //   child: IconButton(
-                            //     icon: Icon(
-                            //       Icons.arrow_back,
-                            //       color: colorScheme.onSurface,
-                            //     ),
-                            //     onPressed: () => Navigator.of(context).pop(),
-                            //   ),
-                            // ),
-                            // const SizedBox(height: 8),
                             Center(
                               child: SizedBox(
                                 width: 80,

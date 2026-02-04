@@ -13,7 +13,7 @@ sealed class LoginState with _$LoginState {
   const factory LoginState.initial() = _Initial;
 
   /// Состояние: загрузка (отправка запроса на сервер)
-  const factory LoginState.loading() = _Loading;
+  const factory LoginState.loginLoading() = LoginLoading;
 
   /// Состояние: успешный вход
   ///
@@ -21,15 +21,15 @@ sealed class LoginState with _$LoginState {
   /// После получения этого состояния UI должен:
   /// 1. Вызвать AuthBloc.setAuthenticated()
   /// 2. Перенаправить на главную страницу
-  const factory LoginState.success({
+  const factory LoginState.loginSuccess({
     required UserPublic user,
     required String accessToken,
     required String refreshToken,
-  }) = _Success;
+  }) = LoginSuccess;
 
   /// Состояние: ошибка
-  const factory LoginState.error({
+  const factory LoginState.loginError({
     required String message,
     String? field,
-  }) = _LoginError;
+  }) = LoginError;
 }

@@ -1,46 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:version_manager_flutter/features/registration/presentation/bloc/registration_bloc.dart';
-import 'package:version_manager_flutter/screens/home_screen.dart';
+import 'package:version_manager_flutter/features/login/presentation/bloc/login_bloc.dart';
 import 'package:version_manager_flutter/shared/services/notification_service.dart';
+import 'package:version_manager_flutter/version_manager_app.dart';
 
-class CreatePasswordScreen extends StatelessWidget {
+class LoginButton extends StatelessWidget {
   final VoidCallback submit;
-  final bool isPasswordValid;
-  final bool passwordsMatch;
-  const CreatePasswordScreen({
+  const LoginButton({
     super.key,
     required this.submit,
-    required this.isPasswordValid,
-    required this.passwordsMatch,
   });
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return BlocConsumer<RegistrationBloc, RegistrationState>(
+    return BlocConsumer<LoginBloc, LoginState>(
       listener: (context, state) => switch (state) {
-        RegistrationSuccess() => Navigator.push(
+        LoginSuccess() => Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => HomeScreen(
-              themeMode: ThemeMode.dark,
-              onThemeToggle: () {},
-            ),
+            builder: (context) => VersionManagerApp(),
           ),
         ),
-        RegistrationError(:final message) => NotificationService.showError(
+        LoginError(:final message) => NotificationService.showError(
           context,
           message,
         ),
         _ => null,
       },
       builder: (context, state) => switch (state) {
-        RegistrationLoading() => FilledButton(
+        LoginLoading() => FilledButton(
           onPressed: null,
           style: FilledButton.styleFrom(
-            padding: const EdgeInsets.symmetric(vertical: 16),
+            padding: const EdgeInsets.symmetric(
+              vertical: 16,
+            ),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
             ),
@@ -55,7 +50,7 @@ class CreatePasswordScreen extends StatelessWidget {
           ),
         ),
         _ => FilledButton(
-          onPressed: (isPasswordValid && passwordsMatch) ? submit : null,
+          onPressed: submit,
           style: FilledButton.styleFrom(
             padding: const EdgeInsets.symmetric(vertical: 16),
             shape: RoundedRectangleBorder(
@@ -63,7 +58,7 @@ class CreatePasswordScreen extends StatelessWidget {
             ),
           ),
           child: const Text(
-            'Создать пароль',
+            'Войти',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,

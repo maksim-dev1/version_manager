@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:version_manager_flutter/features/email_check/presentation/bloc/email_check_bloc.dart';
+import 'package:version_manager_flutter/features/login/presentation/login_provider.dart';
+import 'package:version_manager_flutter/features/login/presentation/view/login_screen.dart';
 import 'package:version_manager_flutter/features/registration/presentation/registration_provider.dart';
 import 'package:version_manager_flutter/features/registration/presentation/view/code_screen.dart';
 import 'package:version_manager_flutter/shared/services/notification_service.dart';
@@ -20,7 +22,18 @@ class EmailNextButton extends StatelessWidget {
         ) =>
           {
             if (emailExists)
-              {print('Navigate to Login Screen')}
+              {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LoginProvider(
+                      child: LoginScreen(
+                        email: email,
+                      ),
+                    ),
+                  ),
+                ),
+              }
             else
               {
                 Navigator.push(

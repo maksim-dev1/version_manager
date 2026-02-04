@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:version_manager_flutter/features/registration/presentation/bloc/registration_bloc.dart';
-import 'package:version_manager_flutter/features/registration/presentation/view/create_password_screen.dart';
 import 'package:version_manager_flutter/shared/services/notification_service.dart';
+import 'package:version_manager_flutter/version_manager_app.dart';
 
-class CodeConfirmButton extends StatelessWidget {
+class CreatePasswordButton extends StatelessWidget {
   final VoidCallback submit;
-  const CodeConfirmButton({super.key, required this.submit});
+  final bool isPasswordValid;
+  final bool passwordsMatch;
+  const CreatePasswordButton({
+    super.key,
+    required this.submit,
+    required this.isPasswordValid,
+    required this.passwordsMatch,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -14,21 +21,12 @@ class CodeConfirmButton extends StatelessWidget {
 
     return BlocConsumer<RegistrationBloc, RegistrationState>(
       listener: (context, state) => switch (state) {
-        CodeConfirmated(:final email) => Navigator.push(
+        RegistrationSuccess() => Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => BlocProvider.value(
-              value: context.read<RegistrationBloc>(),
-              child: CreatePasswordScreen(email: email),
-            ),
+            builder: (context) => VersionManagerApp(),
           ),
         ),
-
-        AttemptsExhausted(:final message) => NotificationService.showError(
-          context,
-          message,
-        ),
-
         RegistrationError(:final message) => NotificationService.showError(
           context,
           message,
@@ -53,26 +51,8 @@ class CodeConfirmButton extends StatelessWidget {
             ),
           ),
         ),
-        AttemptsExhausted() => FilledButton(
-          onPressed: null,
-          style: FilledButton.styleFrom(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            backgroundColor: colorScheme.surfaceContainerHighest,
-          ),
-          child: Text(
-            'Попытки исчерпаны',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: colorScheme.onSurfaceVariant,
-            ),
-          ),
-        ),
         _ => FilledButton(
-          onPressed: submit,
+          onPressed: (isPasswordValid && passwordsMatch) ? submit : null,
           style: FilledButton.styleFrom(
             padding: const EdgeInsets.symmetric(vertical: 16),
             shape: RoundedRectangleBorder(
@@ -80,7 +60,7 @@ class CodeConfirmButton extends StatelessWidget {
             ),
           ),
           child: const Text(
-            'Подтвердить',
+            'Создать пароль',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,

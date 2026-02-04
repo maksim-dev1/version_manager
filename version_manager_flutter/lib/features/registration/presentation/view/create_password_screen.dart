@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:version_manager_flutter/features/registration/presentation/bloc/registration_bloc.dart';
+import 'package:version_manager_flutter/features/registration/presentation/view/ui/create_password_button.dart';
 
-class PasswordScreen extends StatefulWidget {
+class CreatePasswordScreen extends StatefulWidget {
   final String email;
-  const PasswordScreen({super.key, required this.email});
+  const CreatePasswordScreen({super.key, required this.email});
 
   @override
-  State<PasswordScreen> createState() => _PasswordScreenState();
+  State<CreatePasswordScreen> createState() => _CreatePasswordScreenState();
 }
 
-class _PasswordScreenState extends State<PasswordScreen> {
+class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
@@ -57,7 +60,12 @@ class _PasswordScreenState extends State<PasswordScreen> {
     if (_formKey.currentState!.validate() &&
         _isPasswordValid &&
         _passwordsMatch) {
-      // TODO: Отправка данных
+      context.read<RegistrationBloc>().add(
+        RegistrationEvent.register(
+          email: widget.email,
+          password: _passwordController.text,
+        ),
+      );
     }
   }
 
@@ -130,7 +138,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
                                 ),
                               ),
                               const SizedBox(height: 24),
-                  
+
                               // Заголовок
                               Text(
                                 'Создайте пароль',
@@ -141,7 +149,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
                                 textAlign: TextAlign.center,
                               ),
                               const SizedBox(height: 8),
-                  
+
                               // Подзаголовок
                               Text(
                                 'Придумайте надежный пароль для защиты вашего аккаунта',
@@ -151,7 +159,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
                                 textAlign: TextAlign.center,
                               ),
                               const SizedBox(height: 32),
-                  
+
                               // Поле пароля
                               TextFormField(
                                 controller: _passwordController,
@@ -214,7 +222,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
                                 ),
                               ),
                               const SizedBox(height: 16),
-                  
+
                               // Индикаторы валидации пароля
                               Container(
                                 padding: const EdgeInsets.all(16),
@@ -257,7 +265,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
                                 ),
                               ),
                               const SizedBox(height: 24),
-                  
+
                               // Поле подтверждения пароля
                               TextFormField(
                                 controller: _confirmPasswordController,
@@ -321,7 +329,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
                                   ),
                                 ),
                               ),
-                  
+
                               // Индикатор совпадения паролей
                               if (_confirmPasswordController.text.isNotEmpty)
                                 Padding(
@@ -351,28 +359,14 @@ class _PasswordScreenState extends State<PasswordScreen> {
                                     ],
                                   ),
                                 ),
-                  
+
                               const SizedBox(height: 32),
-                  
-                              // Кнопка создания пароля
-                              // FilledButton(
-                              //   onPressed: (_isPasswordValid && _passwordsMatch)
-                              //       ? _submit
-                              //       : null,
-                              //   style: FilledButton.styleFrom(
-                              //     padding: const EdgeInsets.symmetric(vertical: 16),
-                              //     shape: RoundedRectangleBorder(
-                              //       borderRadius: BorderRadius.circular(16),
-                              //     ),
-                              //   ),
-                              //   child: const Text(
-                              //     'Создать пароль',
-                              //     style: TextStyle(
-                              //       fontSize: 16,
-                              //       fontWeight: FontWeight.w600,
-                              //     ),
-                              //   ),
-                              // ),
+
+                              CreatePasswordButton(
+                                submit: _submit,
+                                isPasswordValid: _isPasswordValid,
+                                passwordsMatch: _passwordsMatch,
+                              ),
                             ],
                           ),
                         ),

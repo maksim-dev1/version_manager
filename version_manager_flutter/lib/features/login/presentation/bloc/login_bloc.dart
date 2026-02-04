@@ -44,16 +44,13 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   /// Отправляет email и пароль на сервер для аутентификации.
   /// При успехе возвращает данные пользователя и токены.
   ///
-  /// ВАЖНО: После успешного входа UI должен:
-  /// 1. Вызвать AuthBloc.setAuthenticated() с полученными данными
-  /// 2. Перенаправить на главную страницу
   Future<void> _onLogin({
     required String email,
     required String password,
     required Emitter<LoginState> emit,
   }) async {
     try {
-      emit(const LoginState.loading());
+      emit(const LoginState.loginLoading());
 
       final response = await _loginRepository.login(
         email: email,
@@ -61,16 +58,16 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       );
 
       emit(
-        LoginState.success(
+        LoginState.loginSuccess(
           user: response.user,
           accessToken: response.accessToken,
           refreshToken: response.refreshToken,
         ),
       );
     } on InvalidDataException catch (e) {
-      emit(LoginState.error(message: e.message, field: e.field));
+      emit(LoginState.loginError(message: e.message, field: e.field));
     } catch (e) {
-      emit(LoginState.error(message: 'Ошибка входа: $e'));
+      emit(LoginState.loginError(message: 'Ошибка входа: $e'));
     }
   }
 }
