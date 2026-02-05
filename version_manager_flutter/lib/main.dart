@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:version_manager_flutter/shared/services/client_service.dart';
+import 'package:version_manager_flutter/shared/services/device_info_service.dart';
 import 'package:version_manager_flutter/shared/services/storage_service.dart';
 import 'package:version_manager_flutter/version_manager_app.dart';
 
@@ -13,12 +14,17 @@ void main() async {
 
   final storageService = StorageService()..initialize();
 
+  final deviceInfoService = DeviceInfoService();
+
   runApp(
     Provider<ClientService>(
       create: (context) => clientService,
       child: Provider<StorageService>(
         create: (context) => storageService,
-        child: const VersionManagerApp(),
+        child: Provider(
+          create: (context) => deviceInfoService,
+          child: const VersionManagerApp(),
+        ),
       ),
     ),
   );

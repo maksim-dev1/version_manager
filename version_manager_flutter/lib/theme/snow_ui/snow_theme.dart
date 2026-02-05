@@ -19,6 +19,16 @@ class SnowTheme {
       textTheme: textTheme,
       scaffoldBackgroundColor: colorScheme.surface,
       fontFamily: 'Inter',
+      // Page Transitions
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.android: ZoomPageTransitionsBuilder(),
+          TargetPlatform.iOS: ZoomPageTransitionsBuilder(),
+          TargetPlatform.macOS: ZoomPageTransitionsBuilder(),
+          TargetPlatform.windows: ZoomPageTransitionsBuilder(),
+          TargetPlatform.linux: ZoomPageTransitionsBuilder(),
+        },
+      ),
 
       // AppBar
       appBarTheme: AppBarTheme(
@@ -214,6 +224,17 @@ class SnowTheme {
       textTheme: textTheme,
       scaffoldBackgroundColor: colorScheme.surface,
       fontFamily: 'Inter',
+
+      // Page Transitions
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.android: ZoomPageTransitionsBuilder(),
+          TargetPlatform.iOS: ZoomPageTransitionsBuilder(),
+          TargetPlatform.macOS: ZoomPageTransitionsBuilder(),
+          TargetPlatform.windows: ZoomPageTransitionsBuilder(),
+          TargetPlatform.linux: ZoomPageTransitionsBuilder(),
+        },
+      ),
 
       // AppBar
       appBarTheme: AppBarTheme(

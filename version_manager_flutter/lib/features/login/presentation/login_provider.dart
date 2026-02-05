@@ -4,6 +4,7 @@ import 'package:version_manager_flutter/features/login/data/repository/login_rep
 import 'package:version_manager_flutter/features/login/domain/repository/login_repository.dart';
 import 'package:version_manager_flutter/features/login/presentation/bloc/login_bloc.dart';
 import 'package:version_manager_flutter/shared/services/client_service.dart';
+import 'package:version_manager_flutter/shared/services/device_info_service.dart';
 import 'package:version_manager_flutter/shared/services/storage_service.dart';
 
 class LoginProvider extends StatelessWidget {
@@ -19,6 +20,7 @@ class LoginProvider extends StatelessWidget {
       create: (context) => LoginRepositoryImpl(
         authEndpoint: context.read<ClientService>().auth,
         storageService: context.read<StorageService>(),
+        deviceInfoService: context.read<DeviceInfoService>(),
       ),
       child: BlocProvider(
         create: (context) => LoginBloc(

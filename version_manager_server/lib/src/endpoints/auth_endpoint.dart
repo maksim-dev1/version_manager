@@ -2,6 +2,7 @@ import 'package:serverpod/serverpod.dart';
 import 'package:version_manager_server/src/generated/protocol.dart';
 import 'package:version_manager_server/src/services/service_locator.dart';
 import 'package:version_manager_server/src/services/verification_code_service.dart';
+import 'package:version_manager_server/src/utils/request_info_util.dart';
 
 /// Эндпоинт аутентификации и авторизации пользователей.
 ///
@@ -443,14 +444,19 @@ class AuthEndpoint extends Endpoint {
 
     // Создаем сессию
     final tokenPair = _tokenService.generateTokenPair();
+    final clientInfo = RequestInfoUtil.getClientInfo(
+      request.deviceInfo,
+      request.userAgent,
+      request.ipAddress,
+    );
 
     final authSession = AuthSession(
       userId: savedUser.id!,
       tokenHash: _tokenService.hashToken(tokenPair.accessToken),
       refreshTokenHash: _tokenService.hashToken(tokenPair.refreshToken),
-      deviceInfo: null,
-      ipAddress: null,
-      userAgent: null,
+      deviceInfo: clientInfo['deviceInfo'],
+      ipAddress: clientInfo['ipAddress'],
+      userAgent: clientInfo['userAgent'],
       expiresAt: now.add(Duration(hours: 1)),
       refreshExpiresAt: now.add(Duration(days: 30)),
       createdAt: now,
@@ -580,14 +586,19 @@ class AuthEndpoint extends Endpoint {
 
     // Создаем сессию
     final tokenPair = _tokenService.generateTokenPair();
+    final clientInfo = RequestInfoUtil.getClientInfo(
+      request.deviceInfo,
+      request.userAgent,
+      request.ipAddress,
+    );
 
     final authSession = AuthSession(
       userId: user.id!,
       tokenHash: _tokenService.hashToken(tokenPair.accessToken),
       refreshTokenHash: _tokenService.hashToken(tokenPair.refreshToken),
-      deviceInfo: null,
-      ipAddress: null,
-      userAgent: null,
+      deviceInfo: clientInfo['deviceInfo'],
+      ipAddress: clientInfo['ipAddress'],
+      userAgent: clientInfo['userAgent'],
       expiresAt: now.add(Duration(hours: 1)),
       refreshExpiresAt: now.add(Duration(days: 30)),
       createdAt: now,

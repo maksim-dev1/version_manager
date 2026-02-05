@@ -1,17 +1,21 @@
 import 'package:version_manager_client/version_manager_client.dart';
 import 'package:version_manager_flutter/features/registration/domain/repository/registration_repository.dart';
+import 'package:version_manager_flutter/shared/services/device_info_service.dart';
 import 'package:version_manager_flutter/shared/services/storage_service.dart';
 
 /// Реализация репозитория регистрации.
 class RegistrationRepositoryImpl implements RegistrationRepository {
   final EndpointAuth _authEndpoint;
   final StorageService _storageService;
+  final DeviceInfoService _deviceInfoService;
 
   RegistrationRepositoryImpl({
     required EndpointAuth authEndpoint,
     required StorageService storageService,
+    required DeviceInfoService deviceInfoService,
   }) : _authEndpoint = authEndpoint,
-       _storageService = storageService;
+       _storageService = storageService,
+       _deviceInfoService = deviceInfoService;
 
   @override
   Future<SendCodeResponse> resendCode({
@@ -37,8 +41,19 @@ class RegistrationRepositoryImpl implements RegistrationRepository {
     required String email,
     required String password,
   }) async {
+    // Получаем информацию об устройстве
+    final deviceInfo = await _deviceInfoService.getDeviceInfo();
+    final userAgent = await _deviceInfoService.getUserAgent();
+    final ipAddress = await _deviceInfoService.getPublicIpAddress();
+
     final response = await _authEndpoint.register(
-      request: RegisterRequest(email: email, password: password),
+      request: RegisterRequest(
+        email: email,
+        password: password,
+        deviceInfo: deviceInfo,
+        userAgent: userAgent,
+        ipAddress: ipAddress,
+      ),
     );
 
     // Сохраняем токены после успешной регистрации (автовход)
