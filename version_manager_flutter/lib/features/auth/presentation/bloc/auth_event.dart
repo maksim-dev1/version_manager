@@ -11,29 +11,13 @@ sealed class AuthEvent with _$AuthEvent {
   /// Проверяет наличие сохранённых токенов в хранилище.
   const factory AuthEvent.checkAuth() = _CheckAuth;
 
-  // /// Событие: установка авторизованного состояния
-  // ///
-  // /// Устанавливается после успешного входа или регистрации.
-  // const factory AuthEvent.setAuthenticated({
-  //   required UserPublic user,
-  //   required String accessToken,
-  //   required String refreshToken,
-  // }) = _SetAuthenticated;
-
-  // /// Событие: обновление токенов
-  // ///
-  // /// Использует refresh token для получения новой пары токенов.
-  // const factory AuthEvent.refreshTokens({
-  //   required String refreshToken,
-  // }) = _RefreshTokens;
-
   /// Событие: выход из текущей сессии
-  const factory AuthEvent.logout({
-    required String accessToken,
-  }) = _Logout;
+  ///
+  /// Токен берётся автоматически из AuthKeyProvider.
+  const factory AuthEvent.logout() = _Logout;
 
   /// Событие: выход из всех сессий
-  const factory AuthEvent.logoutAll({
-    required String accessToken,
-  }) = _LogoutAll;
+  ///
+  /// Токен берётся автоматически из AuthKeyProvider.
+  const factory AuthEvent.logoutAll() = _LogoutAll;
 }

@@ -35,8 +35,36 @@ import 'package:version_manager_server/src/generated/auth/token_pair_response.da
     as _i13;
 import 'package:version_manager_server/src/generated/auth/refresh_token.dart'
     as _i14;
+import 'package:version_manager_server/src/generated/auth/common.dart' as _i15;
+import 'package:version_manager_server/src/generated/sessions/session_info.dart'
+    as _i16;
+import 'package:version_manager_server/src/generated/sessions/terminate_session_request.dart'
+    as _i17;
+import 'package:version_manager_server/src/generated/teams/team.dart' as _i18;
+import 'package:version_manager_server/src/generated/teams/create_team_request.dart'
+    as _i19;
+import 'package:version_manager_server/src/generated/teams/update_team_request.dart'
+    as _i20;
+import 'package:version_manager_server/src/generated/teams/invite_team_member_request.dart'
+    as _i21;
+import 'package:version_manager_server/src/generated/teams/team_member.dart'
+    as _i22;
+import 'package:version_manager_server/src/generated/teams/respond_to_invitation_request.dart'
+    as _i23;
+import 'package:version_manager_server/src/generated/teams/revoke_invitation_request.dart'
+    as _i24;
+import 'package:version_manager_server/src/generated/teams/update_member_role_request.dart'
+    as _i25;
+import 'package:version_manager_server/src/generated/teams/remove_member_request.dart'
+    as _i26;
+import 'package:version_manager_server/src/generated/teams/leave_team_request.dart'
+    as _i27;
+import 'package:version_manager_server/src/generated/teams/transfer_team_ownership_request.dart'
+    as _i28;
+import 'package:version_manager_server/src/generated/teams/delete_team_request.dart'
+    as _i29;
 import 'package:version_manager_server/src/generated/greetings/greeting.dart'
-    as _i15;
+    as _i30;
 import 'package:version_manager_server/src/generated/protocol.dart';
 import 'package:version_manager_server/src/generated/endpoints.dart';
 export 'package:serverpod_test/serverpod_test_public_exports.dart';
@@ -146,6 +174,10 @@ void withServerpod(
 class TestEndpoints {
   late final _AuthEndpoint auth;
 
+  late final _SessionEndpoint session;
+
+  late final _TeamEndpoint team;
+
   late final _GreetingEndpoint greeting;
 }
 
@@ -157,6 +189,14 @@ class _InternalTestEndpoints extends TestEndpoints
     _i2.EndpointDispatch endpoints,
   ) {
     auth = _AuthEndpoint(
+      endpoints,
+      serializationManager,
+    );
+    session = _SessionEndpoint(
+      endpoints,
+      serializationManager,
+    );
+    team = _TeamEndpoint(
       endpoints,
       serializationManager,
     );
@@ -424,6 +464,638 @@ class _AuthEndpoint {
       }
     });
   }
+
+  _i3.Future<_i15.UserPublic> getCurrentUser(
+    _i1.TestSessionBuilder sessionBuilder, {
+    required String accessToken,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'auth',
+            method: 'getCurrentUser',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'auth',
+          methodName: 'getCurrentUser',
+          parameters: _i1.testObjectToJson({'accessToken': accessToken}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i15.UserPublic>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+}
+
+class _SessionEndpoint {
+  _SessionEndpoint(
+    this._endpointDispatch,
+    this._serializationManager,
+  );
+
+  final _i2.EndpointDispatch _endpointDispatch;
+
+  final _i2.SerializationManager _serializationManager;
+
+  _i3.Future<List<_i16.SessionInfo>> getActiveSessions(
+    _i1.TestSessionBuilder sessionBuilder,
+    String accessToken,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'session',
+            method: 'getActiveSessions',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'session',
+          methodName: 'getActiveSessions',
+          parameters: _i1.testObjectToJson({'accessToken': accessToken}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<List<_i16.SessionInfo>>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i8.SuccessResponse> terminateSession(
+    _i1.TestSessionBuilder sessionBuilder,
+    String accessToken, {
+    required _i17.TerminateSessionRequest request,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'session',
+            method: 'terminateSession',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'session',
+          methodName: 'terminateSession',
+          parameters: _i1.testObjectToJson({
+            'accessToken': accessToken,
+            'request': request,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i8.SuccessResponse>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i8.SuccessResponse> terminateAllOtherSessions(
+    _i1.TestSessionBuilder sessionBuilder,
+    String accessToken,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'session',
+            method: 'terminateAllOtherSessions',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'session',
+          methodName: 'terminateAllOtherSessions',
+          parameters: _i1.testObjectToJson({'accessToken': accessToken}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i8.SuccessResponse>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+}
+
+class _TeamEndpoint {
+  _TeamEndpoint(
+    this._endpointDispatch,
+    this._serializationManager,
+  );
+
+  final _i2.EndpointDispatch _endpointDispatch;
+
+  final _i2.SerializationManager _serializationManager;
+
+  _i3.Future<_i18.Team> createTeam(
+    _i1.TestSessionBuilder sessionBuilder,
+    String accessToken, {
+    required _i19.CreateTeamRequest request,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'team',
+            method: 'createTeam',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'team',
+          methodName: 'createTeam',
+          parameters: _i1.testObjectToJson({
+            'accessToken': accessToken,
+            'request': request,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i18.Team>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i18.Team> updateTeam(
+    _i1.TestSessionBuilder sessionBuilder,
+    String accessToken, {
+    required _i20.UpdateTeamRequest request,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'team',
+            method: 'updateTeam',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'team',
+          methodName: 'updateTeam',
+          parameters: _i1.testObjectToJson({
+            'accessToken': accessToken,
+            'request': request,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i18.Team>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i18.Team> getTeam(
+    _i1.TestSessionBuilder sessionBuilder,
+    String accessToken, {
+    required _i2.UuidValue teamId,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'team',
+            method: 'getTeam',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'team',
+          methodName: 'getTeam',
+          parameters: _i1.testObjectToJson({
+            'accessToken': accessToken,
+            'teamId': teamId,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i18.Team>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<List<_i18.Team>> getMyTeams(
+    _i1.TestSessionBuilder sessionBuilder,
+    String accessToken,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'team',
+            method: 'getMyTeams',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'team',
+          methodName: 'getMyTeams',
+          parameters: _i1.testObjectToJson({'accessToken': accessToken}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<List<_i18.Team>>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i8.SuccessResponse> inviteMember(
+    _i1.TestSessionBuilder sessionBuilder,
+    String accessToken, {
+    required _i21.InviteTeamMemberRequest request,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'team',
+            method: 'inviteMember',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'team',
+          methodName: 'inviteMember',
+          parameters: _i1.testObjectToJson({
+            'accessToken': accessToken,
+            'request': request,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i8.SuccessResponse>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<List<_i22.TeamMember>> getMyInvitations(
+    _i1.TestSessionBuilder sessionBuilder,
+    String accessToken,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'team',
+            method: 'getMyInvitations',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'team',
+          methodName: 'getMyInvitations',
+          parameters: _i1.testObjectToJson({'accessToken': accessToken}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<List<_i22.TeamMember>>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i8.SuccessResponse> respondToInvitation(
+    _i1.TestSessionBuilder sessionBuilder,
+    String accessToken, {
+    required _i23.RespondToInvitationRequest request,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'team',
+            method: 'respondToInvitation',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'team',
+          methodName: 'respondToInvitation',
+          parameters: _i1.testObjectToJson({
+            'accessToken': accessToken,
+            'request': request,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i8.SuccessResponse>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i8.SuccessResponse> revokeInvitation(
+    _i1.TestSessionBuilder sessionBuilder,
+    String accessToken, {
+    required _i24.RevokeInvitationRequest request,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'team',
+            method: 'revokeInvitation',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'team',
+          methodName: 'revokeInvitation',
+          parameters: _i1.testObjectToJson({
+            'accessToken': accessToken,
+            'request': request,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i8.SuccessResponse>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<List<_i22.TeamMember>> getTeamMembers(
+    _i1.TestSessionBuilder sessionBuilder,
+    String accessToken, {
+    required _i2.UuidValue teamId,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'team',
+            method: 'getTeamMembers',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'team',
+          methodName: 'getTeamMembers',
+          parameters: _i1.testObjectToJson({
+            'accessToken': accessToken,
+            'teamId': teamId,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<List<_i22.TeamMember>>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i8.SuccessResponse> updateMemberRole(
+    _i1.TestSessionBuilder sessionBuilder,
+    String accessToken, {
+    required _i25.UpdateMemberRoleRequest request,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'team',
+            method: 'updateMemberRole',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'team',
+          methodName: 'updateMemberRole',
+          parameters: _i1.testObjectToJson({
+            'accessToken': accessToken,
+            'request': request,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i8.SuccessResponse>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i8.SuccessResponse> removeMember(
+    _i1.TestSessionBuilder sessionBuilder,
+    String accessToken, {
+    required _i26.RemoveMemberRequest request,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'team',
+            method: 'removeMember',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'team',
+          methodName: 'removeMember',
+          parameters: _i1.testObjectToJson({
+            'accessToken': accessToken,
+            'request': request,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i8.SuccessResponse>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i8.SuccessResponse> leaveTeam(
+    _i1.TestSessionBuilder sessionBuilder,
+    String accessToken, {
+    required _i27.LeaveTeamRequest request,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'team',
+            method: 'leaveTeam',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'team',
+          methodName: 'leaveTeam',
+          parameters: _i1.testObjectToJson({
+            'accessToken': accessToken,
+            'request': request,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i8.SuccessResponse>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i8.SuccessResponse> transferOwnership(
+    _i1.TestSessionBuilder sessionBuilder,
+    String accessToken, {
+    required _i28.TransferTeamOwnershipRequest request,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'team',
+            method: 'transferOwnership',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'team',
+          methodName: 'transferOwnership',
+          parameters: _i1.testObjectToJson({
+            'accessToken': accessToken,
+            'request': request,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i8.SuccessResponse>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i8.SuccessResponse> deleteTeam(
+    _i1.TestSessionBuilder sessionBuilder,
+    String accessToken, {
+    required _i29.DeleteTeamRequest request,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'team',
+            method: 'deleteTeam',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'team',
+          methodName: 'deleteTeam',
+          parameters: _i1.testObjectToJson({
+            'accessToken': accessToken,
+            'request': request,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i8.SuccessResponse>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
 }
 
 class _GreetingEndpoint {
@@ -436,7 +1108,7 @@ class _GreetingEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i15.Greeting> hello(
+  _i3.Future<_i30.Greeting> hello(
     _i1.TestSessionBuilder sessionBuilder,
     String name,
   ) async {
@@ -459,7 +1131,7 @@ class _GreetingEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i15.Greeting>);
+                as _i3.Future<_i30.Greeting>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();

@@ -1,58 +1,19 @@
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:version_manager_flutter/common/constants/storage_keys.dart';
 
+/// Сервис для работы с локальным хранилищем SharedPreferences.
+///
+/// Предоставляет базовые методы для сохранения и получения данных.
+/// Инкапсулирует работу с SharedPreferences.
 class StorageService {
   SharedPreferences? _prefs;
 
+  /// Инициализирует сервис.
+  /// Должен быть вызван перед использованием любых методов.
   Future<void> initialize() async {
     _prefs = await SharedPreferences.getInstance();
   }
 
-  // ===== Методы для работы с токенами =====
-
-  /// Сохранить access token
-  Future<bool> saveAccessToken(String token) async {
-    return await setString(accessTokenKey, token);
-  }
-
-  /// Получить access token
-  String? getAccessToken() {
-    return getString(accessTokenKey);
-  }
-
-  /// Сохранить refresh token
-  Future<bool> saveRefreshToken(String token) async {
-    return await setString(refreshTokenKey, token);
-  }
-
-  /// Получить refresh token
-  String? getRefreshToken() {
-    return getString(refreshTokenKey);
-  }
-
-  /// Сохранить оба токена
-  Future<bool> saveTokens({
-    required String accessToken,
-    required String refreshToken,
-  }) async {
-    final accessResult = await saveAccessToken(accessToken);
-    final refreshResult = await saveRefreshToken(refreshToken);
-    return accessResult && refreshResult;
-  }
-
-  /// Удалить токены
-  Future<bool> clearTokens() async {
-    final accessResult = await remove(accessTokenKey);
-    final refreshResult = await remove(refreshTokenKey);
-    return accessResult && refreshResult;
-  }
-
-  /// Проверить наличие токенов
-  bool hasTokens() {
-    return getAccessToken() != null && getRefreshToken() != null;
-  }
-
-  // ===== Общие методы для работы с данными =====
+  // ===== Базовые методы для работы с данными =====
 
   /// Сохранить строку
   Future<bool> setString(String key, String value) async {

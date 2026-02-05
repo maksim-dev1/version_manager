@@ -122,12 +122,12 @@ return logoutAll(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  checkAuth,TResult Function( String accessToken)?  logout,TResult Function( String accessToken)?  logoutAll,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  checkAuth,TResult Function()?  logout,TResult Function()?  logoutAll,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _CheckAuth() when checkAuth != null:
 return checkAuth();case _Logout() when logout != null:
-return logout(_that.accessToken);case _LogoutAll() when logoutAll != null:
-return logoutAll(_that.accessToken);case _:
+return logout();case _LogoutAll() when logoutAll != null:
+return logoutAll();case _:
   return orElse();
 
 }
@@ -145,12 +145,12 @@ return logoutAll(_that.accessToken);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  checkAuth,required TResult Function( String accessToken)  logout,required TResult Function( String accessToken)  logoutAll,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  checkAuth,required TResult Function()  logout,required TResult Function()  logoutAll,}) {final _that = this;
 switch (_that) {
 case _CheckAuth():
 return checkAuth();case _Logout():
-return logout(_that.accessToken);case _LogoutAll():
-return logoutAll(_that.accessToken);}
+return logout();case _LogoutAll():
+return logoutAll();}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -164,12 +164,12 @@ return logoutAll(_that.accessToken);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  checkAuth,TResult? Function( String accessToken)?  logout,TResult? Function( String accessToken)?  logoutAll,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  checkAuth,TResult? Function()?  logout,TResult? Function()?  logoutAll,}) {final _that = this;
 switch (_that) {
 case _CheckAuth() when checkAuth != null:
 return checkAuth();case _Logout() when logout != null:
-return logout(_that.accessToken);case _LogoutAll() when logoutAll != null:
-return logoutAll(_that.accessToken);case _:
+return logout();case _LogoutAll() when logoutAll != null:
+return logoutAll();case _:
   return null;
 
 }
@@ -213,133 +213,65 @@ String toString() {
 
 
 class _Logout implements AuthEvent {
-  const _Logout({required this.accessToken});
+  const _Logout();
   
 
- final  String accessToken;
 
-/// Create a copy of AuthEvent
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-_$LogoutCopyWith<_Logout> get copyWith => __$LogoutCopyWithImpl<_Logout>(this, _$identity);
+
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Logout&&(identical(other.accessToken, accessToken) || other.accessToken == accessToken));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Logout);
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,accessToken);
+int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'AuthEvent.logout(accessToken: $accessToken)';
+  return 'AuthEvent.logout()';
 }
 
 
 }
 
-/// @nodoc
-abstract mixin class _$LogoutCopyWith<$Res> implements $AuthEventCopyWith<$Res> {
-  factory _$LogoutCopyWith(_Logout value, $Res Function(_Logout) _then) = __$LogoutCopyWithImpl;
-@useResult
-$Res call({
- String accessToken
-});
 
 
-
-
-}
-/// @nodoc
-class __$LogoutCopyWithImpl<$Res>
-    implements _$LogoutCopyWith<$Res> {
-  __$LogoutCopyWithImpl(this._self, this._then);
-
-  final _Logout _self;
-  final $Res Function(_Logout) _then;
-
-/// Create a copy of AuthEvent
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? accessToken = null,}) {
-  return _then(_Logout(
-accessToken: null == accessToken ? _self.accessToken : accessToken // ignore: cast_nullable_to_non_nullable
-as String,
-  ));
-}
-
-
-}
 
 /// @nodoc
 
 
 class _LogoutAll implements AuthEvent {
-  const _LogoutAll({required this.accessToken});
+  const _LogoutAll();
   
 
- final  String accessToken;
 
-/// Create a copy of AuthEvent
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-_$LogoutAllCopyWith<_LogoutAll> get copyWith => __$LogoutAllCopyWithImpl<_LogoutAll>(this, _$identity);
+
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LogoutAll&&(identical(other.accessToken, accessToken) || other.accessToken == accessToken));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LogoutAll);
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,accessToken);
+int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'AuthEvent.logoutAll(accessToken: $accessToken)';
+  return 'AuthEvent.logoutAll()';
 }
 
 
 }
 
-/// @nodoc
-abstract mixin class _$LogoutAllCopyWith<$Res> implements $AuthEventCopyWith<$Res> {
-  factory _$LogoutAllCopyWith(_LogoutAll value, $Res Function(_LogoutAll) _then) = __$LogoutAllCopyWithImpl;
-@useResult
-$Res call({
- String accessToken
-});
 
 
-
-
-}
-/// @nodoc
-class __$LogoutAllCopyWithImpl<$Res>
-    implements _$LogoutAllCopyWith<$Res> {
-  __$LogoutAllCopyWithImpl(this._self, this._then);
-
-  final _LogoutAll _self;
-  final $Res Function(_LogoutAll) _then;
-
-/// Create a copy of AuthEvent
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? accessToken = null,}) {
-  return _then(_LogoutAll(
-accessToken: null == accessToken ? _self.accessToken : accessToken // ignore: cast_nullable_to_non_nullable
-as String,
-  ));
-}
-
-
-}
 
 /// @nodoc
 mixin _$AuthState {

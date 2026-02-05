@@ -1,19 +1,19 @@
 import 'package:version_manager_client/version_manager_client.dart';
 import 'package:version_manager_flutter/features/login/domain/repository/login_repository.dart';
+import 'package:version_manager_flutter/shared/services/auth_key_provider.dart';
 import 'package:version_manager_flutter/shared/services/device_info_service.dart';
-import 'package:version_manager_flutter/shared/services/storage_service.dart';
 
 class LoginRepositoryImpl implements LoginRepository {
   final EndpointAuth _authEndpoint;
-  final StorageService _storageService;
+  final AuthKeyProvider _authKeyProvider;
   final DeviceInfoService _deviceInfoService;
 
   LoginRepositoryImpl({
     required EndpointAuth authEndpoint,
-    required StorageService storageService,
+    required AuthKeyProvider authKeyProvider,
     required DeviceInfoService deviceInfoService,
   }) : _authEndpoint = authEndpoint,
-       _storageService = storageService,
+       _authKeyProvider = authKeyProvider,
        _deviceInfoService = deviceInfoService;
 
   @override
@@ -37,7 +37,7 @@ class LoginRepositoryImpl implements LoginRepository {
     );
 
     // Сохраняем токены после успешного логина
-    await _storageService.saveTokens(
+    await _authKeyProvider.saveTokens(
       accessToken: response.accessToken,
       refreshToken: response.refreshToken,
     );

@@ -1,3 +1,4 @@
+import 'package:version_manager_server/src/services/auth_validation_service.dart';
 import 'package:version_manager_server/src/services/email_service.dart';
 import 'package:version_manager_server/src/services/password_service.dart';
 import 'package:version_manager_server/src/services/token_service.dart';
@@ -68,6 +69,9 @@ class Services {
   /// Сервис отправки email (lazy loading).
   EmailService? _emailService;
 
+  /// Сервис валидации токенов (lazy loading).
+  AuthValidationService? _authValidationService;
+
   /// Инициализирует все сервисы приложения.
   ///
   /// **Должен быть вызван один раз при запуске сервера** до первого обращения
@@ -120,6 +124,7 @@ class Services {
     _emailService = EmailService(
       provider: emailProvider,
     );
+    _authValidationService = AuthValidationService();
   }
 
   /// Возвращает экземпляр сервиса хеширования паролей.
@@ -177,6 +182,25 @@ class Services {
       );
     }
     return _emailService!;
+  }
+
+  /// Возвращает экземпляр сервиса валидации токенов.
+  ///
+  /// ### Исключения
+  /// - [StateError] — если сервисы не инициализированы через [initialize()]
+  ///
+  /// ### Пример использования
+  /// ```dart
+  /// final authService = Services().authValidationService;
+  /// final userId = await authService.getUserId(session, accessToken);
+  /// ```
+  AuthValidationService get authValidationService {
+    if (_authValidationService == null) {
+      throw StateError(
+        'Services not initialized. Call Services().initialize() first',
+      );
+    }
+    return _authValidationService!;
   }
 
   /// Заменяет сервисы на mock-объекты для тестирования.

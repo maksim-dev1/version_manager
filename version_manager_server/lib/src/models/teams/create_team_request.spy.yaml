@@ -1,0 +1,5 @@
+### Запрос на создание команды
+class: CreateTeamRequest
+fields:
+  name: String
+  description: String?

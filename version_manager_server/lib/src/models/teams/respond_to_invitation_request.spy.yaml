@@ -1,0 +1,5 @@
+### Запрос на принятие/отклонение приглашения
+class: RespondToInvitationRequest
+fields:
+  teamId: UuidValue
+  accept: bool  # true = принять, false = отклонить

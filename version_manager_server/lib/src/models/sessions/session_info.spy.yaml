@@ -1,0 +1,13 @@
+### Информация об активной сессии
+class: SessionInfo
+fields:
+  id: UuidValue
+  deviceInfo: String?
+  ipAddress: String?
+  userAgent: String?
+  createdAt: DateTime
+  lastActivityAt: DateTime?
+  isCurrent: bool  # Текущая сессия или нет
+  # Геолокация (опционально, можно добавить позже)
+  city: String?
+  country: String?

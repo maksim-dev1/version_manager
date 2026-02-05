@@ -1,0 +1,5 @@
+### Запрос на изменение роли участника
+class: UpdateMemberRoleRequest
+fields:
+  memberId: UuidValue
+  newRole: TeamRoleType

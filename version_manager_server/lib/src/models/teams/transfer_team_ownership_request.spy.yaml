@@ -1,0 +1,5 @@
+### Запрос на передачу владения командой
+class: TransferTeamOwnershipRequest
+fields:
+  teamId: UuidValue
+  newOwnerId: UuidValue

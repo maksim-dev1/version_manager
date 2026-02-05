@@ -1,0 +1,4 @@
+### Запрос на отзыв приглашения
+class: RevokeInvitationRequest
+fields:
+  memberId: UuidValue

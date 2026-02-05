@@ -4,7 +4,6 @@ import 'package:version_manager_flutter/features/auth/data/repository/auth_repos
 import 'package:version_manager_flutter/features/auth/domain/repository/auth_repository.dart';
 import 'package:version_manager_flutter/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:version_manager_flutter/shared/services/client_service.dart';
-import 'package:version_manager_flutter/shared/services/storage_service.dart';
 
 class AuthProviedr extends StatelessWidget {
   final Widget child;
@@ -15,18 +14,29 @@ class AuthProviedr extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final clientService = context.read<ClientService>();
+
     return RepositoryProvider<AuthRepository>(
       create: (context) => AuthRepositoryImpl(
-        authEndpoint: context.read<ClientService>().auth,
-        storageService: context.read<StorageService>(),
+        authEndpoint: clientService.auth,
+        authKeyProvider: clientService.authKeyProvider,
       ),
       child: BlocProvider(
-        create: (context) =>
-            AuthBloc(
-              authRepository: context.read<AuthRepository>(),
-            )..add(
-              AuthEvent.checkAuth(),
-            ),
+        create: (context) {
+          final authRepository = context.read<AuthRepository>();
+          final authBloc = AuthBloc(authRepository: authRepository);
+
+          // Устанавливаем callback для обработки ошибок аутентификации
+          // (когда refresh token истёк)
+          authRepository.setOnAuthenticationFailed(() {
+            authBloc.add(const AuthEvent.logout());
+          });
+
+          // Проверяем начальное состояние авторизации
+          authBloc.add(const AuthEvent.checkAuth());
+
+          return authBloc;
+        },
         child: child,
       ),
     );

@@ -12,17 +12,41 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
 import '../endpoints/auth_endpoint.dart' as _i2;
-import '../greetings/greeting_endpoint.dart' as _i3;
+import '../endpoints/session_endpoint.dart' as _i3;
+import '../endpoints/team_endpoint.dart' as _i4;
+import '../greetings/greeting_endpoint.dart' as _i5;
 import 'package:version_manager_server/src/generated/auth/check_email.dart'
-    as _i4;
-import 'package:version_manager_server/src/generated/auth/register_send_code.dart'
-    as _i5;
-import 'package:version_manager_server/src/generated/auth/register_verify_code.dart'
     as _i6;
-import 'package:version_manager_server/src/generated/auth/register.dart' as _i7;
-import 'package:version_manager_server/src/generated/auth/login.dart' as _i8;
+import 'package:version_manager_server/src/generated/auth/register_send_code.dart'
+    as _i7;
+import 'package:version_manager_server/src/generated/auth/register_verify_code.dart'
+    as _i8;
+import 'package:version_manager_server/src/generated/auth/register.dart' as _i9;
+import 'package:version_manager_server/src/generated/auth/login.dart' as _i10;
 import 'package:version_manager_server/src/generated/auth/refresh_token.dart'
-    as _i9;
+    as _i11;
+import 'package:version_manager_server/src/generated/sessions/terminate_session_request.dart'
+    as _i12;
+import 'package:version_manager_server/src/generated/teams/create_team_request.dart'
+    as _i13;
+import 'package:version_manager_server/src/generated/teams/update_team_request.dart'
+    as _i14;
+import 'package:version_manager_server/src/generated/teams/invite_team_member_request.dart'
+    as _i15;
+import 'package:version_manager_server/src/generated/teams/respond_to_invitation_request.dart'
+    as _i16;
+import 'package:version_manager_server/src/generated/teams/revoke_invitation_request.dart'
+    as _i17;
+import 'package:version_manager_server/src/generated/teams/update_member_role_request.dart'
+    as _i18;
+import 'package:version_manager_server/src/generated/teams/remove_member_request.dart'
+    as _i19;
+import 'package:version_manager_server/src/generated/teams/leave_team_request.dart'
+    as _i20;
+import 'package:version_manager_server/src/generated/teams/transfer_team_ownership_request.dart'
+    as _i21;
+import 'package:version_manager_server/src/generated/teams/delete_team_request.dart'
+    as _i22;
 
 class Endpoints extends _i1.EndpointDispatch {
   @override
@@ -34,7 +58,19 @@ class Endpoints extends _i1.EndpointDispatch {
           'auth',
           null,
         ),
-      'greeting': _i3.GreetingEndpoint()
+      'session': _i3.SessionEndpoint()
+        ..initialize(
+          server,
+          'session',
+          null,
+        ),
+      'team': _i4.TeamEndpoint()
+        ..initialize(
+          server,
+          'team',
+          null,
+        ),
+      'greeting': _i5.GreetingEndpoint()
         ..initialize(
           server,
           'greeting',
@@ -50,7 +86,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i4.CheckEmailRequest>(),
+              type: _i1.getType<_i6.CheckEmailRequest>(),
               nullable: false,
             ),
           },
@@ -69,7 +105,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i5.RegisterSendCodeRequest>(),
+              type: _i1.getType<_i7.RegisterSendCodeRequest>(),
               nullable: false,
             ),
           },
@@ -87,7 +123,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i6.RegisterVerifyCodeRequest>(),
+              type: _i1.getType<_i8.RegisterVerifyCodeRequest>(),
               nullable: false,
             ),
           },
@@ -106,7 +142,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i7.RegisterRequest>(),
+              type: _i1.getType<_i9.RegisterRequest>(),
               nullable: false,
             ),
           },
@@ -124,7 +160,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i8.LoginRequest>(),
+              type: _i1.getType<_i10.LoginRequest>(),
               nullable: false,
             ),
           },
@@ -142,7 +178,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i9.RefreshTokenRequest>(),
+              type: _i1.getType<_i11.RefreshTokenRequest>(),
               nullable: false,
             ),
           },
@@ -191,6 +227,428 @@ class Endpoints extends _i1.EndpointDispatch {
                 accessToken: params['accessToken'],
               ),
         ),
+        'getCurrentUser': _i1.MethodConnector(
+          name: 'getCurrentUser',
+          params: {
+            'accessToken': _i1.ParameterDescription(
+              name: 'accessToken',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['auth'] as _i2.AuthEndpoint).getCurrentUser(
+                session,
+                accessToken: params['accessToken'],
+              ),
+        ),
+      },
+    );
+    connectors['session'] = _i1.EndpointConnector(
+      name: 'session',
+      endpoint: endpoints['session']!,
+      methodConnectors: {
+        'getActiveSessions': _i1.MethodConnector(
+          name: 'getActiveSessions',
+          params: {
+            'accessToken': _i1.ParameterDescription(
+              name: 'accessToken',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['session'] as _i3.SessionEndpoint)
+                  .getActiveSessions(
+                    session,
+                    params['accessToken'],
+                  ),
+        ),
+        'terminateSession': _i1.MethodConnector(
+          name: 'terminateSession',
+          params: {
+            'accessToken': _i1.ParameterDescription(
+              name: 'accessToken',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'request': _i1.ParameterDescription(
+              name: 'request',
+              type: _i1.getType<_i12.TerminateSessionRequest>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['session'] as _i3.SessionEndpoint)
+                  .terminateSession(
+                    session,
+                    params['accessToken'],
+                    request: params['request'],
+                  ),
+        ),
+        'terminateAllOtherSessions': _i1.MethodConnector(
+          name: 'terminateAllOtherSessions',
+          params: {
+            'accessToken': _i1.ParameterDescription(
+              name: 'accessToken',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['session'] as _i3.SessionEndpoint)
+                  .terminateAllOtherSessions(
+                    session,
+                    params['accessToken'],
+                  ),
+        ),
+      },
+    );
+    connectors['team'] = _i1.EndpointConnector(
+      name: 'team',
+      endpoint: endpoints['team']!,
+      methodConnectors: {
+        'createTeam': _i1.MethodConnector(
+          name: 'createTeam',
+          params: {
+            'accessToken': _i1.ParameterDescription(
+              name: 'accessToken',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'request': _i1.ParameterDescription(
+              name: 'request',
+              type: _i1.getType<_i13.CreateTeamRequest>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['team'] as _i4.TeamEndpoint).createTeam(
+                session,
+                params['accessToken'],
+                request: params['request'],
+              ),
+        ),
+        'updateTeam': _i1.MethodConnector(
+          name: 'updateTeam',
+          params: {
+            'accessToken': _i1.ParameterDescription(
+              name: 'accessToken',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'request': _i1.ParameterDescription(
+              name: 'request',
+              type: _i1.getType<_i14.UpdateTeamRequest>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['team'] as _i4.TeamEndpoint).updateTeam(
+                session,
+                params['accessToken'],
+                request: params['request'],
+              ),
+        ),
+        'getTeam': _i1.MethodConnector(
+          name: 'getTeam',
+          params: {
+            'accessToken': _i1.ParameterDescription(
+              name: 'accessToken',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'teamId': _i1.ParameterDescription(
+              name: 'teamId',
+              type: _i1.getType<_i1.UuidValue>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['team'] as _i4.TeamEndpoint).getTeam(
+                session,
+                params['accessToken'],
+                teamId: params['teamId'],
+              ),
+        ),
+        'getMyTeams': _i1.MethodConnector(
+          name: 'getMyTeams',
+          params: {
+            'accessToken': _i1.ParameterDescription(
+              name: 'accessToken',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['team'] as _i4.TeamEndpoint).getMyTeams(
+                session,
+                params['accessToken'],
+              ),
+        ),
+        'inviteMember': _i1.MethodConnector(
+          name: 'inviteMember',
+          params: {
+            'accessToken': _i1.ParameterDescription(
+              name: 'accessToken',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'request': _i1.ParameterDescription(
+              name: 'request',
+              type: _i1.getType<_i15.InviteTeamMemberRequest>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['team'] as _i4.TeamEndpoint).inviteMember(
+                session,
+                params['accessToken'],
+                request: params['request'],
+              ),
+        ),
+        'getMyInvitations': _i1.MethodConnector(
+          name: 'getMyInvitations',
+          params: {
+            'accessToken': _i1.ParameterDescription(
+              name: 'accessToken',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['team'] as _i4.TeamEndpoint).getMyInvitations(
+                    session,
+                    params['accessToken'],
+                  ),
+        ),
+        'respondToInvitation': _i1.MethodConnector(
+          name: 'respondToInvitation',
+          params: {
+            'accessToken': _i1.ParameterDescription(
+              name: 'accessToken',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'request': _i1.ParameterDescription(
+              name: 'request',
+              type: _i1.getType<_i16.RespondToInvitationRequest>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['team'] as _i4.TeamEndpoint).respondToInvitation(
+                    session,
+                    params['accessToken'],
+                    request: params['request'],
+                  ),
+        ),
+        'revokeInvitation': _i1.MethodConnector(
+          name: 'revokeInvitation',
+          params: {
+            'accessToken': _i1.ParameterDescription(
+              name: 'accessToken',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'request': _i1.ParameterDescription(
+              name: 'request',
+              type: _i1.getType<_i17.RevokeInvitationRequest>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['team'] as _i4.TeamEndpoint).revokeInvitation(
+                    session,
+                    params['accessToken'],
+                    request: params['request'],
+                  ),
+        ),
+        'getTeamMembers': _i1.MethodConnector(
+          name: 'getTeamMembers',
+          params: {
+            'accessToken': _i1.ParameterDescription(
+              name: 'accessToken',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'teamId': _i1.ParameterDescription(
+              name: 'teamId',
+              type: _i1.getType<_i1.UuidValue>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['team'] as _i4.TeamEndpoint).getTeamMembers(
+                session,
+                params['accessToken'],
+                teamId: params['teamId'],
+              ),
+        ),
+        'updateMemberRole': _i1.MethodConnector(
+          name: 'updateMemberRole',
+          params: {
+            'accessToken': _i1.ParameterDescription(
+              name: 'accessToken',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'request': _i1.ParameterDescription(
+              name: 'request',
+              type: _i1.getType<_i18.UpdateMemberRoleRequest>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['team'] as _i4.TeamEndpoint).updateMemberRole(
+                    session,
+                    params['accessToken'],
+                    request: params['request'],
+                  ),
+        ),
+        'removeMember': _i1.MethodConnector(
+          name: 'removeMember',
+          params: {
+            'accessToken': _i1.ParameterDescription(
+              name: 'accessToken',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'request': _i1.ParameterDescription(
+              name: 'request',
+              type: _i1.getType<_i19.RemoveMemberRequest>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['team'] as _i4.TeamEndpoint).removeMember(
+                session,
+                params['accessToken'],
+                request: params['request'],
+              ),
+        ),
+        'leaveTeam': _i1.MethodConnector(
+          name: 'leaveTeam',
+          params: {
+            'accessToken': _i1.ParameterDescription(
+              name: 'accessToken',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'request': _i1.ParameterDescription(
+              name: 'request',
+              type: _i1.getType<_i20.LeaveTeamRequest>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['team'] as _i4.TeamEndpoint).leaveTeam(
+                session,
+                params['accessToken'],
+                request: params['request'],
+              ),
+        ),
+        'transferOwnership': _i1.MethodConnector(
+          name: 'transferOwnership',
+          params: {
+            'accessToken': _i1.ParameterDescription(
+              name: 'accessToken',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'request': _i1.ParameterDescription(
+              name: 'request',
+              type: _i1.getType<_i21.TransferTeamOwnershipRequest>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['team'] as _i4.TeamEndpoint).transferOwnership(
+                    session,
+                    params['accessToken'],
+                    request: params['request'],
+                  ),
+        ),
+        'deleteTeam': _i1.MethodConnector(
+          name: 'deleteTeam',
+          params: {
+            'accessToken': _i1.ParameterDescription(
+              name: 'accessToken',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'request': _i1.ParameterDescription(
+              name: 'request',
+              type: _i1.getType<_i22.DeleteTeamRequest>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['team'] as _i4.TeamEndpoint).deleteTeam(
+                session,
+                params['accessToken'],
+                request: params['request'],
+              ),
+        ),
       },
     );
     connectors['greeting'] = _i1.EndpointConnector(
@@ -210,7 +668,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['greeting'] as _i3.GreetingEndpoint).hello(
+              ) async => (endpoints['greeting'] as _i5.GreetingEndpoint).hello(
                 session,
                 params['name'],
               ),

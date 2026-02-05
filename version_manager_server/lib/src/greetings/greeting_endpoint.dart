@@ -1,5 +1,6 @@
 import '../generated/protocol.dart';
 import 'package:serverpod/serverpod.dart';
+import '../endpoints/base/logged_in_endpoint.dart';
 
 // This is an example endpoint of your server. It's best practice to use the
 // `Endpoint` ending of the class name, but it will be removed when accessing
@@ -11,7 +12,9 @@ import 'package:serverpod/serverpod.dart';
 
 /// This is an example endpoint that returns a greeting message through
 /// its [hello] method.
-class GreetingEndpoint extends Endpoint {
+///
+/// **Требует авторизации** — наследуется от [LoggedInEndpoint].
+class GreetingEndpoint extends LoggedInEndpoint {
   // This method is called when the client calls the `hello` method on the
   // `greeting` endpoint.
   //

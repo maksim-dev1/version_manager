@@ -1,20 +1,20 @@
 import 'package:version_manager_client/version_manager_client.dart';
 import 'package:version_manager_flutter/features/registration/domain/repository/registration_repository.dart';
+import 'package:version_manager_flutter/shared/services/auth_key_provider.dart';
 import 'package:version_manager_flutter/shared/services/device_info_service.dart';
-import 'package:version_manager_flutter/shared/services/storage_service.dart';
 
 /// Реализация репозитория регистрации.
 class RegistrationRepositoryImpl implements RegistrationRepository {
   final EndpointAuth _authEndpoint;
-  final StorageService _storageService;
+  final AuthKeyProvider _authKeyProvider;
   final DeviceInfoService _deviceInfoService;
 
   RegistrationRepositoryImpl({
     required EndpointAuth authEndpoint,
-    required StorageService storageService,
+    required AuthKeyProvider authKeyProvider,
     required DeviceInfoService deviceInfoService,
   }) : _authEndpoint = authEndpoint,
-       _storageService = storageService,
+       _authKeyProvider = authKeyProvider,
        _deviceInfoService = deviceInfoService;
 
   @override
@@ -57,7 +57,7 @@ class RegistrationRepositoryImpl implements RegistrationRepository {
     );
 
     // Сохраняем токены после успешной регистрации (автовход)
-    await _storageService.saveTokens(
+    await _authKeyProvider.saveTokens(
       accessToken: response.accessToken,
       refreshToken: response.refreshToken,
     );

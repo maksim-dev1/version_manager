@@ -7,5 +7,25 @@ auth:
   - refreshTokens:
   - logout:
   - logoutAll:
+  - getCurrentUser:
+session:
+  - getActiveSessions:
+  - terminateSession:
+  - terminateAllOtherSessions:
+team:
+  - createTeam:
+  - updateTeam:
+  - getTeam:
+  - getMyTeams:
+  - inviteMember:
+  - getMyInvitations:
+  - respondToInvitation:
+  - revokeInvitation:
+  - getTeamMembers:
+  - updateMemberRole:
+  - removeMember:
+  - leaveTeam:
+  - transferOwnership:
+  - deleteTeam:
 greeting:
   - hello:

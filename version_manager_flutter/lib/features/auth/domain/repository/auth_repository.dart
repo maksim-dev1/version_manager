@@ -1,12 +1,16 @@
-import 'package:version_manager_client/version_manager_client.dart';
-
 /// Репозиторий для управления аутентификацией.
 ///
 /// Отвечает за:
 /// - Проверку наличия сохранённых токенов
-/// - Сохранение и получение токенов из хранилища
-/// - Обновление токенов (refresh)
+/// - Сохранение токенов после успешной авторизации
 /// - Выход из системы (logout/logoutAll)
+///
+/// ## Сроки жизни токенов
+/// - **Access Token**: 1 час
+/// - **Refresh Token**: 30 дней
+///
+/// Refresh токенов выполняется автоматически через [AuthKeyProvider]
+/// при получении 401 ошибки от сервера.
 abstract interface class AuthRepository {
   /// Проверяет наличие сохранённых токенов.
   ///
@@ -14,49 +18,21 @@ abstract interface class AuthRepository {
   /// `true` если токены существуют, `false` если нет.
   Future<bool> checkAuth();
 
-  // /// Получает сохранённые токены из хранилища.
-  // ///
-  // /// ### Возвращает
-  // /// Объект с токенами или `null` если токены не найдены.
-  // Future<({String accessToken, String refreshToken})?> getSavedTokens();
-
-  // /// Сохраняет токены в хранилище.
-  // ///
-  // /// ### Параметры
-  // /// - [accessToken] — access token для сохранения
-  // /// - [refreshToken] — refresh token для сохранения
-  // Future<void> saveTokens({
-  //   required String accessToken,
-  //   required String refreshToken,
-  // });
-
-  // /// Обновляет пару токенов доступа.
-  // ///
-  // /// ### Параметры
-  // /// - [refreshToken] — текущий refresh token
-  // ///
-  // /// ### Возвращает
-  // /// [TokenPairResponse] с новыми токенами
-  // ///
-  // /// ### Исключения
-  // /// - [InvalidDataException] — если refresh token недействителен
-  // Future<TokenPairResponse> refreshTokens({
-  //   required String refreshToken,
-  // });
-
-  /// Завершает текущую сессию.
+  /// Завершает текущую сессию и очищает токены.
   ///
-  /// ### Параметры
-  /// - [accessToken] — текущий access token
-  Future<SuccessResponse> logout({
-    required String accessToken,
-  });
+  /// Отправляет запрос на сервер для деактивации сессии,
+  /// затем очищает локальное хранилище.
+  Future<void> logout();
 
   /// Завершает все активные сессии пользователя.
   ///
-  /// ### Параметры
-  /// - [accessToken] — текущий access token
-  Future<SuccessResponse> logoutAll({
-    required String accessToken,
-  });
+  /// Отправляет запрос на сервер для деактивации всех сессий,
+  /// затем очищает локальное хранилище.
+  Future<void> logoutAll();
+
+  /// Устанавливает callback для обработки ошибок аутентификации.
+  ///
+  /// Вызывается когда refresh token истёк или недействителен.
+  /// Используется для перенаправления на экран входа.
+  void setOnAuthenticationFailed(void Function() callback);
 }

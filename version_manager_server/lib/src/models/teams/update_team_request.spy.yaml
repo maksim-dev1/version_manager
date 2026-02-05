@@ -1,0 +1,6 @@
+### Запрос на обновление команды
+class: UpdateTeamRequest
+fields:
+  teamId: UuidValue
+  name: String
+  description: String?

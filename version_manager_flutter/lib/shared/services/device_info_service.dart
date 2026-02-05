@@ -1,8 +1,8 @@
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:flutter/foundation.dart' show kIsWeb, kDebugMode;
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'dart:io' if (dart.library.html) 'platform_stub.dart';
+import 'dart:io';
 
 /// Сервис для получения информации об устройстве и приложении.
 ///
@@ -12,7 +12,7 @@ import 'dart:io' if (dart.library.html) 'platform_stub.dart';
 /// - Версии приложения
 /// - User Agent для API запросов
 ///
-/// Поддерживает все платформы включая Web.
+/// Поддерживает все платформы: iOS, Android, macOS, Windows, Linux и Web.
 class DeviceInfoService {
   final DeviceInfoPlugin _deviceInfo = DeviceInfoPlugin();
 
@@ -24,7 +24,7 @@ class DeviceInfoService {
   /// - macOS: "MacBook Pro, macOS 14.2.1"
   /// - Windows: "Windows 11 Pro"
   /// - Linux: "Ubuntu 22.04"
-  /// - Web: "Chrome 120.0, Windows 10" или "Safari 17.0, macOS"
+  /// - Web: "Chrome, Windows" или "Safari, macOS"
   ///
   /// ### Пример использования
   /// ```dart
@@ -40,23 +40,26 @@ class DeviceInfoService {
         return '$browser, $platform';
       }
 
-      if (Platform.isIOS) {
-        final iosInfo = await _deviceInfo.iosInfo;
-        // name уже содержит полное название (например "iPhone 16e")
-        return '${iosInfo.name}, iOS ${iosInfo.systemVersion}';
-      } else if (Platform.isAndroid) {
-        final androidInfo = await _deviceInfo.androidInfo;
-        return '${androidInfo.manufacturer} ${androidInfo.model}, Android ${androidInfo.version.release}';
-      } else if (Platform.isMacOS) {
-        final macInfo = await _deviceInfo.macOsInfo;
-        return '${macInfo.model}, macOS ${macInfo.osRelease}';
-      } else if (Platform.isWindows) {
-        final windowsInfo = await _deviceInfo.windowsInfo;
-        return 'Windows ${windowsInfo.productName}';
-      } else if (Platform.isLinux) {
-        final linuxInfo = await _deviceInfo.linuxInfo;
-        return linuxInfo.prettyName;
+      // Для нативных платформ используем Platform из dart:io
+      if (!kIsWeb) {
+        if (Platform.isIOS) {
+          final iosInfo = await _deviceInfo.iosInfo;
+          return '${iosInfo.name}, iOS ${iosInfo.systemVersion}';
+        } else if (Platform.isAndroid) {
+          final androidInfo = await _deviceInfo.androidInfo;
+          return '${androidInfo.manufacturer} ${androidInfo.model}, Android ${androidInfo.version.release}';
+        } else if (Platform.isMacOS) {
+          final macInfo = await _deviceInfo.macOsInfo;
+          return '${macInfo.model}, macOS ${macInfo.osRelease}';
+        } else if (Platform.isWindows) {
+          final windowsInfo = await _deviceInfo.windowsInfo;
+          return 'Windows ${windowsInfo.productName}';
+        } else if (Platform.isLinux) {
+          final linuxInfo = await _deviceInfo.linuxInfo;
+          return linuxInfo.prettyName;
+        }
       }
+
       return 'Unknown Device';
     } catch (e) {
       return 'Unknown Device';
@@ -70,11 +73,13 @@ class DeviceInfoService {
   /// Примеры:
   /// - `VersionManager/1.0.0 (iOS; iPhone 14 Pro, iOS 17.2.1)`
   /// - `VersionManager/1.2.3 (Android; Samsung Galaxy S23, Android 14)`
+  /// - `VersionManager/1.0.0 (Web; Chrome, Windows)`
   ///
   /// ### Пример использования
   /// ```dart
   /// final userAgent = await DeviceInfoService().getUserAgent();
   /// // Использовать в HTTP заголовках
+  /// final response = await http.get(url, headers: {'User-Agent': userAgent});
   /// ```
   Future<String> getUserAgent() async {
     try {
@@ -91,11 +96,15 @@ class DeviceInfoService {
   /// Получает краткое название платформы.
   String _getPlatformName() {
     if (kIsWeb) return 'Web';
-    if (Platform.isIOS) return 'iOS';
-    if (Platform.isAndroid) return 'Android';
-    if (Platform.isMacOS) return 'macOS';
-    if (Platform.isWindows) return 'Windows';
-    if (Platform.isLinux) return 'Linux';
+
+    if (!kIsWeb) {
+      if (Platform.isIOS) return 'iOS';
+      if (Platform.isAndroid) return 'Android';
+      if (Platform.isMacOS) return 'macOS';
+      if (Platform.isWindows) return 'Windows';
+      if (Platform.isLinux) return 'Linux';
+    }
+
     return 'Unknown';
   }
 
@@ -158,6 +167,7 @@ class DeviceInfoService {
   /// ```dart
   /// final shortInfo = await DeviceInfoService().getShortDeviceInfo();
   /// // Показать в списке активных сессий
+  /// Text(shortInfo); // "iPhone 14 Pro"
   /// ```
   Future<String> getShortDeviceInfo() async {
     try {
@@ -167,21 +177,24 @@ class DeviceInfoService {
         return '$browser Browser';
       }
 
-      if (Platform.isIOS) {
-        final iosInfo = await _deviceInfo.iosInfo;
-        // name уже содержит полное название устройства
-        return iosInfo.name;
-      } else if (Platform.isAndroid) {
-        final androidInfo = await _deviceInfo.androidInfo;
-        return '${androidInfo.manufacturer} ${androidInfo.model}';
-      } else if (Platform.isMacOS) {
-        final macInfo = await _deviceInfo.macOsInfo;
-        return macInfo.model;
-      } else if (Platform.isWindows) {
-        return 'Windows PC';
-      } else if (Platform.isLinux) {
-        return 'Linux PC';
+      // Для нативных платформ используем Platform из dart:io
+      if (!kIsWeb) {
+        if (Platform.isIOS) {
+          final iosInfo = await _deviceInfo.iosInfo;
+          return iosInfo.name;
+        } else if (Platform.isAndroid) {
+          final androidInfo = await _deviceInfo.androidInfo;
+          return '${androidInfo.manufacturer} ${androidInfo.model}';
+        } else if (Platform.isMacOS) {
+          final macInfo = await _deviceInfo.macOsInfo;
+          return macInfo.model;
+        } else if (Platform.isWindows) {
+          return 'Windows PC';
+        } else if (Platform.isLinux) {
+          return 'Linux PC';
+        }
       }
+
       return 'Unknown Device';
     } catch (e) {
       return 'Unknown Device';
@@ -192,9 +205,15 @@ class DeviceInfoService {
   ///
   /// ### Возвращает
   /// Map с ключами:
-  /// - `version` — версия (например, "1.2.3")
+  /// - `version` — версия приложения (например, "1.2.3")
   /// - `buildNumber` — номер сборки (например, "42")
-  /// - `appName` — название приложения
+  /// - `appName` — название приложения (например, "VersionManager")
+  ///
+  /// ### Пример использования
+  /// ```dart
+  /// final appInfo = await DeviceInfoService().getAppInfo();
+  /// print('${appInfo['appName']} v${appInfo['version']} (${appInfo['buildNumber']})');
+  /// ```
   Future<Map<String, String>> getAppInfo() async {
     try {
       final packageInfo = await PackageInfo.fromPlatform();
@@ -220,15 +239,24 @@ class DeviceInfoService {
   /// ### Возвращает
   /// IP адрес в виде строки или `null` если получить не удалось
   ///
-  /// ### Примечание
+  /// ### Примечания
   /// - Использует публичный API (ipify.org)
   /// - Имеет таймаут 5 секунд
   /// - Не критично если вернёт null
+  /// - Работает на всех платформах включая Web
+  ///
+  /// ### Пример использования
+  /// ```dart
+  /// final ip = await DeviceInfoService().getPublicIpAddress();
+  /// if (ip != null) {
+  ///   print('IP адрес: $ip');
+  /// }
+  /// ```
   Future<String?> getPublicIpAddress() async {
     try {
-      final response = await http
-          .get(Uri.parse('https://api.ipify.org'))
-          .timeout(Duration(seconds: 5));
+      final response = await http.get(
+        Uri.parse('https://api.ipify.org'),
+      ).timeout(const Duration(seconds: 5));
 
       if (response.statusCode == 200) {
         final ip = response.body.trim();

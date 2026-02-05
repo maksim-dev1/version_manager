@@ -10,9 +10,13 @@ void main() async {
 
   final serverUrl = _getServerUrl();
 
-  final clientService = ClientService()..initializeClient(serverUrl);
+  // Инициализируем storage первым (синхронно ждём)
+  final storageService = StorageService();
+  await storageService.initialize();
 
-  final storageService = StorageService()..initialize();
+  // Инициализируем клиент с поддержкой аутентификации
+  final clientService = ClientService();
+  clientService.initializeClient(serverUrl, storageService: storageService);
 
   final deviceInfoService = DeviceInfoService();
 

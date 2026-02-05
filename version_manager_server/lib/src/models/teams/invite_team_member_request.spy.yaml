@@ -1,0 +1,6 @@
+### Запрос на приглашение участника
+class: InviteTeamMemberRequest
+fields:
+  teamId: UuidValue
+  email: String
+  role: TeamRoleType

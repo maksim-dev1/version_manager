@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:version_manager_flutter/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:version_manager_flutter/features/registration/presentation/bloc/registration_bloc.dart';
 import 'package:version_manager_flutter/shared/services/notification_service.dart';
-import 'package:version_manager_flutter/version_manager_app.dart';
 
 class CreatePasswordButton extends StatelessWidget {
   final VoidCallback submit;
@@ -21,12 +21,11 @@ class CreatePasswordButton extends StatelessWidget {
 
     return BlocConsumer<RegistrationBloc, RegistrationState>(
       listener: (context, state) => switch (state) {
-        RegistrationSuccess() => Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => VersionManagerApp(),
-          ),
-        ),
+        RegistrationSuccess() => () {
+          // Токены уже сохранены в репозитории,
+          // обновляем состояние авторизации
+          context.read<AuthBloc>().add(const AuthEvent.checkAuth());
+        }(),
         RegistrationError(:final message) => NotificationService.showError(
           context,
           message,

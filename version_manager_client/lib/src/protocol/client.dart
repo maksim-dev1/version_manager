@@ -32,9 +32,37 @@ import 'package:version_manager_client/src/protocol/auth/token_pair_response.dar
     as _i12;
 import 'package:version_manager_client/src/protocol/auth/refresh_token.dart'
     as _i13;
+import 'package:version_manager_client/src/protocol/auth/common.dart' as _i14;
+import 'package:version_manager_client/src/protocol/sessions/session_info.dart'
+    as _i15;
+import 'package:version_manager_client/src/protocol/sessions/terminate_session_request.dart'
+    as _i16;
+import 'package:version_manager_client/src/protocol/teams/team.dart' as _i17;
+import 'package:version_manager_client/src/protocol/teams/create_team_request.dart'
+    as _i18;
+import 'package:version_manager_client/src/protocol/teams/update_team_request.dart'
+    as _i19;
+import 'package:version_manager_client/src/protocol/teams/invite_team_member_request.dart'
+    as _i20;
+import 'package:version_manager_client/src/protocol/teams/team_member.dart'
+    as _i21;
+import 'package:version_manager_client/src/protocol/teams/respond_to_invitation_request.dart'
+    as _i22;
+import 'package:version_manager_client/src/protocol/teams/revoke_invitation_request.dart'
+    as _i23;
+import 'package:version_manager_client/src/protocol/teams/update_member_role_request.dart'
+    as _i24;
+import 'package:version_manager_client/src/protocol/teams/remove_member_request.dart'
+    as _i25;
+import 'package:version_manager_client/src/protocol/teams/leave_team_request.dart'
+    as _i26;
+import 'package:version_manager_client/src/protocol/teams/transfer_team_ownership_request.dart'
+    as _i27;
+import 'package:version_manager_client/src/protocol/teams/delete_team_request.dart'
+    as _i28;
 import 'package:version_manager_client/src/protocol/greetings/greeting.dart'
-    as _i14;
-import 'protocol.dart' as _i15;
+    as _i29;
+import 'protocol.dart' as _i30;
 
 /// Эндпоинт аутентификации и авторизации пользователей.
 ///
@@ -44,6 +72,12 @@ import 'protocol.dart' as _i15;
 /// - Вход в систему по email и паролю
 /// - Управление токенами доступа (refresh token rotation)
 /// - Завершение сессий (logout)
+///
+/// ## Защита методов
+/// Большинство методов этого эндпоинта **НЕ требуют** авторизации,
+/// так как они используются для получения токенов. Исключения:
+/// - [logout] — требует валидный access token
+/// - [logoutAll] — требует валидный access token
 ///
 /// ## Поток регистрации
 /// 1. [checkEmailAndSendCode] — проверяет email, отправляет код для новых пользователей
@@ -56,8 +90,8 @@ import 'protocol.dart' as _i15;
 ///
 /// ## Управление сессиями
 /// - [refreshTokens] — обновление пары токенов
-/// - [logout] — завершение текущей сессии
-/// - [logoutAll] — завершение всех сессий пользователя
+/// - [logout] — завершение текущей сессии (требует авторизации)
+/// - [logoutAll] — завершение всех сессий пользователя (требует авторизации)
 ///
 /// Все методы логируют свои действия через [Session.log] для аудита.
 /// {@category Endpoint}
@@ -69,6 +103,8 @@ class EndpointAuth extends _i1.EndpointRef {
 
   /// Проверяет существование email и автоматически отправляет код верификации
   /// для новых пользователей.
+  ///
+  /// **Не требует авторизации** — это первый шаг регистрации/входа.
   ///
   /// Это первый шаг в потоке регистрации/входа. Метод определяет,
   /// существует ли пользователь с указанным email:
@@ -107,9 +143,12 @@ class EndpointAuth extends _i1.EndpointRef {
     'auth',
     'checkEmailAndSendCode',
     {'request': request},
+    authenticated: false,
   );
 
   /// Повторно отправляет код верификации на указанный email.
+  ///
+  /// **Не требует авторизации** — используется в процессе регистрации.
   ///
   /// Используется когда пользователь не получил код или срок его действия
   /// истёк. Метод создаёт новый код и отправляет его на email.
@@ -143,9 +182,12 @@ class EndpointAuth extends _i1.EndpointRef {
     'auth',
     'resendCode',
     {'request': request},
+    authenticated: false,
   );
 
   /// Проверяет код регистрации без создания аккаунта.
+  ///
+  /// **Не требует авторизации** — используется в процессе регистрации.
   ///
   /// Полезно для отдельного шага в UI, когда нужно подтвердить код
   /// перед переходом к созданию пароля.
@@ -166,9 +208,12 @@ class EndpointAuth extends _i1.EndpointRef {
     'auth',
     'verifyRegisterCode',
     {'request': request},
+    authenticated: false,
   );
 
   /// Регистрирует нового пользователя с проверкой кода и автоматическим входом.
+  ///
+  /// **Не требует авторизации** — создаёт новую учётную запись.
   ///
   /// Финальный шаг регистрации, объединяющий:
   /// 1. Верификацию кода, отправленного на email
@@ -217,9 +262,12 @@ class EndpointAuth extends _i1.EndpointRef {
     'auth',
     'register',
     {'request': request},
+    authenticated: false,
   );
 
   /// Аутентифицирует пользователя по email и паролю.
+  ///
+  /// **Не требует авторизации** — выполняет вход в систему.
   ///
   /// Проверяет учётные данные и создаёт новую сессию с токенами.
   /// Обновляет поле `lastLoginAt` пользователя.
@@ -262,9 +310,12 @@ class EndpointAuth extends _i1.EndpointRef {
         'auth',
         'login',
         {'request': request},
+        authenticated: false,
       );
 
   /// Обновляет пару токенов доступа с использованием refresh token.
+  ///
+  /// **Не требует авторизации** — использует refresh token для обновления.
   ///
   /// Реализует паттерн **Refresh Token Rotation**: при каждом обновлении
   /// генерируется новая пара токенов, а старые становятся недействительными.
@@ -279,7 +330,6 @@ class EndpointAuth extends _i1.EndpointRef {
   /// - `accessToken` — новый JWT токен доступа (время жизни: 1 час)
   /// - `refreshToken` — новый токен обновления (время жизни: 30 дней)
   ///
-  /// ### Исключения
   /// - [InvalidDataException] с `field: 'refreshToken'` — токен недействителен,
   ///   истёк или сессия была завершена
   ///
@@ -301,9 +351,12 @@ class EndpointAuth extends _i1.EndpointRef {
     'auth',
     'refreshTokens',
     {'request': request},
+    authenticated: false,
   );
 
   /// Завершает текущую сессию пользователя (выход из системы).
+  ///
+  /// **Требует авторизации** — access token должен быть валидным.
   ///
   /// Деактивирует сессию, связанную с переданным access token.
   /// После вызова токены этой сессии становятся недействительными.
@@ -333,6 +386,8 @@ class EndpointAuth extends _i1.EndpointRef {
       );
 
   /// Завершает все активные сессии пользователя на всех устройствах.
+  ///
+  /// **Требует авторизации** — access token должен быть валидным.
   ///
   /// Используется для повышения безопасности, например после смены пароля
   /// или при подозрении на компрометацию аккаунта. Деактивирует все сессии,
@@ -366,20 +421,431 @@ class EndpointAuth extends _i1.EndpointRef {
         'logoutAll',
         {'accessToken': accessToken},
       );
+
+  /// Получает информацию о текущем пользователе.
+  ///
+  /// Проверяет access token и возвращает публичные данные пользователя.
+  ///
+  /// **Параметры:**
+  /// - `accessToken` — JWT-токен для авторизации.
+  ///
+  /// **Возвращает:** [UserPublic] — публичные данные текущего пользователя.
+  ///
+  /// **Исключения:**
+  /// - [UnauthorizedException] — если токен недействителен или истёк.
+  /// - [InvalidDataException] — если токен недействителен, истёк или пользователь не найден.
+  ///
+  /// **Пример использования:**
+  /// ```dart
+  /// final user = await client.auth.getCurrentUser('access_token');
+  /// print(user.email);
+  /// ```
+  _i2.Future<_i14.UserPublic> getCurrentUser({required String accessToken}) =>
+      caller.callServerEndpoint<_i14.UserPublic>(
+        'auth',
+        'getCurrentUser',
+        {'accessToken': accessToken},
+      );
+}
+
+/// Базовый эндпоинт, требующий аутентификации.
+///
+/// Все эндпоинты, наследующиеся от этого класса, автоматически
+/// требуют валидный токен доступа. Serverpod проверит токен
+/// перед вызовом любого метода.
+///
+/// ### Использование
+/// ```dart
+/// class UserEndpoint extends LoggedInEndpoint {
+///   Future<UserData> getData(Session session) async {
+///     // session.authenticated гарантированно не null
+///     final userId = (await session.authenticated)!.userId;
+///     // ...
+///   }
+/// }
+/// ```
+///
+/// ### Публичные методы в защищённом эндпоинте
+/// Если нужен отдельный публичный метод, пометьте его:
+/// ```dart
+/// @unauthenticatedClientCall
+/// Future<String> publicMethod(Session session) async {
+///   return 'доступно всем';
+/// }
+/// ```
+/// {@category Endpoint}
+abstract class EndpointLoggedIn extends _i1.EndpointRef {
+  EndpointLoggedIn(_i1.EndpointCaller caller) : super(caller);
+}
+
+/// Эндпоинт для управления сессиями пользователя.
+///
+/// Предоставляет функционал для:
+/// - Просмотра всех активных сессий текущего пользователя
+/// - Завершения конкретной сессии
+/// - Завершения всех сессий кроме текущей
+///
+/// Все методы требуют передачи валидного access token.
+/// {@category Endpoint}
+class EndpointSession extends _i1.EndpointRef {
+  EndpointSession(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'session';
+
+  /// Получить список всех активных сессий текущего пользователя.
+  ///
+  /// Возвращает информацию о каждой сессии включая:
+  /// - Устройство, браузер, IP адрес
+  /// - Дату создания и последней активности
+  /// - Признак текущей сессии
+  /// - Геолокацию (город, страна) если доступна
+  ///
+  /// ### Параметры
+  /// - [session] — сессия Serverpod с доступом к БД
+  /// - [accessToken] — текущий access token пользователя
+  ///
+  /// ### Возвращает
+  /// Список [SessionInfo] со всеми активными сессиями пользователя.
+  ///
+  /// ### Пример использования
+  /// ```dart
+  /// final sessions = await client.session.getActiveSessions(accessToken);
+  /// for (var s in sessions) {
+  ///   print('${s.deviceInfo} - ${s.isCurrent ? "Текущая" : ""}');
+  /// }
+  /// ```
+  _i2.Future<List<_i15.SessionInfo>> getActiveSessions(String accessToken) =>
+      caller.callServerEndpoint<List<_i15.SessionInfo>>(
+        'session',
+        'getActiveSessions',
+        {'accessToken': accessToken},
+      );
+
+  /// Завершить конкретную сессию по её ID.
+  ///
+  /// Помечает сессию как неактивную (`isActive = false`) и
+  /// устанавливает время отзыва (`revokedAt`).
+  ///
+  /// Нельзя завершить текущую сессию этим методом.
+  /// Для этого используйте метод `logout` из [AuthEndpoint].
+  ///
+  /// ### Параметры
+  /// - [session] — сессия Serverpod с доступом к БД
+  /// - [accessToken] — текущий access token пользователя
+  /// - [request] — запрос с ID сессии для завершения
+  ///
+  /// ### Возвращает
+  /// [SuccessResponse] с результатом операции.
+  ///
+  /// ### Исключения
+  /// - [InvalidDataException] если сессия не найдена или не принадлежит пользователю
+  /// - [InvalidDataException] если попытка завершить текущую сессию
+  ///
+  /// ### Пример использования
+  /// ```dart
+  /// await client.session.terminateSession(
+  ///   accessToken,
+  ///   TerminateSessionRequest(sessionId: sessionId),
+  /// );
+  /// ```
+  _i2.Future<_i7.SuccessResponse> terminateSession(
+    String accessToken, {
+    required _i16.TerminateSessionRequest request,
+  }) => caller.callServerEndpoint<_i7.SuccessResponse>(
+    'session',
+    'terminateSession',
+    {
+      'accessToken': accessToken,
+      'request': request,
+    },
+  );
+
+  /// Завершить все сессии пользователя кроме текущей.
+  ///
+  /// Полезно для:
+  /// - Выхода со всех устройств при утере одного из них
+  /// - Обеспечения безопасности при подозрении на компрометацию
+  /// - Принудительного выхода из всех старых сессий
+  ///
+  /// ### Параметры
+  /// - [session] — сессия Serverpod с доступом к БД
+  /// - [accessToken] — текущий access token пользователя
+  ///
+  /// ### Возвращает
+  /// [SuccessResponse] с информацией о количестве завершённых сессий.
+  ///
+  /// ### Пример использования
+  /// ```dart
+  /// final result = await client.session.terminateAllOtherSessions(accessToken);
+  /// print('Завершено сессий: ${result.message}');
+  /// ```
+  _i2.Future<_i7.SuccessResponse> terminateAllOtherSessions(
+    String accessToken,
+  ) => caller.callServerEndpoint<_i7.SuccessResponse>(
+    'session',
+    'terminateAllOtherSessions',
+    {'accessToken': accessToken},
+  );
+}
+
+/// Эндпоинт для управления командами.
+///
+/// Предоставляет функционал для:
+/// - Создания и редактирования команд
+/// - Приглашения участников и управления ролями
+/// - Принятия/отклонения приглашений
+/// - Передачи владения командой
+/// - Удаления команд с опциями сохранения приложений
+///
+/// Все методы требуют передачи валидного access token.
+///
+/// ## Роли и права доступа
+/// - **owner** — полный доступ, включая удаление команды
+/// - **admin** — управление участниками и приложениями
+/// - **developer** — создание и редактирование версий
+/// - **observer** — только просмотр
+/// {@category Endpoint}
+class EndpointTeam extends _i1.EndpointRef {
+  EndpointTeam(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'team';
+
+  /// Создать новую команду.
+  ///
+  /// Создатель автоматически становится владельцем команды.
+  ///
+  /// ### Параметры
+  /// - [session] — сессия Serverpod с доступом к БД
+  /// - [accessToken] — access token текущего пользователя
+  /// - [request] — данные для создания команды (название, описание)
+  ///
+  /// ### Возвращает
+  /// Созданную [Team] с полной информацией.
+  ///
+  /// ### Исключения
+  /// - [InvalidDataException] если название пустое или слишком короткое
+  _i2.Future<_i17.Team> createTeam(
+    String accessToken, {
+    required _i18.CreateTeamRequest request,
+  }) => caller.callServerEndpoint<_i17.Team>(
+    'team',
+    'createTeam',
+    {
+      'accessToken': accessToken,
+      'request': request,
+    },
+  );
+
+  /// Обновить информацию о команде.
+  ///
+  /// Доступно только владельцу и администраторам команды.
+  _i2.Future<_i17.Team> updateTeam(
+    String accessToken, {
+    required _i19.UpdateTeamRequest request,
+  }) => caller.callServerEndpoint<_i17.Team>(
+    'team',
+    'updateTeam',
+    {
+      'accessToken': accessToken,
+      'request': request,
+    },
+  );
+
+  /// Получить команду по ID.
+  ///
+  /// Доступно только активным участникам команды.
+  _i2.Future<_i17.Team> getTeam(
+    String accessToken, {
+    required _i1.UuidValue teamId,
+  }) => caller.callServerEndpoint<_i17.Team>(
+    'team',
+    'getTeam',
+    {
+      'accessToken': accessToken,
+      'teamId': teamId,
+    },
+  );
+
+  /// Получить список всех команд пользователя.
+  ///
+  /// Возвращает команды, где пользователь является активным участником.
+  /// Команды с приглашениями (status = invited) не включаются.
+  _i2.Future<List<_i17.Team>> getMyTeams(String accessToken) =>
+      caller.callServerEndpoint<List<_i17.Team>>(
+        'team',
+        'getMyTeams',
+        {'accessToken': accessToken},
+      );
+
+  /// Пригласить участника в команду.
+  ///
+  /// Отправляет приглашение пользователю по email.
+  /// Доступно владельцу и администраторам.
+  _i2.Future<_i7.SuccessResponse> inviteMember(
+    String accessToken, {
+    required _i20.InviteTeamMemberRequest request,
+  }) => caller.callServerEndpoint<_i7.SuccessResponse>(
+    'team',
+    'inviteMember',
+    {
+      'accessToken': accessToken,
+      'request': request,
+    },
+  );
+
+  /// Получить список приглашений для текущего пользователя.
+  ///
+  /// Возвращает все активные приглашения в команды.
+  _i2.Future<List<_i21.TeamMember>> getMyInvitations(String accessToken) =>
+      caller.callServerEndpoint<List<_i21.TeamMember>>(
+        'team',
+        'getMyInvitations',
+        {'accessToken': accessToken},
+      );
+
+  /// Принять или отклонить приглашение в команду.
+  _i2.Future<_i7.SuccessResponse> respondToInvitation(
+    String accessToken, {
+    required _i22.RespondToInvitationRequest request,
+  }) => caller.callServerEndpoint<_i7.SuccessResponse>(
+    'team',
+    'respondToInvitation',
+    {
+      'accessToken': accessToken,
+      'request': request,
+    },
+  );
+
+  /// Отозвать приглашение.
+  ///
+  /// Доступно владельцу и администраторам.
+  _i2.Future<_i7.SuccessResponse> revokeInvitation(
+    String accessToken, {
+    required _i23.RevokeInvitationRequest request,
+  }) => caller.callServerEndpoint<_i7.SuccessResponse>(
+    'team',
+    'revokeInvitation',
+    {
+      'accessToken': accessToken,
+      'request': request,
+    },
+  );
+
+  /// Получить список участников команды.
+  ///
+  /// Возвращает всех участников (активных и приглашённых).
+  /// Доступно всем активным участникам команды.
+  _i2.Future<List<_i21.TeamMember>> getTeamMembers(
+    String accessToken, {
+    required _i1.UuidValue teamId,
+  }) => caller.callServerEndpoint<List<_i21.TeamMember>>(
+    'team',
+    'getTeamMembers',
+    {
+      'accessToken': accessToken,
+      'teamId': teamId,
+    },
+  );
+
+  /// Изменить роль участника команды.
+  ///
+  /// Доступно владельцу и администраторам (с ограничениями).
+  _i2.Future<_i7.SuccessResponse> updateMemberRole(
+    String accessToken, {
+    required _i24.UpdateMemberRoleRequest request,
+  }) => caller.callServerEndpoint<_i7.SuccessResponse>(
+    'team',
+    'updateMemberRole',
+    {
+      'accessToken': accessToken,
+      'request': request,
+    },
+  );
+
+  /// Удалить участника из команды.
+  ///
+  /// Доступно владельцу и администраторам.
+  _i2.Future<_i7.SuccessResponse> removeMember(
+    String accessToken, {
+    required _i25.RemoveMemberRequest request,
+  }) => caller.callServerEndpoint<_i7.SuccessResponse>(
+    'team',
+    'removeMember',
+    {
+      'accessToken': accessToken,
+      'request': request,
+    },
+  );
+
+  /// Покинуть команду.
+  ///
+  /// Владелец не может покинуть команду — нужно сначала передать владение.
+  _i2.Future<_i7.SuccessResponse> leaveTeam(
+    String accessToken, {
+    required _i26.LeaveTeamRequest request,
+  }) => caller.callServerEndpoint<_i7.SuccessResponse>(
+    'team',
+    'leaveTeam',
+    {
+      'accessToken': accessToken,
+      'request': request,
+    },
+  );
+
+  /// Передать владение командой другому активному участнику.
+  ///
+  /// Доступно только владельцу.
+  /// После передачи бывший владелец становится администратором.
+  _i2.Future<_i7.SuccessResponse> transferOwnership(
+    String accessToken, {
+    required _i27.TransferTeamOwnershipRequest request,
+  }) => caller.callServerEndpoint<_i7.SuccessResponse>(
+    'team',
+    'transferOwnership',
+    {
+      'accessToken': accessToken,
+      'request': request,
+    },
+  );
+
+  /// Удалить команду.
+  ///
+  /// Доступно только владельцу.
+  /// Позволяет выбрать: удалить все приложения или забрать себе.
+  ///
+  /// ### Параметры
+  /// - [request.teamId] — ID команды
+  /// - [request.transferAppsToOwner] — true = забрать приложения, false = удалить
+  /// - [request.confirmationName] — название команды для подтверждения
+  _i2.Future<_i7.SuccessResponse> deleteTeam(
+    String accessToken, {
+    required _i28.DeleteTeamRequest request,
+  }) => caller.callServerEndpoint<_i7.SuccessResponse>(
+    'team',
+    'deleteTeam',
+    {
+      'accessToken': accessToken,
+      'request': request,
+    },
+  );
 }
 
 /// This is an example endpoint that returns a greeting message through
 /// its [hello] method.
+///
+/// **Требует авторизации** — наследуется от [LoggedInEndpoint].
 /// {@category Endpoint}
-class EndpointGreeting extends _i1.EndpointRef {
+class EndpointGreeting extends EndpointLoggedIn {
   EndpointGreeting(_i1.EndpointCaller caller) : super(caller);
 
   @override
   String get name => 'greeting';
 
   /// Returns a personalized greeting message: "Hello {name}".
-  _i2.Future<_i14.Greeting> hello(String name) =>
-      caller.callServerEndpoint<_i14.Greeting>(
+  _i2.Future<_i29.Greeting> hello(String name) =>
+      caller.callServerEndpoint<_i29.Greeting>(
         'greeting',
         'hello',
         {'name': name},
@@ -406,7 +872,7 @@ class Client extends _i1.ServerpodClientShared {
     bool? disconnectStreamsOnLostInternetConnection,
   }) : super(
          host,
-         _i15.Protocol(),
+         _i30.Protocol(),
          securityContext: securityContext,
          streamingConnectionTimeout: streamingConnectionTimeout,
          connectionTimeout: connectionTimeout,
@@ -416,16 +882,24 @@ class Client extends _i1.ServerpodClientShared {
              disconnectStreamsOnLostInternetConnection,
        ) {
     auth = EndpointAuth(this);
+    session = EndpointSession(this);
+    team = EndpointTeam(this);
     greeting = EndpointGreeting(this);
   }
 
   late final EndpointAuth auth;
+
+  late final EndpointSession session;
+
+  late final EndpointTeam team;
 
   late final EndpointGreeting greeting;
 
   @override
   Map<String, _i1.EndpointRef> get endpointRefLookup => {
     'auth': auth,
+    'session': session,
+    'team': team,
     'greeting': greeting,
   };
 

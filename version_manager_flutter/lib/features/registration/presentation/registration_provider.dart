@@ -5,7 +5,6 @@ import 'package:version_manager_flutter/features/registration/domain/repository/
 import 'package:version_manager_flutter/features/registration/presentation/bloc/registration_bloc.dart';
 import 'package:version_manager_flutter/shared/services/client_service.dart';
 import 'package:version_manager_flutter/shared/services/device_info_service.dart';
-import 'package:version_manager_flutter/shared/services/storage_service.dart';
 
 class RegistrationProvider extends StatelessWidget {
   final Widget child;
@@ -16,10 +15,12 @@ class RegistrationProvider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final clientService = context.read<ClientService>();
+
     return RepositoryProvider<RegistrationRepository>(
       create: (context) => RegistrationRepositoryImpl(
-        authEndpoint: context.read<ClientService>().auth,
-        storageService: context.read<StorageService>(),
+        authEndpoint: clientService.auth,
+        authKeyProvider: clientService.authKeyProvider,
         deviceInfoService: context.read<DeviceInfoService>(),
       ),
       child: BlocProvider(

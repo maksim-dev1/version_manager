@@ -42,8 +42,25 @@ import 'exceptions/invalid_data_exception.dart' as _i29;
 import 'exceptions/too_many_attempts_exception.dart' as _i30;
 import 'greetings/greeting.dart' as _i31;
 import 'logs/version_check_log.dart' as _i32;
-import 'teams/team.dart' as _i33;
-import 'teams/team_member.dart' as _i34;
+import 'sessions/session_info.dart' as _i33;
+import 'sessions/terminate_session_request.dart' as _i34;
+import 'teams/create_team_request.dart' as _i35;
+import 'teams/delete_team_request.dart' as _i36;
+import 'teams/invite_team_member_request.dart' as _i37;
+import 'teams/leave_team_request.dart' as _i38;
+import 'teams/remove_member_request.dart' as _i39;
+import 'teams/respond_to_invitation_request.dart' as _i40;
+import 'teams/revoke_invitation_request.dart' as _i41;
+import 'teams/team.dart' as _i42;
+import 'teams/team_member.dart' as _i43;
+import 'teams/transfer_team_ownership_request.dart' as _i44;
+import 'teams/update_member_role_request.dart' as _i45;
+import 'teams/update_team_request.dart' as _i46;
+import 'package:version_manager_server/src/generated/sessions/session_info.dart'
+    as _i47;
+import 'package:version_manager_server/src/generated/teams/team.dart' as _i48;
+import 'package:version_manager_server/src/generated/teams/team_member.dart'
+    as _i49;
 export 'apps/application.dart';
 export 'apps/store_link.dart';
 export 'apps/version.dart';
@@ -74,8 +91,20 @@ export 'exceptions/invalid_data_exception.dart';
 export 'exceptions/too_many_attempts_exception.dart';
 export 'greetings/greeting.dart';
 export 'logs/version_check_log.dart';
+export 'sessions/session_info.dart';
+export 'sessions/terminate_session_request.dart';
+export 'teams/create_team_request.dart';
+export 'teams/delete_team_request.dart';
+export 'teams/invite_team_member_request.dart';
+export 'teams/leave_team_request.dart';
+export 'teams/remove_member_request.dart';
+export 'teams/respond_to_invitation_request.dart';
+export 'teams/revoke_invitation_request.dart';
 export 'teams/team.dart';
 export 'teams/team_member.dart';
+export 'teams/transfer_team_ownership_request.dart';
+export 'teams/update_member_role_request.dart';
+export 'teams/update_team_request.dart';
 
 class Protocol extends _i1.SerializationManagerServer {
   Protocol._();
@@ -1724,11 +1753,47 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i32.VersionCheckLog) {
       return _i32.VersionCheckLog.fromJson(data) as T;
     }
-    if (t == _i33.Team) {
-      return _i33.Team.fromJson(data) as T;
+    if (t == _i33.SessionInfo) {
+      return _i33.SessionInfo.fromJson(data) as T;
     }
-    if (t == _i34.TeamMember) {
-      return _i34.TeamMember.fromJson(data) as T;
+    if (t == _i34.TerminateSessionRequest) {
+      return _i34.TerminateSessionRequest.fromJson(data) as T;
+    }
+    if (t == _i35.CreateTeamRequest) {
+      return _i35.CreateTeamRequest.fromJson(data) as T;
+    }
+    if (t == _i36.DeleteTeamRequest) {
+      return _i36.DeleteTeamRequest.fromJson(data) as T;
+    }
+    if (t == _i37.InviteTeamMemberRequest) {
+      return _i37.InviteTeamMemberRequest.fromJson(data) as T;
+    }
+    if (t == _i38.LeaveTeamRequest) {
+      return _i38.LeaveTeamRequest.fromJson(data) as T;
+    }
+    if (t == _i39.RemoveMemberRequest) {
+      return _i39.RemoveMemberRequest.fromJson(data) as T;
+    }
+    if (t == _i40.RespondToInvitationRequest) {
+      return _i40.RespondToInvitationRequest.fromJson(data) as T;
+    }
+    if (t == _i41.RevokeInvitationRequest) {
+      return _i41.RevokeInvitationRequest.fromJson(data) as T;
+    }
+    if (t == _i42.Team) {
+      return _i42.Team.fromJson(data) as T;
+    }
+    if (t == _i43.TeamMember) {
+      return _i43.TeamMember.fromJson(data) as T;
+    }
+    if (t == _i44.TransferTeamOwnershipRequest) {
+      return _i44.TransferTeamOwnershipRequest.fromJson(data) as T;
+    }
+    if (t == _i45.UpdateMemberRoleRequest) {
+      return _i45.UpdateMemberRoleRequest.fromJson(data) as T;
+    }
+    if (t == _i46.UpdateTeamRequest) {
+      return _i46.UpdateTeamRequest.fromJson(data) as T;
     }
     if (t == _i1.getType<_i3.Application?>()) {
       return (data != null ? _i3.Application.fromJson(data) : null) as T;
@@ -1839,11 +1904,58 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i1.getType<_i32.VersionCheckLog?>()) {
       return (data != null ? _i32.VersionCheckLog.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i33.Team?>()) {
-      return (data != null ? _i33.Team.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i33.SessionInfo?>()) {
+      return (data != null ? _i33.SessionInfo.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i34.TeamMember?>()) {
-      return (data != null ? _i34.TeamMember.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i34.TerminateSessionRequest?>()) {
+      return (data != null ? _i34.TerminateSessionRequest.fromJson(data) : null)
+          as T;
+    }
+    if (t == _i1.getType<_i35.CreateTeamRequest?>()) {
+      return (data != null ? _i35.CreateTeamRequest.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i36.DeleteTeamRequest?>()) {
+      return (data != null ? _i36.DeleteTeamRequest.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i37.InviteTeamMemberRequest?>()) {
+      return (data != null ? _i37.InviteTeamMemberRequest.fromJson(data) : null)
+          as T;
+    }
+    if (t == _i1.getType<_i38.LeaveTeamRequest?>()) {
+      return (data != null ? _i38.LeaveTeamRequest.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i39.RemoveMemberRequest?>()) {
+      return (data != null ? _i39.RemoveMemberRequest.fromJson(data) : null)
+          as T;
+    }
+    if (t == _i1.getType<_i40.RespondToInvitationRequest?>()) {
+      return (data != null
+              ? _i40.RespondToInvitationRequest.fromJson(data)
+              : null)
+          as T;
+    }
+    if (t == _i1.getType<_i41.RevokeInvitationRequest?>()) {
+      return (data != null ? _i41.RevokeInvitationRequest.fromJson(data) : null)
+          as T;
+    }
+    if (t == _i1.getType<_i42.Team?>()) {
+      return (data != null ? _i42.Team.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i43.TeamMember?>()) {
+      return (data != null ? _i43.TeamMember.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i44.TransferTeamOwnershipRequest?>()) {
+      return (data != null
+              ? _i44.TransferTeamOwnershipRequest.fromJson(data)
+              : null)
+          as T;
+    }
+    if (t == _i1.getType<_i45.UpdateMemberRoleRequest?>()) {
+      return (data != null ? _i45.UpdateMemberRoleRequest.fromJson(data) : null)
+          as T;
+    }
+    if (t == _i1.getType<_i46.UpdateTeamRequest?>()) {
+      return (data != null ? _i46.UpdateTeamRequest.fromJson(data) : null) as T;
     }
     if (t == List<_i24.PlatformType>) {
       return (data as List)
@@ -1913,23 +2025,23 @@ class Protocol extends _i1.SerializationManagerServer {
               : null)
           as T;
     }
-    if (t == List<_i33.Team>) {
-      return (data as List).map((e) => deserialize<_i33.Team>(e)).toList() as T;
+    if (t == List<_i42.Team>) {
+      return (data as List).map((e) => deserialize<_i42.Team>(e)).toList() as T;
     }
-    if (t == _i1.getType<List<_i33.Team>?>()) {
+    if (t == _i1.getType<List<_i42.Team>?>()) {
       return (data != null
-              ? (data as List).map((e) => deserialize<_i33.Team>(e)).toList()
+              ? (data as List).map((e) => deserialize<_i42.Team>(e)).toList()
               : null)
           as T;
     }
-    if (t == List<_i34.TeamMember>) {
-      return (data as List).map((e) => deserialize<_i34.TeamMember>(e)).toList()
+    if (t == List<_i43.TeamMember>) {
+      return (data as List).map((e) => deserialize<_i43.TeamMember>(e)).toList()
           as T;
     }
-    if (t == _i1.getType<List<_i34.TeamMember>?>()) {
+    if (t == _i1.getType<List<_i43.TeamMember>?>()) {
       return (data != null
               ? (data as List)
-                    .map((e) => deserialize<_i34.TeamMember>(e))
+                    .map((e) => deserialize<_i43.TeamMember>(e))
                     .toList()
               : null)
           as T;
@@ -1944,6 +2056,19 @@ class Protocol extends _i1.SerializationManagerServer {
                     .map((e) => deserialize<_i3.Application>(e))
                     .toList()
               : null)
+          as T;
+    }
+    if (t == List<_i47.SessionInfo>) {
+      return (data as List)
+              .map((e) => deserialize<_i47.SessionInfo>(e))
+              .toList()
+          as T;
+    }
+    if (t == List<_i48.Team>) {
+      return (data as List).map((e) => deserialize<_i48.Team>(e)).toList() as T;
+    }
+    if (t == List<_i49.TeamMember>) {
+      return (data as List).map((e) => deserialize<_i49.TeamMember>(e)).toList()
           as T;
     }
     try {
@@ -1984,8 +2109,20 @@ class Protocol extends _i1.SerializationManagerServer {
       _i30.TooManyAttemptsException => 'TooManyAttemptsException',
       _i31.Greeting => 'Greeting',
       _i32.VersionCheckLog => 'VersionCheckLog',
-      _i33.Team => 'Team',
-      _i34.TeamMember => 'TeamMember',
+      _i33.SessionInfo => 'SessionInfo',
+      _i34.TerminateSessionRequest => 'TerminateSessionRequest',
+      _i35.CreateTeamRequest => 'CreateTeamRequest',
+      _i36.DeleteTeamRequest => 'DeleteTeamRequest',
+      _i37.InviteTeamMemberRequest => 'InviteTeamMemberRequest',
+      _i38.LeaveTeamRequest => 'LeaveTeamRequest',
+      _i39.RemoveMemberRequest => 'RemoveMemberRequest',
+      _i40.RespondToInvitationRequest => 'RespondToInvitationRequest',
+      _i41.RevokeInvitationRequest => 'RevokeInvitationRequest',
+      _i42.Team => 'Team',
+      _i43.TeamMember => 'TeamMember',
+      _i44.TransferTeamOwnershipRequest => 'TransferTeamOwnershipRequest',
+      _i45.UpdateMemberRoleRequest => 'UpdateMemberRoleRequest',
+      _i46.UpdateTeamRequest => 'UpdateTeamRequest',
       _ => null,
     };
   }
@@ -2063,10 +2200,34 @@ class Protocol extends _i1.SerializationManagerServer {
         return 'Greeting';
       case _i32.VersionCheckLog():
         return 'VersionCheckLog';
-      case _i33.Team():
+      case _i33.SessionInfo():
+        return 'SessionInfo';
+      case _i34.TerminateSessionRequest():
+        return 'TerminateSessionRequest';
+      case _i35.CreateTeamRequest():
+        return 'CreateTeamRequest';
+      case _i36.DeleteTeamRequest():
+        return 'DeleteTeamRequest';
+      case _i37.InviteTeamMemberRequest():
+        return 'InviteTeamMemberRequest';
+      case _i38.LeaveTeamRequest():
+        return 'LeaveTeamRequest';
+      case _i39.RemoveMemberRequest():
+        return 'RemoveMemberRequest';
+      case _i40.RespondToInvitationRequest():
+        return 'RespondToInvitationRequest';
+      case _i41.RevokeInvitationRequest():
+        return 'RevokeInvitationRequest';
+      case _i42.Team():
         return 'Team';
-      case _i34.TeamMember():
+      case _i43.TeamMember():
         return 'TeamMember';
+      case _i44.TransferTeamOwnershipRequest():
+        return 'TransferTeamOwnershipRequest';
+      case _i45.UpdateMemberRoleRequest():
+        return 'UpdateMemberRoleRequest';
+      case _i46.UpdateTeamRequest():
+        return 'UpdateTeamRequest';
     }
     className = _i2.Protocol().getClassNameForObject(data);
     if (className != null) {
@@ -2171,11 +2332,47 @@ class Protocol extends _i1.SerializationManagerServer {
     if (dataClassName == 'VersionCheckLog') {
       return deserialize<_i32.VersionCheckLog>(data['data']);
     }
+    if (dataClassName == 'SessionInfo') {
+      return deserialize<_i33.SessionInfo>(data['data']);
+    }
+    if (dataClassName == 'TerminateSessionRequest') {
+      return deserialize<_i34.TerminateSessionRequest>(data['data']);
+    }
+    if (dataClassName == 'CreateTeamRequest') {
+      return deserialize<_i35.CreateTeamRequest>(data['data']);
+    }
+    if (dataClassName == 'DeleteTeamRequest') {
+      return deserialize<_i36.DeleteTeamRequest>(data['data']);
+    }
+    if (dataClassName == 'InviteTeamMemberRequest') {
+      return deserialize<_i37.InviteTeamMemberRequest>(data['data']);
+    }
+    if (dataClassName == 'LeaveTeamRequest') {
+      return deserialize<_i38.LeaveTeamRequest>(data['data']);
+    }
+    if (dataClassName == 'RemoveMemberRequest') {
+      return deserialize<_i39.RemoveMemberRequest>(data['data']);
+    }
+    if (dataClassName == 'RespondToInvitationRequest') {
+      return deserialize<_i40.RespondToInvitationRequest>(data['data']);
+    }
+    if (dataClassName == 'RevokeInvitationRequest') {
+      return deserialize<_i41.RevokeInvitationRequest>(data['data']);
+    }
     if (dataClassName == 'Team') {
-      return deserialize<_i33.Team>(data['data']);
+      return deserialize<_i42.Team>(data['data']);
     }
     if (dataClassName == 'TeamMember') {
-      return deserialize<_i34.TeamMember>(data['data']);
+      return deserialize<_i43.TeamMember>(data['data']);
+    }
+    if (dataClassName == 'TransferTeamOwnershipRequest') {
+      return deserialize<_i44.TransferTeamOwnershipRequest>(data['data']);
+    }
+    if (dataClassName == 'UpdateMemberRoleRequest') {
+      return deserialize<_i45.UpdateMemberRoleRequest>(data['data']);
+    }
+    if (dataClassName == 'UpdateTeamRequest') {
+      return deserialize<_i46.UpdateTeamRequest>(data['data']);
     }
     if (dataClassName.startsWith('serverpod.')) {
       data['className'] = dataClassName.substring(10);
@@ -2207,10 +2404,10 @@ class Protocol extends _i1.SerializationManagerServer {
         return _i21.VerificationCode.t;
       case _i32.VersionCheckLog:
         return _i32.VersionCheckLog.t;
-      case _i33.Team:
-        return _i33.Team.t;
-      case _i34.TeamMember:
-        return _i34.TeamMember.t;
+      case _i42.Team:
+        return _i42.Team.t;
+      case _i43.TeamMember:
+        return _i43.TeamMember.t;
     }
     return null;
   }

@@ -1,0 +1,6 @@
+### Запрос на удаление команды с выбором действия
+class: DeleteTeamRequest
+fields:
+  teamId: UuidValue
+  transferAppsToOwner: bool  # true = оставить приложения себе, false = удалить все
+  confirmationName: String  # Название команды для подтверждения

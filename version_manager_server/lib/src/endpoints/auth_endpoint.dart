@@ -13,6 +13,12 @@ import 'package:version_manager_server/src/utils/request_info_util.dart';
 /// - Управление токенами доступа (refresh token rotation)
 /// - Завершение сессий (logout)
 ///
+/// ## Защита методов
+/// Большинство методов этого эндпоинта **НЕ требуют** авторизации,
+/// так как они используются для получения токенов. Исключения:
+/// - [logout] — требует валидный access token
+/// - [logoutAll] — требует валидный access token
+///
 /// ## Поток регистрации
 /// 1. [checkEmailAndSendCode] — проверяет email, отправляет код для новых пользователей
 /// 2. [resendCode] — повторная отправка кода (если нужно)
@@ -24,8 +30,8 @@ import 'package:version_manager_server/src/utils/request_info_util.dart';
 ///
 /// ## Управление сессиями
 /// - [refreshTokens] — обновление пары токенов
-/// - [logout] — завершение текущей сессии
-/// - [logoutAll] — завершение всех сессий пользователя
+/// - [logout] — завершение текущей сессии (требует авторизации)
+/// - [logoutAll] — завершение всех сессий пользователя (требует авторизации)
 ///
 /// Все методы логируют свои действия через [Session.log] для аудита.
 class AuthEndpoint extends Endpoint {
@@ -40,6 +46,8 @@ class AuthEndpoint extends Endpoint {
 
   /// Проверяет существование email и автоматически отправляет код верификации
   /// для новых пользователей.
+  ///
+  /// **Не требует авторизации** — это первый шаг регистрации/входа.
   ///
   /// Это первый шаг в потоке регистрации/входа. Метод определяет,
   /// существует ли пользователь с указанным email:
@@ -72,6 +80,7 @@ class AuthEndpoint extends Endpoint {
   ///   // Показать форму ввода кода
   /// }
   /// ```
+  @unauthenticatedClientCall
   Future<CheckEmailAndSendCodeResponse> checkEmailAndSendCode(
     Session session, {
     required CheckEmailRequest request,
@@ -156,6 +165,8 @@ class AuthEndpoint extends Endpoint {
 
   /// Повторно отправляет код верификации на указанный email.
   ///
+  /// **Не требует авторизации** — используется в процессе регистрации.
+  ///
   /// Используется когда пользователь не получил код или срок его действия
   /// истёк. Метод создаёт новый код и отправляет его на email.
   ///
@@ -182,6 +193,7 @@ class AuthEndpoint extends Endpoint {
   ///   // Показать таймер обратного отсчёта
   /// }
   /// ```
+  @unauthenticatedClientCall
   Future<SendCodeResponse> resendCode(
     Session session, {
     required RegisterSendCodeRequest request,
@@ -227,6 +239,8 @@ class AuthEndpoint extends Endpoint {
 
   /// Проверяет код регистрации без создания аккаунта.
   ///
+  /// **Не требует авторизации** — используется в процессе регистрации.
+  ///
   /// Полезно для отдельного шага в UI, когда нужно подтвердить код
   /// перед переходом к созданию пароля.
   ///
@@ -240,6 +254,7 @@ class AuthEndpoint extends Endpoint {
   /// ### Исключения
   /// - [InvalidDataException] с `field: 'code'` — неверный/истёкший код или
   ///   превышен лимит попыток
+  @unauthenticatedClientCall
   Future<SuccessResponse> verifyRegisterCode(
     Session session, {
     required RegisterVerifyCodeRequest request,
@@ -321,6 +336,8 @@ class AuthEndpoint extends Endpoint {
 
   /// Регистрирует нового пользователя с проверкой кода и автоматическим входом.
   ///
+  /// **Не требует авторизации** — создаёт новую учётную запись.
+  ///
   /// Финальный шаг регистрации, объединяющий:
   /// 1. Верификацию кода, отправленного на email
   /// 2. Создание учётной записи с хэшированным паролем
@@ -362,6 +379,7 @@ class AuthEndpoint extends Endpoint {
   /// );
   /// // Сохранить токены и данные пользователя
   /// ```
+  @unauthenticatedClientCall
   Future<AuthResponse> register(
     Session session, {
     required RegisterRequest request,
@@ -489,6 +507,8 @@ class AuthEndpoint extends Endpoint {
 
   /// Аутентифицирует пользователя по email и паролю.
   ///
+  /// **Не требует авторизации** — выполняет вход в систему.
+  ///
   /// Проверяет учётные данные и создаёт новую сессию с токенами.
   /// Обновляет поле `lastLoginAt` пользователя.
   ///
@@ -525,6 +545,7 @@ class AuthEndpoint extends Endpoint {
   ///   // Показать ошибку
   /// }
   /// ```
+  @unauthenticatedClientCall
   Future<AuthResponse> login(
     Session session, {
     required LoginRequest request,
@@ -631,6 +652,8 @@ class AuthEndpoint extends Endpoint {
 
   /// Обновляет пару токенов доступа с использованием refresh token.
   ///
+  /// **Не требует авторизации** — использует refresh token для обновления.
+  ///
   /// Реализует паттерн **Refresh Token Rotation**: при каждом обновлении
   /// генерируется новая пара токенов, а старые становятся недействительными.
   /// Это повышает безопасность, ограничивая время жизни скомпрометированных токенов.
@@ -644,7 +667,6 @@ class AuthEndpoint extends Endpoint {
   /// - `accessToken` — новый JWT токен доступа (время жизни: 1 час)
   /// - `refreshToken` — новый токен обновления (время жизни: 30 дней)
   ///
-  /// ### Исключения
   /// - [InvalidDataException] с `field: 'refreshToken'` — токен недействителен,
   ///   истёк или сессия была завершена
   ///
@@ -660,6 +682,7 @@ class AuthEndpoint extends Endpoint {
   /// );
   /// // Заменить старые токены на новые
   /// ```
+  @unauthenticatedClientCall
   Future<TokenPairResponse> refreshTokens(
     Session session, {
     required RefreshTokenRequest request,
@@ -718,6 +741,8 @@ class AuthEndpoint extends Endpoint {
 
   /// Завершает текущую сессию пользователя (выход из системы).
   ///
+  /// **Требует авторизации** — access token должен быть валидным.
+  ///
   /// Деактивирует сессию, связанную с переданным access token.
   /// После вызова токены этой сессии становятся недействительными.
   ///
@@ -764,6 +789,8 @@ class AuthEndpoint extends Endpoint {
   }
 
   /// Завершает все активные сессии пользователя на всех устройствах.
+  ///
+  /// **Требует авторизации** — access token должен быть валидным.
   ///
   /// Используется для повышения безопасности, например после смены пароля
   /// или при подозрении на компрометацию аккаунта. Деактивирует все сессии,
@@ -836,6 +863,97 @@ class AuthEndpoint extends Endpoint {
     return SuccessResponse(
       success: true,
       message: 'Выход выполнен на всех устройствах',
+    );
+  }
+
+  /// Получает информацию о текущем пользователе.
+  ///
+  /// Проверяет access token и возвращает публичные данные пользователя.
+  ///
+  /// **Параметры:**
+  /// - `accessToken` — JWT-токен для авторизации.
+  ///
+  /// **Возвращает:** [UserPublic] — публичные данные текущего пользователя.
+  ///
+  /// **Исключения:**
+  /// - [UnauthorizedException] — если токен недействителен или истёк.
+  /// - [InvalidDataException] — если токен недействителен, истёк или пользователь не найден.
+  ///
+  /// **Пример использования:**
+  /// ```dart
+  /// final user = await client.auth.getCurrentUser('access_token');
+  /// print(user.email);
+  /// ```
+  Future<UserPublic> getCurrentUser(
+    Session session, {
+    required String accessToken,
+  }) async {
+    session.log(
+      'getCurrentUser: запрос информации о текущем пользователе',
+      level: LogLevel.info,
+    );
+
+    // Валидация токена
+    final tokenHash = _tokenService.hashToken(accessToken);
+    final authSession = await AuthSession.db.findFirstRow(
+      session,
+      where: (t) => t.tokenHash.equals(tokenHash) & t.isActive.equals(true),
+    );
+
+    if (authSession == null) {
+      session.log(
+        'getCurrentUser: недействительный токен',
+        level: LogLevel.warning,
+      );
+      throw InvalidDataException(
+        message: 'Недействительный токен доступа',
+        field: 'accessToken',
+        stackTrace: StackTrace.current.toString(),
+      );
+    }
+
+    // Проверка срока действия токена
+    if (authSession.expiresAt.isBefore(DateTime.now())) {
+      session.log(
+        'getCurrentUser: токен истёк',
+        level: LogLevel.warning,
+      );
+      throw InvalidDataException(
+        message: 'Токен доступа истёк',
+        field: 'accessToken',
+        stackTrace: StackTrace.current.toString(),
+      );
+    }
+
+    // Получение пользователя
+    final user = await User.db.findById(session, authSession.userId);
+
+    if (user == null) {
+      session.log(
+        'getCurrentUser: пользователь не найден userId=${authSession.userId}',
+        level: LogLevel.error,
+      );
+      throw InvalidDataException(
+        message: 'Пользователь не найден',
+        field: 'userId',
+        stackTrace: StackTrace.current.toString(),
+      );
+    }
+
+    session.log(
+      'getCurrentUser: успешно для userId=${user.id}',
+      level: LogLevel.info,
+    );
+
+    return UserPublic(
+      id: user.id!,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      displayName: user.displayName,
+      avatarUrl: user.avatarUrl,
+      isEmailVerified: user.isEmailVerified,
+      createdAt: user.createdAt,
     );
   }
 }

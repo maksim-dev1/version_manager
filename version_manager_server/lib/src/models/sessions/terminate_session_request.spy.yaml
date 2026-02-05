@@ -1,0 +1,4 @@
+### Запрос на завершение сессии
+class: TerminateSessionRequest
+fields:
+  sessionId: UuidValue

@@ -1,0 +1,4 @@
+### Запрос на выход из команды
+class: LeaveTeamRequest
+fields:
+  teamId: UuidValue

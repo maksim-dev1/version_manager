@@ -1,84 +1,64 @@
 import 'package:version_manager_client/version_manager_client.dart';
 import 'package:version_manager_flutter/features/auth/domain/repository/auth_repository.dart';
-import 'package:version_manager_flutter/shared/services/storage_service.dart';
+import 'package:version_manager_flutter/shared/services/auth_key_provider.dart';
 
 /// Реализация репозитория аутентификации.
+///
+/// Использует [AuthKeyProvider] для:
+/// - Хранения токенов
+/// - Автоматического refresh при 401 ошибке
+/// - Очистки токенов при logout
+///
+/// ## Сроки жизни токенов
+/// - **Access Token**: 1 час
+/// - **Refresh Token**: 30 дней
 class AuthRepositoryImpl implements AuthRepository {
   final EndpointAuth _authEndpoint;
-  final StorageService _storageService;
+  final AuthKeyProvider _authKeyProvider;
 
   AuthRepositoryImpl({
     required EndpointAuth authEndpoint,
-    required StorageService storageService,
+    required AuthKeyProvider authKeyProvider,
   }) : _authEndpoint = authEndpoint,
-       _storageService = storageService;
+       _authKeyProvider = authKeyProvider;
 
   @override
   Future<bool> checkAuth() async {
-    return _storageService.hasTokens();
-  }
-
-  // @override
-  // Future<({String accessToken, String refreshToken})?> getSavedTokens() async {
-  //   final accessToken = _storageService.getAccessToken();
-  //   final refreshToken = _storageService.getRefreshToken();
-
-  //   if (accessToken == null || refreshToken == null) {
-  //     return null;
-  //   }
-
-  //   return (accessToken: accessToken, refreshToken: refreshToken);
-  // }
-
-  // @override
-  // Future<void> saveTokens({
-  //   required String accessToken,
-  //   required String refreshToken,
-  // }) async {
-  //   await _storageService.saveTokens(
-  //     accessToken: accessToken,
-  //     refreshToken: refreshToken,
-  //   );
-  // }
-
-  // @override
-  // Future<TokenPairResponse> refreshTokens({
-  //   required String refreshToken,
-  // }) async {
-  //   final response = await _authEndpoint.refreshTokens(
-  //     RefreshTokenRequest(refreshToken: refreshToken),
-  //   );
-
-  //   // Обновляем токены после успешного refresh
-  //   await _storageService.saveTokens(
-  //     accessToken: response.accessToken,
-  //     refreshToken: response.refreshToken,
-  //   );
-
-  //   return response;
-  // }
-
-  @override
-  Future<SuccessResponse> logout({
-    required String accessToken,
-  }) async {
-    final response = await _authEndpoint.logout(accessToken);
-
-    // Удаляем токены после успешного logout
-    await _storageService.clearTokens();
-
-    return response;
+    return _authKeyProvider.hasTokens;
   }
 
   @override
-  Future<SuccessResponse> logoutAll({
-    required String accessToken,
-  }) async {
-    final response = await _authEndpoint.logoutAll(accessToken: accessToken);
+  Future<void> logout() async {
+    final accessToken = _authKeyProvider.accessToken;
 
-    // Удаляем токены после успешного logoutAll
-    await _storageService.clearTokens();
+    if (accessToken != null) {
+      try {
+        await _authEndpoint.logout(accessToken);
+      } catch (_) {
+        // Игнорируем ошибки — всё равно очищаем токены
+      }
+    }
 
-    return response;
+    await _authKeyProvider.clearTokens();
+  }
+
+  @override
+  Future<void> logoutAll() async {
+    final accessToken = _authKeyProvider.accessToken;
+
+    if (accessToken != null) {
+      try {
+        await _authEndpoint.logoutAll(accessToken: accessToken);
+      } catch (_) {
+        // Игнорируем ошибки — всё равно очищаем токены
+      }
+    }
+
+    await _authKeyProvider.clearTokens();
+  }
+
+  @override
+  void setOnAuthenticationFailed(void Function() callback) {
+    _authKeyProvider.onAuthenticationFailed = callback;
   }
 }
