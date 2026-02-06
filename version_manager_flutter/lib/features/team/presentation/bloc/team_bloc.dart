@@ -219,11 +219,13 @@ class TeamBloc extends Bloc<TeamEvent, TeamState> {
     final user = results[0] as UserPublic;
     final teams = results[1] as List<Team>;
     final invitations = results[2] as List<TeamMember>;
-    emit(TeamState.teamLoaded(
-      currentUserId: user.id,
-      teams: teams,
-      invitations: invitations,
-    ));
+    emit(
+      TeamState.teamLoaded(
+        currentUserId: user.id,
+        teams: teams,
+        invitations: invitations,
+      ),
+    );
   }
 
   /// Обновить UI с уже полученным списком команд + догрузить приглашения.
@@ -233,14 +235,17 @@ class TeamBloc extends Bloc<TeamEvent, TeamState> {
   }) async {
     final invitations = await _teamRepository.getMyInvitations();
     final currentState = state;
-    final currentUserId =
-        currentState is TeamLoaded ? currentState.currentUserId : null;
+    final currentUserId = currentState is TeamLoaded
+        ? currentState.currentUserId
+        : null;
 
-    emit(TeamState.teamLoaded(
-      currentUserId: currentUserId,
-      teams: teams,
-      invitations: invitations,
-    ));
+    emit(
+      TeamState.teamLoaded(
+        currentUserId: currentUserId,
+        teams: teams,
+        invitations: invitations,
+      ),
+    );
   }
 
   /// Вспомогательный метод: выполняет действие с участником,
@@ -256,15 +261,18 @@ class TeamBloc extends Bloc<TeamEvent, TeamState> {
       final teams = await action();
       final invitations = await _teamRepository.getMyInvitations();
       final currentState = state;
-      final currentUserId =
-          currentState is TeamLoaded ? currentState.currentUserId : null;
+      final currentUserId = currentState is TeamLoaded
+          ? currentState.currentUserId
+          : null;
 
       emit(TeamState.memberActionSuccess(message: successMessage));
-      emit(TeamState.teamLoaded(
-        currentUserId: currentUserId,
-        teams: teams,
-        invitations: invitations,
-      ));
+      emit(
+        TeamState.teamLoaded(
+          currentUserId: currentUserId,
+          teams: teams,
+          invitations: invitations,
+        ),
+      );
     } catch (e) {
       emit(
         TeamState.memberActionError(
