@@ -378,11 +378,11 @@ class EndpointAuth extends _i1.EndpointRef {
   /// await client.auth.logout(currentAccessToken);
   /// // Очистить локальное хранилище токенов
   /// ```
-  _i2.Future<_i7.SuccessResponse> logout(String accessToken) =>
+  _i2.Future<_i7.SuccessResponse> logout() =>
       caller.callServerEndpoint<_i7.SuccessResponse>(
         'auth',
         'logout',
-        {'accessToken': accessToken},
+        {},
       );
 
   /// Завершает все активные сессии пользователя на всех устройствах.
@@ -415,11 +415,11 @@ class EndpointAuth extends _i1.EndpointRef {
   /// await client.auth.logoutAll(currentAccessToken);
   /// // Перенаправить на экран входа
   /// ```
-  _i2.Future<_i7.SuccessResponse> logoutAll({required String accessToken}) =>
+  _i2.Future<_i7.SuccessResponse> logoutAll() =>
       caller.callServerEndpoint<_i7.SuccessResponse>(
         'auth',
         'logoutAll',
-        {'accessToken': accessToken},
+        {},
       );
 
   /// Получает информацию о текущем пользователе.
@@ -440,11 +440,11 @@ class EndpointAuth extends _i1.EndpointRef {
   /// final user = await client.auth.getCurrentUser('access_token');
   /// print(user.email);
   /// ```
-  _i2.Future<_i14.UserPublic> getCurrentUser({required String accessToken}) =>
+  _i2.Future<_i14.UserPublic> getCurrentUser() =>
       caller.callServerEndpoint<_i14.UserPublic>(
         'auth',
         'getCurrentUser',
-        {'accessToken': accessToken},
+        {},
       );
 }
 
@@ -485,9 +485,9 @@ abstract class EndpointLoggedIn extends _i1.EndpointRef {
 /// - Завершения конкретной сессии
 /// - Завершения всех сессий кроме текущей
 ///
-/// Все методы требуют передачи валидного access token.
+/// Наследуется от [LoggedInEndpoint] — авторизация через заголовок.
 /// {@category Endpoint}
-class EndpointSession extends _i1.EndpointRef {
+class EndpointSession extends EndpointLoggedIn {
   EndpointSession(_i1.EndpointCaller caller) : super(caller);
 
   @override
@@ -501,25 +501,13 @@ class EndpointSession extends _i1.EndpointRef {
   /// - Признак текущей сессии
   /// - Геолокацию (город, страна) если доступна
   ///
-  /// ### Параметры
-  /// - [session] — сессия Serverpod с доступом к БД
-  /// - [accessToken] — текущий access token пользователя
-  ///
   /// ### Возвращает
   /// Список [SessionInfo] со всеми активными сессиями пользователя.
-  ///
-  /// ### Пример использования
-  /// ```dart
-  /// final sessions = await client.session.getActiveSessions(accessToken);
-  /// for (var s in sessions) {
-  ///   print('${s.deviceInfo} - ${s.isCurrent ? "Текущая" : ""}');
-  /// }
-  /// ```
-  _i2.Future<List<_i15.SessionInfo>> getActiveSessions(String accessToken) =>
+  _i2.Future<List<_i15.SessionInfo>> getActiveSessions() =>
       caller.callServerEndpoint<List<_i15.SessionInfo>>(
         'session',
         'getActiveSessions',
-        {'accessToken': accessToken},
+        {},
       );
 
   /// Завершить конкретную сессию по её ID.
@@ -529,64 +517,21 @@ class EndpointSession extends _i1.EndpointRef {
   ///
   /// Нельзя завершить текущую сессию этим методом.
   /// Для этого используйте метод `logout` из [AuthEndpoint].
-  ///
-  /// ### Параметры
-  /// - [session] — сессия Serverpod с доступом к БД
-  /// - [accessToken] — текущий access token пользователя
-  /// - [request] — запрос с ID сессии для завершения
-  ///
-  /// ### Возвращает
-  /// [SuccessResponse] с результатом операции.
-  ///
-  /// ### Исключения
-  /// - [InvalidDataException] если сессия не найдена или не принадлежит пользователю
-  /// - [InvalidDataException] если попытка завершить текущую сессию
-  ///
-  /// ### Пример использования
-  /// ```dart
-  /// await client.session.terminateSession(
-  ///   accessToken,
-  ///   TerminateSessionRequest(sessionId: sessionId),
-  /// );
-  /// ```
-  _i2.Future<_i7.SuccessResponse> terminateSession(
-    String accessToken, {
+  _i2.Future<_i7.SuccessResponse> terminateSession({
     required _i16.TerminateSessionRequest request,
   }) => caller.callServerEndpoint<_i7.SuccessResponse>(
     'session',
     'terminateSession',
-    {
-      'accessToken': accessToken,
-      'request': request,
-    },
+    {'request': request},
   );
 
   /// Завершить все сессии пользователя кроме текущей.
-  ///
-  /// Полезно для:
-  /// - Выхода со всех устройств при утере одного из них
-  /// - Обеспечения безопасности при подозрении на компрометацию
-  /// - Принудительного выхода из всех старых сессий
-  ///
-  /// ### Параметры
-  /// - [session] — сессия Serverpod с доступом к БД
-  /// - [accessToken] — текущий access token пользователя
-  ///
-  /// ### Возвращает
-  /// [SuccessResponse] с информацией о количестве завершённых сессий.
-  ///
-  /// ### Пример использования
-  /// ```dart
-  /// final result = await client.session.terminateAllOtherSessions(accessToken);
-  /// print('Завершено сессий: ${result.message}');
-  /// ```
-  _i2.Future<_i7.SuccessResponse> terminateAllOtherSessions(
-    String accessToken,
-  ) => caller.callServerEndpoint<_i7.SuccessResponse>(
-    'session',
-    'terminateAllOtherSessions',
-    {'accessToken': accessToken},
-  );
+  _i2.Future<_i7.SuccessResponse> terminateAllOtherSessions() =>
+      caller.callServerEndpoint<_i7.SuccessResponse>(
+        'session',
+        'terminateAllOtherSessions',
+        {},
+      );
 }
 
 /// Эндпоинт для управления командами.
@@ -598,7 +543,7 @@ class EndpointSession extends _i1.EndpointRef {
 /// - Передачи владения командой
 /// - Удаления команд с опциями сохранения приложений
 ///
-/// Все методы требуют передачи валидного access token.
+/// Наследуется от [LoggedInEndpoint] — авторизация через заголовок.
 ///
 /// ## Роли и права доступа
 /// - **owner** — полный доступ, включая удаление команды
@@ -606,7 +551,7 @@ class EndpointSession extends _i1.EndpointRef {
 /// - **developer** — создание и редактирование версий
 /// - **observer** — только просмотр
 /// {@category Endpoint}
-class EndpointTeam extends _i1.EndpointRef {
+class EndpointTeam extends EndpointLoggedIn {
   EndpointTeam(_i1.EndpointCaller caller) : super(caller);
 
   @override
@@ -626,188 +571,141 @@ class EndpointTeam extends _i1.EndpointRef {
   ///
   /// ### Исключения
   /// - [InvalidDataException] если название пустое или слишком короткое
-  _i2.Future<_i17.Team> createTeam(
-    String accessToken, {
-    required _i18.CreateTeamRequest request,
-  }) => caller.callServerEndpoint<_i17.Team>(
-    'team',
-    'createTeam',
-    {
-      'accessToken': accessToken,
-      'request': request,
-    },
-  );
+  _i2.Future<_i17.Team> createTeam({required _i18.CreateTeamRequest request}) =>
+      caller.callServerEndpoint<_i17.Team>(
+        'team',
+        'createTeam',
+        {'request': request},
+      );
 
   /// Обновить информацию о команде.
   ///
   /// Доступно только владельцу и администраторам команды.
-  _i2.Future<_i17.Team> updateTeam(
-    String accessToken, {
-    required _i19.UpdateTeamRequest request,
-  }) => caller.callServerEndpoint<_i17.Team>(
-    'team',
-    'updateTeam',
-    {
-      'accessToken': accessToken,
-      'request': request,
-    },
-  );
+  _i2.Future<_i17.Team> updateTeam({required _i19.UpdateTeamRequest request}) =>
+      caller.callServerEndpoint<_i17.Team>(
+        'team',
+        'updateTeam',
+        {'request': request},
+      );
 
   /// Получить команду по ID.
   ///
   /// Доступно только активным участникам команды.
-  _i2.Future<_i17.Team> getTeam(
-    String accessToken, {
-    required _i1.UuidValue teamId,
-  }) => caller.callServerEndpoint<_i17.Team>(
-    'team',
-    'getTeam',
-    {
-      'accessToken': accessToken,
-      'teamId': teamId,
-    },
-  );
+  _i2.Future<_i17.Team> getTeam({required _i1.UuidValue teamId}) =>
+      caller.callServerEndpoint<_i17.Team>(
+        'team',
+        'getTeam',
+        {'teamId': teamId},
+      );
 
   /// Получить список всех команд пользователя.
   ///
   /// Возвращает команды, где пользователь является активным участником.
   /// Команды с приглашениями (status = invited) не включаются.
-  _i2.Future<List<_i17.Team>> getMyTeams(String accessToken) =>
+  _i2.Future<List<_i17.Team>> getMyTeams() =>
       caller.callServerEndpoint<List<_i17.Team>>(
         'team',
         'getMyTeams',
-        {'accessToken': accessToken},
+        {},
       );
 
   /// Пригласить участника в команду.
   ///
   /// Отправляет приглашение пользователю по email.
   /// Доступно владельцу и администраторам.
-  _i2.Future<_i7.SuccessResponse> inviteMember(
-    String accessToken, {
+  _i2.Future<List<_i17.Team>> inviteMember({
     required _i20.InviteTeamMemberRequest request,
-  }) => caller.callServerEndpoint<_i7.SuccessResponse>(
+  }) => caller.callServerEndpoint<List<_i17.Team>>(
     'team',
     'inviteMember',
-    {
-      'accessToken': accessToken,
-      'request': request,
-    },
+    {'request': request},
   );
 
   /// Получить список приглашений для текущего пользователя.
   ///
   /// Возвращает все активные приглашения в команды.
-  _i2.Future<List<_i21.TeamMember>> getMyInvitations(String accessToken) =>
+  _i2.Future<List<_i21.TeamMember>> getMyInvitations() =>
       caller.callServerEndpoint<List<_i21.TeamMember>>(
         'team',
         'getMyInvitations',
-        {'accessToken': accessToken},
+        {},
       );
 
   /// Принять или отклонить приглашение в команду.
-  _i2.Future<_i7.SuccessResponse> respondToInvitation(
-    String accessToken, {
+  _i2.Future<List<_i17.Team>> respondToInvitation({
     required _i22.RespondToInvitationRequest request,
-  }) => caller.callServerEndpoint<_i7.SuccessResponse>(
+  }) => caller.callServerEndpoint<List<_i17.Team>>(
     'team',
     'respondToInvitation',
-    {
-      'accessToken': accessToken,
-      'request': request,
-    },
+    {'request': request},
   );
 
   /// Отозвать приглашение.
   ///
   /// Доступно владельцу и администраторам.
-  _i2.Future<_i7.SuccessResponse> revokeInvitation(
-    String accessToken, {
+  _i2.Future<List<_i17.Team>> revokeInvitation({
     required _i23.RevokeInvitationRequest request,
-  }) => caller.callServerEndpoint<_i7.SuccessResponse>(
+  }) => caller.callServerEndpoint<List<_i17.Team>>(
     'team',
     'revokeInvitation',
-    {
-      'accessToken': accessToken,
-      'request': request,
-    },
+    {'request': request},
   );
 
   /// Получить список участников команды.
   ///
   /// Возвращает всех участников (активных и приглашённых).
   /// Доступно всем активным участникам команды.
-  _i2.Future<List<_i21.TeamMember>> getTeamMembers(
-    String accessToken, {
+  _i2.Future<List<_i21.TeamMember>> getTeamMembers({
     required _i1.UuidValue teamId,
   }) => caller.callServerEndpoint<List<_i21.TeamMember>>(
     'team',
     'getTeamMembers',
-    {
-      'accessToken': accessToken,
-      'teamId': teamId,
-    },
+    {'teamId': teamId},
   );
 
   /// Изменить роль участника команды.
   ///
   /// Доступно владельцу и администраторам (с ограничениями).
-  _i2.Future<_i7.SuccessResponse> updateMemberRole(
-    String accessToken, {
+  _i2.Future<List<_i17.Team>> updateMemberRole({
     required _i24.UpdateMemberRoleRequest request,
-  }) => caller.callServerEndpoint<_i7.SuccessResponse>(
+  }) => caller.callServerEndpoint<List<_i17.Team>>(
     'team',
     'updateMemberRole',
-    {
-      'accessToken': accessToken,
-      'request': request,
-    },
+    {'request': request},
   );
 
   /// Удалить участника из команды.
   ///
   /// Доступно владельцу и администраторам.
-  _i2.Future<_i7.SuccessResponse> removeMember(
-    String accessToken, {
+  _i2.Future<List<_i17.Team>> removeMember({
     required _i25.RemoveMemberRequest request,
-  }) => caller.callServerEndpoint<_i7.SuccessResponse>(
+  }) => caller.callServerEndpoint<List<_i17.Team>>(
     'team',
     'removeMember',
-    {
-      'accessToken': accessToken,
-      'request': request,
-    },
+    {'request': request},
   );
 
   /// Покинуть команду.
   ///
   /// Владелец не может покинуть команду — нужно сначала передать владение.
-  _i2.Future<_i7.SuccessResponse> leaveTeam(
-    String accessToken, {
+  _i2.Future<List<_i17.Team>> leaveTeam({
     required _i26.LeaveTeamRequest request,
-  }) => caller.callServerEndpoint<_i7.SuccessResponse>(
+  }) => caller.callServerEndpoint<List<_i17.Team>>(
     'team',
     'leaveTeam',
-    {
-      'accessToken': accessToken,
-      'request': request,
-    },
+    {'request': request},
   );
 
   /// Передать владение командой другому активному участнику.
   ///
   /// Доступно только владельцу.
   /// После передачи бывший владелец становится администратором.
-  _i2.Future<_i7.SuccessResponse> transferOwnership(
-    String accessToken, {
+  _i2.Future<List<_i17.Team>> transferOwnership({
     required _i27.TransferTeamOwnershipRequest request,
-  }) => caller.callServerEndpoint<_i7.SuccessResponse>(
+  }) => caller.callServerEndpoint<List<_i17.Team>>(
     'team',
     'transferOwnership',
-    {
-      'accessToken': accessToken,
-      'request': request,
-    },
+    {'request': request},
   );
 
   /// Удалить команду.
@@ -819,16 +717,12 @@ class EndpointTeam extends _i1.EndpointRef {
   /// - [request.teamId] — ID команды
   /// - [request.transferAppsToOwner] — true = забрать приложения, false = удалить
   /// - [request.confirmationName] — название команды для подтверждения
-  _i2.Future<_i7.SuccessResponse> deleteTeam(
-    String accessToken, {
+  _i2.Future<List<_i17.Team>> deleteTeam({
     required _i28.DeleteTeamRequest request,
-  }) => caller.callServerEndpoint<_i7.SuccessResponse>(
+  }) => caller.callServerEndpoint<List<_i17.Team>>(
     'team',
     'deleteTeam',
-    {
-      'accessToken': accessToken,
-      'request': request,
-    },
+    {'request': request},
   );
 }
 

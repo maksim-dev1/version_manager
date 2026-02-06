@@ -405,7 +405,6 @@ class _AuthEndpoint {
 
   _i3.Future<_i8.SuccessResponse> logout(
     _i1.TestSessionBuilder sessionBuilder,
-    String accessToken,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -418,7 +417,7 @@ class _AuthEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'auth',
           methodName: 'logout',
-          parameters: _i1.testObjectToJson({'accessToken': accessToken}),
+          parameters: _i1.testObjectToJson({}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =
@@ -435,9 +434,8 @@ class _AuthEndpoint {
   }
 
   _i3.Future<_i8.SuccessResponse> logoutAll(
-    _i1.TestSessionBuilder sessionBuilder, {
-    required String accessToken,
-  }) async {
+    _i1.TestSessionBuilder sessionBuilder,
+  ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
@@ -449,7 +447,7 @@ class _AuthEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'auth',
           methodName: 'logoutAll',
-          parameters: _i1.testObjectToJson({'accessToken': accessToken}),
+          parameters: _i1.testObjectToJson({}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =
@@ -466,9 +464,8 @@ class _AuthEndpoint {
   }
 
   _i3.Future<_i15.UserPublic> getCurrentUser(
-    _i1.TestSessionBuilder sessionBuilder, {
-    required String accessToken,
-  }) async {
+    _i1.TestSessionBuilder sessionBuilder,
+  ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
@@ -480,7 +477,7 @@ class _AuthEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'auth',
           methodName: 'getCurrentUser',
-          parameters: _i1.testObjectToJson({'accessToken': accessToken}),
+          parameters: _i1.testObjectToJson({}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =
@@ -509,7 +506,6 @@ class _SessionEndpoint {
 
   _i3.Future<List<_i16.SessionInfo>> getActiveSessions(
     _i1.TestSessionBuilder sessionBuilder,
-    String accessToken,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -522,7 +518,7 @@ class _SessionEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'session',
           methodName: 'getActiveSessions',
-          parameters: _i1.testObjectToJson({'accessToken': accessToken}),
+          parameters: _i1.testObjectToJson({}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =
@@ -539,8 +535,7 @@ class _SessionEndpoint {
   }
 
   _i3.Future<_i8.SuccessResponse> terminateSession(
-    _i1.TestSessionBuilder sessionBuilder,
-    String accessToken, {
+    _i1.TestSessionBuilder sessionBuilder, {
     required _i17.TerminateSessionRequest request,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
@@ -554,10 +549,7 @@ class _SessionEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'session',
           methodName: 'terminateSession',
-          parameters: _i1.testObjectToJson({
-            'accessToken': accessToken,
-            'request': request,
-          }),
+          parameters: _i1.testObjectToJson({'request': request}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =
@@ -575,7 +567,6 @@ class _SessionEndpoint {
 
   _i3.Future<_i8.SuccessResponse> terminateAllOtherSessions(
     _i1.TestSessionBuilder sessionBuilder,
-    String accessToken,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -588,7 +579,7 @@ class _SessionEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'session',
           methodName: 'terminateAllOtherSessions',
-          parameters: _i1.testObjectToJson({'accessToken': accessToken}),
+          parameters: _i1.testObjectToJson({}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =
@@ -616,8 +607,7 @@ class _TeamEndpoint {
   final _i2.SerializationManager _serializationManager;
 
   _i3.Future<_i18.Team> createTeam(
-    _i1.TestSessionBuilder sessionBuilder,
-    String accessToken, {
+    _i1.TestSessionBuilder sessionBuilder, {
     required _i19.CreateTeamRequest request,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
@@ -631,10 +621,7 @@ class _TeamEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'team',
           methodName: 'createTeam',
-          parameters: _i1.testObjectToJson({
-            'accessToken': accessToken,
-            'request': request,
-          }),
+          parameters: _i1.testObjectToJson({'request': request}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =
@@ -651,8 +638,7 @@ class _TeamEndpoint {
   }
 
   _i3.Future<_i18.Team> updateTeam(
-    _i1.TestSessionBuilder sessionBuilder,
-    String accessToken, {
+    _i1.TestSessionBuilder sessionBuilder, {
     required _i20.UpdateTeamRequest request,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
@@ -666,10 +652,7 @@ class _TeamEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'team',
           methodName: 'updateTeam',
-          parameters: _i1.testObjectToJson({
-            'accessToken': accessToken,
-            'request': request,
-          }),
+          parameters: _i1.testObjectToJson({'request': request}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =
@@ -686,8 +669,7 @@ class _TeamEndpoint {
   }
 
   _i3.Future<_i18.Team> getTeam(
-    _i1.TestSessionBuilder sessionBuilder,
-    String accessToken, {
+    _i1.TestSessionBuilder sessionBuilder, {
     required _i2.UuidValue teamId,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
@@ -701,10 +683,7 @@ class _TeamEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'team',
           methodName: 'getTeam',
-          parameters: _i1.testObjectToJson({
-            'accessToken': accessToken,
-            'teamId': teamId,
-          }),
+          parameters: _i1.testObjectToJson({'teamId': teamId}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =
@@ -722,7 +701,6 @@ class _TeamEndpoint {
 
   _i3.Future<List<_i18.Team>> getMyTeams(
     _i1.TestSessionBuilder sessionBuilder,
-    String accessToken,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -735,7 +713,7 @@ class _TeamEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'team',
           methodName: 'getMyTeams',
-          parameters: _i1.testObjectToJson({'accessToken': accessToken}),
+          parameters: _i1.testObjectToJson({}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =
@@ -751,9 +729,8 @@ class _TeamEndpoint {
     });
   }
 
-  _i3.Future<_i8.SuccessResponse> inviteMember(
-    _i1.TestSessionBuilder sessionBuilder,
-    String accessToken, {
+  _i3.Future<List<_i18.Team>> inviteMember(
+    _i1.TestSessionBuilder sessionBuilder, {
     required _i21.InviteTeamMemberRequest request,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
@@ -767,10 +744,7 @@ class _TeamEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'team',
           methodName: 'inviteMember',
-          parameters: _i1.testObjectToJson({
-            'accessToken': accessToken,
-            'request': request,
-          }),
+          parameters: _i1.testObjectToJson({'request': request}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =
@@ -778,7 +752,7 @@ class _TeamEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i8.SuccessResponse>);
+                as _i3.Future<List<_i18.Team>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -788,7 +762,6 @@ class _TeamEndpoint {
 
   _i3.Future<List<_i22.TeamMember>> getMyInvitations(
     _i1.TestSessionBuilder sessionBuilder,
-    String accessToken,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -801,7 +774,7 @@ class _TeamEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'team',
           methodName: 'getMyInvitations',
-          parameters: _i1.testObjectToJson({'accessToken': accessToken}),
+          parameters: _i1.testObjectToJson({}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =
@@ -817,9 +790,8 @@ class _TeamEndpoint {
     });
   }
 
-  _i3.Future<_i8.SuccessResponse> respondToInvitation(
-    _i1.TestSessionBuilder sessionBuilder,
-    String accessToken, {
+  _i3.Future<List<_i18.Team>> respondToInvitation(
+    _i1.TestSessionBuilder sessionBuilder, {
     required _i23.RespondToInvitationRequest request,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
@@ -833,10 +805,7 @@ class _TeamEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'team',
           methodName: 'respondToInvitation',
-          parameters: _i1.testObjectToJson({
-            'accessToken': accessToken,
-            'request': request,
-          }),
+          parameters: _i1.testObjectToJson({'request': request}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =
@@ -844,7 +813,7 @@ class _TeamEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i8.SuccessResponse>);
+                as _i3.Future<List<_i18.Team>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -852,9 +821,8 @@ class _TeamEndpoint {
     });
   }
 
-  _i3.Future<_i8.SuccessResponse> revokeInvitation(
-    _i1.TestSessionBuilder sessionBuilder,
-    String accessToken, {
+  _i3.Future<List<_i18.Team>> revokeInvitation(
+    _i1.TestSessionBuilder sessionBuilder, {
     required _i24.RevokeInvitationRequest request,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
@@ -868,10 +836,7 @@ class _TeamEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'team',
           methodName: 'revokeInvitation',
-          parameters: _i1.testObjectToJson({
-            'accessToken': accessToken,
-            'request': request,
-          }),
+          parameters: _i1.testObjectToJson({'request': request}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =
@@ -879,7 +844,7 @@ class _TeamEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i8.SuccessResponse>);
+                as _i3.Future<List<_i18.Team>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -888,8 +853,7 @@ class _TeamEndpoint {
   }
 
   _i3.Future<List<_i22.TeamMember>> getTeamMembers(
-    _i1.TestSessionBuilder sessionBuilder,
-    String accessToken, {
+    _i1.TestSessionBuilder sessionBuilder, {
     required _i2.UuidValue teamId,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
@@ -903,10 +867,7 @@ class _TeamEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'team',
           methodName: 'getTeamMembers',
-          parameters: _i1.testObjectToJson({
-            'accessToken': accessToken,
-            'teamId': teamId,
-          }),
+          parameters: _i1.testObjectToJson({'teamId': teamId}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =
@@ -922,9 +883,8 @@ class _TeamEndpoint {
     });
   }
 
-  _i3.Future<_i8.SuccessResponse> updateMemberRole(
-    _i1.TestSessionBuilder sessionBuilder,
-    String accessToken, {
+  _i3.Future<List<_i18.Team>> updateMemberRole(
+    _i1.TestSessionBuilder sessionBuilder, {
     required _i25.UpdateMemberRoleRequest request,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
@@ -938,10 +898,7 @@ class _TeamEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'team',
           methodName: 'updateMemberRole',
-          parameters: _i1.testObjectToJson({
-            'accessToken': accessToken,
-            'request': request,
-          }),
+          parameters: _i1.testObjectToJson({'request': request}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =
@@ -949,7 +906,7 @@ class _TeamEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i8.SuccessResponse>);
+                as _i3.Future<List<_i18.Team>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -957,9 +914,8 @@ class _TeamEndpoint {
     });
   }
 
-  _i3.Future<_i8.SuccessResponse> removeMember(
-    _i1.TestSessionBuilder sessionBuilder,
-    String accessToken, {
+  _i3.Future<List<_i18.Team>> removeMember(
+    _i1.TestSessionBuilder sessionBuilder, {
     required _i26.RemoveMemberRequest request,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
@@ -973,10 +929,7 @@ class _TeamEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'team',
           methodName: 'removeMember',
-          parameters: _i1.testObjectToJson({
-            'accessToken': accessToken,
-            'request': request,
-          }),
+          parameters: _i1.testObjectToJson({'request': request}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =
@@ -984,7 +937,7 @@ class _TeamEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i8.SuccessResponse>);
+                as _i3.Future<List<_i18.Team>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -992,9 +945,8 @@ class _TeamEndpoint {
     });
   }
 
-  _i3.Future<_i8.SuccessResponse> leaveTeam(
-    _i1.TestSessionBuilder sessionBuilder,
-    String accessToken, {
+  _i3.Future<List<_i18.Team>> leaveTeam(
+    _i1.TestSessionBuilder sessionBuilder, {
     required _i27.LeaveTeamRequest request,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
@@ -1008,10 +960,7 @@ class _TeamEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'team',
           methodName: 'leaveTeam',
-          parameters: _i1.testObjectToJson({
-            'accessToken': accessToken,
-            'request': request,
-          }),
+          parameters: _i1.testObjectToJson({'request': request}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =
@@ -1019,7 +968,7 @@ class _TeamEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i8.SuccessResponse>);
+                as _i3.Future<List<_i18.Team>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1027,9 +976,8 @@ class _TeamEndpoint {
     });
   }
 
-  _i3.Future<_i8.SuccessResponse> transferOwnership(
-    _i1.TestSessionBuilder sessionBuilder,
-    String accessToken, {
+  _i3.Future<List<_i18.Team>> transferOwnership(
+    _i1.TestSessionBuilder sessionBuilder, {
     required _i28.TransferTeamOwnershipRequest request,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
@@ -1043,10 +991,7 @@ class _TeamEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'team',
           methodName: 'transferOwnership',
-          parameters: _i1.testObjectToJson({
-            'accessToken': accessToken,
-            'request': request,
-          }),
+          parameters: _i1.testObjectToJson({'request': request}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =
@@ -1054,7 +999,7 @@ class _TeamEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i8.SuccessResponse>);
+                as _i3.Future<List<_i18.Team>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1062,9 +1007,8 @@ class _TeamEndpoint {
     });
   }
 
-  _i3.Future<_i8.SuccessResponse> deleteTeam(
-    _i1.TestSessionBuilder sessionBuilder,
-    String accessToken, {
+  _i3.Future<List<_i18.Team>> deleteTeam(
+    _i1.TestSessionBuilder sessionBuilder, {
     required _i29.DeleteTeamRequest request,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
@@ -1078,10 +1022,7 @@ class _TeamEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'team',
           methodName: 'deleteTeam',
-          parameters: _i1.testObjectToJson({
-            'accessToken': accessToken,
-            'request': request,
-          }),
+          parameters: _i1.testObjectToJson({'request': request}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =
@@ -1089,7 +1030,7 @@ class _TeamEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i8.SuccessResponse>);
+                as _i3.Future<List<_i18.Team>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();

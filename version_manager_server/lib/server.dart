@@ -11,7 +11,6 @@ import 'src/web/routes/root.dart';
 
 /// The starting point of the Serverpod server.
 void run(List<String> args) async {
-
   // Инициализация сервисов
   Services().initialize(
     emailProvider: EmailProvider.google,
@@ -19,7 +18,35 @@ void run(List<String> args) async {
   );
 
   // Initialize Serverpod and connect it with your generated code.
-  final pod = Serverpod(args, Protocol(), Endpoints());
+  final pod = Serverpod(
+    args,
+    Protocol(),
+    Endpoints(),
+    authenticationHandler: (session, token) async {
+      final tokenService = Services().tokenService;
+      final tokenHash = tokenService.hashToken(token);
+
+      final authSession = await AuthSession.db.findFirstRow(
+        session,
+        where: (t) => t.tokenHash.equals(tokenHash) & t.isActive.equals(true),
+      );
+
+      if (authSession == null) return null;
+
+      // Проверяем срок действия
+      if (authSession.expiresAt.isBefore(DateTime.now())) return null;
+
+      // Обновляем время последней активности
+      authSession.lastActivityAt = DateTime.now();
+      await AuthSession.db.updateRow(session, authSession);
+
+      return AuthenticationInfo(
+        authSession.userId.toString(),
+        {},
+        authId: authSession.id!.toString(),
+      );
+    },
+  );
 
   // Setup a default page at the web root.
   // These are used by the default page.

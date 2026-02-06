@@ -193,56 +193,33 @@ class Endpoints extends _i1.EndpointDispatch {
         ),
         'logout': _i1.MethodConnector(
           name: 'logout',
-          params: {
-            'accessToken': _i1.ParameterDescription(
-              name: 'accessToken',
-              type: _i1.getType<String>(),
-              nullable: false,
-            ),
-          },
+          params: {},
           call:
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['auth'] as _i2.AuthEndpoint).logout(
-                session,
-                params['accessToken'],
-              ),
+              ) async =>
+                  (endpoints['auth'] as _i2.AuthEndpoint).logout(session),
         ),
         'logoutAll': _i1.MethodConnector(
           name: 'logoutAll',
-          params: {
-            'accessToken': _i1.ParameterDescription(
-              name: 'accessToken',
-              type: _i1.getType<String>(),
-              nullable: false,
-            ),
-          },
+          params: {},
           call:
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['auth'] as _i2.AuthEndpoint).logoutAll(
-                session,
-                accessToken: params['accessToken'],
-              ),
+              ) async =>
+                  (endpoints['auth'] as _i2.AuthEndpoint).logoutAll(session),
         ),
         'getCurrentUser': _i1.MethodConnector(
           name: 'getCurrentUser',
-          params: {
-            'accessToken': _i1.ParameterDescription(
-              name: 'accessToken',
-              type: _i1.getType<String>(),
-              nullable: false,
-            ),
-          },
+          params: {},
           call:
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
               ) async => (endpoints['auth'] as _i2.AuthEndpoint).getCurrentUser(
                 session,
-                accessToken: params['accessToken'],
               ),
         ),
       },
@@ -253,31 +230,17 @@ class Endpoints extends _i1.EndpointDispatch {
       methodConnectors: {
         'getActiveSessions': _i1.MethodConnector(
           name: 'getActiveSessions',
-          params: {
-            'accessToken': _i1.ParameterDescription(
-              name: 'accessToken',
-              type: _i1.getType<String>(),
-              nullable: false,
-            ),
-          },
+          params: {},
           call:
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
               ) async => (endpoints['session'] as _i3.SessionEndpoint)
-                  .getActiveSessions(
-                    session,
-                    params['accessToken'],
-                  ),
+                  .getActiveSessions(session),
         ),
         'terminateSession': _i1.MethodConnector(
           name: 'terminateSession',
           params: {
-            'accessToken': _i1.ParameterDescription(
-              name: 'accessToken',
-              type: _i1.getType<String>(),
-              nullable: false,
-            ),
             'request': _i1.ParameterDescription(
               name: 'request',
               type: _i1.getType<_i12.TerminateSessionRequest>(),
@@ -291,28 +254,18 @@ class Endpoints extends _i1.EndpointDispatch {
               ) async => (endpoints['session'] as _i3.SessionEndpoint)
                   .terminateSession(
                     session,
-                    params['accessToken'],
                     request: params['request'],
                   ),
         ),
         'terminateAllOtherSessions': _i1.MethodConnector(
           name: 'terminateAllOtherSessions',
-          params: {
-            'accessToken': _i1.ParameterDescription(
-              name: 'accessToken',
-              type: _i1.getType<String>(),
-              nullable: false,
-            ),
-          },
+          params: {},
           call:
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
               ) async => (endpoints['session'] as _i3.SessionEndpoint)
-                  .terminateAllOtherSessions(
-                    session,
-                    params['accessToken'],
-                  ),
+                  .terminateAllOtherSessions(session),
         ),
       },
     );
@@ -323,11 +276,6 @@ class Endpoints extends _i1.EndpointDispatch {
         'createTeam': _i1.MethodConnector(
           name: 'createTeam',
           params: {
-            'accessToken': _i1.ParameterDescription(
-              name: 'accessToken',
-              type: _i1.getType<String>(),
-              nullable: false,
-            ),
             'request': _i1.ParameterDescription(
               name: 'request',
               type: _i1.getType<_i13.CreateTeamRequest>(),
@@ -340,18 +288,12 @@ class Endpoints extends _i1.EndpointDispatch {
                 Map<String, dynamic> params,
               ) async => (endpoints['team'] as _i4.TeamEndpoint).createTeam(
                 session,
-                params['accessToken'],
                 request: params['request'],
               ),
         ),
         'updateTeam': _i1.MethodConnector(
           name: 'updateTeam',
           params: {
-            'accessToken': _i1.ParameterDescription(
-              name: 'accessToken',
-              type: _i1.getType<String>(),
-              nullable: false,
-            ),
             'request': _i1.ParameterDescription(
               name: 'request',
               type: _i1.getType<_i14.UpdateTeamRequest>(),
@@ -364,18 +306,12 @@ class Endpoints extends _i1.EndpointDispatch {
                 Map<String, dynamic> params,
               ) async => (endpoints['team'] as _i4.TeamEndpoint).updateTeam(
                 session,
-                params['accessToken'],
                 request: params['request'],
               ),
         ),
         'getTeam': _i1.MethodConnector(
           name: 'getTeam',
           params: {
-            'accessToken': _i1.ParameterDescription(
-              name: 'accessToken',
-              type: _i1.getType<String>(),
-              nullable: false,
-            ),
             'teamId': _i1.ParameterDescription(
               name: 'teamId',
               type: _i1.getType<_i1.UuidValue>(),
@@ -388,36 +324,22 @@ class Endpoints extends _i1.EndpointDispatch {
                 Map<String, dynamic> params,
               ) async => (endpoints['team'] as _i4.TeamEndpoint).getTeam(
                 session,
-                params['accessToken'],
                 teamId: params['teamId'],
               ),
         ),
         'getMyTeams': _i1.MethodConnector(
           name: 'getMyTeams',
-          params: {
-            'accessToken': _i1.ParameterDescription(
-              name: 'accessToken',
-              type: _i1.getType<String>(),
-              nullable: false,
-            ),
-          },
+          params: {},
           call:
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['team'] as _i4.TeamEndpoint).getMyTeams(
-                session,
-                params['accessToken'],
-              ),
+              ) async =>
+                  (endpoints['team'] as _i4.TeamEndpoint).getMyTeams(session),
         ),
         'inviteMember': _i1.MethodConnector(
           name: 'inviteMember',
           params: {
-            'accessToken': _i1.ParameterDescription(
-              name: 'accessToken',
-              type: _i1.getType<String>(),
-              nullable: false,
-            ),
             'request': _i1.ParameterDescription(
               name: 'request',
               type: _i1.getType<_i15.InviteTeamMemberRequest>(),
@@ -430,37 +352,22 @@ class Endpoints extends _i1.EndpointDispatch {
                 Map<String, dynamic> params,
               ) async => (endpoints['team'] as _i4.TeamEndpoint).inviteMember(
                 session,
-                params['accessToken'],
                 request: params['request'],
               ),
         ),
         'getMyInvitations': _i1.MethodConnector(
           name: 'getMyInvitations',
-          params: {
-            'accessToken': _i1.ParameterDescription(
-              name: 'accessToken',
-              type: _i1.getType<String>(),
-              nullable: false,
-            ),
-          },
+          params: {},
           call:
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async =>
-                  (endpoints['team'] as _i4.TeamEndpoint).getMyInvitations(
-                    session,
-                    params['accessToken'],
-                  ),
+              ) async => (endpoints['team'] as _i4.TeamEndpoint)
+                  .getMyInvitations(session),
         ),
         'respondToInvitation': _i1.MethodConnector(
           name: 'respondToInvitation',
           params: {
-            'accessToken': _i1.ParameterDescription(
-              name: 'accessToken',
-              type: _i1.getType<String>(),
-              nullable: false,
-            ),
             'request': _i1.ParameterDescription(
               name: 'request',
               type: _i1.getType<_i16.RespondToInvitationRequest>(),
@@ -474,18 +381,12 @@ class Endpoints extends _i1.EndpointDispatch {
               ) async =>
                   (endpoints['team'] as _i4.TeamEndpoint).respondToInvitation(
                     session,
-                    params['accessToken'],
                     request: params['request'],
                   ),
         ),
         'revokeInvitation': _i1.MethodConnector(
           name: 'revokeInvitation',
           params: {
-            'accessToken': _i1.ParameterDescription(
-              name: 'accessToken',
-              type: _i1.getType<String>(),
-              nullable: false,
-            ),
             'request': _i1.ParameterDescription(
               name: 'request',
               type: _i1.getType<_i17.RevokeInvitationRequest>(),
@@ -499,18 +400,12 @@ class Endpoints extends _i1.EndpointDispatch {
               ) async =>
                   (endpoints['team'] as _i4.TeamEndpoint).revokeInvitation(
                     session,
-                    params['accessToken'],
                     request: params['request'],
                   ),
         ),
         'getTeamMembers': _i1.MethodConnector(
           name: 'getTeamMembers',
           params: {
-            'accessToken': _i1.ParameterDescription(
-              name: 'accessToken',
-              type: _i1.getType<String>(),
-              nullable: false,
-            ),
             'teamId': _i1.ParameterDescription(
               name: 'teamId',
               type: _i1.getType<_i1.UuidValue>(),
@@ -523,18 +418,12 @@ class Endpoints extends _i1.EndpointDispatch {
                 Map<String, dynamic> params,
               ) async => (endpoints['team'] as _i4.TeamEndpoint).getTeamMembers(
                 session,
-                params['accessToken'],
                 teamId: params['teamId'],
               ),
         ),
         'updateMemberRole': _i1.MethodConnector(
           name: 'updateMemberRole',
           params: {
-            'accessToken': _i1.ParameterDescription(
-              name: 'accessToken',
-              type: _i1.getType<String>(),
-              nullable: false,
-            ),
             'request': _i1.ParameterDescription(
               name: 'request',
               type: _i1.getType<_i18.UpdateMemberRoleRequest>(),
@@ -548,18 +437,12 @@ class Endpoints extends _i1.EndpointDispatch {
               ) async =>
                   (endpoints['team'] as _i4.TeamEndpoint).updateMemberRole(
                     session,
-                    params['accessToken'],
                     request: params['request'],
                   ),
         ),
         'removeMember': _i1.MethodConnector(
           name: 'removeMember',
           params: {
-            'accessToken': _i1.ParameterDescription(
-              name: 'accessToken',
-              type: _i1.getType<String>(),
-              nullable: false,
-            ),
             'request': _i1.ParameterDescription(
               name: 'request',
               type: _i1.getType<_i19.RemoveMemberRequest>(),
@@ -572,18 +455,12 @@ class Endpoints extends _i1.EndpointDispatch {
                 Map<String, dynamic> params,
               ) async => (endpoints['team'] as _i4.TeamEndpoint).removeMember(
                 session,
-                params['accessToken'],
                 request: params['request'],
               ),
         ),
         'leaveTeam': _i1.MethodConnector(
           name: 'leaveTeam',
           params: {
-            'accessToken': _i1.ParameterDescription(
-              name: 'accessToken',
-              type: _i1.getType<String>(),
-              nullable: false,
-            ),
             'request': _i1.ParameterDescription(
               name: 'request',
               type: _i1.getType<_i20.LeaveTeamRequest>(),
@@ -596,18 +473,12 @@ class Endpoints extends _i1.EndpointDispatch {
                 Map<String, dynamic> params,
               ) async => (endpoints['team'] as _i4.TeamEndpoint).leaveTeam(
                 session,
-                params['accessToken'],
                 request: params['request'],
               ),
         ),
         'transferOwnership': _i1.MethodConnector(
           name: 'transferOwnership',
           params: {
-            'accessToken': _i1.ParameterDescription(
-              name: 'accessToken',
-              type: _i1.getType<String>(),
-              nullable: false,
-            ),
             'request': _i1.ParameterDescription(
               name: 'request',
               type: _i1.getType<_i21.TransferTeamOwnershipRequest>(),
@@ -621,18 +492,12 @@ class Endpoints extends _i1.EndpointDispatch {
               ) async =>
                   (endpoints['team'] as _i4.TeamEndpoint).transferOwnership(
                     session,
-                    params['accessToken'],
                     request: params['request'],
                   ),
         ),
         'deleteTeam': _i1.MethodConnector(
           name: 'deleteTeam',
           params: {
-            'accessToken': _i1.ParameterDescription(
-              name: 'accessToken',
-              type: _i1.getType<String>(),
-              nullable: false,
-            ),
             'request': _i1.ParameterDescription(
               name: 'request',
               type: _i1.getType<_i22.DeleteTeamRequest>(),
@@ -645,7 +510,6 @@ class Endpoints extends _i1.EndpointDispatch {
                 Map<String, dynamic> params,
               ) async => (endpoints['team'] as _i4.TeamEndpoint).deleteTeam(
                 session,
-                params['accessToken'],
                 request: params['request'],
               ),
         ),

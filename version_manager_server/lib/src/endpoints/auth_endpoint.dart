@@ -763,14 +763,16 @@ class AuthEndpoint extends Endpoint {
   /// await client.auth.logout(currentAccessToken);
   /// // Очистить локальное хранилище токенов
   /// ```
-  Future<SuccessResponse> logout(Session session, String accessToken) async {
+  Future<SuccessResponse> logout(Session session) async {
     session.log('logout: завершение сессии', level: LogLevel.info);
 
-    final tokenHash = _tokenService.hashToken(accessToken);
-    final authSession = await AuthSession.db.findFirstRow(
-      session,
-      where: (t) => t.tokenHash.equals(tokenHash),
-    );
+    final authInfo = session.authenticated;
+    if (authInfo == null) {
+      return SuccessResponse(success: true);
+    }
+
+    final authSessionId = UuidValue.fromString(authInfo.authId);
+    final authSession = await AuthSession.db.findById(session, authSessionId);
 
     if (authSession != null) {
       await AuthSession.db.updateRow(
@@ -819,22 +821,12 @@ class AuthEndpoint extends Endpoint {
   /// // Перенаправить на экран входа
   /// ```
   Future<SuccessResponse> logoutAll(
-    Session session, {
-    required String accessToken,
-  }) async {
+    Session session,
+  ) async {
     session.log('logoutAll: выход со всех устройств', level: LogLevel.info);
 
-    final tokenHash = _tokenService.hashToken(accessToken);
-    final currentSession = await AuthSession.db.findFirstRow(
-      session,
-      where: (t) => t.tokenHash.equals(tokenHash),
-    );
-
-    if (currentSession == null) {
-      session.log(
-        'logoutAll: недействительная сессия',
-        level: LogLevel.warning,
-      );
+    final authInfo = session.authenticated;
+    if (authInfo == null) {
       throw InvalidDataException(
         message: 'Недействительная сессия',
         field: 'session',
@@ -842,7 +834,7 @@ class AuthEndpoint extends Endpoint {
       );
     }
 
-    final userId = currentSession.userId;
+    final userId = UuidValue.fromString(authInfo.userIdentifier);
     final allSessions = await AuthSession.db.find(
       session,
       where: (t) => t.userId.equals(userId) & t.isActive.equals(true),
@@ -885,26 +877,15 @@ class AuthEndpoint extends Endpoint {
   /// print(user.email);
   /// ```
   Future<UserPublic> getCurrentUser(
-    Session session, {
-    required String accessToken,
-  }) async {
+    Session session,
+  ) async {
     session.log(
       'getCurrentUser: запрос информации о текущем пользователе',
       level: LogLevel.info,
     );
 
-    // Валидация токена
-    final tokenHash = _tokenService.hashToken(accessToken);
-    final authSession = await AuthSession.db.findFirstRow(
-      session,
-      where: (t) => t.tokenHash.equals(tokenHash) & t.isActive.equals(true),
-    );
-
-    if (authSession == null) {
-      session.log(
-        'getCurrentUser: недействительный токен',
-        level: LogLevel.warning,
-      );
+    final authInfo = session.authenticated;
+    if (authInfo == null) {
       throw InvalidDataException(
         message: 'Недействительный токен доступа',
         field: 'accessToken',
@@ -912,25 +893,14 @@ class AuthEndpoint extends Endpoint {
       );
     }
 
-    // Проверка срока действия токена
-    if (authSession.expiresAt.isBefore(DateTime.now())) {
-      session.log(
-        'getCurrentUser: токен истёк',
-        level: LogLevel.warning,
-      );
-      throw InvalidDataException(
-        message: 'Токен доступа истёк',
-        field: 'accessToken',
-        stackTrace: StackTrace.current.toString(),
-      );
-    }
+    final userId = UuidValue.fromString(authInfo.userIdentifier);
 
     // Получение пользователя
-    final user = await User.db.findById(session, authSession.userId);
+    final user = await User.db.findById(session, userId);
 
     if (user == null) {
       session.log(
-        'getCurrentUser: пользователь не найден userId=${authSession.userId}',
+        'getCurrentUser: пользователь не найден userId=$userId',
         level: LogLevel.error,
       );
       throw InvalidDataException(

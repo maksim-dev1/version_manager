@@ -1,6 +1,6 @@
 import 'package:serverpod/serverpod.dart';
 import 'package:version_manager_server/src/generated/protocol.dart';
-import 'package:version_manager_server/src/services/service_locator.dart';
+import 'package:version_manager_server/src/endpoints/base/logged_in_endpoint.dart';
 
 /// Эндпоинт для управления сессиями пользователя.
 ///
@@ -9,11 +9,8 @@ import 'package:version_manager_server/src/services/service_locator.dart';
 /// - Завершения конкретной сессии
 /// - Завершения всех сессий кроме текущей
 ///
-/// Все методы требуют передачи валидного access token.
-class SessionEndpoint extends Endpoint {
-  final _tokenService = Services().tokenService;
-  final _authService = Services().authValidationService;
-
+/// Наследуется от [LoggedInEndpoint] — авторизация через заголовок.
+class SessionEndpoint extends LoggedInEndpoint {
   /// Получить список всех активных сессий текущего пользователя.
   ///
   /// Возвращает информацию о каждой сессии включая:
@@ -22,34 +19,17 @@ class SessionEndpoint extends Endpoint {
   /// - Признак текущей сессии
   /// - Геолокацию (город, страна) если доступна
   ///
-  /// ### Параметры
-  /// - [session] — сессия Serverpod с доступом к БД
-  /// - [accessToken] — текущий access token пользователя
-  ///
   /// ### Возвращает
   /// Список [SessionInfo] со всеми активными сессиями пользователя.
-  ///
-  /// ### Пример использования
-  /// ```dart
-  /// final sessions = await client.session.getActiveSessions(accessToken);
-  /// for (var s in sessions) {
-  ///   print('${s.deviceInfo} - ${s.isCurrent ? "Текущая" : ""}');
-  /// }
-  /// ```
-  Future<List<SessionInfo>> getActiveSessions(
-    Session session,
-    String accessToken,
-  ) async {
-    final authResult = await _authService.validateToken(session, accessToken);
-    final userId = authResult.userId;
+  Future<List<SessionInfo>> getActiveSessions(Session session) async {
+    final authInfo = session.authenticated!;
+    final userId = UuidValue.fromString(authInfo.userIdentifier);
+    final currentAuthSessionId = UuidValue.fromString(authInfo.authId);
 
     session.log(
       'getActiveSessions: получение сессий для пользователя $userId',
       level: LogLevel.info,
     );
-
-    // Получаем текущий токен для определения текущей сессии
-    final currentTokenHash = _tokenService.hashToken(accessToken);
 
     // Получаем все активные сессии пользователя
     final authSessions = await AuthSession.db.find(
@@ -73,8 +53,8 @@ class SessionEndpoint extends Endpoint {
         userAgent: authSession.userAgent,
         createdAt: authSession.createdAt,
         lastActivityAt: authSession.lastActivityAt,
-        isCurrent: authSession.tokenHash == currentTokenHash,
-        city: null, // TODO: можно добавить геолокацию позже
+        isCurrent: authSession.id == currentAuthSessionId,
+        city: null,
         country: null,
       );
     }).toList();
@@ -87,41 +67,18 @@ class SessionEndpoint extends Endpoint {
   ///
   /// Нельзя завершить текущую сессию этим методом.
   /// Для этого используйте метод `logout` из [AuthEndpoint].
-  ///
-  /// ### Параметры
-  /// - [session] — сессия Serverpod с доступом к БД
-  /// - [accessToken] — текущий access token пользователя
-  /// - [request] — запрос с ID сессии для завершения
-  ///
-  /// ### Возвращает
-  /// [SuccessResponse] с результатом операции.
-  ///
-  /// ### Исключения
-  /// - [InvalidDataException] если сессия не найдена или не принадлежит пользователю
-  /// - [InvalidDataException] если попытка завершить текущую сессию
-  ///
-  /// ### Пример использования
-  /// ```dart
-  /// await client.session.terminateSession(
-  ///   accessToken,
-  ///   TerminateSessionRequest(sessionId: sessionId),
-  /// );
-  /// ```
   Future<SuccessResponse> terminateSession(
-    Session session,
-    String accessToken, {
+    Session session, {
     required TerminateSessionRequest request,
   }) async {
-    final authResult = await _authService.validateToken(session, accessToken);
-    final userId = authResult.userId;
+    final authInfo = session.authenticated!;
+    final userId = UuidValue.fromString(authInfo.userIdentifier);
+    final currentAuthSessionId = UuidValue.fromString(authInfo.authId);
 
     session.log(
       'terminateSession: завершение сессии ${request.sessionId} для пользователя $userId',
       level: LogLevel.info,
     );
-
-    // Проверяем, что это не текущая сессия
-    final currentTokenHash = _tokenService.hashToken(accessToken);
 
     // Находим сессию
     final authSession = await AuthSession.db.findById(
@@ -136,7 +93,7 @@ class SessionEndpoint extends Endpoint {
       );
     }
 
-    if (authSession.tokenHash == currentTokenHash) {
+    if (authSession.id == currentAuthSessionId) {
       throw InvalidDataException(
         field: 'sessionId',
         message: 'Нельзя завершить текущую сессию. Используйте logout.',
@@ -161,38 +118,15 @@ class SessionEndpoint extends Endpoint {
   }
 
   /// Завершить все сессии пользователя кроме текущей.
-  ///
-  /// Полезно для:
-  /// - Выхода со всех устройств при утере одного из них
-  /// - Обеспечения безопасности при подозрении на компрометацию
-  /// - Принудительного выхода из всех старых сессий
-  ///
-  /// ### Параметры
-  /// - [session] — сессия Serverpod с доступом к БД
-  /// - [accessToken] — текущий access token пользователя
-  ///
-  /// ### Возвращает
-  /// [SuccessResponse] с информацией о количестве завершённых сессий.
-  ///
-  /// ### Пример использования
-  /// ```dart
-  /// final result = await client.session.terminateAllOtherSessions(accessToken);
-  /// print('Завершено сессий: ${result.message}');
-  /// ```
-  Future<SuccessResponse> terminateAllOtherSessions(
-    Session session,
-    String accessToken,
-  ) async {
-    final authResult = await _authService.validateToken(session, accessToken);
-    final userId = authResult.userId;
+  Future<SuccessResponse> terminateAllOtherSessions(Session session) async {
+    final authInfo = session.authenticated!;
+    final userId = UuidValue.fromString(authInfo.userIdentifier);
+    final currentAuthSessionId = UuidValue.fromString(authInfo.authId);
 
     session.log(
       'terminateAllOtherSessions: завершение всех сессий кроме текущей для пользователя $userId',
       level: LogLevel.info,
     );
-
-    // Получаем текущий токен
-    final currentTokenHash = _tokenService.hashToken(accessToken);
 
     // Находим все активные сессии кроме текущей
     final otherSessions = await AuthSession.db.find(
@@ -200,7 +134,7 @@ class SessionEndpoint extends Endpoint {
       where: (t) =>
           (t.userId.equals(userId)) &
           (t.isActive.equals(true)) &
-          (t.tokenHash.notEquals(currentTokenHash)),
+          (t.id.notEquals(currentAuthSessionId)),
     );
 
     session.log(

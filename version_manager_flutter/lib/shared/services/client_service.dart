@@ -60,14 +60,18 @@ class ClientService {
   /// Обрабатывает неудачные вызовы API.
   ///
   /// При получении ошибки аутентификации (401) пытается
-  /// обновить токены и повторить запрос.
+  /// обновить токены. Если refresh не удался — вызывается
+  /// [AuthKeyProvider.onAuthenticationFailed], что приводит к logout.
   void _handleFailedCall(
     MethodCallContext context,
     Object error,
     StackTrace stackTrace,
   ) {
-    // Обработка происходит через authKeyProvider
-    // Здесь можно добавить логирование
+    if (error is ServerpodClientException && error.statusCode == 401) {
+      // Пытаемся обновить токены в фоне.
+      // При неудаче refreshTokens() сам вызовет onAuthenticationFailed → logout.
+      _authKeyProvider?.refreshTokens();
+    }
   }
 
   /// Выполняет refresh token через API.

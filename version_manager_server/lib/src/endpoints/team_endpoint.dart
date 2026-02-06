@@ -1,5 +1,6 @@
 import 'package:serverpod/serverpod.dart';
 import 'package:version_manager_server/src/generated/protocol.dart';
+import 'package:version_manager_server/src/endpoints/base/logged_in_endpoint.dart';
 import 'package:version_manager_server/src/services/service_locator.dart';
 
 /// Эндпоинт для управления командами.
@@ -11,15 +12,14 @@ import 'package:version_manager_server/src/services/service_locator.dart';
 /// - Передачи владения командой
 /// - Удаления команд с опциями сохранения приложений
 ///
-/// Все методы требуют передачи валидного access token.
+/// Наследуется от [LoggedInEndpoint] — авторизация через заголовок.
 ///
 /// ## Роли и права доступа
 /// - **owner** — полный доступ, включая удаление команды
 /// - **admin** — управление участниками и приложениями
 /// - **developer** — создание и редактирование версий
 /// - **observer** — только просмотр
-class TeamEndpoint extends Endpoint {
-  final _authService = Services().authValidationService;
+class TeamEndpoint extends LoggedInEndpoint {
   final _emailService = Services().emailService;
 
   // ============================================================
@@ -41,11 +41,10 @@ class TeamEndpoint extends Endpoint {
   /// ### Исключения
   /// - [InvalidDataException] если название пустое или слишком короткое
   Future<Team> createTeam(
-    Session session,
-    String accessToken, {
+    Session session, {
     required CreateTeamRequest request,
   }) async {
-    final userId = await _authService.getUserId(session, accessToken);
+    final userId = UuidValue.fromString(session.authenticated!.userIdentifier);
 
     session.log(
       'createTeam: создание команды "${request.name}" пользователем $userId',
@@ -104,11 +103,10 @@ class TeamEndpoint extends Endpoint {
   ///
   /// Доступно только владельцу и администраторам команды.
   Future<Team> updateTeam(
-    Session session,
-    String accessToken, {
+    Session session, {
     required UpdateTeamRequest request,
   }) async {
-    final userId = await _authService.getUserId(session, accessToken);
+    final userId = UuidValue.fromString(session.authenticated!.userIdentifier);
 
     session.log(
       'updateTeam: обновление команды ${request.teamId}',
@@ -173,11 +171,10 @@ class TeamEndpoint extends Endpoint {
   ///
   /// Доступно только активным участникам команды.
   Future<Team> getTeam(
-    Session session,
-    String accessToken, {
+    Session session, {
     required UuidValue teamId,
   }) async {
-    final userId = await _authService.getUserId(session, accessToken);
+    final userId = UuidValue.fromString(session.authenticated!.userIdentifier);
 
     // Проверяем, что пользователь — активный участник
     final member = await _getActiveMember(
@@ -207,33 +204,15 @@ class TeamEndpoint extends Endpoint {
   ///
   /// Возвращает команды, где пользователь является активным участником.
   /// Команды с приглашениями (status = invited) не включаются.
-  Future<List<Team>> getMyTeams(Session session, String accessToken) async {
-    final userId = await _authService.getUserId(session, accessToken);
+  Future<List<Team>> getMyTeams(Session session) async {
+    final userId = UuidValue.fromString(session.authenticated!.userIdentifier);
 
     session.log(
       'getMyTeams: получение команд пользователя $userId',
       level: LogLevel.info,
     );
 
-    // Находим все активные членства
-    final memberships = await TeamMember.db.find(
-      session,
-      where: (t) =>
-          (t.userId.equals(userId)) &
-          (t.status.equals(TeamMemberStatusType.active)),
-    );
-
-    if (memberships.isEmpty) {
-      return [];
-    }
-
-    // Получаем команды
-    final teamIds = memberships.map((m) => m.teamId).toList();
-    final teams = await Team.db.find(
-      session,
-      where: (t) => t.id.inSet(teamIds.toSet()),
-      orderBy: (t) => t.name,
-    );
+    final teams = await _getUserTeams(session, userId: userId);
 
     session.log(
       'getMyTeams: найдено ${teams.length} команд',
@@ -251,12 +230,11 @@ class TeamEndpoint extends Endpoint {
   ///
   /// Отправляет приглашение пользователю по email.
   /// Доступно владельцу и администраторам.
-  Future<SuccessResponse> inviteMember(
-    Session session,
-    String accessToken, {
+  Future<List<Team>> inviteMember(
+    Session session, {
     required InviteTeamMemberRequest request,
   }) async {
-    final userId = await _authService.getUserId(session, accessToken);
+    final userId = UuidValue.fromString(session.authenticated!.userIdentifier);
 
     session.log(
       'inviteMember: приглашение ${request.email} в команду ${request.teamId}',
@@ -369,10 +347,7 @@ class TeamEndpoint extends Endpoint {
       level: LogLevel.info,
     );
 
-    return SuccessResponse(
-      success: true,
-      message: 'Приглашение успешно отправлено',
-    );
+    return _getUserTeams(session, userId: userId);
   }
 
   /// Получить список приглашений для текущего пользователя.
@@ -380,9 +355,8 @@ class TeamEndpoint extends Endpoint {
   /// Возвращает все активные приглашения в команды.
   Future<List<TeamMember>> getMyInvitations(
     Session session,
-    String accessToken,
   ) async {
-    final userId = await _authService.getUserId(session, accessToken);
+    final userId = UuidValue.fromString(session.authenticated!.userIdentifier);
 
     session.log(
       'getMyInvitations: получение приглашений для $userId',
@@ -416,12 +390,11 @@ class TeamEndpoint extends Endpoint {
   }
 
   /// Принять или отклонить приглашение в команду.
-  Future<SuccessResponse> respondToInvitation(
-    Session session,
-    String accessToken, {
+  Future<List<Team>> respondToInvitation(
+    Session session, {
     required RespondToInvitationRequest request,
   }) async {
-    final userId = await _authService.getUserId(session, accessToken);
+    final userId = UuidValue.fromString(session.authenticated!.userIdentifier);
 
     session.log(
       'respondToInvitation: ответ на приглашение в команду ${request.teamId}, accept=${request.accept}',
@@ -466,10 +439,7 @@ class TeamEndpoint extends Endpoint {
         level: LogLevel.info,
       );
 
-      return SuccessResponse(
-        success: true,
-        message: 'Вы присоединились к команде',
-      );
+      return _getUserTeams(session, userId: userId);
     } else {
       // Отклоняем — удаляем запись
       await TeamMember.db.deleteRow(session, invitation);
@@ -479,22 +449,18 @@ class TeamEndpoint extends Endpoint {
         level: LogLevel.info,
       );
 
-      return SuccessResponse(
-        success: true,
-        message: 'Приглашение отклонено',
-      );
+      return _getUserTeams(session, userId: userId);
     }
   }
 
   /// Отозвать приглашение.
   ///
   /// Доступно владельцу и администраторам.
-  Future<SuccessResponse> revokeInvitation(
-    Session session,
-    String accessToken, {
+  Future<List<Team>> revokeInvitation(
+    Session session, {
     required RevokeInvitationRequest request,
   }) async {
-    final userId = await _authService.getUserId(session, accessToken);
+    final userId = UuidValue.fromString(session.authenticated!.userIdentifier);
 
     session.log(
       'revokeInvitation: отзыв приглашения ${request.memberId}',
@@ -535,10 +501,7 @@ class TeamEndpoint extends Endpoint {
       level: LogLevel.info,
     );
 
-    return SuccessResponse(
-      success: true,
-      message: 'Приглашение отозвано',
-    );
+    return _getUserTeams(session, userId: userId);
   }
 
   // ============================================================
@@ -550,11 +513,10 @@ class TeamEndpoint extends Endpoint {
   /// Возвращает всех участников (активных и приглашённых).
   /// Доступно всем активным участникам команды.
   Future<List<TeamMember>> getTeamMembers(
-    Session session,
-    String accessToken, {
+    Session session, {
     required UuidValue teamId,
   }) async {
-    final userId = await _authService.getUserId(session, accessToken);
+    final userId = UuidValue.fromString(session.authenticated!.userIdentifier);
 
     session.log(
       'getTeamMembers: получение участников команды $teamId',
@@ -592,12 +554,11 @@ class TeamEndpoint extends Endpoint {
   /// Изменить роль участника команды.
   ///
   /// Доступно владельцу и администраторам (с ограничениями).
-  Future<SuccessResponse> updateMemberRole(
-    Session session,
-    String accessToken, {
+  Future<List<Team>> updateMemberRole(
+    Session session, {
     required UpdateMemberRoleRequest request,
   }) async {
-    final userId = await _authService.getUserId(session, accessToken);
+    final userId = UuidValue.fromString(session.authenticated!.userIdentifier);
 
     session.log(
       'updateMemberRole: изменение роли участника ${request.memberId}',
@@ -673,21 +634,17 @@ class TeamEndpoint extends Endpoint {
       level: LogLevel.info,
     );
 
-    return SuccessResponse(
-      success: true,
-      message: 'Роль участника изменена',
-    );
+    return _getUserTeams(session, userId: userId);
   }
 
   /// Удалить участника из команды.
   ///
   /// Доступно владельцу и администраторам.
-  Future<SuccessResponse> removeMember(
-    Session session,
-    String accessToken, {
+  Future<List<Team>> removeMember(
+    Session session, {
     required RemoveMemberRequest request,
   }) async {
-    final userId = await _authService.getUserId(session, accessToken);
+    final userId = UuidValue.fromString(session.authenticated!.userIdentifier);
 
     session.log(
       'removeMember: удаление участника ${request.memberId}',
@@ -751,21 +708,17 @@ class TeamEndpoint extends Endpoint {
       level: LogLevel.info,
     );
 
-    return SuccessResponse(
-      success: true,
-      message: 'Участник удалён из команды',
-    );
+    return _getUserTeams(session, userId: userId);
   }
 
   /// Покинуть команду.
   ///
   /// Владелец не может покинуть команду — нужно сначала передать владение.
-  Future<SuccessResponse> leaveTeam(
-    Session session,
-    String accessToken, {
+  Future<List<Team>> leaveTeam(
+    Session session, {
     required LeaveTeamRequest request,
   }) async {
-    final userId = await _authService.getUserId(session, accessToken);
+    final userId = UuidValue.fromString(session.authenticated!.userIdentifier);
 
     session.log(
       'leaveTeam: выход из команды ${request.teamId}',
@@ -805,10 +758,7 @@ class TeamEndpoint extends Endpoint {
       level: LogLevel.info,
     );
 
-    return SuccessResponse(
-      success: true,
-      message: 'Вы покинули команду',
-    );
+    return _getUserTeams(session, userId: userId);
   }
 
   // ============================================================
@@ -819,12 +769,11 @@ class TeamEndpoint extends Endpoint {
   ///
   /// Доступно только владельцу.
   /// После передачи бывший владелец становится администратором.
-  Future<SuccessResponse> transferOwnership(
-    Session session,
-    String accessToken, {
+  Future<List<Team>> transferOwnership(
+    Session session, {
     required TransferTeamOwnershipRequest request,
   }) async {
-    final userId = await _authService.getUserId(session, accessToken);
+    final userId = UuidValue.fromString(session.authenticated!.userIdentifier);
 
     session.log(
       'transferOwnership: передача владения командой ${request.teamId}',
@@ -890,10 +839,7 @@ class TeamEndpoint extends Endpoint {
       level: LogLevel.info,
     );
 
-    return SuccessResponse(
-      success: true,
-      message: 'Владение командой передано',
-    );
+    return _getUserTeams(session, userId: userId);
   }
 
   /// Удалить команду.
@@ -905,12 +851,11 @@ class TeamEndpoint extends Endpoint {
   /// - [request.teamId] — ID команды
   /// - [request.transferAppsToOwner] — true = забрать приложения, false = удалить
   /// - [request.confirmationName] — название команды для подтверждения
-  Future<SuccessResponse> deleteTeam(
-    Session session,
-    String accessToken, {
+  Future<List<Team>> deleteTeam(
+    Session session, {
     required DeleteTeamRequest request,
   }) async {
-    final userId = await _authService.getUserId(session, accessToken);
+    final userId = UuidValue.fromString(session.authenticated!.userIdentifier);
 
     session.log(
       'deleteTeam: удаление команды ${request.teamId}',
@@ -1001,17 +946,42 @@ class TeamEndpoint extends Endpoint {
       level: LogLevel.info,
     );
 
-    return SuccessResponse(
-      success: true,
-      message: request.transferAppsToOwner
-          ? 'Команда удалена, приложения сохранены в вашем личном кабинете'
-          : 'Команда и все приложения удалены',
-    );
+    return _getUserTeams(session, userId: userId);
   }
 
   // ============================================================
   // ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ
   // ============================================================
+
+  /// Получить список команд пользователя (с участниками и владельцем).
+  ///
+  /// Используется для возврата обновлённого списка после мутаций.
+  Future<List<Team>> _getUserTeams(
+    Session session, {
+    required UuidValue userId,
+  }) async {
+    final memberships = await TeamMember.db.find(
+      session,
+      where: (t) =>
+          (t.userId.equals(userId)) &
+          (t.status.equals(TeamMemberStatusType.active)),
+    );
+
+    if (memberships.isEmpty) return [];
+
+    final teamIds = memberships.map((m) => m.teamId).toList();
+    return Team.db.find(
+      session,
+      where: (t) => t.id.inSet(teamIds.toSet()),
+      orderBy: (t) => t.name,
+      include: Team.include(
+        owner: User.include(),
+        members: TeamMember.includeList(
+          include: TeamMember.include(user: User.include()),
+        ),
+      ),
+    );
+  }
 
   /// Получить активного участника команды.
   Future<TeamMember?> _getActiveMember(

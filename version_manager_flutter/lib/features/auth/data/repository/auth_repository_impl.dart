@@ -29,14 +29,10 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<void> logout() async {
-    final accessToken = _authKeyProvider.accessToken;
-
-    if (accessToken != null) {
-      try {
-        await _authEndpoint.logout(accessToken);
-      } catch (_) {
-        // Игнорируем ошибки — всё равно очищаем токены
-      }
+    try {
+      await _authEndpoint.logout();
+    } catch (_) {
+      // Игнорируем ошибки — всё равно очищаем токены
     }
 
     await _authKeyProvider.clearTokens();
@@ -44,14 +40,10 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<void> logoutAll() async {
-    final accessToken = _authKeyProvider.accessToken;
-
-    if (accessToken != null) {
-      try {
-        await _authEndpoint.logoutAll(accessToken: accessToken);
-      } catch (_) {
-        // Игнорируем ошибки — всё равно очищаем токены
-      }
+    try {
+      await _authEndpoint.logoutAll();
+    } catch (_) {
+      // Игнорируем ошибки — всё равно очищаем токены
     }
 
     await _authKeyProvider.clearTokens();

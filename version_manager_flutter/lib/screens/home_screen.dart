@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:version_manager_flutter/features/team/presentation/view/teams_screen.dart';
+import 'package:version_manager_flutter/features/user/presentation/view/user_screen.dart';
 import 'package:version_manager_flutter/shared/services/notification_service.dart';
+import 'package:version_manager_flutter/shared/widgets/app_navigation_rail.dart';
 import 'package:version_manager_flutter/theme/snow_ui/snow_spacing.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   final ThemeMode themeMode;
   final VoidCallback onThemeToggle;
 
@@ -12,21 +15,75 @@ class HomeScreen extends StatelessWidget {
     required this.onThemeToggle,
   });
 
-  IconData _getThemeIcon() {
-    return switch (themeMode) {
-      ThemeMode.light => Icons.light_mode,
-      ThemeMode.dark => Icons.dark_mode,
-      ThemeMode.system => Icons.brightness_auto,
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _selectedIndex = 0;
+
+  Widget _getSelectedPage() {
+    return switch (_selectedIndex) {
+      0 => _buildHomePage(),
+      1 => _buildProjectsPage(),
+      2 => _buildReleasesPage(),
+      3 => _buildAnalyticsPage(),
+      4 => _buildSettingsPage(),
+      5 => const TeamsScreen(),
+      6 => const UserScreen(),
+      _ => _buildHomePage(),
     };
   }
 
-  String _getThemeTooltip() {
-    return switch (themeMode) {
-      ThemeMode.light => 'Светлая тема',
-      ThemeMode.dark => 'Тёмная тема',
-      ThemeMode.system => 'Системная тема',
-    };
+  Widget _buildHomePage() {
+    return const _PageContent(title: 'Главная страница');
   }
+
+  Widget _buildProjectsPage() {
+    return const _PageContent(title: 'Проекты');
+  }
+
+  Widget _buildReleasesPage() {
+    return const _PageContent(title: 'Релизы');
+  }
+
+  Widget _buildAnalyticsPage() {
+    return const _PageContent(title: 'Аналитика');
+  }
+
+  Widget _buildSettingsPage() {
+    return const _PageContent(title: 'Настройки');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Row(
+        children: [
+          AppNavigationRail(
+            selectedIndex: _selectedIndex,
+            onDestinationSelected: (index) {
+              setState(() {
+                _selectedIndex = index;
+              });
+            },
+            themeMode: widget.themeMode,
+            onThemeToggle: widget.onThemeToggle,
+          ),
+          const VerticalDivider(thickness: 1, width: 1),
+          Expanded(
+            child: _getSelectedPage(),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PageContent extends StatelessWidget {
+  final String title;
+
+  const _PageContent({required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -35,14 +92,8 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('SnowUI Design System'),
-        actions: [
-          IconButton(
-            icon: Icon(_getThemeIcon()),
-            tooltip: _getThemeTooltip(),
-            onPressed: onThemeToggle,
-          ),
-        ],
+        title: Text(title),
+        elevation: 0,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(SnowSpacing.spacing24),
