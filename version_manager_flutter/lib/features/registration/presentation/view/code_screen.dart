@@ -97,9 +97,12 @@ class _CodeScreenState extends State<CodeScreen> {
         ),
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: SizedBox(
-              width: 460,
+            padding: EdgeInsets.symmetric(
+              horizontal: MediaQuery.sizeOf(context).width < 600 ? 16 : 24,
+              vertical: 24,
+            ),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 460),
               child: Stack(
                 children: [
                   Card(
@@ -121,7 +124,9 @@ class _CodeScreenState extends State<CodeScreen> {
                         ),
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.all(40),
+                        padding: EdgeInsets.all(
+                          MediaQuery.sizeOf(context).width < 600 ? 24 : 40,
+                        ),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.stretch,

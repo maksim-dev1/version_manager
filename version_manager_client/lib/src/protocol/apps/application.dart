@@ -26,7 +26,7 @@ abstract class Application implements _i1.SerializableModel {
     this.id,
     required this.namespace,
     required this.name,
-    required this.description,
+    String? description,
     this.iconUrl,
     required this.platforms,
     required this.ownerType,
@@ -39,11 +39,14 @@ abstract class Application implements _i1.SerializableModel {
     this.checkLogs,
     bool? isActive,
     required this.apiKeyHash,
+    String? apiKeyLast4,
     DateTime? apiKeyCreatedAt,
     this.apiKeyLastRegeneratedAt,
     DateTime? createdAt,
     DateTime? updatedAt,
-  }) : isActive = isActive ?? true,
+  }) : description = description ?? '',
+       isActive = isActive ?? true,
+       apiKeyLast4 = apiKeyLast4 ?? '',
        apiKeyCreatedAt = apiKeyCreatedAt ?? DateTime.now(),
        createdAt = createdAt ?? DateTime.now(),
        updatedAt = updatedAt ?? DateTime.now();
@@ -52,7 +55,7 @@ abstract class Application implements _i1.SerializableModel {
     _i1.UuidValue? id,
     required String namespace,
     required String name,
-    required String description,
+    String? description,
     String? iconUrl,
     required List<_i2.PlatformType> platforms,
     required _i3.OwnerType ownerType,
@@ -65,6 +68,7 @@ abstract class Application implements _i1.SerializableModel {
     List<_i8.VersionCheckLog>? checkLogs,
     bool? isActive,
     required String apiKeyHash,
+    String? apiKeyLast4,
     DateTime? apiKeyCreatedAt,
     DateTime? apiKeyLastRegeneratedAt,
     DateTime? createdAt,
@@ -78,7 +82,7 @@ abstract class Application implements _i1.SerializableModel {
           : _i1.UuidValueJsonExtension.fromJson(jsonSerialization['id']),
       namespace: jsonSerialization['namespace'] as String,
       name: jsonSerialization['name'] as String,
-      description: jsonSerialization['description'] as String,
+      description: jsonSerialization['description'] as String?,
       iconUrl: jsonSerialization['iconUrl'] as String?,
       platforms: _i9.Protocol().deserialize<List<_i2.PlatformType>>(
         jsonSerialization['platforms'],
@@ -123,6 +127,7 @@ abstract class Application implements _i1.SerializableModel {
             ),
       isActive: jsonSerialization['isActive'] as bool?,
       apiKeyHash: jsonSerialization['apiKeyHash'] as String,
+      apiKeyLast4: jsonSerialization['apiKeyLast4'] as String?,
       apiKeyCreatedAt: jsonSerialization['apiKeyCreatedAt'] == null
           ? null
           : _i1.DateTimeJsonExtension.fromJson(
@@ -178,6 +183,8 @@ abstract class Application implements _i1.SerializableModel {
 
   String apiKeyHash;
 
+  String apiKeyLast4;
+
   DateTime apiKeyCreatedAt;
 
   DateTime? apiKeyLastRegeneratedAt;
@@ -206,6 +213,7 @@ abstract class Application implements _i1.SerializableModel {
     List<_i8.VersionCheckLog>? checkLogs,
     bool? isActive,
     String? apiKeyHash,
+    String? apiKeyLast4,
     DateTime? apiKeyCreatedAt,
     DateTime? apiKeyLastRegeneratedAt,
     DateTime? createdAt,
@@ -234,6 +242,7 @@ abstract class Application implements _i1.SerializableModel {
         'checkLogs': checkLogs?.toJson(valueToJson: (v) => v.toJson()),
       'isActive': isActive,
       'apiKeyHash': apiKeyHash,
+      'apiKeyLast4': apiKeyLast4,
       'apiKeyCreatedAt': apiKeyCreatedAt.toJson(),
       if (apiKeyLastRegeneratedAt != null)
         'apiKeyLastRegeneratedAt': apiKeyLastRegeneratedAt?.toJson(),
@@ -255,7 +264,7 @@ class _ApplicationImpl extends Application {
     _i1.UuidValue? id,
     required String namespace,
     required String name,
-    required String description,
+    String? description,
     String? iconUrl,
     required List<_i2.PlatformType> platforms,
     required _i3.OwnerType ownerType,
@@ -268,6 +277,7 @@ class _ApplicationImpl extends Application {
     List<_i8.VersionCheckLog>? checkLogs,
     bool? isActive,
     required String apiKeyHash,
+    String? apiKeyLast4,
     DateTime? apiKeyCreatedAt,
     DateTime? apiKeyLastRegeneratedAt,
     DateTime? createdAt,
@@ -289,6 +299,7 @@ class _ApplicationImpl extends Application {
          checkLogs: checkLogs,
          isActive: isActive,
          apiKeyHash: apiKeyHash,
+         apiKeyLast4: apiKeyLast4,
          apiKeyCreatedAt: apiKeyCreatedAt,
          apiKeyLastRegeneratedAt: apiKeyLastRegeneratedAt,
          createdAt: createdAt,
@@ -316,6 +327,7 @@ class _ApplicationImpl extends Application {
     Object? checkLogs = _Undefined,
     bool? isActive,
     String? apiKeyHash,
+    String? apiKeyLast4,
     DateTime? apiKeyCreatedAt,
     Object? apiKeyLastRegeneratedAt = _Undefined,
     DateTime? createdAt,
@@ -352,6 +364,7 @@ class _ApplicationImpl extends Application {
           : this.checkLogs?.map((e0) => e0.copyWith()).toList(),
       isActive: isActive ?? this.isActive,
       apiKeyHash: apiKeyHash ?? this.apiKeyHash,
+      apiKeyLast4: apiKeyLast4 ?? this.apiKeyLast4,
       apiKeyCreatedAt: apiKeyCreatedAt ?? this.apiKeyCreatedAt,
       apiKeyLastRegeneratedAt: apiKeyLastRegeneratedAt is DateTime?
           ? apiKeyLastRegeneratedAt

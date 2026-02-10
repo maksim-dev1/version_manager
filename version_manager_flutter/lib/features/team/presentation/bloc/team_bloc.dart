@@ -7,13 +7,12 @@ part 'team_bloc.freezed.dart';
 part 'team_event.dart';
 part 'team_state.dart';
 
-/// BLoC для управления командами и участниками.
+/// BLoC для управления командами.
 ///
 /// Отвечает за:
 /// - Загрузку списка команд пользователя
 /// - Создание, редактирование и удаление команд
 /// - Работу с приглашениями (ответ на приглашение)
-/// - Управление участниками (приглашение, удаление, роли)
 class TeamBloc extends Bloc<TeamEvent, TeamState> {
   final TeamRepository _teamRepository;
 
@@ -54,38 +53,6 @@ class TeamBloc extends Bloc<TeamEvent, TeamState> {
             accept: accept,
             emit: emit,
           ),
-        // ── Управление участниками ──
-        _InviteMember(:final teamId, :final email, :final role) =>
-          _onInviteMember(
-            teamId: teamId,
-            email: email,
-            role: role,
-            emit: emit,
-          ),
-        _RemoveMember(:final memberId) => _onRemoveMember(
-          memberId: memberId,
-          emit: emit,
-        ),
-        _UpdateMemberRole(:final memberId, :final newRole) =>
-          _onUpdateMemberRole(
-            memberId: memberId,
-            newRole: newRole,
-            emit: emit,
-          ),
-        _RevokeInvitation(:final memberId) => _onRevokeInvitation(
-          memberId: memberId,
-          emit: emit,
-        ),
-        _LeaveTeam(:final teamId) => _onLeaveTeam(
-          teamId: teamId,
-          emit: emit,
-        ),
-        _TransferOwnership(:final teamId, :final newOwnerId) =>
-          _onTransferOwnership(
-            teamId: teamId,
-            newOwnerId: newOwnerId,
-            emit: emit,
-          ),
       },
     );
   }
@@ -93,10 +60,15 @@ class TeamBloc extends Bloc<TeamEvent, TeamState> {
   // ── Команды ──
 
   /// Загружает список команд пользователя.
+  ///
+  /// Показывает индикатор загрузки только при первом запуске.
+  /// При повторных вызовах обновляет данные без спиннера.
   Future<void> _onLoadTeams({
     required Emitter<TeamState> emit,
   }) async {
-    emit(const TeamState.teamLoading());
+    if (state is! TeamLoaded) {
+      emit(const TeamState.teamLoading());
+    }
     try {
       final results = await Future.wait([
         _teamRepository.getCurrentUser(),
@@ -162,12 +134,12 @@ class TeamBloc extends Bloc<TeamEvent, TeamState> {
     required Emitter<TeamState> emit,
   }) async {
     try {
-      final teams = await _teamRepository.deleteTeam(
+      await _teamRepository.deleteTeam(
         teamId: teamId,
         transferAppsToOwner: transferAppsToOwner,
         confirmationName: confirmationName,
       );
-      await _emitTeamsWithInvitations(teams: teams, emit: emit);
+      await _reloadTeams(emit: emit);
     } catch (e) {
       emit(TeamState.teamError(message: e.toString()));
     }
@@ -195,17 +167,17 @@ class TeamBloc extends Bloc<TeamEvent, TeamState> {
     required Emitter<TeamState> emit,
   }) async {
     try {
-      final teams = await _teamRepository.respondToInvitation(
+      await _teamRepository.respondToInvitation(
         teamId: teamId,
         accept: accept,
       );
-      await _emitTeamsWithInvitations(teams: teams, emit: emit);
+      await _reloadTeams(emit: emit);
     } catch (e) {
       emit(TeamState.teamError(message: e.toString()));
     }
   }
 
-  // ── Участники команды ──
+  // ── Вспомогательные методы ──
 
   /// Перезагрузить список команд (без показа загрузки).
   Future<void> _reloadTeams({
@@ -225,146 +197,6 @@ class TeamBloc extends Bloc<TeamEvent, TeamState> {
         teams: teams,
         invitations: invitations,
       ),
-    );
-  }
-
-  /// Обновить UI с уже полученным списком команд + догрузить приглашения.
-  Future<void> _emitTeamsWithInvitations({
-    required List<Team> teams,
-    required Emitter<TeamState> emit,
-  }) async {
-    final invitations = await _teamRepository.getMyInvitations();
-    final currentState = state;
-    final currentUserId = currentState is TeamLoaded
-        ? currentState.currentUserId
-        : null;
-
-    emit(
-      TeamState.teamLoaded(
-        currentUserId: currentUserId,
-        teams: teams,
-        invitations: invitations,
-      ),
-    );
-  }
-
-  /// Вспомогательный метод: выполняет действие с участником,
-  /// использует возвращённый сервером список команд для обновления UI,
-  /// показывает результат через [MemberActionSuccess].
-  Future<void> _performMemberAction({
-    required Future<List<Team>> Function() action,
-    required String successMessage,
-    required String errorPrefix,
-    required Emitter<TeamState> emit,
-  }) async {
-    try {
-      final teams = await action();
-      final invitations = await _teamRepository.getMyInvitations();
-      final currentState = state;
-      final currentUserId = currentState is TeamLoaded
-          ? currentState.currentUserId
-          : null;
-
-      emit(TeamState.memberActionSuccess(message: successMessage));
-      emit(
-        TeamState.teamLoaded(
-          currentUserId: currentUserId,
-          teams: teams,
-          invitations: invitations,
-        ),
-      );
-    } catch (e) {
-      emit(
-        TeamState.memberActionError(
-          message: '$errorPrefix: ${e.toString()}',
-        ),
-      );
-    }
-  }
-
-  Future<void> _onInviteMember({
-    required UuidValue teamId,
-    required String email,
-    required TeamRoleType role,
-    required Emitter<TeamState> emit,
-  }) async {
-    await _performMemberAction(
-      action: () => _teamRepository.inviteMember(
-        teamId: teamId,
-        email: email,
-        role: role,
-      ),
-      successMessage: 'Приглашение отправлено на $email',
-      errorPrefix: 'Не удалось отправить приглашение',
-      emit: emit,
-    );
-  }
-
-  Future<void> _onRemoveMember({
-    required UuidValue memberId,
-    required Emitter<TeamState> emit,
-  }) async {
-    await _performMemberAction(
-      action: () => _teamRepository.removeMember(memberId: memberId),
-      successMessage: 'Участник удалён из команды',
-      errorPrefix: 'Не удалось удалить участника',
-      emit: emit,
-    );
-  }
-
-  Future<void> _onUpdateMemberRole({
-    required UuidValue memberId,
-    required TeamRoleType newRole,
-    required Emitter<TeamState> emit,
-  }) async {
-    await _performMemberAction(
-      action: () => _teamRepository.updateMemberRole(
-        memberId: memberId,
-        newRole: newRole,
-      ),
-      successMessage: 'Роль участника обновлена',
-      errorPrefix: 'Не удалось обновить роль',
-      emit: emit,
-    );
-  }
-
-  Future<void> _onRevokeInvitation({
-    required UuidValue memberId,
-    required Emitter<TeamState> emit,
-  }) async {
-    await _performMemberAction(
-      action: () => _teamRepository.revokeInvitation(memberId: memberId),
-      successMessage: 'Приглашение отозвано',
-      errorPrefix: 'Не удалось отозвать приглашение',
-      emit: emit,
-    );
-  }
-
-  Future<void> _onLeaveTeam({
-    required UuidValue teamId,
-    required Emitter<TeamState> emit,
-  }) async {
-    await _performMemberAction(
-      action: () => _teamRepository.leaveTeam(teamId: teamId),
-      successMessage: 'Вы покинули команду',
-      errorPrefix: 'Не удалось покинуть команду',
-      emit: emit,
-    );
-  }
-
-  Future<void> _onTransferOwnership({
-    required UuidValue teamId,
-    required UuidValue newOwnerId,
-    required Emitter<TeamState> emit,
-  }) async {
-    await _performMemberAction(
-      action: () => _teamRepository.transferOwnership(
-        teamId: teamId,
-        newOwnerId: newOwnerId,
-      ),
-      successMessage: 'Владение командой передано',
-      errorPrefix: 'Не удалось передать владение',
-      emit: emit,
     );
   }
 }

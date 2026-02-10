@@ -12,57 +12,223 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
 import 'dart:async' as _i2;
-import 'package:version_manager_client/src/protocol/auth/check_email_and_send_code_response.dart'
+import 'package:version_manager_client/src/protocol/apps/application.dart'
     as _i3;
-import 'package:version_manager_client/src/protocol/auth/check_email.dart'
+import 'package:version_manager_client/src/protocol/apps/create_application_response.dart'
     as _i4;
-import 'package:version_manager_client/src/protocol/auth/send_code_response.dart'
+import 'package:version_manager_client/src/protocol/apps/create_application_request.dart'
     as _i5;
-import 'package:version_manager_client/src/protocol/auth/register_send_code.dart'
+import 'package:version_manager_client/src/protocol/apps/update_application_request.dart'
     as _i6;
 import 'package:version_manager_client/src/protocol/auth/common_success.dart'
     as _i7;
-import 'package:version_manager_client/src/protocol/auth/register_verify_code.dart'
+import 'package:version_manager_client/src/protocol/apps/delete_application_request.dart'
     as _i8;
-import 'package:version_manager_client/src/protocol/auth/auth_response.dart'
+import 'package:version_manager_client/src/protocol/apps/request_api_key_regeneration_response.dart'
     as _i9;
-import 'package:version_manager_client/src/protocol/auth/register.dart' as _i10;
-import 'package:version_manager_client/src/protocol/auth/login.dart' as _i11;
-import 'package:version_manager_client/src/protocol/auth/token_pair_response.dart'
+import 'package:version_manager_client/src/protocol/apps/request_api_key_regeneration_request.dart'
+    as _i10;
+import 'package:version_manager_client/src/protocol/apps/regenerate_api_key_response.dart'
+    as _i11;
+import 'package:version_manager_client/src/protocol/apps/regenerate_api_key_request.dart'
     as _i12;
-import 'package:version_manager_client/src/protocol/auth/refresh_token.dart'
+import 'package:version_manager_client/src/protocol/apps/toggle_application_status_request.dart'
     as _i13;
-import 'package:version_manager_client/src/protocol/auth/common.dart' as _i14;
-import 'package:version_manager_client/src/protocol/sessions/session_info.dart'
+import 'package:version_manager_client/src/protocol/apps/transfer_application_ownership_request.dart'
+    as _i14;
+import 'package:version_manager_client/src/protocol/auth/check_email_and_send_code_response.dart'
     as _i15;
-import 'package:version_manager_client/src/protocol/sessions/terminate_session_request.dart'
+import 'package:version_manager_client/src/protocol/auth/check_email.dart'
     as _i16;
-import 'package:version_manager_client/src/protocol/teams/team.dart' as _i17;
-import 'package:version_manager_client/src/protocol/teams/create_team_request.dart'
+import 'package:version_manager_client/src/protocol/auth/send_code_response.dart'
+    as _i17;
+import 'package:version_manager_client/src/protocol/auth/register_send_code.dart'
     as _i18;
-import 'package:version_manager_client/src/protocol/teams/update_team_request.dart'
+import 'package:version_manager_client/src/protocol/auth/register_verify_code.dart'
     as _i19;
-import 'package:version_manager_client/src/protocol/teams/invite_team_member_request.dart'
+import 'package:version_manager_client/src/protocol/auth/auth_response.dart'
     as _i20;
-import 'package:version_manager_client/src/protocol/teams/team_member.dart'
-    as _i21;
-import 'package:version_manager_client/src/protocol/teams/respond_to_invitation_request.dart'
-    as _i22;
-import 'package:version_manager_client/src/protocol/teams/revoke_invitation_request.dart'
+import 'package:version_manager_client/src/protocol/auth/register.dart' as _i21;
+import 'package:version_manager_client/src/protocol/auth/login.dart' as _i22;
+import 'package:version_manager_client/src/protocol/auth/token_pair_response.dart'
     as _i23;
-import 'package:version_manager_client/src/protocol/teams/update_member_role_request.dart'
+import 'package:version_manager_client/src/protocol/auth/refresh_token.dart'
     as _i24;
-import 'package:version_manager_client/src/protocol/teams/remove_member_request.dart'
-    as _i25;
-import 'package:version_manager_client/src/protocol/teams/leave_team_request.dart'
+import 'package:version_manager_client/src/protocol/auth/common.dart' as _i25;
+import 'package:version_manager_client/src/protocol/sessions/session_info.dart'
     as _i26;
-import 'package:version_manager_client/src/protocol/teams/transfer_team_ownership_request.dart'
+import 'package:version_manager_client/src/protocol/sessions/terminate_session_request.dart'
     as _i27;
-import 'package:version_manager_client/src/protocol/teams/delete_team_request.dart'
-    as _i28;
-import 'package:version_manager_client/src/protocol/greetings/greeting.dart'
+import 'package:version_manager_client/src/protocol/teams/team.dart' as _i28;
+import 'package:version_manager_client/src/protocol/teams/create_team_request.dart'
     as _i29;
-import 'protocol.dart' as _i30;
+import 'package:version_manager_client/src/protocol/teams/update_team_request.dart'
+    as _i30;
+import 'package:version_manager_client/src/protocol/teams/invite_team_member_request.dart'
+    as _i31;
+import 'package:version_manager_client/src/protocol/teams/team_member.dart'
+    as _i32;
+import 'package:version_manager_client/src/protocol/teams/respond_to_invitation_request.dart'
+    as _i33;
+import 'package:version_manager_client/src/protocol/teams/revoke_invitation_request.dart'
+    as _i34;
+import 'package:version_manager_client/src/protocol/teams/update_member_role_request.dart'
+    as _i35;
+import 'package:version_manager_client/src/protocol/teams/remove_member_request.dart'
+    as _i36;
+import 'package:version_manager_client/src/protocol/teams/leave_team_request.dart'
+    as _i37;
+import 'package:version_manager_client/src/protocol/teams/transfer_team_ownership_request.dart'
+    as _i38;
+import 'package:version_manager_client/src/protocol/teams/delete_team_request.dart'
+    as _i39;
+import 'package:version_manager_client/src/protocol/greetings/greeting.dart'
+    as _i40;
+import 'protocol.dart' as _i41;
+
+/// Эндпоинт для управления приложениями.
+///
+/// Предоставляет функционал для:
+/// - Создания, редактирования и удаления приложений
+/// - Управления API ключами (генерация, регенерация)
+/// - Активации/деактивации приложений
+/// - Получения списка приложений пользователя
+///
+/// Наследуется от [LoggedInEndpoint] — требует авторизации.
+///
+/// ## Владение приложением
+/// - **user** — личное приложение пользователя
+/// - **team** — командное приложение (доступно owner/admin команды)
+/// {@category Endpoint}
+class EndpointApp extends EndpointLoggedIn {
+  EndpointApp(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'app';
+
+  /// Получить все приложения текущего пользователя.
+  ///
+  /// Возвращает личные приложения пользователя и приложения
+  /// команд, в которых он состоит.
+  _i2.Future<List<_i3.Application>> getMyApplications() =>
+      caller.callServerEndpoint<List<_i3.Application>>(
+        'app',
+        'getMyApplications',
+        {},
+      );
+
+  /// Получить приложение по ID.
+  ///
+  /// Проверяет права доступа пользователя к приложению.
+  _i2.Future<_i3.Application> getApplication({
+    required _i1.UuidValue applicationId,
+  }) => caller.callServerEndpoint<_i3.Application>(
+    'app',
+    'getApplication',
+    {'applicationId': applicationId},
+  );
+
+  /// Создать новое приложение.
+  ///
+  /// Генерирует уникальный API ключ при создании.
+  /// Ключ возвращается в ответе и показывается пользователю один раз.
+  _i2.Future<_i4.CreateApplicationResponse> createApplication({
+    required _i5.CreateApplicationRequest request,
+  }) => caller.callServerEndpoint<_i4.CreateApplicationResponse>(
+    'app',
+    'createApplication',
+    {'request': request},
+  );
+
+  /// Обновить данные приложения.
+  ///
+  /// Позволяет изменить все поля кроме namespace.
+  _i2.Future<_i3.Application> updateApplication({
+    required _i6.UpdateApplicationRequest request,
+  }) => caller.callServerEndpoint<_i3.Application>(
+    'app',
+    'updateApplication',
+    {'request': request},
+  );
+
+  /// Удалить приложение.
+  ///
+  /// Требует подтверждение — имя приложения должно совпадать.
+  /// При удалении также удаляются все версии, ссылки и логи.
+  _i2.Future<_i7.SuccessResponse> deleteApplication({
+    required _i8.DeleteApplicationRequest request,
+  }) => caller.callServerEndpoint<_i7.SuccessResponse>(
+    'app',
+    'deleteApplication',
+    {'request': request},
+  );
+
+  /// Получить замаскированный email владельца приложения.
+  ///
+  /// Используется для показа пользователю, на какой адрес
+  /// будет отправлен код подтверждения, до отправки кода.
+  _i2.Future<String> getRegenerationTargetEmail({
+    required _i1.UuidValue applicationId,
+  }) => caller.callServerEndpoint<String>(
+    'app',
+    'getRegenerationTargetEmail',
+    {'applicationId': applicationId},
+  );
+
+  /// Шаг 1: Запросить код подтверждения для регенерации API ключа.
+  ///
+  /// Отправляет 6-значный код на email владельца приложения.
+  /// Код действует 10 минут, максимум 5 попыток ввода.
+  _i2.Future<_i9.RequestApiKeyRegenerationResponse> requestApiKeyRegeneration({
+    required _i10.RequestApiKeyRegenerationRequest request,
+  }) => caller.callServerEndpoint<_i9.RequestApiKeyRegenerationResponse>(
+    'app',
+    'requestApiKeyRegeneration',
+    {'request': request},
+  );
+
+  /// Шаг 2: Регенерировать API ключ с подтверждением кода.
+  ///
+  /// Проверяет 6-значный код из email и генерирует новый API ключ.
+  /// Старый ключ становится недействительным.
+  /// Новый ключ показывается пользователю один раз.
+  _i2.Future<_i11.RegenerateApiKeyResponse> regenerateApiKey({
+    required _i12.RegenerateApiKeyRequest request,
+  }) => caller.callServerEndpoint<_i11.RegenerateApiKeyResponse>(
+    'app',
+    'regenerateApiKey',
+    {'request': request},
+  );
+
+  /// Активировать или деактивировать приложение.
+  _i2.Future<_i3.Application> toggleApplicationStatus({
+    required _i13.ToggleApplicationStatusRequest request,
+  }) => caller.callServerEndpoint<_i3.Application>(
+    'app',
+    'toggleApplicationStatus',
+    {'request': request},
+  );
+
+  /// Передать приложение другому владельцу.
+  ///
+  /// Поддерживает три сценария:
+  /// - **user → team**: личное приложение передаётся в команду
+  /// - **team → user**: командное приложение забирается в личные
+  /// - **team → team**: приложение переносится из одной команды в другую
+  ///
+  /// ## Безопасность
+  /// - **user → team**: пользователь должен быть владельцем приложения
+  ///   и owner/admin целевой команды.
+  /// - **team → user**: пользователь должен быть owner/admin исходной команды.
+  /// - **team → team**: пользователь должен быть owner/admin в обеих командах.
+  _i2.Future<_i7.SuccessResponse> transferApplicationOwnership({
+    required _i14.TransferApplicationOwnershipRequest request,
+  }) => caller.callServerEndpoint<_i7.SuccessResponse>(
+    'app',
+    'transferApplicationOwnership',
+    {'request': request},
+  );
+}
 
 /// Эндпоинт аутентификации и авторизации пользователей.
 ///
@@ -137,9 +303,9 @@ class EndpointAuth extends _i1.EndpointRef {
   ///   // Показать форму ввода кода
   /// }
   /// ```
-  _i2.Future<_i3.CheckEmailAndSendCodeResponse> checkEmailAndSendCode({
-    required _i4.CheckEmailRequest request,
-  }) => caller.callServerEndpoint<_i3.CheckEmailAndSendCodeResponse>(
+  _i2.Future<_i15.CheckEmailAndSendCodeResponse> checkEmailAndSendCode({
+    required _i16.CheckEmailRequest request,
+  }) => caller.callServerEndpoint<_i15.CheckEmailAndSendCodeResponse>(
     'auth',
     'checkEmailAndSendCode',
     {'request': request},
@@ -176,9 +342,9 @@ class EndpointAuth extends _i1.EndpointRef {
   ///   // Показать таймер обратного отсчёта
   /// }
   /// ```
-  _i2.Future<_i5.SendCodeResponse> resendCode({
-    required _i6.RegisterSendCodeRequest request,
-  }) => caller.callServerEndpoint<_i5.SendCodeResponse>(
+  _i2.Future<_i17.SendCodeResponse> resendCode({
+    required _i18.RegisterSendCodeRequest request,
+  }) => caller.callServerEndpoint<_i17.SendCodeResponse>(
     'auth',
     'resendCode',
     {'request': request},
@@ -203,7 +369,7 @@ class EndpointAuth extends _i1.EndpointRef {
   /// - [InvalidDataException] с `field: 'code'` — неверный/истёкший код или
   ///   превышен лимит попыток
   _i2.Future<_i7.SuccessResponse> verifyRegisterCode({
-    required _i8.RegisterVerifyCodeRequest request,
+    required _i19.RegisterVerifyCodeRequest request,
   }) => caller.callServerEndpoint<_i7.SuccessResponse>(
     'auth',
     'verifyRegisterCode',
@@ -256,9 +422,9 @@ class EndpointAuth extends _i1.EndpointRef {
   /// );
   /// // Сохранить токены и данные пользователя
   /// ```
-  _i2.Future<_i9.AuthResponse> register({
-    required _i10.RegisterRequest request,
-  }) => caller.callServerEndpoint<_i9.AuthResponse>(
+  _i2.Future<_i20.AuthResponse> register({
+    required _i21.RegisterRequest request,
+  }) => caller.callServerEndpoint<_i20.AuthResponse>(
     'auth',
     'register',
     {'request': request},
@@ -305,8 +471,8 @@ class EndpointAuth extends _i1.EndpointRef {
   ///   // Показать ошибку
   /// }
   /// ```
-  _i2.Future<_i9.AuthResponse> login({required _i11.LoginRequest request}) =>
-      caller.callServerEndpoint<_i9.AuthResponse>(
+  _i2.Future<_i20.AuthResponse> login({required _i22.LoginRequest request}) =>
+      caller.callServerEndpoint<_i20.AuthResponse>(
         'auth',
         'login',
         {'request': request},
@@ -345,9 +511,9 @@ class EndpointAuth extends _i1.EndpointRef {
   /// );
   /// // Заменить старые токены на новые
   /// ```
-  _i2.Future<_i12.TokenPairResponse> refreshTokens({
-    required _i13.RefreshTokenRequest request,
-  }) => caller.callServerEndpoint<_i12.TokenPairResponse>(
+  _i2.Future<_i23.TokenPairResponse> refreshTokens({
+    required _i24.RefreshTokenRequest request,
+  }) => caller.callServerEndpoint<_i23.TokenPairResponse>(
     'auth',
     'refreshTokens',
     {'request': request},
@@ -440,8 +606,8 @@ class EndpointAuth extends _i1.EndpointRef {
   /// final user = await client.auth.getCurrentUser('access_token');
   /// print(user.email);
   /// ```
-  _i2.Future<_i14.UserPublic> getCurrentUser() =>
-      caller.callServerEndpoint<_i14.UserPublic>(
+  _i2.Future<_i25.UserPublic> getCurrentUser() =>
+      caller.callServerEndpoint<_i25.UserPublic>(
         'auth',
         'getCurrentUser',
         {},
@@ -503,8 +669,8 @@ class EndpointSession extends EndpointLoggedIn {
   ///
   /// ### Возвращает
   /// Список [SessionInfo] со всеми активными сессиями пользователя.
-  _i2.Future<List<_i15.SessionInfo>> getActiveSessions() =>
-      caller.callServerEndpoint<List<_i15.SessionInfo>>(
+  _i2.Future<List<_i26.SessionInfo>> getActiveSessions() =>
+      caller.callServerEndpoint<List<_i26.SessionInfo>>(
         'session',
         'getActiveSessions',
         {},
@@ -518,7 +684,7 @@ class EndpointSession extends EndpointLoggedIn {
   /// Нельзя завершить текущую сессию этим методом.
   /// Для этого используйте метод `logout` из [AuthEndpoint].
   _i2.Future<_i7.SuccessResponse> terminateSession({
-    required _i16.TerminateSessionRequest request,
+    required _i27.TerminateSessionRequest request,
   }) => caller.callServerEndpoint<_i7.SuccessResponse>(
     'session',
     'terminateSession',
@@ -571,8 +737,8 @@ class EndpointTeam extends EndpointLoggedIn {
   ///
   /// ### Исключения
   /// - [InvalidDataException] если название пустое или слишком короткое
-  _i2.Future<_i17.Team> createTeam({required _i18.CreateTeamRequest request}) =>
-      caller.callServerEndpoint<_i17.Team>(
+  _i2.Future<_i28.Team> createTeam({required _i29.CreateTeamRequest request}) =>
+      caller.callServerEndpoint<_i28.Team>(
         'team',
         'createTeam',
         {'request': request},
@@ -581,8 +747,8 @@ class EndpointTeam extends EndpointLoggedIn {
   /// Обновить информацию о команде.
   ///
   /// Доступно только владельцу и администраторам команды.
-  _i2.Future<_i17.Team> updateTeam({required _i19.UpdateTeamRequest request}) =>
-      caller.callServerEndpoint<_i17.Team>(
+  _i2.Future<_i28.Team> updateTeam({required _i30.UpdateTeamRequest request}) =>
+      caller.callServerEndpoint<_i28.Team>(
         'team',
         'updateTeam',
         {'request': request},
@@ -591,8 +757,8 @@ class EndpointTeam extends EndpointLoggedIn {
   /// Получить команду по ID.
   ///
   /// Доступно только активным участникам команды.
-  _i2.Future<_i17.Team> getTeam({required _i1.UuidValue teamId}) =>
-      caller.callServerEndpoint<_i17.Team>(
+  _i2.Future<_i28.Team> getTeam({required _i1.UuidValue teamId}) =>
+      caller.callServerEndpoint<_i28.Team>(
         'team',
         'getTeam',
         {'teamId': teamId},
@@ -602,8 +768,8 @@ class EndpointTeam extends EndpointLoggedIn {
   ///
   /// Возвращает команды, где пользователь является активным участником.
   /// Команды с приглашениями (status = invited) не включаются.
-  _i2.Future<List<_i17.Team>> getMyTeams() =>
-      caller.callServerEndpoint<List<_i17.Team>>(
+  _i2.Future<List<_i28.Team>> getMyTeams() =>
+      caller.callServerEndpoint<List<_i28.Team>>(
         'team',
         'getMyTeams',
         {},
@@ -613,9 +779,9 @@ class EndpointTeam extends EndpointLoggedIn {
   ///
   /// Отправляет приглашение пользователю по email.
   /// Доступно владельцу и администраторам.
-  _i2.Future<List<_i17.Team>> inviteMember({
-    required _i20.InviteTeamMemberRequest request,
-  }) => caller.callServerEndpoint<List<_i17.Team>>(
+  _i2.Future<_i7.SuccessResponse> inviteMember({
+    required _i31.InviteTeamMemberRequest request,
+  }) => caller.callServerEndpoint<_i7.SuccessResponse>(
     'team',
     'inviteMember',
     {'request': request},
@@ -624,17 +790,17 @@ class EndpointTeam extends EndpointLoggedIn {
   /// Получить список приглашений для текущего пользователя.
   ///
   /// Возвращает все активные приглашения в команды.
-  _i2.Future<List<_i21.TeamMember>> getMyInvitations() =>
-      caller.callServerEndpoint<List<_i21.TeamMember>>(
+  _i2.Future<List<_i32.TeamMember>> getMyInvitations() =>
+      caller.callServerEndpoint<List<_i32.TeamMember>>(
         'team',
         'getMyInvitations',
         {},
       );
 
   /// Принять или отклонить приглашение в команду.
-  _i2.Future<List<_i17.Team>> respondToInvitation({
-    required _i22.RespondToInvitationRequest request,
-  }) => caller.callServerEndpoint<List<_i17.Team>>(
+  _i2.Future<_i7.SuccessResponse> respondToInvitation({
+    required _i33.RespondToInvitationRequest request,
+  }) => caller.callServerEndpoint<_i7.SuccessResponse>(
     'team',
     'respondToInvitation',
     {'request': request},
@@ -643,9 +809,9 @@ class EndpointTeam extends EndpointLoggedIn {
   /// Отозвать приглашение.
   ///
   /// Доступно владельцу и администраторам.
-  _i2.Future<List<_i17.Team>> revokeInvitation({
-    required _i23.RevokeInvitationRequest request,
-  }) => caller.callServerEndpoint<List<_i17.Team>>(
+  _i2.Future<_i7.SuccessResponse> revokeInvitation({
+    required _i34.RevokeInvitationRequest request,
+  }) => caller.callServerEndpoint<_i7.SuccessResponse>(
     'team',
     'revokeInvitation',
     {'request': request},
@@ -655,9 +821,9 @@ class EndpointTeam extends EndpointLoggedIn {
   ///
   /// Возвращает всех участников (активных и приглашённых).
   /// Доступно всем активным участникам команды.
-  _i2.Future<List<_i21.TeamMember>> getTeamMembers({
+  _i2.Future<List<_i32.TeamMember>> getTeamMembers({
     required _i1.UuidValue teamId,
-  }) => caller.callServerEndpoint<List<_i21.TeamMember>>(
+  }) => caller.callServerEndpoint<List<_i32.TeamMember>>(
     'team',
     'getTeamMembers',
     {'teamId': teamId},
@@ -666,9 +832,9 @@ class EndpointTeam extends EndpointLoggedIn {
   /// Изменить роль участника команды.
   ///
   /// Доступно владельцу и администраторам (с ограничениями).
-  _i2.Future<List<_i17.Team>> updateMemberRole({
-    required _i24.UpdateMemberRoleRequest request,
-  }) => caller.callServerEndpoint<List<_i17.Team>>(
+  _i2.Future<_i7.SuccessResponse> updateMemberRole({
+    required _i35.UpdateMemberRoleRequest request,
+  }) => caller.callServerEndpoint<_i7.SuccessResponse>(
     'team',
     'updateMemberRole',
     {'request': request},
@@ -677,9 +843,9 @@ class EndpointTeam extends EndpointLoggedIn {
   /// Удалить участника из команды.
   ///
   /// Доступно владельцу и администраторам.
-  _i2.Future<List<_i17.Team>> removeMember({
-    required _i25.RemoveMemberRequest request,
-  }) => caller.callServerEndpoint<List<_i17.Team>>(
+  _i2.Future<_i7.SuccessResponse> removeMember({
+    required _i36.RemoveMemberRequest request,
+  }) => caller.callServerEndpoint<_i7.SuccessResponse>(
     'team',
     'removeMember',
     {'request': request},
@@ -688,9 +854,9 @@ class EndpointTeam extends EndpointLoggedIn {
   /// Покинуть команду.
   ///
   /// Владелец не может покинуть команду — нужно сначала передать владение.
-  _i2.Future<List<_i17.Team>> leaveTeam({
-    required _i26.LeaveTeamRequest request,
-  }) => caller.callServerEndpoint<List<_i17.Team>>(
+  _i2.Future<_i7.SuccessResponse> leaveTeam({
+    required _i37.LeaveTeamRequest request,
+  }) => caller.callServerEndpoint<_i7.SuccessResponse>(
     'team',
     'leaveTeam',
     {'request': request},
@@ -700,9 +866,9 @@ class EndpointTeam extends EndpointLoggedIn {
   ///
   /// Доступно только владельцу.
   /// После передачи бывший владелец становится администратором.
-  _i2.Future<List<_i17.Team>> transferOwnership({
-    required _i27.TransferTeamOwnershipRequest request,
-  }) => caller.callServerEndpoint<List<_i17.Team>>(
+  _i2.Future<_i7.SuccessResponse> transferOwnership({
+    required _i38.TransferTeamOwnershipRequest request,
+  }) => caller.callServerEndpoint<_i7.SuccessResponse>(
     'team',
     'transferOwnership',
     {'request': request},
@@ -717,9 +883,9 @@ class EndpointTeam extends EndpointLoggedIn {
   /// - [request.teamId] — ID команды
   /// - [request.transferAppsToOwner] — true = забрать приложения, false = удалить
   /// - [request.confirmationName] — название команды для подтверждения
-  _i2.Future<List<_i17.Team>> deleteTeam({
-    required _i28.DeleteTeamRequest request,
-  }) => caller.callServerEndpoint<List<_i17.Team>>(
+  _i2.Future<_i7.SuccessResponse> deleteTeam({
+    required _i39.DeleteTeamRequest request,
+  }) => caller.callServerEndpoint<_i7.SuccessResponse>(
     'team',
     'deleteTeam',
     {'request': request},
@@ -738,8 +904,8 @@ class EndpointGreeting extends EndpointLoggedIn {
   String get name => 'greeting';
 
   /// Returns a personalized greeting message: "Hello {name}".
-  _i2.Future<_i29.Greeting> hello(String name) =>
-      caller.callServerEndpoint<_i29.Greeting>(
+  _i2.Future<_i40.Greeting> hello(String name) =>
+      caller.callServerEndpoint<_i40.Greeting>(
         'greeting',
         'hello',
         {'name': name},
@@ -766,7 +932,7 @@ class Client extends _i1.ServerpodClientShared {
     bool? disconnectStreamsOnLostInternetConnection,
   }) : super(
          host,
-         _i30.Protocol(),
+         _i41.Protocol(),
          securityContext: securityContext,
          streamingConnectionTimeout: streamingConnectionTimeout,
          connectionTimeout: connectionTimeout,
@@ -775,11 +941,14 @@ class Client extends _i1.ServerpodClientShared {
          disconnectStreamsOnLostInternetConnection:
              disconnectStreamsOnLostInternetConnection,
        ) {
+    app = EndpointApp(this);
     auth = EndpointAuth(this);
     session = EndpointSession(this);
     team = EndpointTeam(this);
     greeting = EndpointGreeting(this);
   }
+
+  late final EndpointApp app;
 
   late final EndpointAuth auth;
 
@@ -791,6 +960,7 @@ class Client extends _i1.ServerpodClientShared {
 
   @override
   Map<String, _i1.EndpointRef> get endpointRefLookup => {
+    'app': app,
     'auth': auth,
     'session': session,
     'team': team,

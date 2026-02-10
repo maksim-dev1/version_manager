@@ -212,7 +212,27 @@ class TeamEndpoint extends LoggedInEndpoint {
       level: LogLevel.info,
     );
 
-    final teams = await _getUserTeams(session, userId: userId);
+    final memberships = await TeamMember.db.find(
+      session,
+      where: (t) =>
+          (t.userId.equals(userId)) &
+          (t.status.equals(TeamMemberStatusType.active)),
+    );
+
+    if (memberships.isEmpty) return [];
+
+    final teamIds = memberships.map((m) => m.teamId).toList();
+    final teams = await Team.db.find(
+      session,
+      where: (t) => t.id.inSet(teamIds.toSet()),
+      orderBy: (t) => t.name,
+      include: Team.include(
+        owner: User.include(),
+        members: TeamMember.includeList(
+          include: TeamMember.include(user: User.include()),
+        ),
+      ),
+    );
 
     session.log(
       'getMyTeams: найдено ${teams.length} команд',
@@ -230,7 +250,7 @@ class TeamEndpoint extends LoggedInEndpoint {
   ///
   /// Отправляет приглашение пользователю по email.
   /// Доступно владельцу и администраторам.
-  Future<List<Team>> inviteMember(
+  Future<SuccessResponse> inviteMember(
     Session session, {
     required InviteTeamMemberRequest request,
   }) async {
@@ -322,32 +342,34 @@ class TeamEndpoint extends LoggedInEndpoint {
 
     await TeamMember.db.insertRow(session, member);
 
-    // Отправляем уведомление на email
-    try {
-      await _emailService.sendNotification(
-        email: invitee.email,
-        title: 'Приглашение в команду "${team?.name ?? 'Команда'}"',
-        message:
-            'Вы получили приглашение присоединиться к команде. '
-            'Роль: ${_getRoleDisplayName(request.role)}. '
-            'Для принятия приглашения войдите в Version Manager и перейдите в раздел "Приглашения". '
-            'Приглашение действительно 7 дней.',
-        icon: '👥',
-        appName: 'Version Manager',
-      );
-    } catch (e) {
-      session.log(
-        'inviteMember: ошибка отправки email: $e',
-        level: LogLevel.warning,
-      );
-    }
+    // Отправляем уведомление на email (fire-and-forget)
+    // ignore: unawaited_futures
+    _emailService
+        .sendNotification(
+          email: invitee.email,
+          title: 'Приглашение в команду "${team?.name ?? 'Команда'}"',
+          message:
+              'Вы получили приглашение присоединиться к команде. '
+              'Роль: ${_getRoleDisplayName(request.role)}. '
+              'Для принятия приглашения войдите в Version Manager и перейдите в раздел "Приглашения". '
+              'Приглашение действительно 7 дней.',
+          icon: '👥',
+          appName: 'Version Manager',
+        )
+        .catchError((Object e) {
+          session.log(
+            'inviteMember: ошибка отправки email: $e',
+            level: LogLevel.warning,
+          );
+          return false;
+        });
 
     session.log(
       'inviteMember: приглашение отправлено пользователю ${invitee.id}',
       level: LogLevel.info,
     );
 
-    return _getUserTeams(session, userId: userId);
+    return SuccessResponse(success: true, message: 'Приглашение отправлено');
   }
 
   /// Получить список приглашений для текущего пользователя.
@@ -390,7 +412,7 @@ class TeamEndpoint extends LoggedInEndpoint {
   }
 
   /// Принять или отклонить приглашение в команду.
-  Future<List<Team>> respondToInvitation(
+  Future<SuccessResponse> respondToInvitation(
     Session session, {
     required RespondToInvitationRequest request,
   }) async {
@@ -439,7 +461,7 @@ class TeamEndpoint extends LoggedInEndpoint {
         level: LogLevel.info,
       );
 
-      return _getUserTeams(session, userId: userId);
+      return SuccessResponse(success: true, message: 'Приглашение принято');
     } else {
       // Отклоняем — удаляем запись
       await TeamMember.db.deleteRow(session, invitation);
@@ -449,14 +471,14 @@ class TeamEndpoint extends LoggedInEndpoint {
         level: LogLevel.info,
       );
 
-      return _getUserTeams(session, userId: userId);
+      return SuccessResponse(success: true, message: 'Приглашение отклонено');
     }
   }
 
   /// Отозвать приглашение.
   ///
   /// Доступно владельцу и администраторам.
-  Future<List<Team>> revokeInvitation(
+  Future<SuccessResponse> revokeInvitation(
     Session session, {
     required RevokeInvitationRequest request,
   }) async {
@@ -501,7 +523,7 @@ class TeamEndpoint extends LoggedInEndpoint {
       level: LogLevel.info,
     );
 
-    return _getUserTeams(session, userId: userId);
+    return SuccessResponse(success: true, message: 'Приглашение отозвано');
   }
 
   // ============================================================
@@ -554,7 +576,7 @@ class TeamEndpoint extends LoggedInEndpoint {
   /// Изменить роль участника команды.
   ///
   /// Доступно владельцу и администраторам (с ограничениями).
-  Future<List<Team>> updateMemberRole(
+  Future<SuccessResponse> updateMemberRole(
     Session session, {
     required UpdateMemberRoleRequest request,
   }) async {
@@ -634,13 +656,13 @@ class TeamEndpoint extends LoggedInEndpoint {
       level: LogLevel.info,
     );
 
-    return _getUserTeams(session, userId: userId);
+    return SuccessResponse(success: true, message: 'Роль участника обновлена');
   }
 
   /// Удалить участника из команды.
   ///
   /// Доступно владельцу и администраторам.
-  Future<List<Team>> removeMember(
+  Future<SuccessResponse> removeMember(
     Session session, {
     required RemoveMemberRequest request,
   }) async {
@@ -708,13 +730,13 @@ class TeamEndpoint extends LoggedInEndpoint {
       level: LogLevel.info,
     );
 
-    return _getUserTeams(session, userId: userId);
+    return SuccessResponse(success: true, message: 'Участник удалён');
   }
 
   /// Покинуть команду.
   ///
   /// Владелец не может покинуть команду — нужно сначала передать владение.
-  Future<List<Team>> leaveTeam(
+  Future<SuccessResponse> leaveTeam(
     Session session, {
     required LeaveTeamRequest request,
   }) async {
@@ -758,7 +780,7 @@ class TeamEndpoint extends LoggedInEndpoint {
       level: LogLevel.info,
     );
 
-    return _getUserTeams(session, userId: userId);
+    return SuccessResponse(success: true, message: 'Вы покинули команду');
   }
 
   // ============================================================
@@ -769,7 +791,7 @@ class TeamEndpoint extends LoggedInEndpoint {
   ///
   /// Доступно только владельцу.
   /// После передачи бывший владелец становится администратором.
-  Future<List<Team>> transferOwnership(
+  Future<SuccessResponse> transferOwnership(
     Session session, {
     required TransferTeamOwnershipRequest request,
   }) async {
@@ -839,7 +861,7 @@ class TeamEndpoint extends LoggedInEndpoint {
       level: LogLevel.info,
     );
 
-    return _getUserTeams(session, userId: userId);
+    return SuccessResponse(success: true, message: 'Владение передано');
   }
 
   /// Удалить команду.
@@ -851,7 +873,7 @@ class TeamEndpoint extends LoggedInEndpoint {
   /// - [request.teamId] — ID команды
   /// - [request.transferAppsToOwner] — true = забрать приложения, false = удалить
   /// - [request.confirmationName] — название команды для подтверждения
-  Future<List<Team>> deleteTeam(
+  Future<SuccessResponse> deleteTeam(
     Session session, {
     required DeleteTeamRequest request,
   }) async {
@@ -946,42 +968,12 @@ class TeamEndpoint extends LoggedInEndpoint {
       level: LogLevel.info,
     );
 
-    return _getUserTeams(session, userId: userId);
+    return SuccessResponse(success: true, message: 'Команда удалена');
   }
 
   // ============================================================
   // ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ
   // ============================================================
-
-  /// Получить список команд пользователя (с участниками и владельцем).
-  ///
-  /// Используется для возврата обновлённого списка после мутаций.
-  Future<List<Team>> _getUserTeams(
-    Session session, {
-    required UuidValue userId,
-  }) async {
-    final memberships = await TeamMember.db.find(
-      session,
-      where: (t) =>
-          (t.userId.equals(userId)) &
-          (t.status.equals(TeamMemberStatusType.active)),
-    );
-
-    if (memberships.isEmpty) return [];
-
-    final teamIds = memberships.map((m) => m.teamId).toList();
-    return Team.db.find(
-      session,
-      where: (t) => t.id.inSet(teamIds.toSet()),
-      orderBy: (t) => t.name,
-      include: Team.include(
-        owner: User.include(),
-        members: TeamMember.includeList(
-          include: TeamMember.include(user: User.include()),
-        ),
-      ),
-    );
-  }
 
   /// Получить активного участника команды.
   Future<TeamMember?> _getActiveMember(

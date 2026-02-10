@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class AppNavigationRail extends StatefulWidget {
@@ -71,54 +72,41 @@ class _AppNavigationRailState extends State<AppNavigationRail> {
                   tooltip: 'Переключить тему',
                   onPressed: widget.onThemeToggle,
                 ),
-                if (_extended) ...[
-                  const SizedBox(height: 8),
-                  Text(
-                    widget.themeMode == ThemeMode.dark ? 'Тёмная' : 'Светлая',
-                    style: Theme.of(context).textTheme.bodySmall,
+                if (_extended)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Text(
+                      widget.themeMode == ThemeMode.dark ? 'Тёмная' : 'Светлая',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
                   ),
-                ],
               ],
             ),
           ),
         ),
       ),
-      destinations: const [
-        NavigationRailDestination(
-          icon: Icon(Icons.home_outlined),
-          selectedIcon: Icon(Icons.home_rounded),
-          label: Text('Главная'),
-        ),
-        NavigationRailDestination(
-          icon: Icon(Icons.folder_outlined),
-          selectedIcon: Icon(Icons.folder_rounded),
-          label: Text('Проекты'),
-        ),
-        NavigationRailDestination(
-          icon: Icon(Icons.cloud_upload_outlined),
-          selectedIcon: Icon(Icons.cloud_upload_rounded),
-          label: Text('Релизы'),
-        ),
-        NavigationRailDestination(
-          icon: Icon(Icons.analytics_outlined),
-          selectedIcon: Icon(Icons.analytics_rounded),
-          label: Text('Аналитика'),
-        ),
-        NavigationRailDestination(
-          icon: Icon(Icons.settings_outlined),
-          selectedIcon: Icon(Icons.settings_rounded),
-          label: Text('Настройки'),
-        ),
-        NavigationRailDestination(
+      destinations: [
+        const NavigationRailDestination(
           icon: Icon(Icons.groups_outlined),
           selectedIcon: Icon(Icons.groups_rounded),
           label: Text('Команды'),
         ),
-        NavigationRailDestination(
+        const NavigationRailDestination(
+          icon: Icon(Icons.apps_outlined),
+          selectedIcon: Icon(Icons.apps_rounded),
+          label: Text('Приложения'),
+        ),
+        const NavigationRailDestination(
           icon: Icon(Icons.person_outlined),
           selectedIcon: Icon(Icons.person_rounded),
           label: Text('Профиль'),
         ),
+        if (kDebugMode)
+          const NavigationRailDestination(
+            icon: Icon(Icons.palette_outlined),
+            selectedIcon: Icon(Icons.palette_rounded),
+            label: Text('UI Kit'),
+          ),
       ],
     );
   }

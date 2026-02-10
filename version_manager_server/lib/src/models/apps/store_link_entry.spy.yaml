@@ -1,0 +1,6 @@
+### Запись ссылки на магазин (DTO, без таблицы)
+class: StoreLinkEntry
+fields:
+  platform: PlatformType
+  storeName: String
+  url: String

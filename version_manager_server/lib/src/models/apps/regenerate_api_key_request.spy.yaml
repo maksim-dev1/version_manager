@@ -1,0 +1,5 @@
+### Запрос на регенерацию API ключа
+class: RegenerateApiKeyRequest
+fields:
+  applicationId: UuidValue
+  code: String

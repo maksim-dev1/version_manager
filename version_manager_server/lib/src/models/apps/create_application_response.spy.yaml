@@ -1,0 +1,5 @@
+### Ответ при создании приложения (содержит API ключ)
+class: CreateApplicationResponse
+fields:
+  application: Application
+  apiKey: String

@@ -1,0 +1,5 @@
+### Запрос на удаление приложения
+class: DeleteApplicationRequest
+fields:
+  applicationId: UuidValue
+  confirmationName: String

@@ -1,3 +1,14 @@
+app:
+  - getMyApplications:
+  - getApplication:
+  - createApplication:
+  - updateApplication:
+  - deleteApplication:
+  - getRegenerationTargetEmail:
+  - requestApiKeyRegeneration:
+  - regenerateApiKey:
+  - toggleApplicationStatus:
+  - transferApplicationOwnership:
 auth:
   - checkEmailAndSendCode:
   - resendCode:

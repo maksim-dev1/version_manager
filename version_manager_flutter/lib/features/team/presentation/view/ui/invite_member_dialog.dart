@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:version_manager_client/version_manager_client.dart';
-import 'package:version_manager_flutter/features/team/presentation/bloc/team_bloc.dart';
+import 'package:version_manager_flutter/features/team_member/presentation/bloc/team_member_bloc.dart';
 import 'package:version_manager_flutter/shared/widgets/role_selector.dart';
 
 /// Диалог приглашения участника в команду.
@@ -91,10 +91,10 @@ class _InviteMemberDialogState extends State<InviteMemberDialog> {
 
   void _submit() {
     if (_formKey.currentState?.validate() ?? false) {
-      final bloc = context.read<TeamBloc>();
+      final bloc = context.read<TeamMemberBloc>();
       Navigator.pop(context);
       bloc.add(
-        TeamEvent.inviteMember(
+        TeamMemberEvent.inviteMember(
           teamId: widget.teamId,
           email: _emailController.text.trim(),
           role: _selectedRole,

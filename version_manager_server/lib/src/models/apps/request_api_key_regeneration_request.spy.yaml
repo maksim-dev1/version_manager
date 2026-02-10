@@ -1,0 +1,4 @@
+### Запрос на отправку кода подтверждения для регенерации API ключа
+class: RequestApiKeyRegenerationRequest
+fields:
+  applicationId: UuidValue

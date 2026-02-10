@@ -18,14 +18,4 @@ sealed class TeamState with _$TeamState {
 
   /// Ошибка загрузки списка команд.
   const factory TeamState.teamError({required String message}) = TeamError;
-
-  /// Действие с участником выполнено успешно (для SnackBar).
-  const factory TeamState.memberActionSuccess({
-    required String message,
-  }) = MemberActionSuccess;
-
-  /// Действие с участником завершилось ошибкой (для SnackBar).
-  const factory TeamState.memberActionError({
-    required String message,
-  }) = MemberActionError;
 }

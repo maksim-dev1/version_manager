@@ -9,6 +9,7 @@ import 'package:version_manager_flutter/features/team/presentation/view/ui/invit
 import 'package:version_manager_flutter/features/team/presentation/view/ui/leave_team_dialog.dart';
 import 'package:version_manager_flutter/features/team/presentation/view/ui/remove_member_dialog.dart';
 import 'package:version_manager_flutter/features/team/presentation/view/ui/transfer_ownership_dialog.dart';
+import 'package:version_manager_flutter/features/team_member/presentation/bloc/team_member_bloc.dart';
 
 class TeamCard extends StatelessWidget {
   final Team team;
@@ -27,6 +28,7 @@ class TeamCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final allMembers = team.members ?? [];
+    final isCompact = MediaQuery.sizeOf(context).width < 600;
 
     // Определяем роль текущего пользователя в команде
     final currentMember = allMembers.cast<TeamMember?>().firstWhere(
@@ -109,91 +111,35 @@ class TeamCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                // Действия с командой — инлайн-кнопки
-                // Редактировать — владелец и админ
-                if (isOwnerOrAdmin)
-                  IconButton(
-                    onPressed: () => showDialog(
-                      context: context,
-                      builder: (_) => BlocProvider.value(
-                        value: context.read<TeamBloc>(),
-                        child: EditTeamDialog(team: team),
-                      ),
-                    ),
-                    icon: const Icon(Icons.edit_outlined, size: 20),
-                    tooltip: 'Редактировать',
-                    visualDensity: VisualDensity.compact,
-                  ),
-                // Передать владение — только владелец
-                if (isOwner)
-                  IconButton(
-                    onPressed: () => showDialog(
-                      context: context,
-                      builder: (_) => BlocProvider.value(
-                        value: context.read<TeamBloc>(),
-                        child: TransferOwnershipDialog(team: team),
-                      ),
-                    ),
-                    icon: const Icon(Icons.swap_horiz, size: 20),
-                    tooltip: 'Передать владение',
-                    visualDensity: VisualDensity.compact,
-                  ),
-                // Покинуть команду — все кроме владельца
-                if (!isOwner && currentMember != null)
-                  IconButton(
-                    onPressed: () => showDialog(
-                      context: context,
-                      builder: (_) => BlocProvider.value(
-                        value: context.read<TeamBloc>(),
-                        child: LeaveTeamDialog(team: team),
-                      ),
-                    ),
-                    icon: Icon(
-                      Icons.exit_to_app,
-                      size: 20,
-                      color: colorScheme.error,
-                    ),
-                    tooltip: 'Покинуть команду',
-                    visualDensity: VisualDensity.compact,
-                  ),
-                // Удалить команду — только владелец
-                if (isOwner)
-                  IconButton(
-                    onPressed: () => showDialog(
-                      context: context,
-                      builder: (_) => BlocProvider.value(
-                        value: context.read<TeamBloc>(),
-                        child: DeleteTeamDialog(team: team),
-                      ),
-                    ),
-                    icon: Icon(
-                      Icons.delete_outline,
-                      size: 20,
-                      color: colorScheme.error,
-                    ),
-                    tooltip: 'Удалить команду',
-                    visualDensity: VisualDensity.compact,
-                  ),
+                // На мобильном — PopupMenu, на десктопе — инлайн-кнопки
+                _TeamCardActions(
+                  isCompact: isCompact,
+                  team: team,
+                  isOwnerOrAdmin: isOwnerOrAdmin,
+                  isOwner: isOwner,
+                  currentMember: currentMember,
+                  colorScheme: colorScheme,
+                ),
               ],
             ),
             const SizedBox(height: 12),
 
             // Мета-информация
-            Row(
+            Wrap(
+              spacing: 12,
+              runSpacing: 8,
               children: [
                 _DetailChip(
                   icon: Icons.calendar_today,
                   label: _formatDate(team.createdAt),
                   colorScheme: colorScheme,
                 ),
-                if (currentRole != null) ...[
-                  const SizedBox(width: 12),
+                if (currentRole != null)
                   _DetailChip(
                     icon: Icons.shield_outlined,
                     label: _roleLabel(currentRole),
                     colorScheme: colorScheme,
                   ),
-                ],
               ],
             ),
             const SizedBox(height: 16),
@@ -225,7 +171,7 @@ class TeamCard extends StatelessWidget {
                     onPressed: () => showDialog(
                       context: context,
                       builder: (_) => BlocProvider.value(
-                        value: context.read<TeamBloc>(),
+                        value: context.read<TeamMemberBloc>(),
                         child: InviteMemberDialog(teamId: team.id!),
                       ),
                     ),
@@ -292,6 +238,202 @@ class TeamCard extends StatelessWidget {
 }
 
 /// Строка участника команды.
+/// Действия с командой — PopupMenu на мобильном, инлайн-кнопки на десктопе.
+class _TeamCardActions extends StatelessWidget {
+  final bool isCompact;
+  final Team team;
+  final bool isOwnerOrAdmin;
+  final bool isOwner;
+  final TeamMember? currentMember;
+  final ColorScheme colorScheme;
+
+  const _TeamCardActions({
+    required this.isCompact,
+    required this.team,
+    required this.isOwnerOrAdmin,
+    required this.isOwner,
+    required this.currentMember,
+    required this.colorScheme,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final hasActions = isOwnerOrAdmin || (!isOwner && currentMember != null);
+    if (!hasActions) return const SizedBox.shrink();
+
+    if (isCompact) {
+      return PopupMenuButton<String>(
+        icon: const Icon(Icons.more_vert, size: 20),
+        padding: EdgeInsets.zero,
+        onSelected: (value) => _onAction(context, value),
+        itemBuilder: (context) => [
+          if (isOwnerOrAdmin)
+            const PopupMenuItem(
+              value: 'edit',
+              child: ListTile(
+                leading: Icon(Icons.edit_outlined, size: 20),
+                title: Text('Редактировать'),
+                contentPadding: EdgeInsets.zero,
+                dense: true,
+              ),
+            ),
+          if (isOwner)
+            const PopupMenuItem(
+              value: 'transfer',
+              child: ListTile(
+                leading: Icon(Icons.swap_horiz, size: 20),
+                title: Text('Передать владение'),
+                contentPadding: EdgeInsets.zero,
+                dense: true,
+              ),
+            ),
+          if (!isOwner && currentMember != null)
+            PopupMenuItem(
+              value: 'leave',
+              child: ListTile(
+                leading: Icon(
+                  Icons.exit_to_app,
+                  size: 20,
+                  color: colorScheme.error,
+                ),
+                title: Text(
+                  'Покинуть',
+                  style: TextStyle(color: colorScheme.error),
+                ),
+                contentPadding: EdgeInsets.zero,
+                dense: true,
+              ),
+            ),
+          if (isOwner)
+            PopupMenuItem(
+              value: 'delete',
+              child: ListTile(
+                leading: Icon(
+                  Icons.delete_outline,
+                  size: 20,
+                  color: colorScheme.error,
+                ),
+                title: Text(
+                  'Удалить',
+                  style: TextStyle(color: colorScheme.error),
+                ),
+                contentPadding: EdgeInsets.zero,
+                dense: true,
+              ),
+            ),
+        ],
+      );
+    }
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (isOwnerOrAdmin)
+          IconButton(
+            onPressed: () => _showDialog(
+              context,
+              BlocProvider.value(
+                value: context.read<TeamBloc>(),
+                child: EditTeamDialog(team: team),
+              ),
+            ),
+            icon: const Icon(Icons.edit_outlined, size: 20),
+            tooltip: 'Редактировать',
+            visualDensity: VisualDensity.compact,
+          ),
+        if (isOwner)
+          IconButton(
+            onPressed: () => _showDialog(
+              context,
+              BlocProvider.value(
+                value: context.read<TeamMemberBloc>(),
+                child: TransferOwnershipDialog(team: team),
+              ),
+            ),
+            icon: const Icon(Icons.swap_horiz, size: 20),
+            tooltip: 'Передать владение',
+            visualDensity: VisualDensity.compact,
+          ),
+        if (!isOwner && currentMember != null)
+          IconButton(
+            onPressed: () => _showDialog(
+              context,
+              BlocProvider.value(
+                value: context.read<TeamMemberBloc>(),
+                child: LeaveTeamDialog(team: team),
+              ),
+            ),
+            icon: Icon(
+              Icons.exit_to_app,
+              size: 20,
+              color: colorScheme.error,
+            ),
+            tooltip: 'Покинуть команду',
+            visualDensity: VisualDensity.compact,
+          ),
+        if (isOwner)
+          IconButton(
+            onPressed: () => _showDialog(
+              context,
+              BlocProvider.value(
+                value: context.read<TeamBloc>(),
+                child: DeleteTeamDialog(team: team),
+              ),
+            ),
+            icon: Icon(
+              Icons.delete_outline,
+              size: 20,
+              color: colorScheme.error,
+            ),
+            tooltip: 'Удалить команду',
+            visualDensity: VisualDensity.compact,
+          ),
+      ],
+    );
+  }
+
+  void _onAction(BuildContext context, String value) {
+    switch (value) {
+      case 'edit':
+        _showDialog(
+          context,
+          BlocProvider.value(
+            value: context.read<TeamBloc>(),
+            child: EditTeamDialog(team: team),
+          ),
+        );
+      case 'transfer':
+        _showDialog(
+          context,
+          BlocProvider.value(
+            value: context.read<TeamMemberBloc>(),
+            child: TransferOwnershipDialog(team: team),
+          ),
+        );
+      case 'leave':
+        _showDialog(
+          context,
+          BlocProvider.value(
+            value: context.read<TeamMemberBloc>(),
+            child: LeaveTeamDialog(team: team),
+          ),
+        );
+      case 'delete':
+        _showDialog(
+          context,
+          BlocProvider.value(
+            value: context.read<TeamBloc>(),
+            child: DeleteTeamDialog(team: team),
+          ),
+        );
+    }
+  }
+
+  void _showDialog(BuildContext context, Widget dialog) {
+    showDialog(context: context, builder: (_) => dialog);
+  }
+}
+
 class _MemberTile extends StatelessWidget {
   final TeamMember member;
   final UuidValue? currentUserId;
@@ -369,36 +511,38 @@ class _MemberTile extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      if (_isCurrentUser) ...[
-                        const SizedBox(width: 6),
-                        Text(
-                          '(вы)',
-                          style: textTheme.bodySmall?.copyWith(
-                            color: colorScheme.primary,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                      if (_isInvited) ...[
-                        const SizedBox(width: 6),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 6,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: colorScheme.tertiaryContainer,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
+                      if (_isCurrentUser)
+                        Padding(
+                          padding: const EdgeInsets.only(left: 6),
                           child: Text(
-                            'Приглашён',
-                            style: textTheme.labelSmall?.copyWith(
-                              color: colorScheme.onTertiaryContainer,
-                              fontSize: 10,
+                            '(вы)',
+                            style: textTheme.bodySmall?.copyWith(
+                              color: colorScheme.primary,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                         ),
-                      ],
+                      if (_isInvited)
+                        Padding(
+                          padding: const EdgeInsets.only(left: 6),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: colorScheme.tertiaryContainer,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              'Приглашён',
+                              style: textTheme.labelSmall?.copyWith(
+                                color: colorScheme.onTertiaryContainer,
+                                fontSize: 10,
+                              ),
+                            ),
+                          ),
+                        ),
                     ],
                   ),
                   if (displayName.isNotEmpty && email.isNotEmpty)
@@ -414,15 +558,23 @@ class _MemberTile extends StatelessWidget {
             ),
 
             // Бейдж роли (кликабельный для смены роли)
-            _buildRoleBadge(context),
+            _RoleBadge(
+              member: member,
+              isOwnerOrAdmin: isOwnerOrAdmin,
+              isCurrentUser: _isCurrentUser,
+              isMemberOwner: _isMemberOwner,
+              isInvited: _isInvited,
+              colorScheme: colorScheme,
+              textTheme: textTheme,
+            ),
 
             // Действия с участником — инлайн-кнопки
             // Отозвать приглашение — владелец/админ, приглашённый
             if (isOwnerOrAdmin && _isInvited && member.id != null)
               IconButton(
                 onPressed: () {
-                  context.read<TeamBloc>().add(
-                    TeamEvent.revokeInvitation(memberId: member.id!),
+                  context.read<TeamMemberBloc>().add(
+                    TeamMemberEvent.revokeInvitation(memberId: member.id!),
                   );
                 },
                 icon: Icon(
@@ -447,7 +599,7 @@ class _MemberTile extends StatelessWidget {
                 onPressed: () => showDialog(
                   context: context,
                   builder: (_) => BlocProvider.value(
-                    value: context.read<TeamBloc>(),
+                    value: context.read<TeamMemberBloc>(),
                     child: RemoveMemberDialog(
                       member: member,
                       teamName: teamName,
@@ -473,9 +625,43 @@ class _MemberTile extends StatelessWidget {
     );
   }
 
-  Widget _buildRoleBadge(BuildContext context) {
+  String _getInitials(String displayName, String email) {
+    if (displayName.isNotEmpty) {
+      final parts = displayName.trim().split(' ');
+      if (parts.length >= 2) {
+        return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
+      }
+      return displayName[0].toUpperCase();
+    }
+    if (email.isNotEmpty) return email[0].toUpperCase();
+    return '?';
+  }
+}
+
+/// Бейдж роли участника (кликабельный для смены роли).
+class _RoleBadge extends StatelessWidget {
+  final TeamMember member;
+  final bool isOwnerOrAdmin;
+  final bool isCurrentUser;
+  final bool isMemberOwner;
+  final bool isInvited;
+  final ColorScheme colorScheme;
+  final TextTheme textTheme;
+
+  const _RoleBadge({
+    required this.member,
+    required this.isOwnerOrAdmin,
+    required this.isCurrentUser,
+    required this.isMemberOwner,
+    required this.isInvited,
+    required this.colorScheme,
+    required this.textTheme,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     final canChangeRole =
-        isOwnerOrAdmin && !_isCurrentUser && !_isMemberOwner && !_isInvited;
+        isOwnerOrAdmin && !isCurrentUser && !isMemberOwner && !isInvited;
 
     final badge = Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -493,14 +679,15 @@ class _MemberTile extends StatelessWidget {
               fontWeight: FontWeight.w600,
             ),
           ),
-          if (canChangeRole) ...[
-            const SizedBox(width: 4),
-            Icon(
-              Icons.edit,
-              size: 12,
-              color: _roleBadgeColor(member.role),
+          if (canChangeRole)
+            Padding(
+              padding: const EdgeInsets.only(left: 4),
+              child: Icon(
+                Icons.edit,
+                size: 12,
+                color: _roleBadgeColor(member.role),
+              ),
             ),
-          ],
         ],
       ),
     );
@@ -511,25 +698,13 @@ class _MemberTile extends StatelessWidget {
       onTap: () => showDialog(
         context: context,
         builder: (_) => BlocProvider.value(
-          value: context.read<TeamBloc>(),
+          value: context.read<TeamMemberBloc>(),
           child: ChangeRoleDialog(member: member),
         ),
       ),
       borderRadius: BorderRadius.circular(12),
       child: badge,
     );
-  }
-
-  String _getInitials(String displayName, String email) {
-    if (displayName.isNotEmpty) {
-      final parts = displayName.trim().split(' ');
-      if (parts.length >= 2) {
-        return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
-      }
-      return displayName[0].toUpperCase();
-    }
-    if (email.isNotEmpty) return email[0].toUpperCase();
-    return '?';
   }
 
   String _roleLabel(TeamRoleType role) {

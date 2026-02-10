@@ -1,0 +1,5 @@
+### Ответ при регенерации API ключа
+class: RegenerateApiKeyResponse
+fields:
+  apiKey: String
+  regeneratedAt: DateTime

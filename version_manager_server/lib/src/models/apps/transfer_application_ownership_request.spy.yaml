@@ -1,0 +1,12 @@
+### Запрос на передачу приложения другому владельцу.
+###
+### Поддерживает три сценария:
+### - user → team (личное в команду)
+### - team → user (командное в личное)
+### - team → team (из одной команды в другую)
+class: TransferApplicationOwnershipRequest
+fields:
+  applicationId: UuidValue
+  newOwnerType: OwnerType
+  ## ID команды-получателя (обязательно если newOwnerType == team)
+  newTeamId: UuidValue?

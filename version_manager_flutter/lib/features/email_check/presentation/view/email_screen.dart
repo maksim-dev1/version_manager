@@ -64,9 +64,12 @@ class _EmailScreenState extends State<EmailScreen> {
         ),
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: SizedBox(
-              width: 460,
+            padding: EdgeInsets.symmetric(
+              horizontal: MediaQuery.sizeOf(context).width < 600 ? 16 : 24,
+              vertical: 24,
+            ),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 460),
               child: Card(
                 elevation: 8,
                 shadowColor: colorScheme.shadow.withValues(alpha: 0.2),
@@ -86,7 +89,9 @@ class _EmailScreenState extends State<EmailScreen> {
                     ),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.all(40),
+                    padding: EdgeInsets.all(
+                      MediaQuery.sizeOf(context).width < 600 ? 24 : 40,
+                    ),
                     child: Form(
                       key: _formKey,
                       child: Column(

@@ -55,7 +55,7 @@ extension TeamEventPatterns on TeamEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _LoadTeams value)?  loadTeams,TResult Function( _CreateTeam value)?  createTeam,TResult Function( _UpdateTeam value)?  updateTeam,TResult Function( _DeleteTeam value)?  deleteTeam,TResult Function( _LoadInvitations value)?  loadInvitations,TResult Function( _RespondToInvitation value)?  respondToInvitation,TResult Function( _InviteMember value)?  inviteMember,TResult Function( _RemoveMember value)?  removeMember,TResult Function( _UpdateMemberRole value)?  updateMemberRole,TResult Function( _RevokeInvitation value)?  revokeInvitation,TResult Function( _LeaveTeam value)?  leaveTeam,TResult Function( _TransferOwnership value)?  transferOwnership,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _LoadTeams value)?  loadTeams,TResult Function( _CreateTeam value)?  createTeam,TResult Function( _UpdateTeam value)?  updateTeam,TResult Function( _DeleteTeam value)?  deleteTeam,TResult Function( _LoadInvitations value)?  loadInvitations,TResult Function( _RespondToInvitation value)?  respondToInvitation,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _LoadTeams() when loadTeams != null:
@@ -64,13 +64,7 @@ return createTeam(_that);case _UpdateTeam() when updateTeam != null:
 return updateTeam(_that);case _DeleteTeam() when deleteTeam != null:
 return deleteTeam(_that);case _LoadInvitations() when loadInvitations != null:
 return loadInvitations(_that);case _RespondToInvitation() when respondToInvitation != null:
-return respondToInvitation(_that);case _InviteMember() when inviteMember != null:
-return inviteMember(_that);case _RemoveMember() when removeMember != null:
-return removeMember(_that);case _UpdateMemberRole() when updateMemberRole != null:
-return updateMemberRole(_that);case _RevokeInvitation() when revokeInvitation != null:
-return revokeInvitation(_that);case _LeaveTeam() when leaveTeam != null:
-return leaveTeam(_that);case _TransferOwnership() when transferOwnership != null:
-return transferOwnership(_that);case _:
+return respondToInvitation(_that);case _:
   return orElse();
 
 }
@@ -88,7 +82,7 @@ return transferOwnership(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _LoadTeams value)  loadTeams,required TResult Function( _CreateTeam value)  createTeam,required TResult Function( _UpdateTeam value)  updateTeam,required TResult Function( _DeleteTeam value)  deleteTeam,required TResult Function( _LoadInvitations value)  loadInvitations,required TResult Function( _RespondToInvitation value)  respondToInvitation,required TResult Function( _InviteMember value)  inviteMember,required TResult Function( _RemoveMember value)  removeMember,required TResult Function( _UpdateMemberRole value)  updateMemberRole,required TResult Function( _RevokeInvitation value)  revokeInvitation,required TResult Function( _LeaveTeam value)  leaveTeam,required TResult Function( _TransferOwnership value)  transferOwnership,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _LoadTeams value)  loadTeams,required TResult Function( _CreateTeam value)  createTeam,required TResult Function( _UpdateTeam value)  updateTeam,required TResult Function( _DeleteTeam value)  deleteTeam,required TResult Function( _LoadInvitations value)  loadInvitations,required TResult Function( _RespondToInvitation value)  respondToInvitation,}){
 final _that = this;
 switch (_that) {
 case _LoadTeams():
@@ -97,13 +91,7 @@ return createTeam(_that);case _UpdateTeam():
 return updateTeam(_that);case _DeleteTeam():
 return deleteTeam(_that);case _LoadInvitations():
 return loadInvitations(_that);case _RespondToInvitation():
-return respondToInvitation(_that);case _InviteMember():
-return inviteMember(_that);case _RemoveMember():
-return removeMember(_that);case _UpdateMemberRole():
-return updateMemberRole(_that);case _RevokeInvitation():
-return revokeInvitation(_that);case _LeaveTeam():
-return leaveTeam(_that);case _TransferOwnership():
-return transferOwnership(_that);}
+return respondToInvitation(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -117,7 +105,7 @@ return transferOwnership(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _LoadTeams value)?  loadTeams,TResult? Function( _CreateTeam value)?  createTeam,TResult? Function( _UpdateTeam value)?  updateTeam,TResult? Function( _DeleteTeam value)?  deleteTeam,TResult? Function( _LoadInvitations value)?  loadInvitations,TResult? Function( _RespondToInvitation value)?  respondToInvitation,TResult? Function( _InviteMember value)?  inviteMember,TResult? Function( _RemoveMember value)?  removeMember,TResult? Function( _UpdateMemberRole value)?  updateMemberRole,TResult? Function( _RevokeInvitation value)?  revokeInvitation,TResult? Function( _LeaveTeam value)?  leaveTeam,TResult? Function( _TransferOwnership value)?  transferOwnership,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _LoadTeams value)?  loadTeams,TResult? Function( _CreateTeam value)?  createTeam,TResult? Function( _UpdateTeam value)?  updateTeam,TResult? Function( _DeleteTeam value)?  deleteTeam,TResult? Function( _LoadInvitations value)?  loadInvitations,TResult? Function( _RespondToInvitation value)?  respondToInvitation,}){
 final _that = this;
 switch (_that) {
 case _LoadTeams() when loadTeams != null:
@@ -126,13 +114,7 @@ return createTeam(_that);case _UpdateTeam() when updateTeam != null:
 return updateTeam(_that);case _DeleteTeam() when deleteTeam != null:
 return deleteTeam(_that);case _LoadInvitations() when loadInvitations != null:
 return loadInvitations(_that);case _RespondToInvitation() when respondToInvitation != null:
-return respondToInvitation(_that);case _InviteMember() when inviteMember != null:
-return inviteMember(_that);case _RemoveMember() when removeMember != null:
-return removeMember(_that);case _UpdateMemberRole() when updateMemberRole != null:
-return updateMemberRole(_that);case _RevokeInvitation() when revokeInvitation != null:
-return revokeInvitation(_that);case _LeaveTeam() when leaveTeam != null:
-return leaveTeam(_that);case _TransferOwnership() when transferOwnership != null:
-return transferOwnership(_that);case _:
+return respondToInvitation(_that);case _:
   return null;
 
 }
@@ -149,7 +131,7 @@ return transferOwnership(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  loadTeams,TResult Function( String name,  String? description)?  createTeam,TResult Function( UuidValue teamId,  String name,  String? description)?  updateTeam,TResult Function( UuidValue teamId,  bool transferAppsToOwner,  String confirmationName)?  deleteTeam,TResult Function()?  loadInvitations,TResult Function( UuidValue teamId,  bool accept)?  respondToInvitation,TResult Function( UuidValue teamId,  String email,  TeamRoleType role)?  inviteMember,TResult Function( UuidValue memberId)?  removeMember,TResult Function( UuidValue memberId,  TeamRoleType newRole)?  updateMemberRole,TResult Function( UuidValue memberId)?  revokeInvitation,TResult Function( UuidValue teamId)?  leaveTeam,TResult Function( UuidValue teamId,  UuidValue newOwnerId)?  transferOwnership,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  loadTeams,TResult Function( String name,  String? description)?  createTeam,TResult Function( UuidValue teamId,  String name,  String? description)?  updateTeam,TResult Function( UuidValue teamId,  bool transferAppsToOwner,  String confirmationName)?  deleteTeam,TResult Function()?  loadInvitations,TResult Function( UuidValue teamId,  bool accept)?  respondToInvitation,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _LoadTeams() when loadTeams != null:
 return loadTeams();case _CreateTeam() when createTeam != null:
@@ -157,13 +139,7 @@ return createTeam(_that.name,_that.description);case _UpdateTeam() when updateTe
 return updateTeam(_that.teamId,_that.name,_that.description);case _DeleteTeam() when deleteTeam != null:
 return deleteTeam(_that.teamId,_that.transferAppsToOwner,_that.confirmationName);case _LoadInvitations() when loadInvitations != null:
 return loadInvitations();case _RespondToInvitation() when respondToInvitation != null:
-return respondToInvitation(_that.teamId,_that.accept);case _InviteMember() when inviteMember != null:
-return inviteMember(_that.teamId,_that.email,_that.role);case _RemoveMember() when removeMember != null:
-return removeMember(_that.memberId);case _UpdateMemberRole() when updateMemberRole != null:
-return updateMemberRole(_that.memberId,_that.newRole);case _RevokeInvitation() when revokeInvitation != null:
-return revokeInvitation(_that.memberId);case _LeaveTeam() when leaveTeam != null:
-return leaveTeam(_that.teamId);case _TransferOwnership() when transferOwnership != null:
-return transferOwnership(_that.teamId,_that.newOwnerId);case _:
+return respondToInvitation(_that.teamId,_that.accept);case _:
   return orElse();
 
 }
@@ -181,7 +157,7 @@ return transferOwnership(_that.teamId,_that.newOwnerId);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  loadTeams,required TResult Function( String name,  String? description)  createTeam,required TResult Function( UuidValue teamId,  String name,  String? description)  updateTeam,required TResult Function( UuidValue teamId,  bool transferAppsToOwner,  String confirmationName)  deleteTeam,required TResult Function()  loadInvitations,required TResult Function( UuidValue teamId,  bool accept)  respondToInvitation,required TResult Function( UuidValue teamId,  String email,  TeamRoleType role)  inviteMember,required TResult Function( UuidValue memberId)  removeMember,required TResult Function( UuidValue memberId,  TeamRoleType newRole)  updateMemberRole,required TResult Function( UuidValue memberId)  revokeInvitation,required TResult Function( UuidValue teamId)  leaveTeam,required TResult Function( UuidValue teamId,  UuidValue newOwnerId)  transferOwnership,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  loadTeams,required TResult Function( String name,  String? description)  createTeam,required TResult Function( UuidValue teamId,  String name,  String? description)  updateTeam,required TResult Function( UuidValue teamId,  bool transferAppsToOwner,  String confirmationName)  deleteTeam,required TResult Function()  loadInvitations,required TResult Function( UuidValue teamId,  bool accept)  respondToInvitation,}) {final _that = this;
 switch (_that) {
 case _LoadTeams():
 return loadTeams();case _CreateTeam():
@@ -189,13 +165,7 @@ return createTeam(_that.name,_that.description);case _UpdateTeam():
 return updateTeam(_that.teamId,_that.name,_that.description);case _DeleteTeam():
 return deleteTeam(_that.teamId,_that.transferAppsToOwner,_that.confirmationName);case _LoadInvitations():
 return loadInvitations();case _RespondToInvitation():
-return respondToInvitation(_that.teamId,_that.accept);case _InviteMember():
-return inviteMember(_that.teamId,_that.email,_that.role);case _RemoveMember():
-return removeMember(_that.memberId);case _UpdateMemberRole():
-return updateMemberRole(_that.memberId,_that.newRole);case _RevokeInvitation():
-return revokeInvitation(_that.memberId);case _LeaveTeam():
-return leaveTeam(_that.teamId);case _TransferOwnership():
-return transferOwnership(_that.teamId,_that.newOwnerId);}
+return respondToInvitation(_that.teamId,_that.accept);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -209,7 +179,7 @@ return transferOwnership(_that.teamId,_that.newOwnerId);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  loadTeams,TResult? Function( String name,  String? description)?  createTeam,TResult? Function( UuidValue teamId,  String name,  String? description)?  updateTeam,TResult? Function( UuidValue teamId,  bool transferAppsToOwner,  String confirmationName)?  deleteTeam,TResult? Function()?  loadInvitations,TResult? Function( UuidValue teamId,  bool accept)?  respondToInvitation,TResult? Function( UuidValue teamId,  String email,  TeamRoleType role)?  inviteMember,TResult? Function( UuidValue memberId)?  removeMember,TResult? Function( UuidValue memberId,  TeamRoleType newRole)?  updateMemberRole,TResult? Function( UuidValue memberId)?  revokeInvitation,TResult? Function( UuidValue teamId)?  leaveTeam,TResult? Function( UuidValue teamId,  UuidValue newOwnerId)?  transferOwnership,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  loadTeams,TResult? Function( String name,  String? description)?  createTeam,TResult? Function( UuidValue teamId,  String name,  String? description)?  updateTeam,TResult? Function( UuidValue teamId,  bool transferAppsToOwner,  String confirmationName)?  deleteTeam,TResult? Function()?  loadInvitations,TResult? Function( UuidValue teamId,  bool accept)?  respondToInvitation,}) {final _that = this;
 switch (_that) {
 case _LoadTeams() when loadTeams != null:
 return loadTeams();case _CreateTeam() when createTeam != null:
@@ -217,13 +187,7 @@ return createTeam(_that.name,_that.description);case _UpdateTeam() when updateTe
 return updateTeam(_that.teamId,_that.name,_that.description);case _DeleteTeam() when deleteTeam != null:
 return deleteTeam(_that.teamId,_that.transferAppsToOwner,_that.confirmationName);case _LoadInvitations() when loadInvitations != null:
 return loadInvitations();case _RespondToInvitation() when respondToInvitation != null:
-return respondToInvitation(_that.teamId,_that.accept);case _InviteMember() when inviteMember != null:
-return inviteMember(_that.teamId,_that.email,_that.role);case _RemoveMember() when removeMember != null:
-return removeMember(_that.memberId);case _UpdateMemberRole() when updateMemberRole != null:
-return updateMemberRole(_that.memberId,_that.newRole);case _RevokeInvitation() when revokeInvitation != null:
-return revokeInvitation(_that.memberId);case _LeaveTeam() when leaveTeam != null:
-return leaveTeam(_that.teamId);case _TransferOwnership() when transferOwnership != null:
-return transferOwnership(_that.teamId,_that.newOwnerId);case _:
+return respondToInvitation(_that.teamId,_that.accept);case _:
   return null;
 
 }
@@ -572,410 +536,6 @@ as bool,
 }
 
 /// @nodoc
-
-
-class _InviteMember implements TeamEvent {
-  const _InviteMember({required this.teamId, required this.email, required this.role});
-  
-
- final  UuidValue teamId;
- final  String email;
- final  TeamRoleType role;
-
-/// Create a copy of TeamEvent
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-_$InviteMemberCopyWith<_InviteMember> get copyWith => __$InviteMemberCopyWithImpl<_InviteMember>(this, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _InviteMember&&(identical(other.teamId, teamId) || other.teamId == teamId)&&(identical(other.email, email) || other.email == email)&&(identical(other.role, role) || other.role == role));
-}
-
-
-@override
-int get hashCode => Object.hash(runtimeType,teamId,email,role);
-
-@override
-String toString() {
-  return 'TeamEvent.inviteMember(teamId: $teamId, email: $email, role: $role)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class _$InviteMemberCopyWith<$Res> implements $TeamEventCopyWith<$Res> {
-  factory _$InviteMemberCopyWith(_InviteMember value, $Res Function(_InviteMember) _then) = __$InviteMemberCopyWithImpl;
-@useResult
-$Res call({
- UuidValue teamId, String email, TeamRoleType role
-});
-
-
-
-
-}
-/// @nodoc
-class __$InviteMemberCopyWithImpl<$Res>
-    implements _$InviteMemberCopyWith<$Res> {
-  __$InviteMemberCopyWithImpl(this._self, this._then);
-
-  final _InviteMember _self;
-  final $Res Function(_InviteMember) _then;
-
-/// Create a copy of TeamEvent
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? teamId = null,Object? email = null,Object? role = null,}) {
-  return _then(_InviteMember(
-teamId: null == teamId ? _self.teamId : teamId // ignore: cast_nullable_to_non_nullable
-as UuidValue,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
-as String,role: null == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
-as TeamRoleType,
-  ));
-}
-
-
-}
-
-/// @nodoc
-
-
-class _RemoveMember implements TeamEvent {
-  const _RemoveMember({required this.memberId});
-  
-
- final  UuidValue memberId;
-
-/// Create a copy of TeamEvent
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-_$RemoveMemberCopyWith<_RemoveMember> get copyWith => __$RemoveMemberCopyWithImpl<_RemoveMember>(this, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RemoveMember&&(identical(other.memberId, memberId) || other.memberId == memberId));
-}
-
-
-@override
-int get hashCode => Object.hash(runtimeType,memberId);
-
-@override
-String toString() {
-  return 'TeamEvent.removeMember(memberId: $memberId)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class _$RemoveMemberCopyWith<$Res> implements $TeamEventCopyWith<$Res> {
-  factory _$RemoveMemberCopyWith(_RemoveMember value, $Res Function(_RemoveMember) _then) = __$RemoveMemberCopyWithImpl;
-@useResult
-$Res call({
- UuidValue memberId
-});
-
-
-
-
-}
-/// @nodoc
-class __$RemoveMemberCopyWithImpl<$Res>
-    implements _$RemoveMemberCopyWith<$Res> {
-  __$RemoveMemberCopyWithImpl(this._self, this._then);
-
-  final _RemoveMember _self;
-  final $Res Function(_RemoveMember) _then;
-
-/// Create a copy of TeamEvent
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? memberId = null,}) {
-  return _then(_RemoveMember(
-memberId: null == memberId ? _self.memberId : memberId // ignore: cast_nullable_to_non_nullable
-as UuidValue,
-  ));
-}
-
-
-}
-
-/// @nodoc
-
-
-class _UpdateMemberRole implements TeamEvent {
-  const _UpdateMemberRole({required this.memberId, required this.newRole});
-  
-
- final  UuidValue memberId;
- final  TeamRoleType newRole;
-
-/// Create a copy of TeamEvent
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-_$UpdateMemberRoleCopyWith<_UpdateMemberRole> get copyWith => __$UpdateMemberRoleCopyWithImpl<_UpdateMemberRole>(this, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UpdateMemberRole&&(identical(other.memberId, memberId) || other.memberId == memberId)&&(identical(other.newRole, newRole) || other.newRole == newRole));
-}
-
-
-@override
-int get hashCode => Object.hash(runtimeType,memberId,newRole);
-
-@override
-String toString() {
-  return 'TeamEvent.updateMemberRole(memberId: $memberId, newRole: $newRole)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class _$UpdateMemberRoleCopyWith<$Res> implements $TeamEventCopyWith<$Res> {
-  factory _$UpdateMemberRoleCopyWith(_UpdateMemberRole value, $Res Function(_UpdateMemberRole) _then) = __$UpdateMemberRoleCopyWithImpl;
-@useResult
-$Res call({
- UuidValue memberId, TeamRoleType newRole
-});
-
-
-
-
-}
-/// @nodoc
-class __$UpdateMemberRoleCopyWithImpl<$Res>
-    implements _$UpdateMemberRoleCopyWith<$Res> {
-  __$UpdateMemberRoleCopyWithImpl(this._self, this._then);
-
-  final _UpdateMemberRole _self;
-  final $Res Function(_UpdateMemberRole) _then;
-
-/// Create a copy of TeamEvent
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? memberId = null,Object? newRole = null,}) {
-  return _then(_UpdateMemberRole(
-memberId: null == memberId ? _self.memberId : memberId // ignore: cast_nullable_to_non_nullable
-as UuidValue,newRole: null == newRole ? _self.newRole : newRole // ignore: cast_nullable_to_non_nullable
-as TeamRoleType,
-  ));
-}
-
-
-}
-
-/// @nodoc
-
-
-class _RevokeInvitation implements TeamEvent {
-  const _RevokeInvitation({required this.memberId});
-  
-
- final  UuidValue memberId;
-
-/// Create a copy of TeamEvent
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-_$RevokeInvitationCopyWith<_RevokeInvitation> get copyWith => __$RevokeInvitationCopyWithImpl<_RevokeInvitation>(this, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RevokeInvitation&&(identical(other.memberId, memberId) || other.memberId == memberId));
-}
-
-
-@override
-int get hashCode => Object.hash(runtimeType,memberId);
-
-@override
-String toString() {
-  return 'TeamEvent.revokeInvitation(memberId: $memberId)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class _$RevokeInvitationCopyWith<$Res> implements $TeamEventCopyWith<$Res> {
-  factory _$RevokeInvitationCopyWith(_RevokeInvitation value, $Res Function(_RevokeInvitation) _then) = __$RevokeInvitationCopyWithImpl;
-@useResult
-$Res call({
- UuidValue memberId
-});
-
-
-
-
-}
-/// @nodoc
-class __$RevokeInvitationCopyWithImpl<$Res>
-    implements _$RevokeInvitationCopyWith<$Res> {
-  __$RevokeInvitationCopyWithImpl(this._self, this._then);
-
-  final _RevokeInvitation _self;
-  final $Res Function(_RevokeInvitation) _then;
-
-/// Create a copy of TeamEvent
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? memberId = null,}) {
-  return _then(_RevokeInvitation(
-memberId: null == memberId ? _self.memberId : memberId // ignore: cast_nullable_to_non_nullable
-as UuidValue,
-  ));
-}
-
-
-}
-
-/// @nodoc
-
-
-class _LeaveTeam implements TeamEvent {
-  const _LeaveTeam({required this.teamId});
-  
-
- final  UuidValue teamId;
-
-/// Create a copy of TeamEvent
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-_$LeaveTeamCopyWith<_LeaveTeam> get copyWith => __$LeaveTeamCopyWithImpl<_LeaveTeam>(this, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LeaveTeam&&(identical(other.teamId, teamId) || other.teamId == teamId));
-}
-
-
-@override
-int get hashCode => Object.hash(runtimeType,teamId);
-
-@override
-String toString() {
-  return 'TeamEvent.leaveTeam(teamId: $teamId)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class _$LeaveTeamCopyWith<$Res> implements $TeamEventCopyWith<$Res> {
-  factory _$LeaveTeamCopyWith(_LeaveTeam value, $Res Function(_LeaveTeam) _then) = __$LeaveTeamCopyWithImpl;
-@useResult
-$Res call({
- UuidValue teamId
-});
-
-
-
-
-}
-/// @nodoc
-class __$LeaveTeamCopyWithImpl<$Res>
-    implements _$LeaveTeamCopyWith<$Res> {
-  __$LeaveTeamCopyWithImpl(this._self, this._then);
-
-  final _LeaveTeam _self;
-  final $Res Function(_LeaveTeam) _then;
-
-/// Create a copy of TeamEvent
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? teamId = null,}) {
-  return _then(_LeaveTeam(
-teamId: null == teamId ? _self.teamId : teamId // ignore: cast_nullable_to_non_nullable
-as UuidValue,
-  ));
-}
-
-
-}
-
-/// @nodoc
-
-
-class _TransferOwnership implements TeamEvent {
-  const _TransferOwnership({required this.teamId, required this.newOwnerId});
-  
-
- final  UuidValue teamId;
- final  UuidValue newOwnerId;
-
-/// Create a copy of TeamEvent
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-_$TransferOwnershipCopyWith<_TransferOwnership> get copyWith => __$TransferOwnershipCopyWithImpl<_TransferOwnership>(this, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TransferOwnership&&(identical(other.teamId, teamId) || other.teamId == teamId)&&(identical(other.newOwnerId, newOwnerId) || other.newOwnerId == newOwnerId));
-}
-
-
-@override
-int get hashCode => Object.hash(runtimeType,teamId,newOwnerId);
-
-@override
-String toString() {
-  return 'TeamEvent.transferOwnership(teamId: $teamId, newOwnerId: $newOwnerId)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class _$TransferOwnershipCopyWith<$Res> implements $TeamEventCopyWith<$Res> {
-  factory _$TransferOwnershipCopyWith(_TransferOwnership value, $Res Function(_TransferOwnership) _then) = __$TransferOwnershipCopyWithImpl;
-@useResult
-$Res call({
- UuidValue teamId, UuidValue newOwnerId
-});
-
-
-
-
-}
-/// @nodoc
-class __$TransferOwnershipCopyWithImpl<$Res>
-    implements _$TransferOwnershipCopyWith<$Res> {
-  __$TransferOwnershipCopyWithImpl(this._self, this._then);
-
-  final _TransferOwnership _self;
-  final $Res Function(_TransferOwnership) _then;
-
-/// Create a copy of TeamEvent
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? teamId = null,Object? newOwnerId = null,}) {
-  return _then(_TransferOwnership(
-teamId: null == teamId ? _self.teamId : teamId // ignore: cast_nullable_to_non_nullable
-as UuidValue,newOwnerId: null == newOwnerId ? _self.newOwnerId : newOwnerId // ignore: cast_nullable_to_non_nullable
-as UuidValue,
-  ));
-}
-
-
-}
-
-/// @nodoc
 mixin _$TeamState {
 
 
@@ -1019,16 +579,14 @@ extension TeamStatePatterns on TeamState {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( Initial value)?  initial,TResult Function( TeamLoading value)?  teamLoading,TResult Function( TeamLoaded value)?  teamLoaded,TResult Function( TeamError value)?  teamError,TResult Function( MemberActionSuccess value)?  memberActionSuccess,TResult Function( MemberActionError value)?  memberActionError,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( Initial value)?  initial,TResult Function( TeamLoading value)?  teamLoading,TResult Function( TeamLoaded value)?  teamLoaded,TResult Function( TeamError value)?  teamError,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case Initial() when initial != null:
 return initial(_that);case TeamLoading() when teamLoading != null:
 return teamLoading(_that);case TeamLoaded() when teamLoaded != null:
 return teamLoaded(_that);case TeamError() when teamError != null:
-return teamError(_that);case MemberActionSuccess() when memberActionSuccess != null:
-return memberActionSuccess(_that);case MemberActionError() when memberActionError != null:
-return memberActionError(_that);case _:
+return teamError(_that);case _:
   return orElse();
 
 }
@@ -1046,16 +604,14 @@ return memberActionError(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( Initial value)  initial,required TResult Function( TeamLoading value)  teamLoading,required TResult Function( TeamLoaded value)  teamLoaded,required TResult Function( TeamError value)  teamError,required TResult Function( MemberActionSuccess value)  memberActionSuccess,required TResult Function( MemberActionError value)  memberActionError,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( Initial value)  initial,required TResult Function( TeamLoading value)  teamLoading,required TResult Function( TeamLoaded value)  teamLoaded,required TResult Function( TeamError value)  teamError,}){
 final _that = this;
 switch (_that) {
 case Initial():
 return initial(_that);case TeamLoading():
 return teamLoading(_that);case TeamLoaded():
 return teamLoaded(_that);case TeamError():
-return teamError(_that);case MemberActionSuccess():
-return memberActionSuccess(_that);case MemberActionError():
-return memberActionError(_that);}
+return teamError(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -1069,16 +625,14 @@ return memberActionError(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( Initial value)?  initial,TResult? Function( TeamLoading value)?  teamLoading,TResult? Function( TeamLoaded value)?  teamLoaded,TResult? Function( TeamError value)?  teamError,TResult? Function( MemberActionSuccess value)?  memberActionSuccess,TResult? Function( MemberActionError value)?  memberActionError,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( Initial value)?  initial,TResult? Function( TeamLoading value)?  teamLoading,TResult? Function( TeamLoaded value)?  teamLoaded,TResult? Function( TeamError value)?  teamError,}){
 final _that = this;
 switch (_that) {
 case Initial() when initial != null:
 return initial(_that);case TeamLoading() when teamLoading != null:
 return teamLoading(_that);case TeamLoaded() when teamLoaded != null:
 return teamLoaded(_that);case TeamError() when teamError != null:
-return teamError(_that);case MemberActionSuccess() when memberActionSuccess != null:
-return memberActionSuccess(_that);case MemberActionError() when memberActionError != null:
-return memberActionError(_that);case _:
+return teamError(_that);case _:
   return null;
 
 }
@@ -1095,15 +649,13 @@ return memberActionError(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  teamLoading,TResult Function( UuidValue? currentUserId,  List<Team> teams,  List<TeamMember> invitations)?  teamLoaded,TResult Function( String message)?  teamError,TResult Function( String message)?  memberActionSuccess,TResult Function( String message)?  memberActionError,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  teamLoading,TResult Function( UuidValue? currentUserId,  List<Team> teams,  List<TeamMember> invitations)?  teamLoaded,TResult Function( String message)?  teamError,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case Initial() when initial != null:
 return initial();case TeamLoading() when teamLoading != null:
 return teamLoading();case TeamLoaded() when teamLoaded != null:
 return teamLoaded(_that.currentUserId,_that.teams,_that.invitations);case TeamError() when teamError != null:
-return teamError(_that.message);case MemberActionSuccess() when memberActionSuccess != null:
-return memberActionSuccess(_that.message);case MemberActionError() when memberActionError != null:
-return memberActionError(_that.message);case _:
+return teamError(_that.message);case _:
   return orElse();
 
 }
@@ -1121,15 +673,13 @@ return memberActionError(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  teamLoading,required TResult Function( UuidValue? currentUserId,  List<Team> teams,  List<TeamMember> invitations)  teamLoaded,required TResult Function( String message)  teamError,required TResult Function( String message)  memberActionSuccess,required TResult Function( String message)  memberActionError,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  teamLoading,required TResult Function( UuidValue? currentUserId,  List<Team> teams,  List<TeamMember> invitations)  teamLoaded,required TResult Function( String message)  teamError,}) {final _that = this;
 switch (_that) {
 case Initial():
 return initial();case TeamLoading():
 return teamLoading();case TeamLoaded():
 return teamLoaded(_that.currentUserId,_that.teams,_that.invitations);case TeamError():
-return teamError(_that.message);case MemberActionSuccess():
-return memberActionSuccess(_that.message);case MemberActionError():
-return memberActionError(_that.message);}
+return teamError(_that.message);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -1143,15 +693,13 @@ return memberActionError(_that.message);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  teamLoading,TResult? Function( UuidValue? currentUserId,  List<Team> teams,  List<TeamMember> invitations)?  teamLoaded,TResult? Function( String message)?  teamError,TResult? Function( String message)?  memberActionSuccess,TResult? Function( String message)?  memberActionError,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  teamLoading,TResult? Function( UuidValue? currentUserId,  List<Team> teams,  List<TeamMember> invitations)?  teamLoaded,TResult? Function( String message)?  teamError,}) {final _that = this;
 switch (_that) {
 case Initial() when initial != null:
 return initial();case TeamLoading() when teamLoading != null:
 return teamLoading();case TeamLoaded() when teamLoaded != null:
 return teamLoaded(_that.currentUserId,_that.teams,_that.invitations);case TeamError() when teamError != null:
-return teamError(_that.message);case MemberActionSuccess() when memberActionSuccess != null:
-return memberActionSuccess(_that.message);case MemberActionError() when memberActionError != null:
-return memberActionError(_that.message);case _:
+return teamError(_that.message);case _:
   return null;
 
 }
@@ -1363,138 +911,6 @@ class _$TeamErrorCopyWithImpl<$Res>
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') $Res call({Object? message = null,}) {
   return _then(TeamError(
-message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
-as String,
-  ));
-}
-
-
-}
-
-/// @nodoc
-
-
-class MemberActionSuccess implements TeamState {
-  const MemberActionSuccess({required this.message});
-  
-
- final  String message;
-
-/// Create a copy of TeamState
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$MemberActionSuccessCopyWith<MemberActionSuccess> get copyWith => _$MemberActionSuccessCopyWithImpl<MemberActionSuccess>(this, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MemberActionSuccess&&(identical(other.message, message) || other.message == message));
-}
-
-
-@override
-int get hashCode => Object.hash(runtimeType,message);
-
-@override
-String toString() {
-  return 'TeamState.memberActionSuccess(message: $message)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class $MemberActionSuccessCopyWith<$Res> implements $TeamStateCopyWith<$Res> {
-  factory $MemberActionSuccessCopyWith(MemberActionSuccess value, $Res Function(MemberActionSuccess) _then) = _$MemberActionSuccessCopyWithImpl;
-@useResult
-$Res call({
- String message
-});
-
-
-
-
-}
-/// @nodoc
-class _$MemberActionSuccessCopyWithImpl<$Res>
-    implements $MemberActionSuccessCopyWith<$Res> {
-  _$MemberActionSuccessCopyWithImpl(this._self, this._then);
-
-  final MemberActionSuccess _self;
-  final $Res Function(MemberActionSuccess) _then;
-
-/// Create a copy of TeamState
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? message = null,}) {
-  return _then(MemberActionSuccess(
-message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
-as String,
-  ));
-}
-
-
-}
-
-/// @nodoc
-
-
-class MemberActionError implements TeamState {
-  const MemberActionError({required this.message});
-  
-
- final  String message;
-
-/// Create a copy of TeamState
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$MemberActionErrorCopyWith<MemberActionError> get copyWith => _$MemberActionErrorCopyWithImpl<MemberActionError>(this, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MemberActionError&&(identical(other.message, message) || other.message == message));
-}
-
-
-@override
-int get hashCode => Object.hash(runtimeType,message);
-
-@override
-String toString() {
-  return 'TeamState.memberActionError(message: $message)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class $MemberActionErrorCopyWith<$Res> implements $TeamStateCopyWith<$Res> {
-  factory $MemberActionErrorCopyWith(MemberActionError value, $Res Function(MemberActionError) _then) = _$MemberActionErrorCopyWithImpl;
-@useResult
-$Res call({
- String message
-});
-
-
-
-
-}
-/// @nodoc
-class _$MemberActionErrorCopyWithImpl<$Res>
-    implements $MemberActionErrorCopyWith<$Res> {
-  _$MemberActionErrorCopyWithImpl(this._self, this._then);
-
-  final MemberActionError _self;
-  final $Res Function(MemberActionError) _then;
-
-/// Create a copy of TeamState
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? message = null,}) {
-  return _then(MemberActionError(
 message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String,
   ));

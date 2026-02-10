@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:version_manager_client/version_manager_client.dart';
-import 'package:version_manager_flutter/features/team/presentation/bloc/team_bloc.dart';
+import 'package:version_manager_flutter/features/team_member/presentation/bloc/team_member_bloc.dart';
 
 /// Диалог передачи владения командой другому активному участнику.
 ///
@@ -73,16 +73,15 @@ class _TransferOwnershipDialogState extends State<TransferOwnershipDialog> {
                 ),
               )
             else
-              ...candidates.map(
-                (member) => _CandidateTile(
-                  member: member,
-                  selected: _selectedMemberId == member.userId,
+              for (int i = 0; i < candidates.length; i++)
+                _CandidateTile(
+                  member: candidates[i],
+                  selected: _selectedMemberId == candidates[i].userId,
                   onTap: () =>
-                      setState(() => _selectedMemberId = member.userId),
+                      setState(() => _selectedMemberId = candidates[i].userId),
                   colorScheme: colorScheme,
                   textTheme: textTheme,
                 ),
-              ),
           ],
         ),
       ),
@@ -101,10 +100,10 @@ class _TransferOwnershipDialogState extends State<TransferOwnershipDialog> {
 
   void _onTransfer() {
     if (_selectedMemberId == null) return;
-    final bloc = context.read<TeamBloc>();
+    final bloc = context.read<TeamMemberBloc>();
     Navigator.pop(context);
     bloc.add(
-      TeamEvent.transferOwnership(
+      TeamMemberEvent.transferOwnership(
         teamId: widget.team.id!,
         newOwnerId: _selectedMemberId!,
       ),

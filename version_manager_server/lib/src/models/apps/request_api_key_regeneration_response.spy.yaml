@@ -1,0 +1,6 @@
+### Ответ на запрос кода подтверждения для регенерации API ключа
+class: RequestApiKeyRegenerationResponse
+fields:
+  codeSent: bool
+  retryAfterSeconds: int?
+  maskedEmail: String?

@@ -1,0 +1,9 @@
+### Запрос на обновление приложения
+class: UpdateApplicationRequest
+fields:
+  applicationId: UuidValue
+  name: String?
+  description: String?
+  iconUrl: String?
+  platforms: List<PlatformType>?
+  storeLinks: List<StoreLinkEntry>?

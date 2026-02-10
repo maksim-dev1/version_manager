@@ -23,8 +23,7 @@ class ClientService {
 
     _client = Client(
       baseUrl,
-      onFailedCall: _handleFailedCall,
-    )..authKeyProvider = _authKeyProvider;
+    )..authKeyProvider = MutexRefresherClientAuthKeyProvider(_authKeyProvider!);
 
     // Настраиваем callback для refresh token
     _authKeyProvider!.onRefreshToken = _performRefreshToken;
@@ -56,23 +55,6 @@ class ClientService {
           field: 'ClientService',
           stackTrace: StackTrace.current.toString(),
         );
-
-  /// Обрабатывает неудачные вызовы API.
-  ///
-  /// При получении ошибки аутентификации (401) пытается
-  /// обновить токены. Если refresh не удался — вызывается
-  /// [AuthKeyProvider.onAuthenticationFailed], что приводит к logout.
-  void _handleFailedCall(
-    MethodCallContext context,
-    Object error,
-    StackTrace stackTrace,
-  ) {
-    if (error is ServerpodClientException && error.statusCode == 401) {
-      // Пытаемся обновить токены в фоне.
-      // При неудаче refreshTokens() сам вызовет onAuthenticationFailed → logout.
-      _authKeyProvider?.refreshTokens();
-    }
-  }
 
   /// Выполняет refresh token через API.
   Future<RefreshResult> _performRefreshToken(String refreshToken) async {

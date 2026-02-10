@@ -5,8 +5,6 @@ import 'package:version_manager_flutter/features/session/domain/repository/sessi
 ///
 /// Использует Serverpod эндпоинт [EndpointSession]
 /// для управления активными сессиями пользователя.
-///
-/// Авторизация осуществляется автоматически через заголовок запроса.
 class SessionRepositoryImpl implements SessionRepository {
   final EndpointSession _sessionEndpoint;
 

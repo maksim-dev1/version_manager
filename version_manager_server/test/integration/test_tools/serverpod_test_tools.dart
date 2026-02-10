@@ -14,57 +14,79 @@
 import 'package:serverpod_test/serverpod_test.dart' as _i1;
 import 'package:serverpod/serverpod.dart' as _i2;
 import 'dart:async' as _i3;
-import 'package:version_manager_server/src/generated/auth/check_email_and_send_code_response.dart'
+import 'package:version_manager_server/src/generated/apps/application.dart'
     as _i4;
-import 'package:version_manager_server/src/generated/auth/check_email.dart'
+import 'package:version_manager_server/src/generated/apps/create_application_response.dart'
     as _i5;
-import 'package:version_manager_server/src/generated/auth/send_code_response.dart'
+import 'package:version_manager_server/src/generated/apps/create_application_request.dart'
     as _i6;
-import 'package:version_manager_server/src/generated/auth/register_send_code.dart'
+import 'package:version_manager_server/src/generated/apps/update_application_request.dart'
     as _i7;
 import 'package:version_manager_server/src/generated/auth/common_success.dart'
     as _i8;
-import 'package:version_manager_server/src/generated/auth/register_verify_code.dart'
+import 'package:version_manager_server/src/generated/apps/delete_application_request.dart'
     as _i9;
-import 'package:version_manager_server/src/generated/auth/auth_response.dart'
+import 'package:version_manager_server/src/generated/apps/request_api_key_regeneration_response.dart'
     as _i10;
-import 'package:version_manager_server/src/generated/auth/register.dart'
+import 'package:version_manager_server/src/generated/apps/request_api_key_regeneration_request.dart'
     as _i11;
-import 'package:version_manager_server/src/generated/auth/login.dart' as _i12;
-import 'package:version_manager_server/src/generated/auth/token_pair_response.dart'
+import 'package:version_manager_server/src/generated/apps/regenerate_api_key_response.dart'
+    as _i12;
+import 'package:version_manager_server/src/generated/apps/regenerate_api_key_request.dart'
     as _i13;
-import 'package:version_manager_server/src/generated/auth/refresh_token.dart'
+import 'package:version_manager_server/src/generated/apps/toggle_application_status_request.dart'
     as _i14;
-import 'package:version_manager_server/src/generated/auth/common.dart' as _i15;
-import 'package:version_manager_server/src/generated/sessions/session_info.dart'
+import 'package:version_manager_server/src/generated/apps/transfer_application_ownership_request.dart'
+    as _i15;
+import 'package:version_manager_server/src/generated/auth/check_email_and_send_code_response.dart'
     as _i16;
-import 'package:version_manager_server/src/generated/sessions/terminate_session_request.dart'
+import 'package:version_manager_server/src/generated/auth/check_email.dart'
     as _i17;
-import 'package:version_manager_server/src/generated/teams/team.dart' as _i18;
-import 'package:version_manager_server/src/generated/teams/create_team_request.dart'
+import 'package:version_manager_server/src/generated/auth/send_code_response.dart'
+    as _i18;
+import 'package:version_manager_server/src/generated/auth/register_send_code.dart'
     as _i19;
-import 'package:version_manager_server/src/generated/teams/update_team_request.dart'
+import 'package:version_manager_server/src/generated/auth/register_verify_code.dart'
     as _i20;
-import 'package:version_manager_server/src/generated/teams/invite_team_member_request.dart'
+import 'package:version_manager_server/src/generated/auth/auth_response.dart'
     as _i21;
-import 'package:version_manager_server/src/generated/teams/team_member.dart'
+import 'package:version_manager_server/src/generated/auth/register.dart'
     as _i22;
-import 'package:version_manager_server/src/generated/teams/respond_to_invitation_request.dart'
-    as _i23;
-import 'package:version_manager_server/src/generated/teams/revoke_invitation_request.dart'
+import 'package:version_manager_server/src/generated/auth/login.dart' as _i23;
+import 'package:version_manager_server/src/generated/auth/token_pair_response.dart'
     as _i24;
-import 'package:version_manager_server/src/generated/teams/update_member_role_request.dart'
+import 'package:version_manager_server/src/generated/auth/refresh_token.dart'
     as _i25;
-import 'package:version_manager_server/src/generated/teams/remove_member_request.dart'
-    as _i26;
-import 'package:version_manager_server/src/generated/teams/leave_team_request.dart'
+import 'package:version_manager_server/src/generated/auth/common.dart' as _i26;
+import 'package:version_manager_server/src/generated/sessions/session_info.dart'
     as _i27;
-import 'package:version_manager_server/src/generated/teams/transfer_team_ownership_request.dart'
+import 'package:version_manager_server/src/generated/sessions/terminate_session_request.dart'
     as _i28;
-import 'package:version_manager_server/src/generated/teams/delete_team_request.dart'
-    as _i29;
-import 'package:version_manager_server/src/generated/greetings/greeting.dart'
+import 'package:version_manager_server/src/generated/teams/team.dart' as _i29;
+import 'package:version_manager_server/src/generated/teams/create_team_request.dart'
     as _i30;
+import 'package:version_manager_server/src/generated/teams/update_team_request.dart'
+    as _i31;
+import 'package:version_manager_server/src/generated/teams/invite_team_member_request.dart'
+    as _i32;
+import 'package:version_manager_server/src/generated/teams/team_member.dart'
+    as _i33;
+import 'package:version_manager_server/src/generated/teams/respond_to_invitation_request.dart'
+    as _i34;
+import 'package:version_manager_server/src/generated/teams/revoke_invitation_request.dart'
+    as _i35;
+import 'package:version_manager_server/src/generated/teams/update_member_role_request.dart'
+    as _i36;
+import 'package:version_manager_server/src/generated/teams/remove_member_request.dart'
+    as _i37;
+import 'package:version_manager_server/src/generated/teams/leave_team_request.dart'
+    as _i38;
+import 'package:version_manager_server/src/generated/teams/transfer_team_ownership_request.dart'
+    as _i39;
+import 'package:version_manager_server/src/generated/teams/delete_team_request.dart'
+    as _i40;
+import 'package:version_manager_server/src/generated/greetings/greeting.dart'
+    as _i41;
 import 'package:version_manager_server/src/generated/protocol.dart';
 import 'package:version_manager_server/src/generated/endpoints.dart';
 export 'package:serverpod_test/serverpod_test_public_exports.dart';
@@ -172,6 +194,8 @@ void withServerpod(
 }
 
 class TestEndpoints {
+  late final _AppEndpoint app;
+
   late final _AuthEndpoint auth;
 
   late final _SessionEndpoint session;
@@ -188,6 +212,10 @@ class _InternalTestEndpoints extends TestEndpoints
     _i2.SerializationManager serializationManager,
     _i2.EndpointDispatch endpoints,
   ) {
+    app = _AppEndpoint(
+      endpoints,
+      serializationManager,
+    );
     auth = _AuthEndpoint(
       endpoints,
       serializationManager,
@@ -207,6 +235,326 @@ class _InternalTestEndpoints extends TestEndpoints
   }
 }
 
+class _AppEndpoint {
+  _AppEndpoint(
+    this._endpointDispatch,
+    this._serializationManager,
+  );
+
+  final _i2.EndpointDispatch _endpointDispatch;
+
+  final _i2.SerializationManager _serializationManager;
+
+  _i3.Future<List<_i4.Application>> getMyApplications(
+    _i1.TestSessionBuilder sessionBuilder,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'app',
+            method: 'getMyApplications',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'app',
+          methodName: 'getMyApplications',
+          parameters: _i1.testObjectToJson({}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<List<_i4.Application>>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i4.Application> getApplication(
+    _i1.TestSessionBuilder sessionBuilder, {
+    required _i2.UuidValue applicationId,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'app',
+            method: 'getApplication',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'app',
+          methodName: 'getApplication',
+          parameters: _i1.testObjectToJson({'applicationId': applicationId}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i4.Application>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i5.CreateApplicationResponse> createApplication(
+    _i1.TestSessionBuilder sessionBuilder, {
+    required _i6.CreateApplicationRequest request,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'app',
+            method: 'createApplication',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'app',
+          methodName: 'createApplication',
+          parameters: _i1.testObjectToJson({'request': request}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i5.CreateApplicationResponse>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i4.Application> updateApplication(
+    _i1.TestSessionBuilder sessionBuilder, {
+    required _i7.UpdateApplicationRequest request,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'app',
+            method: 'updateApplication',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'app',
+          methodName: 'updateApplication',
+          parameters: _i1.testObjectToJson({'request': request}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i4.Application>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i8.SuccessResponse> deleteApplication(
+    _i1.TestSessionBuilder sessionBuilder, {
+    required _i9.DeleteApplicationRequest request,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'app',
+            method: 'deleteApplication',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'app',
+          methodName: 'deleteApplication',
+          parameters: _i1.testObjectToJson({'request': request}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i8.SuccessResponse>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<String> getRegenerationTargetEmail(
+    _i1.TestSessionBuilder sessionBuilder, {
+    required _i2.UuidValue applicationId,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'app',
+            method: 'getRegenerationTargetEmail',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'app',
+          methodName: 'getRegenerationTargetEmail',
+          parameters: _i1.testObjectToJson({'applicationId': applicationId}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<String>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i10.RequestApiKeyRegenerationResponse> requestApiKeyRegeneration(
+    _i1.TestSessionBuilder sessionBuilder, {
+    required _i11.RequestApiKeyRegenerationRequest request,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'app',
+            method: 'requestApiKeyRegeneration',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'app',
+          methodName: 'requestApiKeyRegeneration',
+          parameters: _i1.testObjectToJson({'request': request}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i10.RequestApiKeyRegenerationResponse>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i12.RegenerateApiKeyResponse> regenerateApiKey(
+    _i1.TestSessionBuilder sessionBuilder, {
+    required _i13.RegenerateApiKeyRequest request,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'app',
+            method: 'regenerateApiKey',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'app',
+          methodName: 'regenerateApiKey',
+          parameters: _i1.testObjectToJson({'request': request}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i12.RegenerateApiKeyResponse>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i4.Application> toggleApplicationStatus(
+    _i1.TestSessionBuilder sessionBuilder, {
+    required _i14.ToggleApplicationStatusRequest request,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'app',
+            method: 'toggleApplicationStatus',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'app',
+          methodName: 'toggleApplicationStatus',
+          parameters: _i1.testObjectToJson({'request': request}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i4.Application>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i8.SuccessResponse> transferApplicationOwnership(
+    _i1.TestSessionBuilder sessionBuilder, {
+    required _i15.TransferApplicationOwnershipRequest request,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'app',
+            method: 'transferApplicationOwnership',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'app',
+          methodName: 'transferApplicationOwnership',
+          parameters: _i1.testObjectToJson({'request': request}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i8.SuccessResponse>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+}
+
 class _AuthEndpoint {
   _AuthEndpoint(
     this._endpointDispatch,
@@ -217,9 +565,9 @@ class _AuthEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i4.CheckEmailAndSendCodeResponse> checkEmailAndSendCode(
+  _i3.Future<_i16.CheckEmailAndSendCodeResponse> checkEmailAndSendCode(
     _i1.TestSessionBuilder sessionBuilder, {
-    required _i5.CheckEmailRequest request,
+    required _i17.CheckEmailRequest request,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -240,7 +588,7 @@ class _AuthEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i4.CheckEmailAndSendCodeResponse>);
+                as _i3.Future<_i16.CheckEmailAndSendCodeResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -248,9 +596,9 @@ class _AuthEndpoint {
     });
   }
 
-  _i3.Future<_i6.SendCodeResponse> resendCode(
+  _i3.Future<_i18.SendCodeResponse> resendCode(
     _i1.TestSessionBuilder sessionBuilder, {
-    required _i7.RegisterSendCodeRequest request,
+    required _i19.RegisterSendCodeRequest request,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -271,7 +619,7 @@ class _AuthEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i6.SendCodeResponse>);
+                as _i3.Future<_i18.SendCodeResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -281,7 +629,7 @@ class _AuthEndpoint {
 
   _i3.Future<_i8.SuccessResponse> verifyRegisterCode(
     _i1.TestSessionBuilder sessionBuilder, {
-    required _i9.RegisterVerifyCodeRequest request,
+    required _i20.RegisterVerifyCodeRequest request,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -310,9 +658,9 @@ class _AuthEndpoint {
     });
   }
 
-  _i3.Future<_i10.AuthResponse> register(
+  _i3.Future<_i21.AuthResponse> register(
     _i1.TestSessionBuilder sessionBuilder, {
-    required _i11.RegisterRequest request,
+    required _i22.RegisterRequest request,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -333,7 +681,7 @@ class _AuthEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i10.AuthResponse>);
+                as _i3.Future<_i21.AuthResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -341,9 +689,9 @@ class _AuthEndpoint {
     });
   }
 
-  _i3.Future<_i10.AuthResponse> login(
+  _i3.Future<_i21.AuthResponse> login(
     _i1.TestSessionBuilder sessionBuilder, {
-    required _i12.LoginRequest request,
+    required _i23.LoginRequest request,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -364,7 +712,7 @@ class _AuthEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i10.AuthResponse>);
+                as _i3.Future<_i21.AuthResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -372,9 +720,9 @@ class _AuthEndpoint {
     });
   }
 
-  _i3.Future<_i13.TokenPairResponse> refreshTokens(
+  _i3.Future<_i24.TokenPairResponse> refreshTokens(
     _i1.TestSessionBuilder sessionBuilder, {
-    required _i14.RefreshTokenRequest request,
+    required _i25.RefreshTokenRequest request,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -395,7 +743,7 @@ class _AuthEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i13.TokenPairResponse>);
+                as _i3.Future<_i24.TokenPairResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -463,7 +811,7 @@ class _AuthEndpoint {
     });
   }
 
-  _i3.Future<_i15.UserPublic> getCurrentUser(
+  _i3.Future<_i26.UserPublic> getCurrentUser(
     _i1.TestSessionBuilder sessionBuilder,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
@@ -485,7 +833,7 @@ class _AuthEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i15.UserPublic>);
+                as _i3.Future<_i26.UserPublic>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -504,7 +852,7 @@ class _SessionEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<List<_i16.SessionInfo>> getActiveSessions(
+  _i3.Future<List<_i27.SessionInfo>> getActiveSessions(
     _i1.TestSessionBuilder sessionBuilder,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
@@ -526,7 +874,7 @@ class _SessionEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<List<_i16.SessionInfo>>);
+                as _i3.Future<List<_i27.SessionInfo>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -536,7 +884,7 @@ class _SessionEndpoint {
 
   _i3.Future<_i8.SuccessResponse> terminateSession(
     _i1.TestSessionBuilder sessionBuilder, {
-    required _i17.TerminateSessionRequest request,
+    required _i28.TerminateSessionRequest request,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -606,9 +954,9 @@ class _TeamEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i18.Team> createTeam(
+  _i3.Future<_i29.Team> createTeam(
     _i1.TestSessionBuilder sessionBuilder, {
-    required _i19.CreateTeamRequest request,
+    required _i30.CreateTeamRequest request,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -629,7 +977,7 @@ class _TeamEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i18.Team>);
+                as _i3.Future<_i29.Team>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -637,9 +985,9 @@ class _TeamEndpoint {
     });
   }
 
-  _i3.Future<_i18.Team> updateTeam(
+  _i3.Future<_i29.Team> updateTeam(
     _i1.TestSessionBuilder sessionBuilder, {
-    required _i20.UpdateTeamRequest request,
+    required _i31.UpdateTeamRequest request,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -660,7 +1008,7 @@ class _TeamEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i18.Team>);
+                as _i3.Future<_i29.Team>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -668,7 +1016,7 @@ class _TeamEndpoint {
     });
   }
 
-  _i3.Future<_i18.Team> getTeam(
+  _i3.Future<_i29.Team> getTeam(
     _i1.TestSessionBuilder sessionBuilder, {
     required _i2.UuidValue teamId,
   }) async {
@@ -691,7 +1039,7 @@ class _TeamEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i18.Team>);
+                as _i3.Future<_i29.Team>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -699,7 +1047,7 @@ class _TeamEndpoint {
     });
   }
 
-  _i3.Future<List<_i18.Team>> getMyTeams(
+  _i3.Future<List<_i29.Team>> getMyTeams(
     _i1.TestSessionBuilder sessionBuilder,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
@@ -721,7 +1069,7 @@ class _TeamEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<List<_i18.Team>>);
+                as _i3.Future<List<_i29.Team>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -729,9 +1077,9 @@ class _TeamEndpoint {
     });
   }
 
-  _i3.Future<List<_i18.Team>> inviteMember(
+  _i3.Future<_i8.SuccessResponse> inviteMember(
     _i1.TestSessionBuilder sessionBuilder, {
-    required _i21.InviteTeamMemberRequest request,
+    required _i32.InviteTeamMemberRequest request,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -752,7 +1100,7 @@ class _TeamEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<List<_i18.Team>>);
+                as _i3.Future<_i8.SuccessResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -760,7 +1108,7 @@ class _TeamEndpoint {
     });
   }
 
-  _i3.Future<List<_i22.TeamMember>> getMyInvitations(
+  _i3.Future<List<_i33.TeamMember>> getMyInvitations(
     _i1.TestSessionBuilder sessionBuilder,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
@@ -782,7 +1130,7 @@ class _TeamEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<List<_i22.TeamMember>>);
+                as _i3.Future<List<_i33.TeamMember>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -790,9 +1138,9 @@ class _TeamEndpoint {
     });
   }
 
-  _i3.Future<List<_i18.Team>> respondToInvitation(
+  _i3.Future<_i8.SuccessResponse> respondToInvitation(
     _i1.TestSessionBuilder sessionBuilder, {
-    required _i23.RespondToInvitationRequest request,
+    required _i34.RespondToInvitationRequest request,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -813,7 +1161,7 @@ class _TeamEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<List<_i18.Team>>);
+                as _i3.Future<_i8.SuccessResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -821,9 +1169,9 @@ class _TeamEndpoint {
     });
   }
 
-  _i3.Future<List<_i18.Team>> revokeInvitation(
+  _i3.Future<_i8.SuccessResponse> revokeInvitation(
     _i1.TestSessionBuilder sessionBuilder, {
-    required _i24.RevokeInvitationRequest request,
+    required _i35.RevokeInvitationRequest request,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -844,7 +1192,7 @@ class _TeamEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<List<_i18.Team>>);
+                as _i3.Future<_i8.SuccessResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -852,7 +1200,7 @@ class _TeamEndpoint {
     });
   }
 
-  _i3.Future<List<_i22.TeamMember>> getTeamMembers(
+  _i3.Future<List<_i33.TeamMember>> getTeamMembers(
     _i1.TestSessionBuilder sessionBuilder, {
     required _i2.UuidValue teamId,
   }) async {
@@ -875,7 +1223,7 @@ class _TeamEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<List<_i22.TeamMember>>);
+                as _i3.Future<List<_i33.TeamMember>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -883,9 +1231,9 @@ class _TeamEndpoint {
     });
   }
 
-  _i3.Future<List<_i18.Team>> updateMemberRole(
+  _i3.Future<_i8.SuccessResponse> updateMemberRole(
     _i1.TestSessionBuilder sessionBuilder, {
-    required _i25.UpdateMemberRoleRequest request,
+    required _i36.UpdateMemberRoleRequest request,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -906,7 +1254,7 @@ class _TeamEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<List<_i18.Team>>);
+                as _i3.Future<_i8.SuccessResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -914,9 +1262,9 @@ class _TeamEndpoint {
     });
   }
 
-  _i3.Future<List<_i18.Team>> removeMember(
+  _i3.Future<_i8.SuccessResponse> removeMember(
     _i1.TestSessionBuilder sessionBuilder, {
-    required _i26.RemoveMemberRequest request,
+    required _i37.RemoveMemberRequest request,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -937,7 +1285,7 @@ class _TeamEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<List<_i18.Team>>);
+                as _i3.Future<_i8.SuccessResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -945,9 +1293,9 @@ class _TeamEndpoint {
     });
   }
 
-  _i3.Future<List<_i18.Team>> leaveTeam(
+  _i3.Future<_i8.SuccessResponse> leaveTeam(
     _i1.TestSessionBuilder sessionBuilder, {
-    required _i27.LeaveTeamRequest request,
+    required _i38.LeaveTeamRequest request,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -968,7 +1316,7 @@ class _TeamEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<List<_i18.Team>>);
+                as _i3.Future<_i8.SuccessResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -976,9 +1324,9 @@ class _TeamEndpoint {
     });
   }
 
-  _i3.Future<List<_i18.Team>> transferOwnership(
+  _i3.Future<_i8.SuccessResponse> transferOwnership(
     _i1.TestSessionBuilder sessionBuilder, {
-    required _i28.TransferTeamOwnershipRequest request,
+    required _i39.TransferTeamOwnershipRequest request,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -999,7 +1347,7 @@ class _TeamEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<List<_i18.Team>>);
+                as _i3.Future<_i8.SuccessResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1007,9 +1355,9 @@ class _TeamEndpoint {
     });
   }
 
-  _i3.Future<List<_i18.Team>> deleteTeam(
+  _i3.Future<_i8.SuccessResponse> deleteTeam(
     _i1.TestSessionBuilder sessionBuilder, {
-    required _i29.DeleteTeamRequest request,
+    required _i40.DeleteTeamRequest request,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1030,7 +1378,7 @@ class _TeamEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<List<_i18.Team>>);
+                as _i3.Future<_i8.SuccessResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1049,7 +1397,7 @@ class _GreetingEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i30.Greeting> hello(
+  _i3.Future<_i41.Greeting> hello(
     _i1.TestSessionBuilder sessionBuilder,
     String name,
   ) async {
@@ -1072,7 +1420,7 @@ class _GreetingEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i30.Greeting>);
+                as _i3.Future<_i41.Greeting>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();

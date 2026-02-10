@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:version_manager_client/version_manager_client.dart';
-import 'package:version_manager_flutter/features/team/presentation/bloc/team_bloc.dart';
+import 'package:version_manager_flutter/features/team_member/presentation/bloc/team_member_bloc.dart';
 import 'package:version_manager_flutter/shared/widgets/role_selector.dart';
 
 /// Диалог изменения роли участника команды.
@@ -96,10 +96,10 @@ class _ChangeRoleDialogState extends State<ChangeRoleDialog> {
   }
 
   void _submit() {
-    final bloc = context.read<TeamBloc>();
+    final bloc = context.read<TeamMemberBloc>();
     Navigator.pop(context);
     bloc.add(
-      TeamEvent.updateMemberRole(
+      TeamMemberEvent.updateMemberRole(
         memberId: widget.member.id!,
         newRole: _selectedRole,
       ),

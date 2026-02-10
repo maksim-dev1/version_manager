@@ -1,0 +1,11 @@
+### Запрос на создание приложения
+class: CreateApplicationRequest
+fields:
+  namespace: String
+  name: String
+  description: String?
+  iconUrl: String?
+  platforms: List<PlatformType>
+  ownerType: OwnerType
+  teamId: UuidValue?
+  storeLinks: List<StoreLinkEntry>?

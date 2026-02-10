@@ -12,7 +12,7 @@ import 'package:version_manager_flutter/shared/services/storage_service.dart';
 /// ## Сроки жизни токенов
 /// - **Access Token**: 1 час
 /// - **Refresh Token**: 30 дней
-class AuthKeyProvider implements ClientAuthKeyProvider {
+class AuthKeyProvider implements RefresherClientAuthKeyProvider {
   final StorageService _storageService;
 
   /// Callback для выполнения refresh token.
@@ -21,9 +21,6 @@ class AuthKeyProvider implements ClientAuthKeyProvider {
 
   /// Callback вызывается при ошибке refresh (logout).
   void Function()? onAuthenticationFailed;
-
-  /// Флаг, предотвращающий повторные попытки refresh.
-  bool _isRefreshing = false;
 
   AuthKeyProvider({
     required StorageService storageService,
@@ -39,6 +36,45 @@ class AuthKeyProvider implements ClientAuthKeyProvider {
     if (accessToken == null) return null;
 
     return wrapAsBearerAuthHeaderValue(accessToken);
+  }
+
+  /// Обновляет access token через refresh token.
+  ///
+  /// Вызывается автоматически Serverpod клиентом при получении 401.
+  /// Serverpod сам перехватывает 401, вызывает этот метод,
+  /// и повторяет исходный запрос при успехе.
+  @override
+  Future<RefreshAuthKeyResult> refreshAuthKey({bool force = false}) async {
+    final currentRefreshToken = refreshToken;
+    if (currentRefreshToken == null) {
+      onAuthenticationFailed?.call();
+      return RefreshAuthKeyResult.failedUnauthorized;
+    }
+
+    if (onRefreshToken == null) {
+      onAuthenticationFailed?.call();
+      return RefreshAuthKeyResult.failedOther;
+    }
+
+    try {
+      final result = await onRefreshToken!(currentRefreshToken);
+
+      if (result.success) {
+        await saveTokens(
+          accessToken: result.accessToken!,
+          refreshToken: result.refreshToken!,
+        );
+        return RefreshAuthKeyResult.success;
+      } else {
+        await clearTokens();
+        onAuthenticationFailed?.call();
+        return RefreshAuthKeyResult.failedUnauthorized;
+      }
+    } catch (e) {
+      await clearTokens();
+      onAuthenticationFailed?.call();
+      return RefreshAuthKeyResult.failedOther;
+    }
   }
 
   /// Сохраняет новую пару токенов.
@@ -68,54 +104,6 @@ class AuthKeyProvider implements ClientAuthKeyProvider {
 
   /// Получает текущий refresh token.
   String? get refreshToken => _storageService.getString(refreshTokenKey);
-
-  /// Выполняет обновление токенов.
-  ///
-  /// Вызывается при получении 401 ошибки от сервера.
-  /// Использует refresh token для получения новой пары токенов.
-  ///
-  /// Возвращает `true` если refresh успешен, `false` в противном случае.
-  Future<bool> refreshTokens() async {
-    // Предотвращаем параллельные refresh запросы
-    if (_isRefreshing) return false;
-
-    final currentRefreshToken = refreshToken;
-    if (currentRefreshToken == null) {
-      onAuthenticationFailed?.call();
-      return false;
-    }
-
-    if (onRefreshToken == null) {
-      onAuthenticationFailed?.call();
-      return false;
-    }
-
-    _isRefreshing = true;
-
-    try {
-      final result = await onRefreshToken!(currentRefreshToken);
-
-      if (result.success) {
-        await saveTokens(
-          accessToken: result.accessToken!,
-          refreshToken: result.refreshToken!,
-        );
-        return true;
-      } else {
-        // Refresh не удался — токены невалидны
-        await clearTokens();
-        onAuthenticationFailed?.call();
-        return false;
-      }
-    } catch (e) {
-      // Ошибка refresh — очищаем токены и уведомляем
-      await clearTokens();
-      onAuthenticationFailed?.call();
-      return false;
-    } finally {
-      _isRefreshing = false;
-    }
-  }
 }
 
 /// Результат операции refresh token.

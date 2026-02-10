@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:version_manager_client/version_manager_client.dart';
-import 'package:version_manager_flutter/features/team/presentation/bloc/team_bloc.dart';
+import 'package:version_manager_flutter/features/team_member/presentation/bloc/team_member_bloc.dart';
 
 /// Диалог подтверждения удаления участника из команды.
 class RemoveMemberDialog extends StatelessWidget {
@@ -60,10 +60,10 @@ class RemoveMemberDialog extends StatelessWidget {
         ),
         FilledButton(
           onPressed: () {
-            final bloc = context.read<TeamBloc>();
+            final bloc = context.read<TeamMemberBloc>();
             Navigator.pop(context);
             bloc.add(
-              TeamEvent.removeMember(memberId: member.id!),
+              TeamMemberEvent.removeMember(memberId: member.id!),
             );
           },
           style: FilledButton.styleFrom(

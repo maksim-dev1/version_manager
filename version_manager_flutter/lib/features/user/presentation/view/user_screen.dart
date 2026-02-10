@@ -53,42 +53,15 @@ class _UserScreenContent extends StatelessWidget {
         title: const Text('Профиль'),
         elevation: 0,
         actions: [
-          PopupMenuButton<String>(
-            icon: const Icon(Icons.more_vert),
-            onSelected: (value) {
-              if (value == 'logout') {
-                _showLogoutDialog(context);
-              } else if (value == 'logoutAll') {
-                _showLogoutAllDialog(context);
-              }
-            },
-            itemBuilder: (context) => [
-              const PopupMenuItem(
-                value: 'logout',
-                child: ListTile(
-                  leading: Icon(Icons.logout),
-                  title: Text('Выйти'),
-                  contentPadding: EdgeInsets.zero,
-                  dense: true,
-                ),
-              ),
-              PopupMenuItem(
-                value: 'logoutAll',
-                child: ListTile(
-                  leading: Icon(
-                    Icons.logout,
-                    color: colorScheme.error,
-                  ),
-                  title: Text(
-                    'Выйти со всех устройств',
-                    style: TextStyle(color: colorScheme.error),
-                  ),
-                  contentPadding: EdgeInsets.zero,
-                  dense: true,
-                ),
-              ),
-            ],
+          IconButton(
+            onPressed: () => _showLogoutDialog(context),
+            icon: Icon(
+              Icons.logout_outlined,
+              color: colorScheme.error,
+            ),
+            tooltip: 'Выйти',
           ),
+          const SizedBox(width: 8),
         ],
       ),
       body: const _ProfileAndSessionsBody(),
@@ -117,35 +90,6 @@ class _UserScreenContent extends StatelessWidget {
       ),
     );
   }
-
-  void _showLogoutAllDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('Выйти со всех устройств?'),
-        content: const Text(
-          'Все активные сессии будут завершены. '
-          'Вам потребуется заново войти в аккаунт.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('Отмена'),
-          ),
-          FilledButton(
-            onPressed: () {
-              Navigator.pop(dialogContext);
-              context.read<AuthBloc>().add(const AuthEvent.logoutAll());
-            },
-            style: FilledButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.error,
-            ),
-            child: const Text('Выйти со всех'),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 /// Тело экрана — профиль + список сессий на одной странице.
@@ -167,7 +111,9 @@ class _ProfileAndSessionsBody extends StatelessWidget {
         );
       },
       child: ListView(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(
+          MediaQuery.sizeOf(context).width < 600 ? 16.0 : 24.0,
+        ),
         children: [
           // --- Секция «Профиль» ---
           BlocBuilder<UserProfileBloc, UserProfileState>(
@@ -281,8 +227,11 @@ class _SessionsSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Заголовок с кнопкой
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        Wrap(
+          alignment: WrapAlignment.spaceBetween,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: 12,
+          runSpacing: 8,
           children: [
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,

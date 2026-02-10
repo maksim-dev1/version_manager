@@ -17,7 +17,8 @@ enum VerificationPurposeType implements _i1.SerializableModel {
   sign_up,
   login,
   reset_password,
-  change_email;
+  change_email,
+  regenerate_api_key;
 
   static VerificationPurposeType fromJson(String name) {
     switch (name) {
@@ -29,6 +30,8 @@ enum VerificationPurposeType implements _i1.SerializableModel {
         return VerificationPurposeType.reset_password;
       case 'change_email':
         return VerificationPurposeType.change_email;
+      case 'regenerate_api_key':
+        return VerificationPurposeType.regenerate_api_key;
       default:
         throw ArgumentError(
           'Value "$name" cannot be converted to "VerificationPurposeType"',

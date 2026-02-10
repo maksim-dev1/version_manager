@@ -1,0 +1,5 @@
+### Запрос на активацию/деактивацию приложения
+class: ToggleApplicationStatusRequest
+fields:
+  applicationId: UuidValue
+  isActive: bool

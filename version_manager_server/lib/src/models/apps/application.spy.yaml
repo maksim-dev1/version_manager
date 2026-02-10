@@ -6,7 +6,7 @@ fields:
 
   namespace: String
   name: String
-  description: String
+  description: String, default=''
   iconUrl: String?
 
   platforms: List<PlatformType>  # enum[] (минимум 1)
@@ -25,6 +25,7 @@ fields:
   isActive: bool, default=true
 
   apiKeyHash: String
+  apiKeyLast4: String, default=''
   apiKeyCreatedAt: DateTime, default=now
   apiKeyLastRegeneratedAt: DateTime?
 

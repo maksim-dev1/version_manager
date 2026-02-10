@@ -2,8 +2,6 @@ import 'package:mailer/mailer.dart' as mailer;
 import 'package:mailer/smtp_server.dart';
 import 'package:serverpod/serverpod.dart';
 import 'package:version_manager_server/email_templates.dart';
-import 'package:version_manager_server/src/generated/protocol.dart';
-
 
 /// Поддерживаемые провайдеры email-сервисов.
 ///
@@ -21,7 +19,6 @@ enum EmailProvider {
   /// - Порт: 465 (SSL) или 587 (TLS)
   google,
 
-
   /// Яндекс.Почта SMTP сервис.
   ///
   /// **Требования:**
@@ -34,7 +31,6 @@ enum EmailProvider {
   /// - Порт: 465 (SSL)
   yandex,
 }
-
 
 /// Сервис для отправки email-уведомлений с поддержкой HTML-шаблонов.
 ///
@@ -70,7 +66,6 @@ class EmailService {
   /// SMTP провайдер для отправки email.
   final EmailProvider provider;
 
-
   /// Создаёт экземпляр сервиса email-уведомлений.
   ///
   /// ### Параметры
@@ -96,24 +91,18 @@ class EmailService {
     required this.provider,
   });
 
-
   Map<String, String> _getCredentials() {
     switch (provider) {
       case EmailProvider.google:
         final username = Serverpod.instance.getPassword('gmailSmtpEmail');
         final password = Serverpod.instance.getPassword('gmailSmtpAppPassword');
 
-
         if (username == null || password == null) {
-          throw InvalidDataException(
-            message:
-                'Email или пароль Gmail не настроены в Serverpod passwords.',
-            field: 'Gmail SMTP',
-            stackTrace: StackTrace.current.toString(),
+          throw StateError(
+            'Email или пароль Gmail не настроены в Serverpod passwords.',
           );
         }
         return {'username': username, 'password': password};
-
 
       case EmailProvider.yandex:
         final username = Serverpod.instance.getPassword('yandexSmtpEmail');
@@ -121,28 +110,21 @@ class EmailService {
           'yandexSmtpAppPassword',
         );
 
-
         if (username == null || password == null) {
-          throw InvalidDataException(
-            message:
-                'Email или пароль Яндекс не настроены в Serverpod passwords.',
-            field: 'Yandex SMTP',
-            stackTrace: StackTrace.current.toString(),
+          throw StateError(
+            'Email или пароль Яндекс не настроены в Serverpod passwords.',
           );
         }
         return {'username': username, 'password': password};
     }
   }
 
-
   SmtpServer _getSmtpServer() {
     final credentials = _getCredentials();
-
 
     switch (provider) {
       case EmailProvider.google:
         return gmail(credentials['username']!, credentials['password']!);
-
 
       case EmailProvider.yandex:
         return SmtpServer(
@@ -154,7 +136,6 @@ class EmailService {
         );
     }
   }
-
 
   /// Обрабатывает HTML-шаблон и заменяет переменные и условные блоки.
   ///
@@ -178,12 +159,10 @@ class EmailService {
   String _loadTemplate(String template, Map<String, String> variables) {
     var html = template;
 
-
     // Замена переменных
     variables.forEach((key, value) {
       html = html.replaceAll('{{$key}}', value);
     });
-
 
     // Обработка условных блоков
     html = html.replaceAllMapped(
@@ -192,7 +171,6 @@ class EmailService {
         final varName = match.group(1)!;
         final content = match.group(2)!;
 
-
         if (variables.containsKey(varName)) {
           return content.replaceAll('{{$varName}}', variables[varName]!);
         }
@@ -200,10 +178,8 @@ class EmailService {
       },
     );
 
-
     return html;
   }
-
 
   Future<bool> _sendEmail({
     required String recipientEmail,
@@ -215,7 +191,6 @@ class EmailService {
       final smtpServer = _getSmtpServer();
       final credentials = _getCredentials();
 
-
       final message = mailer.Message()
         ..from = mailer.Address(credentials['username']!)
         ..recipients.add(recipientEmail)
@@ -223,24 +198,14 @@ class EmailService {
         ..text = textBody
         ..html = htmlBody;
 
-
       await mailer.send(message, smtpServer);
       return true;
-    } on mailer.MailerException catch (e) {
-      throw InvalidDataException(
-        message: 'Ошибка при отправке email: ${e.message}',
-        field: 'Email Service',
-        stackTrace: StackTrace.current.toString(),
-      );
-    } catch (e, stackTrace) {
-      throw InvalidDataException(
-        message: 'Неожиданная ошибка при отправке email: $e',
-        field: 'Email Service',
-        stackTrace: stackTrace.toString(),
-      );
+    } on mailer.MailerException {
+      return false;
+    } catch (_) {
+      return false;
     }
   }
-
 
   /// Отправляет email с кодом верификации на указанный адрес.
   ///
@@ -253,14 +218,11 @@ class EmailService {
   /// - [appName] — название приложения для персонализации (по умолчанию: 'YourApp')
   ///
   /// ### Возвращает
-  /// `true` если email успешно отправлен, иначе выбрасывает [InvalidDataException].
+  /// `true` если email успешно отправлен, `false` если произошла ошибка.
   ///
   /// ### Шаблон переменных
   /// - `{{CODE}}` — код верификации
   /// - `{{APP_NAME}}` — название приложения
-  ///
-  /// ### Исключения
-  /// - [InvalidDataException] — ошибка отправки
   ///
   /// ### Пример
   /// ```dart
@@ -280,7 +242,6 @@ class EmailService {
       'APP_NAME': appName,
     });
 
-
     return await _sendEmail(
       recipientEmail: email,
       subject: 'Подтверждение email',
@@ -288,7 +249,6 @@ class EmailService {
       textBody: 'Ваш код подтверждения: $code',
     );
   }
-
 
   /// Отправляет email с кодом восстановления пароля.
   ///
@@ -329,14 +289,11 @@ class EmailService {
       'APP_NAME': appName,
     };
 
-
     if (username != null) {
       variables['USERNAME'] = username;
     }
 
-
     final html = _loadTemplate(passwordResetTemplate, variables);
-
 
     return await _sendEmail(
       recipientEmail: email,
@@ -345,7 +302,6 @@ class EmailService {
       textBody: 'Код восстановления пароля: $code',
     );
   }
-
 
   /// Отправляет персонализированное уведомление с поддержкой множества параметров.
   ///
@@ -406,33 +362,34 @@ class EmailService {
     String? supportUrl,
     String? unsubscribeUrl,
   }) async {
-    final variables = {
-      'TITLE': title,
-      'MESSAGE': message,
-      'ICON': icon,
-      'APP_NAME': appName,
-      'TIMESTAMP': DateTime.now().toLocal().toString().substring(0, 16),
-    };
+    try {
+      final variables = {
+        'TITLE': title,
+        'MESSAGE': message,
+        'ICON': icon,
+        'APP_NAME': appName,
+        'TIMESTAMP': DateTime.now().toLocal().toString().substring(0, 16),
+      };
 
+      if (username != null) variables['USERNAME'] = username;
+      if (ctaUrl != null) {
+        variables['CTA_URL'] = ctaUrl;
+        variables['CTA_TEXT'] = ctaText ?? 'Перейти';
+      }
+      if (infoMessage != null) variables['INFO_MESSAGE'] = infoMessage;
+      if (supportUrl != null) variables['SUPPORT_URL'] = supportUrl;
+      if (unsubscribeUrl != null) variables['UNSUBSCRIBE_URL'] = unsubscribeUrl;
 
-    if (username != null) variables['USERNAME'] = username;
-    if (ctaUrl != null) {
-      variables['CTA_URL'] = ctaUrl;
-      variables['CTA_TEXT'] = ctaText ?? 'Перейти';
+      final html = _loadTemplate(notificationTemplate, variables);
+
+      return await _sendEmail(
+        recipientEmail: email,
+        subject: title,
+        htmlBody: html,
+        textBody: message,
+      );
+    } catch (_) {
+      return false;
     }
-    if (infoMessage != null) variables['INFO_MESSAGE'] = infoMessage;
-    if (supportUrl != null) variables['SUPPORT_URL'] = supportUrl;
-    if (unsubscribeUrl != null) variables['UNSUBSCRIBE_URL'] = unsubscribeUrl;
-
-
-    final html = _loadTemplate(notificationTemplate, variables);
-
-
-    return await _sendEmail(
-      recipientEmail: email,
-      subject: title,
-      htmlBody: html,
-      textBody: message,
-    );
   }
 }

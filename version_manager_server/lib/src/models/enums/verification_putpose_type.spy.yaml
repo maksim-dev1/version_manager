@@ -6,3 +6,4 @@ values:
   - login
   - reset_password
   - change_email
+  - regenerate_api_key
