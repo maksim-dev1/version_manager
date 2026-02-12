@@ -41,7 +41,7 @@ String _getServerUrl() {
 
   if (kIsWeb) {
     // Для web используем текущий домен
-    return '${Uri.base.scheme}://${Uri.base.host}/api';
+    return '${Uri.base.scheme}://${Uri.base.host}';
   } else {
     if (urlFromEnv.isNotEmpty) {
       return urlFromEnv;
