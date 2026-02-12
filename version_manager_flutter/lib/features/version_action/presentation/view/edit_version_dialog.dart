@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:version_manager_client/version_manager_client.dart';
 import 'package:version_manager_flutter/features/version_action/presentation/bloc/version_action_bloc.dart';
 
-/// Диалог редактирования changelog версии.
+/// Диалог редактирования версии.
 class EditVersionDialog extends StatefulWidget {
   final VersionListItem version;
   final UuidValue applicationId;
@@ -20,11 +21,19 @@ class EditVersionDialog extends StatefulWidget {
 
 class _EditVersionDialogState extends State<EditVersionDialog> {
   final _formKey = GlobalKey<FormState>();
+  late final TextEditingController _versionNumberController;
+  late final TextEditingController _buildNumberController;
   late final TextEditingController _changelogController;
 
   @override
   void initState() {
     super.initState();
+    _versionNumberController = TextEditingController(
+      text: widget.version.versionNumber,
+    );
+    _buildNumberController = TextEditingController(
+      text: widget.version.buildNumber.toString(),
+    );
     _changelogController = TextEditingController(
       text: widget.version.changelog,
     );
@@ -32,6 +41,8 @@ class _EditVersionDialogState extends State<EditVersionDialog> {
 
   @override
   void dispose() {
+    _versionNumberController.dispose();
+    _buildNumberController.dispose();
     _changelogController.dispose();
     super.dispose();
   }
@@ -39,7 +50,7 @@ class _EditVersionDialogState extends State<EditVersionDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Версия ${widget.version.versionNumber}'),
+      title: Text('Редактирование v${widget.version.versionNumber}'),
       content: ConstrainedBox(
         constraints: const BoxConstraints(
           minWidth: 480,
@@ -51,17 +62,53 @@ class _EditVersionDialogState extends State<EditVersionDialog> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ── Информация о версии (read-only) ──
-              _ReadOnlyField(
-                label: 'Номер версии',
-                value: widget.version.versionNumber,
+              // ── Номер версии ──
+              TextFormField(
+                controller: _versionNumberController,
+                decoration: const InputDecoration(
+                  labelText: 'Номер версии',
+                  hintText: '1.0.0',
+                  helperText: 'Формат: MAJOR.MINOR.PATCH',
+                ),
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'[\d.]')),
+                ],
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Укажите номер версии';
+                  }
+                  final regex = RegExp(r'^\d+\.\d+\.\d+$');
+                  if (!regex.hasMatch(value.trim())) {
+                    return 'Формат: MAJOR.MINOR.PATCH (например, 1.0.0)';
+                  }
+                  return null;
+                },
               ),
-              const SizedBox(height: 8),
-              _ReadOnlyField(
-                label: 'Номер сборки',
-                value: '#${widget.version.buildNumber}',
+              const SizedBox(height: 12),
+
+              // ── Номер сборки ──
+              TextFormField(
+                controller: _buildNumberController,
+                decoration: const InputDecoration(
+                  labelText: 'Номер сборки',
+                  hintText: '1',
+                ),
+                keyboardType: TextInputType.number,
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                ],
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Укажите номер сборки';
+                  }
+                  final n = int.tryParse(value.trim());
+                  if (n == null || n <= 0) {
+                    return 'Номер сборки должен быть положительным числом';
+                  }
+                  return null;
+                },
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
 
               // ── Changelog ──
               TextFormField(
@@ -74,7 +121,6 @@ class _EditVersionDialogState extends State<EditVersionDialog> {
                 maxLines: 4,
                 minLines: 2,
                 maxLength: 2000,
-                autofocus: true,
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return 'Укажите описание изменений';
@@ -108,45 +154,23 @@ class _EditVersionDialogState extends State<EditVersionDialog> {
 
     Navigator.pop(context);
 
+    final newVersionNumber = _versionNumberController.text.trim();
+    final newBuildNumber = int.parse(_buildNumberController.text.trim());
+    final newChangelog = _changelogController.text.trim();
+
     context.read<VersionActionBloc>().add(
       VersionActionEvent.updateVersion(
         versionId: widget.version.id,
-        changelog: _changelogController.text.trim(),
+        versionNumber: newVersionNumber != widget.version.versionNumber
+            ? newVersionNumber
+            : null,
+        buildNumber: newBuildNumber != widget.version.buildNumber
+            ? newBuildNumber
+            : null,
+        changelog: newChangelog != widget.version.changelog
+            ? newChangelog
+            : null,
       ),
-    );
-  }
-}
-
-// ──────────────────────────────────────────────────────────────────
-// Вспомогательные виджеты
-// ──────────────────────────────────────────────────────────────────
-
-class _ReadOnlyField extends StatelessWidget {
-  final String label;
-  final String value;
-
-  const _ReadOnlyField({required this.label, required this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return Row(
-      children: [
-        Text(
-          '$label: ',
-          style: textTheme.bodyMedium?.copyWith(
-            color: colorScheme.onSurfaceVariant,
-          ),
-        ),
-        Text(
-          value,
-          style: textTheme.bodyMedium?.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ],
     );
   }
 }
