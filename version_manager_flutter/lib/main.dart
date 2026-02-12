@@ -40,12 +40,20 @@ String _getServerUrl() {
   const urlFromEnv = String.fromEnvironment('SERVER_URL');
 
   if (kIsWeb) {
-    // Для web используем текущий домен
-    return '';
+    // Для web проверяем, production это или локальная разработка
+    if (kReleaseMode) {
+      // Production web - используем текущий домен с протоколом
+      return 'https://${Uri.base.host}';
+    } else {
+      // Development web - используем localhost:9080
+      return 'http://localhost:9080';
+    }
   } else {
+    // Для мобильных приложений
     if (urlFromEnv.isNotEmpty) {
       return urlFromEnv;
     }
   }
   return 'http://localhost:8080/';
 }
+
