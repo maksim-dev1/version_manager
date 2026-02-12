@@ -62,6 +62,17 @@ services:
       - ./version_manager_server/config:/app/config:ro
       - ./version_manager_server/migrations:/app/migrations:ro
 
+flutter_web:
+    build:
+      context: ./version_manager_flutter
+      dockerfile: Dockerfile
+    container_name: version_manager_web
+    ports:
+      - "127.0.0.1:9083:80"
+    networks:
+      - version_manager_network
+    restart: unless-stopped
+
 networks:
   version_manager_network:
     driver: bridge
