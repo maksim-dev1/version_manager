@@ -38,15 +38,14 @@ void main() async {
 /// Получает URL сервера из переменных окружения или возвращает значение по умолчанию.
 String _getServerUrl() {
   const urlFromEnv = String.fromEnvironment('SERVER_URL');
-  if (urlFromEnv.isNotEmpty) {
-    return urlFromEnv;
-  }
-  
-  // Для web используем текущий домен
+
   if (kIsWeb) {
+    // Для web используем текущий домен
     return '${Uri.base.scheme}://${Uri.base.host}';
+  } else {
+    if (urlFromEnv.isNotEmpty) {
+      return urlFromEnv;
+    }
   }
-  
   return 'http://localhost:8080/';
 }
-
