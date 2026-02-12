@@ -12,7 +12,7 @@ WORKDIR /app/version_manager_flutter
 # Получаем зависимости
 RUN flutter pub get
 
-# Собираем Flutter web приложение с загрузкой env файла
+# Собираем Flutter web приложение БЕЗ base-href
 RUN flutter build web --release \
     --dart-define-from-file="lib/.env.json"
 
