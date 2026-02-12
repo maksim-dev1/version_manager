@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: version_manager_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: version_manager
+      POSTGRES_PASSWORD: "6_yI4TXMa-Zd-tIe4QedLusUvWFe0PKh"
+    volumes:
+      - version_manager_prod_data:/var/lib/postgresql/data
+    networks:
+      - version_manager_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:6.2.6
+    container_name: version_manager_redis
+    command: redis-server --requirepass "a0N3BMjTbdUFutl5bba6vWm4ykLnADVP" --appendonly yes
+    volumes:
+      - version_manager_redis_data:/data
+    networks:
+      - version_manager_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "--pass", "a0N3BMjTbdUFutl5bba6vWm4ykLnADVP", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    environment:
+      - REDIS_REPLICATION_MODE=master
+
+  serverpod:
+    build:
+      context: ./version_manager_server
+      dockerfile: Dockerfile
+    container_name: version_manager_app
+    environment:
+      - runmode=production
+      - serverid=default
+      - logging=normal
+      - role=monolith
+    ports:
+      - "127.0.0.1:9080:8080"
+      - "127.0.0.1:9081:8081"
+      - "127.0.0.1:9082:8082"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - version_manager_network
+    restart: unless-stopped
+    volumes:
+      - ./version_manager_server/config:/app/config:ro
+      - ./version_manager_server/migrations:/app/migrations:ro
+
+networks:
+  version_manager_network:
+    driver: bridge
+
+volumes:
+  version_manager_prod_data:
+  version_manager_redis_data:
