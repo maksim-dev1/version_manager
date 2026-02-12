@@ -36,63 +36,75 @@ class _ApplicationDetailBody extends StatelessWidget {
   Widget build(BuildContext context) {
     final isCompact = MediaQuery.sizeOf(context).width < 600;
 
-    return BlocSelector<ApplicationBloc, ApplicationState, Application>(
-      selector: (state) {
+    return BlocListener<ApplicationBloc, ApplicationState>(
+      listener: (context, state) {
         if (state is ApplicationLoaded) {
-          return state.applications.firstWhere(
+          final exists = state.applications.any(
             (a) => a.id == application.id,
-            orElse: () => application,
           );
+          if (!exists && context.mounted) {
+            Navigator.of(context).pop();
+          }
         }
-        return application;
       },
-      builder: (context, app) {
-        return DefaultTabController(
-          length: 3,
-          child: Scaffold(
-            appBar: AppBar(
-              title: Text(app.name),
-              elevation: 0,
-              // actions: [
-              //   _ActionsMenu(application: app, colorScheme: colorScheme),
-              // ],
-              bottom: TabBar(
-                tabAlignment: isCompact
-                    ? TabAlignment.fill
-                    : TabAlignment.start,
-                isScrollable: !isCompact,
-                tabs: [
-                  Tab(
-                    icon: isCompact
-                        ? const Icon(Icons.info_outline, size: 20)
-                        : null,
-                    text: 'Информация',
-                  ),
-                  Tab(
-                    icon: isCompact
-                        ? const Icon(Icons.list_alt, size: 20)
-                        : null,
-                    text: 'Версии',
-                  ),
-                  Tab(
-                    icon: isCompact
-                        ? const Icon(Icons.bar_chart, size: 20)
-                        : null,
-                    text: 'Статистика',
-                  ),
+      child: BlocSelector<ApplicationBloc, ApplicationState, Application>(
+        selector: (state) {
+          if (state is ApplicationLoaded) {
+            return state.applications.firstWhere(
+              (a) => a.id == application.id,
+              orElse: () => application,
+            );
+          }
+          return application;
+        },
+        builder: (context, app) {
+          return DefaultTabController(
+            length: 3,
+            child: Scaffold(
+              appBar: AppBar(
+                title: Text(app.name),
+                elevation: 0,
+                // actions: [
+                //   _ActionsMenu(application: app, colorScheme: colorScheme),
+                // ],
+                bottom: TabBar(
+                  tabAlignment: isCompact
+                      ? TabAlignment.fill
+                      : TabAlignment.start,
+                  isScrollable: !isCompact,
+                  tabs: [
+                    Tab(
+                      icon: isCompact
+                          ? const Icon(Icons.info_outline, size: 20)
+                          : null,
+                      text: 'Информация',
+                    ),
+                    Tab(
+                      icon: isCompact
+                          ? const Icon(Icons.list_alt, size: 20)
+                          : null,
+                      text: 'Версии',
+                    ),
+                    Tab(
+                      icon: isCompact
+                          ? const Icon(Icons.bar_chart, size: 20)
+                          : null,
+                      text: 'Статистика',
+                    ),
+                  ],
+                ),
+              ),
+              body: TabBarView(
+                children: [
+                  _InfoTab(application: app),
+                  VersionsScreen(application: app),
+                  _StatisticsTab(application: app),
                 ],
               ),
             ),
-            body: TabBarView(
-              children: [
-                _InfoTab(application: app),
-                VersionsScreen(application: app),
-                _StatisticsTab(application: app),
-              ],
-            ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }
@@ -669,17 +681,7 @@ class _ActionsList extends StatelessWidget {
               value: bloc,
               child: DeleteApplicationDialog(application: application),
             ),
-          ).then((_) {
-            if (context.mounted) {
-              final state = bloc.state;
-              if (state is ApplicationLoaded) {
-                final exists = state.applications.any(
-                  (a) => a.id == application.id,
-                );
-                if (!exists) Navigator.of(context).pop();
-              }
-            }
-          });
+          );
         },
       ),
     ];

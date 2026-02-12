@@ -7,6 +7,7 @@ import 'package:version_manager_flutter/features/version/presentation/version_pr
 import 'package:version_manager_flutter/features/version_action/presentation/view/create_version_dialog.dart';
 import 'package:version_manager_flutter/features/version_action/presentation/view/delete_version_dialog.dart';
 import 'package:version_manager_flutter/features/version_action/presentation/view/edit_version_dialog.dart';
+import 'package:version_manager_flutter/features/version_action/presentation/view/recommendation_dialog.dart';
 import 'package:version_manager_flutter/features/version_detail/presentation/bloc/version_detail_bloc.dart';
 import 'package:version_manager_flutter/features/version/presentation/view/ui/version_card.dart';
 import 'package:version_manager_flutter/features/version_action/presentation/bloc/version_action_bloc.dart';
@@ -137,6 +138,9 @@ class _VersionsContent extends StatelessWidget {
               applicationId: application.id!,
               onEdit: () => _showEditDialog(context, version),
               onDelete: () => _showDeleteDialog(context, version),
+              onRecommendation: version.isLatest
+                  ? null
+                  : () => _showRecommendationDialog(context, version),
             ),
           );
         },
@@ -161,6 +165,23 @@ class _VersionsContent extends StatelessWidget {
 
   void _showEditDialog(BuildContext context, VersionListItem version) {
     final actionBloc = context.read<VersionActionBloc>();
+    showDialog(
+      context: context,
+      builder: (_) => BlocProvider.value(
+        value: actionBloc,
+        child: EditVersionDialog(
+          version: version,
+          applicationId: application.id!,
+        ),
+      ),
+    );
+  }
+
+  void _showRecommendationDialog(
+    BuildContext context,
+    VersionListItem version,
+  ) {
+    final actionBloc = context.read<VersionActionBloc>();
     final repo = context.read<VersionRepository>();
     showDialog(
       context: context,
@@ -178,7 +199,7 @@ class _VersionsContent extends StatelessWidget {
                   ),
             ),
           ],
-          child: EditVersionDialog(
+          child: RecommendationDialog(
             version: version,
             applicationId: application.id!,
           ),

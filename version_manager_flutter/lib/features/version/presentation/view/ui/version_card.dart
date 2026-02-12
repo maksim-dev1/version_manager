@@ -10,6 +10,7 @@ class VersionCard extends StatelessWidget {
   final UuidValue applicationId;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
+  final VoidCallback? onRecommendation;
 
   const VersionCard({
     super.key,
@@ -17,6 +18,7 @@ class VersionCard extends StatelessWidget {
     required this.applicationId,
     required this.onEdit,
     required this.onDelete,
+    this.onRecommendation,
   });
 
   @override
@@ -96,56 +98,41 @@ class VersionCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  // Быстрые действия
+                  // Действия
                   if (!isCompact) ...[
-                    if (!version.isLatest)
+                    IconButton(
+                      onPressed: onEdit,
+                      icon: Icon(
+                        Icons.edit_outlined,
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                      tooltip: 'Редактировать',
+                      visualDensity: VisualDensity.compact,
+                    ),
+                    if (!version.isLatest) ...[
+                      IconButton(
+                        onPressed: onRecommendation,
+                        icon: Icon(
+                          Icons.system_update_alt,
+                          color: colorScheme.tertiary,
+                        ),
+                        tooltip: 'Рекомендация',
+                        visualDensity: VisualDensity.compact,
+                      ),
                       _BlockToggleButton(
                         version: version,
                         applicationId: applicationId,
                       ),
-                    const SizedBox(width: 4),
-                    PopupMenuButton<_VersionAction>(
-                      itemBuilder: (context) => [
-                        const PopupMenuItem(
-                          value: _VersionAction.edit,
-                          child: ListTile(
-                            leading: Icon(Icons.edit_outlined, size: 20),
-                            title: Text('Редактировать'),
-                            dense: true,
-                            contentPadding: EdgeInsets.zero,
-                          ),
+                      IconButton(
+                        onPressed: onDelete,
+                        icon: Icon(
+                          Icons.delete_outline,
+                          color: colorScheme.error,
                         ),
-                        if (!version.isLatest)
-                          PopupMenuItem(
-                            value: _VersionAction.delete,
-                            child: ListTile(
-                              leading: Icon(
-                                Icons.delete_outline,
-                                size: 20,
-                                color: colorScheme.error,
-                              ),
-                              title: Text(
-                                'Удалить',
-                                style: TextStyle(color: colorScheme.error),
-                              ),
-                              dense: true,
-                              contentPadding: EdgeInsets.zero,
-                            ),
-                          ),
-                      ],
-                      onSelected: (action) {
-                        switch (action) {
-                          case _VersionAction.edit:
-                            onEdit();
-                          case _VersionAction.delete:
-                            onDelete();
-                        }
-                      },
-                      icon: Icon(
-                        Icons.more_vert,
-                        color: colorScheme.onSurfaceVariant,
+                        tooltip: 'Удалить',
+                        visualDensity: VisualDensity.compact,
                       ),
-                    ),
+                    ],
                   ],
                 ],
               ),
@@ -202,6 +189,15 @@ class VersionCard extends StatelessWidget {
                       _BlockToggleButton(
                         version: version,
                         applicationId: applicationId,
+                      ),
+                      const SizedBox(width: 8),
+                      OutlinedButton.icon(
+                        onPressed: onRecommendation,
+                        icon: const Icon(Icons.system_update_alt, size: 16),
+                        label: const Text('Рекомендация'),
+                        style: OutlinedButton.styleFrom(
+                          visualDensity: VisualDensity.compact,
+                        ),
                       ),
                       const SizedBox(width: 8),
                     ],
@@ -443,8 +439,6 @@ class _BlockToggleButton extends StatelessWidget {
 // ──────────────────────────────────────────────────────────────────
 // Хелперы
 // ──────────────────────────────────────────────────────────────────
-
-enum _VersionAction { edit, delete }
 
 String _formatDate(DateTime date) {
   final day = date.day.toString().padLeft(2, '0');

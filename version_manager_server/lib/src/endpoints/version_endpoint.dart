@@ -310,6 +310,29 @@ class VersionEndpoint extends LoggedInEndpoint {
       );
     }
 
+    // Проверка что номер версии не ниже максимального существующего
+    if (maxBuildVersion != null) {
+      final newParts = request.versionNumber
+          .trim()
+          .split('.')
+          .map(int.parse)
+          .toList();
+      final latestParts = maxBuildVersion.versionNumber
+          .split('.')
+          .map(int.parse)
+          .toList();
+
+      final comparison = _compareVersionParts(newParts, latestParts);
+      if (comparison < 0) {
+        throw InvalidDataException(
+          field: 'versionNumber',
+          message:
+              'Номер версии (${request.versionNumber}) не может быть ниже '
+              'текущей максимальной версии (${maxBuildVersion.versionNumber})',
+        );
+      }
+    }
+
     // Создание версии
     final version = Version(
       applicationId: request.applicationId,
@@ -936,6 +959,17 @@ class VersionEndpoint extends LoggedInEndpoint {
         message: 'Номер сборки должен быть положительным числом',
       );
     }
+  }
+
+  /// Сравнение двух версий по частям (MAJOR.MINOR.PATCH).
+  ///
+  /// Возвращает отрицательное число если [a] < [b],
+  /// ноль если равны, положительное если [a] > [b].
+  int _compareVersionParts(List<int> a, List<int> b) {
+    for (var i = 0; i < a.length && i < b.length; i++) {
+      if (a[i] != b[i]) return a[i] - b[i];
+    }
+    return a.length - b.length;
   }
 
   /// Валидация changelog (от 10 до 2000 символов).
