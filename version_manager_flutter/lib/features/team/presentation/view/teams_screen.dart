@@ -125,7 +125,7 @@ class _TeamsContent extends StatelessWidget {
           Text(
             'Мои команды',
             style: textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w600,
             ),
           ),
           const SizedBox(height: 20),

@@ -55,17 +55,13 @@ extension ApplicationEventPatterns on ApplicationEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _LoadApplications value)?  loadApplications,TResult Function( _CreateApplication value)?  createApplication,TResult Function( _UpdateApplication value)?  updateApplication,TResult Function( _DeleteApplication value)?  deleteApplication,TResult Function( _RequestApiKeyRegeneration value)?  requestApiKeyRegeneration,TResult Function( _FetchRegenerationEmail value)?  fetchRegenerationEmail,TResult Function( _RegenerateApiKey value)?  regenerateApiKey,TResult Function( _ToggleApplicationStatus value)?  toggleApplicationStatus,TResult Function( _TransferApplicationOwnership value)?  transferApplicationOwnership,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _LoadApplications value)?  loadApplications,TResult Function( _UpdateApplication value)?  updateApplication,TResult Function( _DeleteApplication value)?  deleteApplication,TResult Function( _ToggleApplicationStatus value)?  toggleApplicationStatus,TResult Function( _TransferApplicationOwnership value)?  transferApplicationOwnership,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _LoadApplications() when loadApplications != null:
-return loadApplications(_that);case _CreateApplication() when createApplication != null:
-return createApplication(_that);case _UpdateApplication() when updateApplication != null:
+return loadApplications(_that);case _UpdateApplication() when updateApplication != null:
 return updateApplication(_that);case _DeleteApplication() when deleteApplication != null:
-return deleteApplication(_that);case _RequestApiKeyRegeneration() when requestApiKeyRegeneration != null:
-return requestApiKeyRegeneration(_that);case _FetchRegenerationEmail() when fetchRegenerationEmail != null:
-return fetchRegenerationEmail(_that);case _RegenerateApiKey() when regenerateApiKey != null:
-return regenerateApiKey(_that);case _ToggleApplicationStatus() when toggleApplicationStatus != null:
+return deleteApplication(_that);case _ToggleApplicationStatus() when toggleApplicationStatus != null:
 return toggleApplicationStatus(_that);case _TransferApplicationOwnership() when transferApplicationOwnership != null:
 return transferApplicationOwnership(_that);case _:
   return orElse();
@@ -85,17 +81,13 @@ return transferApplicationOwnership(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _LoadApplications value)  loadApplications,required TResult Function( _CreateApplication value)  createApplication,required TResult Function( _UpdateApplication value)  updateApplication,required TResult Function( _DeleteApplication value)  deleteApplication,required TResult Function( _RequestApiKeyRegeneration value)  requestApiKeyRegeneration,required TResult Function( _FetchRegenerationEmail value)  fetchRegenerationEmail,required TResult Function( _RegenerateApiKey value)  regenerateApiKey,required TResult Function( _ToggleApplicationStatus value)  toggleApplicationStatus,required TResult Function( _TransferApplicationOwnership value)  transferApplicationOwnership,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _LoadApplications value)  loadApplications,required TResult Function( _UpdateApplication value)  updateApplication,required TResult Function( _DeleteApplication value)  deleteApplication,required TResult Function( _ToggleApplicationStatus value)  toggleApplicationStatus,required TResult Function( _TransferApplicationOwnership value)  transferApplicationOwnership,}){
 final _that = this;
 switch (_that) {
 case _LoadApplications():
-return loadApplications(_that);case _CreateApplication():
-return createApplication(_that);case _UpdateApplication():
+return loadApplications(_that);case _UpdateApplication():
 return updateApplication(_that);case _DeleteApplication():
-return deleteApplication(_that);case _RequestApiKeyRegeneration():
-return requestApiKeyRegeneration(_that);case _FetchRegenerationEmail():
-return fetchRegenerationEmail(_that);case _RegenerateApiKey():
-return regenerateApiKey(_that);case _ToggleApplicationStatus():
+return deleteApplication(_that);case _ToggleApplicationStatus():
 return toggleApplicationStatus(_that);case _TransferApplicationOwnership():
 return transferApplicationOwnership(_that);}
 }
@@ -111,17 +103,13 @@ return transferApplicationOwnership(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _LoadApplications value)?  loadApplications,TResult? Function( _CreateApplication value)?  createApplication,TResult? Function( _UpdateApplication value)?  updateApplication,TResult? Function( _DeleteApplication value)?  deleteApplication,TResult? Function( _RequestApiKeyRegeneration value)?  requestApiKeyRegeneration,TResult? Function( _FetchRegenerationEmail value)?  fetchRegenerationEmail,TResult? Function( _RegenerateApiKey value)?  regenerateApiKey,TResult? Function( _ToggleApplicationStatus value)?  toggleApplicationStatus,TResult? Function( _TransferApplicationOwnership value)?  transferApplicationOwnership,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _LoadApplications value)?  loadApplications,TResult? Function( _UpdateApplication value)?  updateApplication,TResult? Function( _DeleteApplication value)?  deleteApplication,TResult? Function( _ToggleApplicationStatus value)?  toggleApplicationStatus,TResult? Function( _TransferApplicationOwnership value)?  transferApplicationOwnership,}){
 final _that = this;
 switch (_that) {
 case _LoadApplications() when loadApplications != null:
-return loadApplications(_that);case _CreateApplication() when createApplication != null:
-return createApplication(_that);case _UpdateApplication() when updateApplication != null:
+return loadApplications(_that);case _UpdateApplication() when updateApplication != null:
 return updateApplication(_that);case _DeleteApplication() when deleteApplication != null:
-return deleteApplication(_that);case _RequestApiKeyRegeneration() when requestApiKeyRegeneration != null:
-return requestApiKeyRegeneration(_that);case _FetchRegenerationEmail() when fetchRegenerationEmail != null:
-return fetchRegenerationEmail(_that);case _RegenerateApiKey() when regenerateApiKey != null:
-return regenerateApiKey(_that);case _ToggleApplicationStatus() when toggleApplicationStatus != null:
+return deleteApplication(_that);case _ToggleApplicationStatus() when toggleApplicationStatus != null:
 return toggleApplicationStatus(_that);case _TransferApplicationOwnership() when transferApplicationOwnership != null:
 return transferApplicationOwnership(_that);case _:
   return null;
@@ -140,16 +128,12 @@ return transferApplicationOwnership(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  loadApplications,TResult Function( String namespace,  String name,  String? description,  String? iconUrl,  List<PlatformType> platforms,  OwnerType ownerType,  UuidValue? teamId,  List<StoreLinkEntry>? storeLinks)?  createApplication,TResult Function( UuidValue applicationId,  String? name,  String? description,  String? iconUrl,  List<PlatformType>? platforms,  List<StoreLinkEntry>? storeLinks)?  updateApplication,TResult Function( UuidValue applicationId,  String confirmationName)?  deleteApplication,TResult Function( UuidValue applicationId)?  requestApiKeyRegeneration,TResult Function( UuidValue applicationId)?  fetchRegenerationEmail,TResult Function( UuidValue applicationId,  String code)?  regenerateApiKey,TResult Function( UuidValue applicationId,  bool isActive)?  toggleApplicationStatus,TResult Function( UuidValue applicationId,  OwnerType newOwnerType,  UuidValue? newTeamId)?  transferApplicationOwnership,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  loadApplications,TResult Function( UuidValue applicationId,  String? name,  String? description,  String? iconUrl,  List<PlatformType>? platforms,  List<StoreLinkEntry>? storeLinks)?  updateApplication,TResult Function( UuidValue applicationId,  String confirmationName)?  deleteApplication,TResult Function( UuidValue applicationId,  bool isActive)?  toggleApplicationStatus,TResult Function( UuidValue applicationId,  OwnerType newOwnerType,  UuidValue? newTeamId)?  transferApplicationOwnership,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _LoadApplications() when loadApplications != null:
-return loadApplications();case _CreateApplication() when createApplication != null:
-return createApplication(_that.namespace,_that.name,_that.description,_that.iconUrl,_that.platforms,_that.ownerType,_that.teamId,_that.storeLinks);case _UpdateApplication() when updateApplication != null:
+return loadApplications();case _UpdateApplication() when updateApplication != null:
 return updateApplication(_that.applicationId,_that.name,_that.description,_that.iconUrl,_that.platforms,_that.storeLinks);case _DeleteApplication() when deleteApplication != null:
-return deleteApplication(_that.applicationId,_that.confirmationName);case _RequestApiKeyRegeneration() when requestApiKeyRegeneration != null:
-return requestApiKeyRegeneration(_that.applicationId);case _FetchRegenerationEmail() when fetchRegenerationEmail != null:
-return fetchRegenerationEmail(_that.applicationId);case _RegenerateApiKey() when regenerateApiKey != null:
-return regenerateApiKey(_that.applicationId,_that.code);case _ToggleApplicationStatus() when toggleApplicationStatus != null:
+return deleteApplication(_that.applicationId,_that.confirmationName);case _ToggleApplicationStatus() when toggleApplicationStatus != null:
 return toggleApplicationStatus(_that.applicationId,_that.isActive);case _TransferApplicationOwnership() when transferApplicationOwnership != null:
 return transferApplicationOwnership(_that.applicationId,_that.newOwnerType,_that.newTeamId);case _:
   return orElse();
@@ -169,16 +153,12 @@ return transferApplicationOwnership(_that.applicationId,_that.newOwnerType,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  loadApplications,required TResult Function( String namespace,  String name,  String? description,  String? iconUrl,  List<PlatformType> platforms,  OwnerType ownerType,  UuidValue? teamId,  List<StoreLinkEntry>? storeLinks)  createApplication,required TResult Function( UuidValue applicationId,  String? name,  String? description,  String? iconUrl,  List<PlatformType>? platforms,  List<StoreLinkEntry>? storeLinks)  updateApplication,required TResult Function( UuidValue applicationId,  String confirmationName)  deleteApplication,required TResult Function( UuidValue applicationId)  requestApiKeyRegeneration,required TResult Function( UuidValue applicationId)  fetchRegenerationEmail,required TResult Function( UuidValue applicationId,  String code)  regenerateApiKey,required TResult Function( UuidValue applicationId,  bool isActive)  toggleApplicationStatus,required TResult Function( UuidValue applicationId,  OwnerType newOwnerType,  UuidValue? newTeamId)  transferApplicationOwnership,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  loadApplications,required TResult Function( UuidValue applicationId,  String? name,  String? description,  String? iconUrl,  List<PlatformType>? platforms,  List<StoreLinkEntry>? storeLinks)  updateApplication,required TResult Function( UuidValue applicationId,  String confirmationName)  deleteApplication,required TResult Function( UuidValue applicationId,  bool isActive)  toggleApplicationStatus,required TResult Function( UuidValue applicationId,  OwnerType newOwnerType,  UuidValue? newTeamId)  transferApplicationOwnership,}) {final _that = this;
 switch (_that) {
 case _LoadApplications():
-return loadApplications();case _CreateApplication():
-return createApplication(_that.namespace,_that.name,_that.description,_that.iconUrl,_that.platforms,_that.ownerType,_that.teamId,_that.storeLinks);case _UpdateApplication():
+return loadApplications();case _UpdateApplication():
 return updateApplication(_that.applicationId,_that.name,_that.description,_that.iconUrl,_that.platforms,_that.storeLinks);case _DeleteApplication():
-return deleteApplication(_that.applicationId,_that.confirmationName);case _RequestApiKeyRegeneration():
-return requestApiKeyRegeneration(_that.applicationId);case _FetchRegenerationEmail():
-return fetchRegenerationEmail(_that.applicationId);case _RegenerateApiKey():
-return regenerateApiKey(_that.applicationId,_that.code);case _ToggleApplicationStatus():
+return deleteApplication(_that.applicationId,_that.confirmationName);case _ToggleApplicationStatus():
 return toggleApplicationStatus(_that.applicationId,_that.isActive);case _TransferApplicationOwnership():
 return transferApplicationOwnership(_that.applicationId,_that.newOwnerType,_that.newTeamId);}
 }
@@ -194,16 +174,12 @@ return transferApplicationOwnership(_that.applicationId,_that.newOwnerType,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  loadApplications,TResult? Function( String namespace,  String name,  String? description,  String? iconUrl,  List<PlatformType> platforms,  OwnerType ownerType,  UuidValue? teamId,  List<StoreLinkEntry>? storeLinks)?  createApplication,TResult? Function( UuidValue applicationId,  String? name,  String? description,  String? iconUrl,  List<PlatformType>? platforms,  List<StoreLinkEntry>? storeLinks)?  updateApplication,TResult? Function( UuidValue applicationId,  String confirmationName)?  deleteApplication,TResult? Function( UuidValue applicationId)?  requestApiKeyRegeneration,TResult? Function( UuidValue applicationId)?  fetchRegenerationEmail,TResult? Function( UuidValue applicationId,  String code)?  regenerateApiKey,TResult? Function( UuidValue applicationId,  bool isActive)?  toggleApplicationStatus,TResult? Function( UuidValue applicationId,  OwnerType newOwnerType,  UuidValue? newTeamId)?  transferApplicationOwnership,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  loadApplications,TResult? Function( UuidValue applicationId,  String? name,  String? description,  String? iconUrl,  List<PlatformType>? platforms,  List<StoreLinkEntry>? storeLinks)?  updateApplication,TResult? Function( UuidValue applicationId,  String confirmationName)?  deleteApplication,TResult? Function( UuidValue applicationId,  bool isActive)?  toggleApplicationStatus,TResult? Function( UuidValue applicationId,  OwnerType newOwnerType,  UuidValue? newTeamId)?  transferApplicationOwnership,}) {final _that = this;
 switch (_that) {
 case _LoadApplications() when loadApplications != null:
-return loadApplications();case _CreateApplication() when createApplication != null:
-return createApplication(_that.namespace,_that.name,_that.description,_that.iconUrl,_that.platforms,_that.ownerType,_that.teamId,_that.storeLinks);case _UpdateApplication() when updateApplication != null:
+return loadApplications();case _UpdateApplication() when updateApplication != null:
 return updateApplication(_that.applicationId,_that.name,_that.description,_that.iconUrl,_that.platforms,_that.storeLinks);case _DeleteApplication() when deleteApplication != null:
-return deleteApplication(_that.applicationId,_that.confirmationName);case _RequestApiKeyRegeneration() when requestApiKeyRegeneration != null:
-return requestApiKeyRegeneration(_that.applicationId);case _FetchRegenerationEmail() when fetchRegenerationEmail != null:
-return fetchRegenerationEmail(_that.applicationId);case _RegenerateApiKey() when regenerateApiKey != null:
-return regenerateApiKey(_that.applicationId,_that.code);case _ToggleApplicationStatus() when toggleApplicationStatus != null:
+return deleteApplication(_that.applicationId,_that.confirmationName);case _ToggleApplicationStatus() when toggleApplicationStatus != null:
 return toggleApplicationStatus(_that.applicationId,_that.isActive);case _TransferApplicationOwnership() when transferApplicationOwnership != null:
 return transferApplicationOwnership(_that.applicationId,_that.newOwnerType,_that.newTeamId);case _:
   return null;
@@ -244,100 +220,6 @@ String toString() {
 
 
 
-
-/// @nodoc
-
-
-class _CreateApplication implements ApplicationEvent {
-  const _CreateApplication({required this.namespace, required this.name, this.description, this.iconUrl, required final  List<PlatformType> platforms, required this.ownerType, this.teamId, final  List<StoreLinkEntry>? storeLinks}): _platforms = platforms,_storeLinks = storeLinks;
-  
-
- final  String namespace;
- final  String name;
- final  String? description;
- final  String? iconUrl;
- final  List<PlatformType> _platforms;
- List<PlatformType> get platforms {
-  if (_platforms is EqualUnmodifiableListView) return _platforms;
-  // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_platforms);
-}
-
- final  OwnerType ownerType;
- final  UuidValue? teamId;
- final  List<StoreLinkEntry>? _storeLinks;
- List<StoreLinkEntry>? get storeLinks {
-  final value = _storeLinks;
-  if (value == null) return null;
-  if (_storeLinks is EqualUnmodifiableListView) return _storeLinks;
-  // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(value);
-}
-
-
-/// Create a copy of ApplicationEvent
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-_$CreateApplicationCopyWith<_CreateApplication> get copyWith => __$CreateApplicationCopyWithImpl<_CreateApplication>(this, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CreateApplication&&(identical(other.namespace, namespace) || other.namespace == namespace)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.iconUrl, iconUrl) || other.iconUrl == iconUrl)&&const DeepCollectionEquality().equals(other._platforms, _platforms)&&(identical(other.ownerType, ownerType) || other.ownerType == ownerType)&&(identical(other.teamId, teamId) || other.teamId == teamId)&&const DeepCollectionEquality().equals(other._storeLinks, _storeLinks));
-}
-
-
-@override
-int get hashCode => Object.hash(runtimeType,namespace,name,description,iconUrl,const DeepCollectionEquality().hash(_platforms),ownerType,teamId,const DeepCollectionEquality().hash(_storeLinks));
-
-@override
-String toString() {
-  return 'ApplicationEvent.createApplication(namespace: $namespace, name: $name, description: $description, iconUrl: $iconUrl, platforms: $platforms, ownerType: $ownerType, teamId: $teamId, storeLinks: $storeLinks)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class _$CreateApplicationCopyWith<$Res> implements $ApplicationEventCopyWith<$Res> {
-  factory _$CreateApplicationCopyWith(_CreateApplication value, $Res Function(_CreateApplication) _then) = __$CreateApplicationCopyWithImpl;
-@useResult
-$Res call({
- String namespace, String name, String? description, String? iconUrl, List<PlatformType> platforms, OwnerType ownerType, UuidValue? teamId, List<StoreLinkEntry>? storeLinks
-});
-
-
-
-
-}
-/// @nodoc
-class __$CreateApplicationCopyWithImpl<$Res>
-    implements _$CreateApplicationCopyWith<$Res> {
-  __$CreateApplicationCopyWithImpl(this._self, this._then);
-
-  final _CreateApplication _self;
-  final $Res Function(_CreateApplication) _then;
-
-/// Create a copy of ApplicationEvent
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? namespace = null,Object? name = null,Object? description = freezed,Object? iconUrl = freezed,Object? platforms = null,Object? ownerType = null,Object? teamId = freezed,Object? storeLinks = freezed,}) {
-  return _then(_CreateApplication(
-namespace: null == namespace ? _self.namespace : namespace // ignore: cast_nullable_to_non_nullable
-as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
-as String?,iconUrl: freezed == iconUrl ? _self.iconUrl : iconUrl // ignore: cast_nullable_to_non_nullable
-as String?,platforms: null == platforms ? _self._platforms : platforms // ignore: cast_nullable_to_non_nullable
-as List<PlatformType>,ownerType: null == ownerType ? _self.ownerType : ownerType // ignore: cast_nullable_to_non_nullable
-as OwnerType,teamId: freezed == teamId ? _self.teamId : teamId // ignore: cast_nullable_to_non_nullable
-as UuidValue?,storeLinks: freezed == storeLinks ? _self._storeLinks : storeLinks // ignore: cast_nullable_to_non_nullable
-as List<StoreLinkEntry>?,
-  ));
-}
-
-
-}
 
 /// @nodoc
 
@@ -492,206 +374,6 @@ class __$DeleteApplicationCopyWithImpl<$Res>
   return _then(_DeleteApplication(
 applicationId: null == applicationId ? _self.applicationId : applicationId // ignore: cast_nullable_to_non_nullable
 as UuidValue,confirmationName: null == confirmationName ? _self.confirmationName : confirmationName // ignore: cast_nullable_to_non_nullable
-as String,
-  ));
-}
-
-
-}
-
-/// @nodoc
-
-
-class _RequestApiKeyRegeneration implements ApplicationEvent {
-  const _RequestApiKeyRegeneration({required this.applicationId});
-  
-
- final  UuidValue applicationId;
-
-/// Create a copy of ApplicationEvent
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-_$RequestApiKeyRegenerationCopyWith<_RequestApiKeyRegeneration> get copyWith => __$RequestApiKeyRegenerationCopyWithImpl<_RequestApiKeyRegeneration>(this, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RequestApiKeyRegeneration&&(identical(other.applicationId, applicationId) || other.applicationId == applicationId));
-}
-
-
-@override
-int get hashCode => Object.hash(runtimeType,applicationId);
-
-@override
-String toString() {
-  return 'ApplicationEvent.requestApiKeyRegeneration(applicationId: $applicationId)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class _$RequestApiKeyRegenerationCopyWith<$Res> implements $ApplicationEventCopyWith<$Res> {
-  factory _$RequestApiKeyRegenerationCopyWith(_RequestApiKeyRegeneration value, $Res Function(_RequestApiKeyRegeneration) _then) = __$RequestApiKeyRegenerationCopyWithImpl;
-@useResult
-$Res call({
- UuidValue applicationId
-});
-
-
-
-
-}
-/// @nodoc
-class __$RequestApiKeyRegenerationCopyWithImpl<$Res>
-    implements _$RequestApiKeyRegenerationCopyWith<$Res> {
-  __$RequestApiKeyRegenerationCopyWithImpl(this._self, this._then);
-
-  final _RequestApiKeyRegeneration _self;
-  final $Res Function(_RequestApiKeyRegeneration) _then;
-
-/// Create a copy of ApplicationEvent
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? applicationId = null,}) {
-  return _then(_RequestApiKeyRegeneration(
-applicationId: null == applicationId ? _self.applicationId : applicationId // ignore: cast_nullable_to_non_nullable
-as UuidValue,
-  ));
-}
-
-
-}
-
-/// @nodoc
-
-
-class _FetchRegenerationEmail implements ApplicationEvent {
-  const _FetchRegenerationEmail({required this.applicationId});
-  
-
- final  UuidValue applicationId;
-
-/// Create a copy of ApplicationEvent
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-_$FetchRegenerationEmailCopyWith<_FetchRegenerationEmail> get copyWith => __$FetchRegenerationEmailCopyWithImpl<_FetchRegenerationEmail>(this, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _FetchRegenerationEmail&&(identical(other.applicationId, applicationId) || other.applicationId == applicationId));
-}
-
-
-@override
-int get hashCode => Object.hash(runtimeType,applicationId);
-
-@override
-String toString() {
-  return 'ApplicationEvent.fetchRegenerationEmail(applicationId: $applicationId)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class _$FetchRegenerationEmailCopyWith<$Res> implements $ApplicationEventCopyWith<$Res> {
-  factory _$FetchRegenerationEmailCopyWith(_FetchRegenerationEmail value, $Res Function(_FetchRegenerationEmail) _then) = __$FetchRegenerationEmailCopyWithImpl;
-@useResult
-$Res call({
- UuidValue applicationId
-});
-
-
-
-
-}
-/// @nodoc
-class __$FetchRegenerationEmailCopyWithImpl<$Res>
-    implements _$FetchRegenerationEmailCopyWith<$Res> {
-  __$FetchRegenerationEmailCopyWithImpl(this._self, this._then);
-
-  final _FetchRegenerationEmail _self;
-  final $Res Function(_FetchRegenerationEmail) _then;
-
-/// Create a copy of ApplicationEvent
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? applicationId = null,}) {
-  return _then(_FetchRegenerationEmail(
-applicationId: null == applicationId ? _self.applicationId : applicationId // ignore: cast_nullable_to_non_nullable
-as UuidValue,
-  ));
-}
-
-
-}
-
-/// @nodoc
-
-
-class _RegenerateApiKey implements ApplicationEvent {
-  const _RegenerateApiKey({required this.applicationId, required this.code});
-  
-
- final  UuidValue applicationId;
- final  String code;
-
-/// Create a copy of ApplicationEvent
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-_$RegenerateApiKeyCopyWith<_RegenerateApiKey> get copyWith => __$RegenerateApiKeyCopyWithImpl<_RegenerateApiKey>(this, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RegenerateApiKey&&(identical(other.applicationId, applicationId) || other.applicationId == applicationId)&&(identical(other.code, code) || other.code == code));
-}
-
-
-@override
-int get hashCode => Object.hash(runtimeType,applicationId,code);
-
-@override
-String toString() {
-  return 'ApplicationEvent.regenerateApiKey(applicationId: $applicationId, code: $code)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class _$RegenerateApiKeyCopyWith<$Res> implements $ApplicationEventCopyWith<$Res> {
-  factory _$RegenerateApiKeyCopyWith(_RegenerateApiKey value, $Res Function(_RegenerateApiKey) _then) = __$RegenerateApiKeyCopyWithImpl;
-@useResult
-$Res call({
- UuidValue applicationId, String code
-});
-
-
-
-
-}
-/// @nodoc
-class __$RegenerateApiKeyCopyWithImpl<$Res>
-    implements _$RegenerateApiKeyCopyWith<$Res> {
-  __$RegenerateApiKeyCopyWithImpl(this._self, this._then);
-
-  final _RegenerateApiKey _self;
-  final $Res Function(_RegenerateApiKey) _then;
-
-/// Create a copy of ApplicationEvent
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? applicationId = null,Object? code = null,}) {
-  return _then(_RegenerateApiKey(
-applicationId: null == applicationId ? _self.applicationId : applicationId // ignore: cast_nullable_to_non_nullable
-as UuidValue,code: null == code ? _self.code : code // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
@@ -881,18 +563,14 @@ extension ApplicationStatePatterns on ApplicationState {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( ApplicationInitial value)?  initial,TResult Function( ApplicationLoading value)?  loading,TResult Function( ApplicationLoaded value)?  loaded,TResult Function( ApplicationError value)?  error,TResult Function( ApplicationCreated value)?  created,TResult Function( ApplicationApiKeyRegenerationCodeSent value)?  apiKeyRegenerationCodeSent,TResult Function( ApplicationRegenerationEmailLoaded value)?  regenerationEmailLoaded,TResult Function( ApplicationApiKeyRegenerated value)?  apiKeyRegenerated,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( ApplicationInitial value)?  initial,TResult Function( ApplicationLoading value)?  loading,TResult Function( ApplicationLoaded value)?  loaded,TResult Function( ApplicationError value)?  error,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case ApplicationInitial() when initial != null:
 return initial(_that);case ApplicationLoading() when loading != null:
 return loading(_that);case ApplicationLoaded() when loaded != null:
 return loaded(_that);case ApplicationError() when error != null:
-return error(_that);case ApplicationCreated() when created != null:
-return created(_that);case ApplicationApiKeyRegenerationCodeSent() when apiKeyRegenerationCodeSent != null:
-return apiKeyRegenerationCodeSent(_that);case ApplicationRegenerationEmailLoaded() when regenerationEmailLoaded != null:
-return regenerationEmailLoaded(_that);case ApplicationApiKeyRegenerated() when apiKeyRegenerated != null:
-return apiKeyRegenerated(_that);case _:
+return error(_that);case _:
   return orElse();
 
 }
@@ -910,18 +588,14 @@ return apiKeyRegenerated(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( ApplicationInitial value)  initial,required TResult Function( ApplicationLoading value)  loading,required TResult Function( ApplicationLoaded value)  loaded,required TResult Function( ApplicationError value)  error,required TResult Function( ApplicationCreated value)  created,required TResult Function( ApplicationApiKeyRegenerationCodeSent value)  apiKeyRegenerationCodeSent,required TResult Function( ApplicationRegenerationEmailLoaded value)  regenerationEmailLoaded,required TResult Function( ApplicationApiKeyRegenerated value)  apiKeyRegenerated,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( ApplicationInitial value)  initial,required TResult Function( ApplicationLoading value)  loading,required TResult Function( ApplicationLoaded value)  loaded,required TResult Function( ApplicationError value)  error,}){
 final _that = this;
 switch (_that) {
 case ApplicationInitial():
 return initial(_that);case ApplicationLoading():
 return loading(_that);case ApplicationLoaded():
 return loaded(_that);case ApplicationError():
-return error(_that);case ApplicationCreated():
-return created(_that);case ApplicationApiKeyRegenerationCodeSent():
-return apiKeyRegenerationCodeSent(_that);case ApplicationRegenerationEmailLoaded():
-return regenerationEmailLoaded(_that);case ApplicationApiKeyRegenerated():
-return apiKeyRegenerated(_that);}
+return error(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -935,18 +609,14 @@ return apiKeyRegenerated(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( ApplicationInitial value)?  initial,TResult? Function( ApplicationLoading value)?  loading,TResult? Function( ApplicationLoaded value)?  loaded,TResult? Function( ApplicationError value)?  error,TResult? Function( ApplicationCreated value)?  created,TResult? Function( ApplicationApiKeyRegenerationCodeSent value)?  apiKeyRegenerationCodeSent,TResult? Function( ApplicationRegenerationEmailLoaded value)?  regenerationEmailLoaded,TResult? Function( ApplicationApiKeyRegenerated value)?  apiKeyRegenerated,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( ApplicationInitial value)?  initial,TResult? Function( ApplicationLoading value)?  loading,TResult? Function( ApplicationLoaded value)?  loaded,TResult? Function( ApplicationError value)?  error,}){
 final _that = this;
 switch (_that) {
 case ApplicationInitial() when initial != null:
 return initial(_that);case ApplicationLoading() when loading != null:
 return loading(_that);case ApplicationLoaded() when loaded != null:
 return loaded(_that);case ApplicationError() when error != null:
-return error(_that);case ApplicationCreated() when created != null:
-return created(_that);case ApplicationApiKeyRegenerationCodeSent() when apiKeyRegenerationCodeSent != null:
-return apiKeyRegenerationCodeSent(_that);case ApplicationRegenerationEmailLoaded() when regenerationEmailLoaded != null:
-return regenerationEmailLoaded(_that);case ApplicationApiKeyRegenerated() when apiKeyRegenerated != null:
-return apiKeyRegenerated(_that);case _:
+return error(_that);case _:
   return null;
 
 }
@@ -963,17 +633,13 @@ return apiKeyRegenerated(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( List<Application> applications,  List<Team> teams)?  loaded,TResult Function( String message)?  error,TResult Function( Application application,  String apiKey)?  created,TResult Function( int? retryAfterSeconds,  String? maskedEmail)?  apiKeyRegenerationCodeSent,TResult Function( String maskedEmail)?  regenerationEmailLoaded,TResult Function( String apiKey,  DateTime regeneratedAt)?  apiKeyRegenerated,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( List<Application> applications,  List<Team> teams)?  loaded,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case ApplicationInitial() when initial != null:
 return initial();case ApplicationLoading() when loading != null:
 return loading();case ApplicationLoaded() when loaded != null:
 return loaded(_that.applications,_that.teams);case ApplicationError() when error != null:
-return error(_that.message);case ApplicationCreated() when created != null:
-return created(_that.application,_that.apiKey);case ApplicationApiKeyRegenerationCodeSent() when apiKeyRegenerationCodeSent != null:
-return apiKeyRegenerationCodeSent(_that.retryAfterSeconds,_that.maskedEmail);case ApplicationRegenerationEmailLoaded() when regenerationEmailLoaded != null:
-return regenerationEmailLoaded(_that.maskedEmail);case ApplicationApiKeyRegenerated() when apiKeyRegenerated != null:
-return apiKeyRegenerated(_that.apiKey,_that.regeneratedAt);case _:
+return error(_that.message);case _:
   return orElse();
 
 }
@@ -991,17 +657,13 @@ return apiKeyRegenerated(_that.apiKey,_that.regeneratedAt);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( List<Application> applications,  List<Team> teams)  loaded,required TResult Function( String message)  error,required TResult Function( Application application,  String apiKey)  created,required TResult Function( int? retryAfterSeconds,  String? maskedEmail)  apiKeyRegenerationCodeSent,required TResult Function( String maskedEmail)  regenerationEmailLoaded,required TResult Function( String apiKey,  DateTime regeneratedAt)  apiKeyRegenerated,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( List<Application> applications,  List<Team> teams)  loaded,required TResult Function( String message)  error,}) {final _that = this;
 switch (_that) {
 case ApplicationInitial():
 return initial();case ApplicationLoading():
 return loading();case ApplicationLoaded():
 return loaded(_that.applications,_that.teams);case ApplicationError():
-return error(_that.message);case ApplicationCreated():
-return created(_that.application,_that.apiKey);case ApplicationApiKeyRegenerationCodeSent():
-return apiKeyRegenerationCodeSent(_that.retryAfterSeconds,_that.maskedEmail);case ApplicationRegenerationEmailLoaded():
-return regenerationEmailLoaded(_that.maskedEmail);case ApplicationApiKeyRegenerated():
-return apiKeyRegenerated(_that.apiKey,_that.regeneratedAt);}
+return error(_that.message);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -1015,17 +677,13 @@ return apiKeyRegenerated(_that.apiKey,_that.regeneratedAt);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( List<Application> applications,  List<Team> teams)?  loaded,TResult? Function( String message)?  error,TResult? Function( Application application,  String apiKey)?  created,TResult? Function( int? retryAfterSeconds,  String? maskedEmail)?  apiKeyRegenerationCodeSent,TResult? Function( String maskedEmail)?  regenerationEmailLoaded,TResult? Function( String apiKey,  DateTime regeneratedAt)?  apiKeyRegenerated,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( List<Application> applications,  List<Team> teams)?  loaded,TResult? Function( String message)?  error,}) {final _that = this;
 switch (_that) {
 case ApplicationInitial() when initial != null:
 return initial();case ApplicationLoading() when loading != null:
 return loading();case ApplicationLoaded() when loaded != null:
 return loaded(_that.applications,_that.teams);case ApplicationError() when error != null:
-return error(_that.message);case ApplicationCreated() when created != null:
-return created(_that.application,_that.apiKey);case ApplicationApiKeyRegenerationCodeSent() when apiKeyRegenerationCodeSent != null:
-return apiKeyRegenerationCodeSent(_that.retryAfterSeconds,_that.maskedEmail);case ApplicationRegenerationEmailLoaded() when regenerationEmailLoaded != null:
-return regenerationEmailLoaded(_that.maskedEmail);case ApplicationApiKeyRegenerated() when apiKeyRegenerated != null:
-return apiKeyRegenerated(_that.apiKey,_that.regeneratedAt);case _:
+return error(_that.message);case _:
   return null;
 
 }
@@ -1237,276 +895,6 @@ class _$ApplicationErrorCopyWithImpl<$Res>
   return _then(ApplicationError(
 message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String,
-  ));
-}
-
-
-}
-
-/// @nodoc
-
-
-class ApplicationCreated implements ApplicationState {
-  const ApplicationCreated({required this.application, required this.apiKey});
-  
-
- final  Application application;
- final  String apiKey;
-
-/// Create a copy of ApplicationState
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$ApplicationCreatedCopyWith<ApplicationCreated> get copyWith => _$ApplicationCreatedCopyWithImpl<ApplicationCreated>(this, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ApplicationCreated&&(identical(other.application, application) || other.application == application)&&(identical(other.apiKey, apiKey) || other.apiKey == apiKey));
-}
-
-
-@override
-int get hashCode => Object.hash(runtimeType,application,apiKey);
-
-@override
-String toString() {
-  return 'ApplicationState.created(application: $application, apiKey: $apiKey)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class $ApplicationCreatedCopyWith<$Res> implements $ApplicationStateCopyWith<$Res> {
-  factory $ApplicationCreatedCopyWith(ApplicationCreated value, $Res Function(ApplicationCreated) _then) = _$ApplicationCreatedCopyWithImpl;
-@useResult
-$Res call({
- Application application, String apiKey
-});
-
-
-
-
-}
-/// @nodoc
-class _$ApplicationCreatedCopyWithImpl<$Res>
-    implements $ApplicationCreatedCopyWith<$Res> {
-  _$ApplicationCreatedCopyWithImpl(this._self, this._then);
-
-  final ApplicationCreated _self;
-  final $Res Function(ApplicationCreated) _then;
-
-/// Create a copy of ApplicationState
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? application = null,Object? apiKey = null,}) {
-  return _then(ApplicationCreated(
-application: null == application ? _self.application : application // ignore: cast_nullable_to_non_nullable
-as Application,apiKey: null == apiKey ? _self.apiKey : apiKey // ignore: cast_nullable_to_non_nullable
-as String,
-  ));
-}
-
-
-}
-
-/// @nodoc
-
-
-class ApplicationApiKeyRegenerationCodeSent implements ApplicationState {
-  const ApplicationApiKeyRegenerationCodeSent({this.retryAfterSeconds, this.maskedEmail});
-  
-
- final  int? retryAfterSeconds;
- final  String? maskedEmail;
-
-/// Create a copy of ApplicationState
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$ApplicationApiKeyRegenerationCodeSentCopyWith<ApplicationApiKeyRegenerationCodeSent> get copyWith => _$ApplicationApiKeyRegenerationCodeSentCopyWithImpl<ApplicationApiKeyRegenerationCodeSent>(this, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ApplicationApiKeyRegenerationCodeSent&&(identical(other.retryAfterSeconds, retryAfterSeconds) || other.retryAfterSeconds == retryAfterSeconds)&&(identical(other.maskedEmail, maskedEmail) || other.maskedEmail == maskedEmail));
-}
-
-
-@override
-int get hashCode => Object.hash(runtimeType,retryAfterSeconds,maskedEmail);
-
-@override
-String toString() {
-  return 'ApplicationState.apiKeyRegenerationCodeSent(retryAfterSeconds: $retryAfterSeconds, maskedEmail: $maskedEmail)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class $ApplicationApiKeyRegenerationCodeSentCopyWith<$Res> implements $ApplicationStateCopyWith<$Res> {
-  factory $ApplicationApiKeyRegenerationCodeSentCopyWith(ApplicationApiKeyRegenerationCodeSent value, $Res Function(ApplicationApiKeyRegenerationCodeSent) _then) = _$ApplicationApiKeyRegenerationCodeSentCopyWithImpl;
-@useResult
-$Res call({
- int? retryAfterSeconds, String? maskedEmail
-});
-
-
-
-
-}
-/// @nodoc
-class _$ApplicationApiKeyRegenerationCodeSentCopyWithImpl<$Res>
-    implements $ApplicationApiKeyRegenerationCodeSentCopyWith<$Res> {
-  _$ApplicationApiKeyRegenerationCodeSentCopyWithImpl(this._self, this._then);
-
-  final ApplicationApiKeyRegenerationCodeSent _self;
-  final $Res Function(ApplicationApiKeyRegenerationCodeSent) _then;
-
-/// Create a copy of ApplicationState
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? retryAfterSeconds = freezed,Object? maskedEmail = freezed,}) {
-  return _then(ApplicationApiKeyRegenerationCodeSent(
-retryAfterSeconds: freezed == retryAfterSeconds ? _self.retryAfterSeconds : retryAfterSeconds // ignore: cast_nullable_to_non_nullable
-as int?,maskedEmail: freezed == maskedEmail ? _self.maskedEmail : maskedEmail // ignore: cast_nullable_to_non_nullable
-as String?,
-  ));
-}
-
-
-}
-
-/// @nodoc
-
-
-class ApplicationRegenerationEmailLoaded implements ApplicationState {
-  const ApplicationRegenerationEmailLoaded({required this.maskedEmail});
-  
-
- final  String maskedEmail;
-
-/// Create a copy of ApplicationState
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$ApplicationRegenerationEmailLoadedCopyWith<ApplicationRegenerationEmailLoaded> get copyWith => _$ApplicationRegenerationEmailLoadedCopyWithImpl<ApplicationRegenerationEmailLoaded>(this, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ApplicationRegenerationEmailLoaded&&(identical(other.maskedEmail, maskedEmail) || other.maskedEmail == maskedEmail));
-}
-
-
-@override
-int get hashCode => Object.hash(runtimeType,maskedEmail);
-
-@override
-String toString() {
-  return 'ApplicationState.regenerationEmailLoaded(maskedEmail: $maskedEmail)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class $ApplicationRegenerationEmailLoadedCopyWith<$Res> implements $ApplicationStateCopyWith<$Res> {
-  factory $ApplicationRegenerationEmailLoadedCopyWith(ApplicationRegenerationEmailLoaded value, $Res Function(ApplicationRegenerationEmailLoaded) _then) = _$ApplicationRegenerationEmailLoadedCopyWithImpl;
-@useResult
-$Res call({
- String maskedEmail
-});
-
-
-
-
-}
-/// @nodoc
-class _$ApplicationRegenerationEmailLoadedCopyWithImpl<$Res>
-    implements $ApplicationRegenerationEmailLoadedCopyWith<$Res> {
-  _$ApplicationRegenerationEmailLoadedCopyWithImpl(this._self, this._then);
-
-  final ApplicationRegenerationEmailLoaded _self;
-  final $Res Function(ApplicationRegenerationEmailLoaded) _then;
-
-/// Create a copy of ApplicationState
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? maskedEmail = null,}) {
-  return _then(ApplicationRegenerationEmailLoaded(
-maskedEmail: null == maskedEmail ? _self.maskedEmail : maskedEmail // ignore: cast_nullable_to_non_nullable
-as String,
-  ));
-}
-
-
-}
-
-/// @nodoc
-
-
-class ApplicationApiKeyRegenerated implements ApplicationState {
-  const ApplicationApiKeyRegenerated({required this.apiKey, required this.regeneratedAt});
-  
-
- final  String apiKey;
- final  DateTime regeneratedAt;
-
-/// Create a copy of ApplicationState
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$ApplicationApiKeyRegeneratedCopyWith<ApplicationApiKeyRegenerated> get copyWith => _$ApplicationApiKeyRegeneratedCopyWithImpl<ApplicationApiKeyRegenerated>(this, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ApplicationApiKeyRegenerated&&(identical(other.apiKey, apiKey) || other.apiKey == apiKey)&&(identical(other.regeneratedAt, regeneratedAt) || other.regeneratedAt == regeneratedAt));
-}
-
-
-@override
-int get hashCode => Object.hash(runtimeType,apiKey,regeneratedAt);
-
-@override
-String toString() {
-  return 'ApplicationState.apiKeyRegenerated(apiKey: $apiKey, regeneratedAt: $regeneratedAt)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class $ApplicationApiKeyRegeneratedCopyWith<$Res> implements $ApplicationStateCopyWith<$Res> {
-  factory $ApplicationApiKeyRegeneratedCopyWith(ApplicationApiKeyRegenerated value, $Res Function(ApplicationApiKeyRegenerated) _then) = _$ApplicationApiKeyRegeneratedCopyWithImpl;
-@useResult
-$Res call({
- String apiKey, DateTime regeneratedAt
-});
-
-
-
-
-}
-/// @nodoc
-class _$ApplicationApiKeyRegeneratedCopyWithImpl<$Res>
-    implements $ApplicationApiKeyRegeneratedCopyWith<$Res> {
-  _$ApplicationApiKeyRegeneratedCopyWithImpl(this._self, this._then);
-
-  final ApplicationApiKeyRegenerated _self;
-  final $Res Function(ApplicationApiKeyRegenerated) _then;
-
-/// Create a copy of ApplicationState
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? apiKey = null,Object? regeneratedAt = null,}) {
-  return _then(ApplicationApiKeyRegenerated(
-apiKey: null == apiKey ? _self.apiKey : apiKey // ignore: cast_nullable_to_non_nullable
-as String,regeneratedAt: null == regeneratedAt ? _self.regeneratedAt : regeneratedAt // ignore: cast_nullable_to_non_nullable
-as DateTime,
   ));
 }
 

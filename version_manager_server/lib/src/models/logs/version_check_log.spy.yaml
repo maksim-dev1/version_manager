@@ -1,23 +1,106 @@
-### Лог проверки версии
+### Лог проверки версии мобильного приложения.
+###
+### Подробная запись каждого запроса check-version.
+### Используется для аналитики, мониторинга и отладки.
+###
+### Все собираемые данные — анонимные технические метрики (non-PII).
+### Правовое основание: GDPR Art. 6(1)(f) — legitimate interest.
+### IP-адреса анонимизируются (обрезаются до подсети /24).
+### deviceId — анонимный идентификатор (vendor ID), не привязан к аккаунту.
+###
+### Retention policy: рекомендуется удалять записи старше 90 дней
+### и переносить агрегированные данные в version_check_daily_summaries.
 class: VersionCheckLog
 table: version_check_logs
 fields:
   id: UuidValue?, defaultPersist=random_v7
 
+  ### Приложение, для которого выполнена проверка
   application: Application?, relation(name=application_check_logs, onDelete=Cascade)
+
+  ### Найденная версия (null если версия не найдена в БД)
   version: Version?, relation(name=version_check_logs, optional, onDelete=SetNull)
 
+  # ============================================================
+  # ОБЯЗАТЕЛЬНЫЕ ДАННЫЕ ЗАПРОСА
+  # ============================================================
+
+  ### Версия приложения из запроса
   versionNumber: String
+  ### Номер сборки из запроса
   buildNumber: int
+  ### Платформа из запроса
   platform: PlatformType
 
-  osVersion: String?
-  deviceId: String?
-  locale: String?
-  deviceModel: String?
-  ipAddress: String?
+  # ============================================================
+  # ОПЦИОНАЛЬНЫЕ ДАННЫЕ УСТРОЙСТВА
+  # ============================================================
 
+  ### Версия ОС
+  osVersion: String?
+  ### Анонимный идентификатор устройства
+  deviceId: String?
+  ### Локаль пользователя
+  locale: String?
+  ### Модель устройства
+  deviceModel: String?
+  ### Ширина экрана
+  screenWidth: int?
+  ### Высота экрана
+  screenHeight: int?
+  ### Часовой пояс (IANA)
+  timezone: String?
+  ### Версия фреймворка (Flutter, React Native и т.д.)
+  frameworkVersion: String?
+  ### Тип соединения (wifi, cellular, ethernet, none)
+  connectionType: String?
+  ### Тип сборки (debug, profile, release)
+  buildType: String?
+  ### Архитектура CPU
+  cpuArchitecture: String?
+  ### Общий объём RAM в МБ
+  totalRamMb: int?
+  ### Свободное хранилище в МБ
+  freeStorageMb: int?
+  ### Язык интерфейса устройства (ISO 639-1)
+  deviceLanguage: String?
+  ### Включён ли режим энергосбережения
+  isLowPowerMode: bool?
+
+  # ============================================================
+  # МЕТАДАННЫЕ
+  # ============================================================
+
+  ### Версия клиентского SDK
+  sdkVersion: String?
+
+  # ============================================================
+  # СЕРВЕРНЫЕ ДАННЫЕ
+  # ============================================================
+
+  ### IP-адрес клиента (из заголовков, анонимизируется)
+  ipAddress: String?
+  ### User-Agent клиента
+  userAgent: String?
+  ### Страна по IP (GeoIP lookup, если доступно)
+  country: String?
+
+  # ============================================================
+  # ДАННЫЕ ОТВЕТА
+  # ============================================================
+
+  ### Статус ответа (blocked, update_available, active, error)
   responseStatus: ResponseStatusType
+  ### Приоритет обновления в ответе
+  updatePriority: UpdatePriorityType?
+  ### Время обработки запроса на сервере в мс
+  processingTimeMs: int?
+  ### Первая ли это проверка с данного устройства для этого приложения
+  isFirstCheck: bool?
+  ### Новая ли это версия (не встречалась ранее для этого deviceId)
+  isNewVersion: bool?
+
+  ### Время выполнения проверки
   checkedAt: DateTime, default=now
 
 indexes:

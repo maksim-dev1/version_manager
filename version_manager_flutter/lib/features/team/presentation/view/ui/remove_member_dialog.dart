@@ -33,25 +33,28 @@ class RemoveMemberDialog extends StatelessWidget {
           const Expanded(child: Text('Удалить участника')),
         ],
       ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: colorScheme.errorContainer.withValues(alpha: 0.3),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              'Участник «$name» будет удалён из команды «$teamName» '
-              'и потеряет доступ ко всем командным приложениям.',
-              style: textTheme.bodyMedium?.copyWith(
-                color: colorScheme.onErrorContainer,
+      content: ConstrainedBox(
+        constraints: const BoxConstraints(minWidth: 480, maxWidth: 480),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: colorScheme.errorContainer.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                'Участник «$name» будет удалён из команды «$teamName» '
+                'и потеряет доступ ко всем командным приложениям.',
+                style: textTheme.bodyMedium?.copyWith(
+                  color: colorScheme.onErrorContainer,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       actions: [
         TextButton(

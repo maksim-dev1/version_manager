@@ -1,4 +1,7 @@
 {
     "commentTranslate.targetLanguage": "ru",
-    "cmake.ignoreCMakeListsMissing": true
+    "cmake.ignoreCMakeListsMissing": true,
+    "github.copilot.advanced": {
+        "debug.useNodeFetcher": true
+    }
 }

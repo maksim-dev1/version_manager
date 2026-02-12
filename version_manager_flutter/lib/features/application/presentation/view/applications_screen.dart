@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:version_manager_client/version_manager_client.dart';
+import 'package:version_manager_flutter/features/application/domain/repository/application_repository.dart';
 import 'package:version_manager_flutter/features/application/presentation/application_provider.dart';
 import 'package:version_manager_flutter/features/application/presentation/bloc/application_bloc.dart';
 import 'package:version_manager_flutter/features/application/presentation/view/ui/application_card.dart';
-import 'package:version_manager_flutter/features/application/presentation/view/ui/create_application_dialog.dart';
-import 'package:version_manager_flutter/features/application/presentation/view/ui/regenerate_api_key_dialog.dart';
+import 'package:version_manager_flutter/features/create_application/presentation/bloc/create_application_bloc.dart';
+import 'package:version_manager_flutter/features/create_application/presentation/view/create_application_dialog.dart';
 import 'package:version_manager_flutter/shared/services/notification_service.dart';
 
 /// Экран «Приложения» — отдельная страница навигации.
@@ -40,19 +41,6 @@ class _ApplicationsScreenBody extends StatelessWidget {
     return BlocListener<ApplicationBloc, ApplicationState>(
       listener: (context, state) {
         switch (state) {
-          case ApplicationCreated(:final apiKey):
-            NotificationService.showSuccess(context, 'Приложение создано');
-            // Показать диалог с API ключом
-            showDialog(
-              context: context,
-              barrierDismissible: false,
-              builder: (_) => ApiKeyDisplayDialog(
-                apiKey: apiKey,
-                title: 'API ключ создан',
-              ),
-            );
-          case ApplicationApiKeyRegenerated():
-            break; // обрабатывается в RegenerateApiKeyDialog и _InfoTab
           case ApplicationError(:final message):
             NotificationService.showError(context, message);
           default:
@@ -346,13 +334,28 @@ class _CreateApplicationCard extends StatelessWidget {
     return Card(
       clipBehavior: Clip.antiAlias,
       child: InkWell(
-        onTap: () => showDialog(
-          context: context,
-          builder: (_) => BlocProvider.value(
-            value: context.read<ApplicationBloc>(),
-            child: CreateApplicationDialog(preselectedTeam: team),
-          ),
-        ),
+        onTap: () {
+          final appBloc = context.read<ApplicationBloc>();
+          final repo = context.read<ApplicationRepository>();
+          showDialog(
+            context: context,
+            builder: (_) => RepositoryProvider.value(
+              value: repo,
+              child: MultiBlocProvider(
+                providers: [
+                  BlocProvider.value(value: appBloc),
+                  BlocProvider(
+                    create: (context) => CreateApplicationBloc(
+                      applicationRepository: context
+                          .read<ApplicationRepository>(),
+                    ),
+                  ),
+                ],
+                child: CreateApplicationDialog(preselectedTeam: team),
+              ),
+            ),
+          );
+        },
         borderRadius: BorderRadius.circular(12),
         child: DashedBorderPainter(
           color: colorScheme.outlineVariant,

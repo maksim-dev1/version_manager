@@ -85,8 +85,26 @@ import 'package:version_manager_server/src/generated/teams/transfer_team_ownersh
     as _i39;
 import 'package:version_manager_server/src/generated/teams/delete_team_request.dart'
     as _i40;
-import 'package:version_manager_server/src/generated/greetings/greeting.dart'
+import 'package:version_manager_server/src/generated/versions/version_list_response.dart'
     as _i41;
+import 'package:version_manager_server/src/generated/versions/version_detail_response.dart'
+    as _i42;
+import 'package:version_manager_server/src/generated/versions/next_build_number_response.dart'
+    as _i43;
+import 'package:version_manager_server/src/generated/versions/version.dart'
+    as _i44;
+import 'package:version_manager_server/src/generated/versions/create_version_request.dart'
+    as _i45;
+import 'package:version_manager_server/src/generated/versions/update_version_request.dart'
+    as _i46;
+import 'package:version_manager_server/src/generated/versions/toggle_version_block_request.dart'
+    as _i47;
+import 'package:version_manager_server/src/generated/versions/set_version_recommendation_request.dart'
+    as _i48;
+import 'package:version_manager_server/src/generated/versions/delete_version_request.dart'
+    as _i49;
+import 'package:version_manager_server/src/generated/greetings/greeting.dart'
+    as _i50;
 import 'package:version_manager_server/src/generated/protocol.dart';
 import 'package:version_manager_server/src/generated/endpoints.dart';
 export 'package:serverpod_test/serverpod_test_public_exports.dart';
@@ -202,6 +220,8 @@ class TestEndpoints {
 
   late final _TeamEndpoint team;
 
+  late final _VersionEndpoint version;
+
   late final _GreetingEndpoint greeting;
 }
 
@@ -225,6 +245,10 @@ class _InternalTestEndpoints extends TestEndpoints
       serializationManager,
     );
     team = _TeamEndpoint(
+      endpoints,
+      serializationManager,
+    );
+    version = _VersionEndpoint(
       endpoints,
       serializationManager,
     );
@@ -1387,6 +1411,265 @@ class _TeamEndpoint {
   }
 }
 
+class _VersionEndpoint {
+  _VersionEndpoint(
+    this._endpointDispatch,
+    this._serializationManager,
+  );
+
+  final _i2.EndpointDispatch _endpointDispatch;
+
+  final _i2.SerializationManager _serializationManager;
+
+  _i3.Future<_i41.VersionListResponse> getVersions(
+    _i1.TestSessionBuilder sessionBuilder, {
+    required _i2.UuidValue applicationId,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'version',
+            method: 'getVersions',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'version',
+          methodName: 'getVersions',
+          parameters: _i1.testObjectToJson({'applicationId': applicationId}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i41.VersionListResponse>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i42.VersionDetailResponse> getVersionDetail(
+    _i1.TestSessionBuilder sessionBuilder, {
+    required _i2.UuidValue versionId,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'version',
+            method: 'getVersionDetail',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'version',
+          methodName: 'getVersionDetail',
+          parameters: _i1.testObjectToJson({'versionId': versionId}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i42.VersionDetailResponse>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i43.NextBuildNumberResponse> getNextBuildNumber(
+    _i1.TestSessionBuilder sessionBuilder, {
+    required _i2.UuidValue applicationId,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'version',
+            method: 'getNextBuildNumber',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'version',
+          methodName: 'getNextBuildNumber',
+          parameters: _i1.testObjectToJson({'applicationId': applicationId}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i43.NextBuildNumberResponse>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i44.Version> createVersion(
+    _i1.TestSessionBuilder sessionBuilder, {
+    required _i45.CreateVersionRequest request,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'version',
+            method: 'createVersion',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'version',
+          methodName: 'createVersion',
+          parameters: _i1.testObjectToJson({'request': request}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i44.Version>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i44.Version> updateVersion(
+    _i1.TestSessionBuilder sessionBuilder, {
+    required _i46.UpdateVersionRequest request,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'version',
+            method: 'updateVersion',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'version',
+          methodName: 'updateVersion',
+          parameters: _i1.testObjectToJson({'request': request}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i44.Version>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i44.Version> toggleVersionBlock(
+    _i1.TestSessionBuilder sessionBuilder, {
+    required _i47.ToggleVersionBlockRequest request,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'version',
+            method: 'toggleVersionBlock',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'version',
+          methodName: 'toggleVersionBlock',
+          parameters: _i1.testObjectToJson({'request': request}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i44.Version>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i44.Version> setVersionRecommendation(
+    _i1.TestSessionBuilder sessionBuilder, {
+    required _i48.SetVersionRecommendationRequest request,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'version',
+            method: 'setVersionRecommendation',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'version',
+          methodName: 'setVersionRecommendation',
+          parameters: _i1.testObjectToJson({'request': request}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i44.Version>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i8.SuccessResponse> deleteVersion(
+    _i1.TestSessionBuilder sessionBuilder, {
+    required _i49.DeleteVersionRequest request,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'version',
+            method: 'deleteVersion',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'version',
+          methodName: 'deleteVersion',
+          parameters: _i1.testObjectToJson({'request': request}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i8.SuccessResponse>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+}
+
 class _GreetingEndpoint {
   _GreetingEndpoint(
     this._endpointDispatch,
@@ -1397,7 +1680,7 @@ class _GreetingEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i41.Greeting> hello(
+  _i3.Future<_i50.Greeting> hello(
     _i1.TestSessionBuilder sessionBuilder,
     String name,
   ) async {
@@ -1420,7 +1703,7 @@ class _GreetingEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i41.Greeting>);
+                as _i3.Future<_i50.Greeting>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();

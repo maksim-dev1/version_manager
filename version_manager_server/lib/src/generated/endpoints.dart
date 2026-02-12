@@ -15,54 +15,65 @@ import '../endpoints/app_endpoint.dart' as _i2;
 import '../endpoints/auth_endpoint.dart' as _i3;
 import '../endpoints/session_endpoint.dart' as _i4;
 import '../endpoints/team_endpoint.dart' as _i5;
-import '../greetings/greeting_endpoint.dart' as _i6;
+import '../endpoints/version_endpoint.dart' as _i6;
+import '../greetings/greeting_endpoint.dart' as _i7;
 import 'package:version_manager_server/src/generated/apps/create_application_request.dart'
-    as _i7;
-import 'package:version_manager_server/src/generated/apps/update_application_request.dart'
     as _i8;
-import 'package:version_manager_server/src/generated/apps/delete_application_request.dart'
+import 'package:version_manager_server/src/generated/apps/update_application_request.dart'
     as _i9;
-import 'package:version_manager_server/src/generated/apps/request_api_key_regeneration_request.dart'
+import 'package:version_manager_server/src/generated/apps/delete_application_request.dart'
     as _i10;
-import 'package:version_manager_server/src/generated/apps/regenerate_api_key_request.dart'
+import 'package:version_manager_server/src/generated/apps/request_api_key_regeneration_request.dart'
     as _i11;
-import 'package:version_manager_server/src/generated/apps/toggle_application_status_request.dart'
+import 'package:version_manager_server/src/generated/apps/regenerate_api_key_request.dart'
     as _i12;
-import 'package:version_manager_server/src/generated/apps/transfer_application_ownership_request.dart'
+import 'package:version_manager_server/src/generated/apps/toggle_application_status_request.dart'
     as _i13;
-import 'package:version_manager_server/src/generated/auth/check_email.dart'
+import 'package:version_manager_server/src/generated/apps/transfer_application_ownership_request.dart'
     as _i14;
-import 'package:version_manager_server/src/generated/auth/register_send_code.dart'
+import 'package:version_manager_server/src/generated/auth/check_email.dart'
     as _i15;
-import 'package:version_manager_server/src/generated/auth/register_verify_code.dart'
+import 'package:version_manager_server/src/generated/auth/register_send_code.dart'
     as _i16;
-import 'package:version_manager_server/src/generated/auth/register.dart'
+import 'package:version_manager_server/src/generated/auth/register_verify_code.dart'
     as _i17;
-import 'package:version_manager_server/src/generated/auth/login.dart' as _i18;
+import 'package:version_manager_server/src/generated/auth/register.dart'
+    as _i18;
+import 'package:version_manager_server/src/generated/auth/login.dart' as _i19;
 import 'package:version_manager_server/src/generated/auth/refresh_token.dart'
-    as _i19;
-import 'package:version_manager_server/src/generated/sessions/terminate_session_request.dart'
     as _i20;
-import 'package:version_manager_server/src/generated/teams/create_team_request.dart'
+import 'package:version_manager_server/src/generated/sessions/terminate_session_request.dart'
     as _i21;
-import 'package:version_manager_server/src/generated/teams/update_team_request.dart'
+import 'package:version_manager_server/src/generated/teams/create_team_request.dart'
     as _i22;
-import 'package:version_manager_server/src/generated/teams/invite_team_member_request.dart'
+import 'package:version_manager_server/src/generated/teams/update_team_request.dart'
     as _i23;
-import 'package:version_manager_server/src/generated/teams/respond_to_invitation_request.dart'
+import 'package:version_manager_server/src/generated/teams/invite_team_member_request.dart'
     as _i24;
-import 'package:version_manager_server/src/generated/teams/revoke_invitation_request.dart'
+import 'package:version_manager_server/src/generated/teams/respond_to_invitation_request.dart'
     as _i25;
-import 'package:version_manager_server/src/generated/teams/update_member_role_request.dart'
+import 'package:version_manager_server/src/generated/teams/revoke_invitation_request.dart'
     as _i26;
-import 'package:version_manager_server/src/generated/teams/remove_member_request.dart'
+import 'package:version_manager_server/src/generated/teams/update_member_role_request.dart'
     as _i27;
-import 'package:version_manager_server/src/generated/teams/leave_team_request.dart'
+import 'package:version_manager_server/src/generated/teams/remove_member_request.dart'
     as _i28;
-import 'package:version_manager_server/src/generated/teams/transfer_team_ownership_request.dart'
+import 'package:version_manager_server/src/generated/teams/leave_team_request.dart'
     as _i29;
-import 'package:version_manager_server/src/generated/teams/delete_team_request.dart'
+import 'package:version_manager_server/src/generated/teams/transfer_team_ownership_request.dart'
     as _i30;
+import 'package:version_manager_server/src/generated/teams/delete_team_request.dart'
+    as _i31;
+import 'package:version_manager_server/src/generated/versions/create_version_request.dart'
+    as _i32;
+import 'package:version_manager_server/src/generated/versions/update_version_request.dart'
+    as _i33;
+import 'package:version_manager_server/src/generated/versions/toggle_version_block_request.dart'
+    as _i34;
+import 'package:version_manager_server/src/generated/versions/set_version_recommendation_request.dart'
+    as _i35;
+import 'package:version_manager_server/src/generated/versions/delete_version_request.dart'
+    as _i36;
 
 class Endpoints extends _i1.EndpointDispatch {
   @override
@@ -92,7 +103,13 @@ class Endpoints extends _i1.EndpointDispatch {
           'team',
           null,
         ),
-      'greeting': _i6.GreetingEndpoint()
+      'version': _i6.VersionEndpoint()
+        ..initialize(
+          server,
+          'version',
+          null,
+        ),
+      'greeting': _i7.GreetingEndpoint()
         ..initialize(
           server,
           'greeting',
@@ -136,7 +153,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i7.CreateApplicationRequest>(),
+              type: _i1.getType<_i8.CreateApplicationRequest>(),
               nullable: false,
             ),
           },
@@ -155,7 +172,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i8.UpdateApplicationRequest>(),
+              type: _i1.getType<_i9.UpdateApplicationRequest>(),
               nullable: false,
             ),
           },
@@ -174,7 +191,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i9.DeleteApplicationRequest>(),
+              type: _i1.getType<_i10.DeleteApplicationRequest>(),
               nullable: false,
             ),
           },
@@ -212,7 +229,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i10.RequestApiKeyRegenerationRequest>(),
+              type: _i1.getType<_i11.RequestApiKeyRegenerationRequest>(),
               nullable: false,
             ),
           },
@@ -231,7 +248,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i11.RegenerateApiKeyRequest>(),
+              type: _i1.getType<_i12.RegenerateApiKeyRequest>(),
               nullable: false,
             ),
           },
@@ -249,7 +266,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i12.ToggleApplicationStatusRequest>(),
+              type: _i1.getType<_i13.ToggleApplicationStatusRequest>(),
               nullable: false,
             ),
           },
@@ -268,7 +285,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i13.TransferApplicationOwnershipRequest>(),
+              type: _i1.getType<_i14.TransferApplicationOwnershipRequest>(),
               nullable: false,
             ),
           },
@@ -293,7 +310,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i14.CheckEmailRequest>(),
+              type: _i1.getType<_i15.CheckEmailRequest>(),
               nullable: false,
             ),
           },
@@ -312,7 +329,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i15.RegisterSendCodeRequest>(),
+              type: _i1.getType<_i16.RegisterSendCodeRequest>(),
               nullable: false,
             ),
           },
@@ -330,7 +347,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i16.RegisterVerifyCodeRequest>(),
+              type: _i1.getType<_i17.RegisterVerifyCodeRequest>(),
               nullable: false,
             ),
           },
@@ -349,7 +366,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i17.RegisterRequest>(),
+              type: _i1.getType<_i18.RegisterRequest>(),
               nullable: false,
             ),
           },
@@ -367,7 +384,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i18.LoginRequest>(),
+              type: _i1.getType<_i19.LoginRequest>(),
               nullable: false,
             ),
           },
@@ -385,7 +402,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i19.RefreshTokenRequest>(),
+              type: _i1.getType<_i20.RefreshTokenRequest>(),
               nullable: false,
             ),
           },
@@ -450,7 +467,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i20.TerminateSessionRequest>(),
+              type: _i1.getType<_i21.TerminateSessionRequest>(),
               nullable: false,
             ),
           },
@@ -485,7 +502,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i21.CreateTeamRequest>(),
+              type: _i1.getType<_i22.CreateTeamRequest>(),
               nullable: false,
             ),
           },
@@ -503,7 +520,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i22.UpdateTeamRequest>(),
+              type: _i1.getType<_i23.UpdateTeamRequest>(),
               nullable: false,
             ),
           },
@@ -549,7 +566,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i23.InviteTeamMemberRequest>(),
+              type: _i1.getType<_i24.InviteTeamMemberRequest>(),
               nullable: false,
             ),
           },
@@ -577,7 +594,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i24.RespondToInvitationRequest>(),
+              type: _i1.getType<_i25.RespondToInvitationRequest>(),
               nullable: false,
             ),
           },
@@ -596,7 +613,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i25.RevokeInvitationRequest>(),
+              type: _i1.getType<_i26.RevokeInvitationRequest>(),
               nullable: false,
             ),
           },
@@ -633,7 +650,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i26.UpdateMemberRoleRequest>(),
+              type: _i1.getType<_i27.UpdateMemberRoleRequest>(),
               nullable: false,
             ),
           },
@@ -652,7 +669,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i27.RemoveMemberRequest>(),
+              type: _i1.getType<_i28.RemoveMemberRequest>(),
               nullable: false,
             ),
           },
@@ -670,7 +687,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i28.LeaveTeamRequest>(),
+              type: _i1.getType<_i29.LeaveTeamRequest>(),
               nullable: false,
             ),
           },
@@ -688,7 +705,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i29.TransferTeamOwnershipRequest>(),
+              type: _i1.getType<_i30.TransferTeamOwnershipRequest>(),
               nullable: false,
             ),
           },
@@ -707,7 +724,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i30.DeleteTeamRequest>(),
+              type: _i1.getType<_i31.DeleteTeamRequest>(),
               nullable: false,
             ),
           },
@@ -719,6 +736,164 @@ class Endpoints extends _i1.EndpointDispatch {
                 session,
                 request: params['request'],
               ),
+        ),
+      },
+    );
+    connectors['version'] = _i1.EndpointConnector(
+      name: 'version',
+      endpoint: endpoints['version']!,
+      methodConnectors: {
+        'getVersions': _i1.MethodConnector(
+          name: 'getVersions',
+          params: {
+            'applicationId': _i1.ParameterDescription(
+              name: 'applicationId',
+              type: _i1.getType<_i1.UuidValue>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['version'] as _i6.VersionEndpoint).getVersions(
+                    session,
+                    applicationId: params['applicationId'],
+                  ),
+        ),
+        'getVersionDetail': _i1.MethodConnector(
+          name: 'getVersionDetail',
+          params: {
+            'versionId': _i1.ParameterDescription(
+              name: 'versionId',
+              type: _i1.getType<_i1.UuidValue>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['version'] as _i6.VersionEndpoint)
+                  .getVersionDetail(
+                    session,
+                    versionId: params['versionId'],
+                  ),
+        ),
+        'getNextBuildNumber': _i1.MethodConnector(
+          name: 'getNextBuildNumber',
+          params: {
+            'applicationId': _i1.ParameterDescription(
+              name: 'applicationId',
+              type: _i1.getType<_i1.UuidValue>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['version'] as _i6.VersionEndpoint)
+                  .getNextBuildNumber(
+                    session,
+                    applicationId: params['applicationId'],
+                  ),
+        ),
+        'createVersion': _i1.MethodConnector(
+          name: 'createVersion',
+          params: {
+            'request': _i1.ParameterDescription(
+              name: 'request',
+              type: _i1.getType<_i32.CreateVersionRequest>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['version'] as _i6.VersionEndpoint).createVersion(
+                    session,
+                    request: params['request'],
+                  ),
+        ),
+        'updateVersion': _i1.MethodConnector(
+          name: 'updateVersion',
+          params: {
+            'request': _i1.ParameterDescription(
+              name: 'request',
+              type: _i1.getType<_i33.UpdateVersionRequest>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['version'] as _i6.VersionEndpoint).updateVersion(
+                    session,
+                    request: params['request'],
+                  ),
+        ),
+        'toggleVersionBlock': _i1.MethodConnector(
+          name: 'toggleVersionBlock',
+          params: {
+            'request': _i1.ParameterDescription(
+              name: 'request',
+              type: _i1.getType<_i34.ToggleVersionBlockRequest>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['version'] as _i6.VersionEndpoint)
+                  .toggleVersionBlock(
+                    session,
+                    request: params['request'],
+                  ),
+        ),
+        'setVersionRecommendation': _i1.MethodConnector(
+          name: 'setVersionRecommendation',
+          params: {
+            'request': _i1.ParameterDescription(
+              name: 'request',
+              type: _i1.getType<_i35.SetVersionRecommendationRequest>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['version'] as _i6.VersionEndpoint)
+                  .setVersionRecommendation(
+                    session,
+                    request: params['request'],
+                  ),
+        ),
+        'deleteVersion': _i1.MethodConnector(
+          name: 'deleteVersion',
+          params: {
+            'request': _i1.ParameterDescription(
+              name: 'request',
+              type: _i1.getType<_i36.DeleteVersionRequest>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['version'] as _i6.VersionEndpoint).deleteVersion(
+                    session,
+                    request: params['request'],
+                  ),
         ),
       },
     );
@@ -739,7 +914,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['greeting'] as _i6.GreetingEndpoint).hello(
+              ) async => (endpoints['greeting'] as _i7.GreetingEndpoint).hello(
                 session,
                 params['name'],
               ),

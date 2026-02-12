@@ -38,51 +38,55 @@ class _TransferOwnershipDialogState extends State<TransferOwnershipDialog> {
 
     return AlertDialog(
       title: const Text('Передать владение'),
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: colorScheme.tertiaryContainer.withValues(alpha: 0.3),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                'Новый владелец получит полный контроль над командой. '
-                'Вы станете администратором.',
-                style: textTheme.bodySmall?.copyWith(
-                  color: colorScheme.onTertiaryContainer,
+      content: ConstrainedBox(
+        constraints: const BoxConstraints(minWidth: 480, maxWidth: 480),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: colorScheme.tertiaryContainer.withValues(alpha: 0.3),
+                  borderRadius: BorderRadius.circular(8),
                 ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            if (candidates.isEmpty)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                child: Center(
-                  child: Text(
-                    'Нет подходящих участников.\n'
-                    'Сначала пригласите кого-нибудь в команду.',
-                    textAlign: TextAlign.center,
-                    style: textTheme.bodyMedium?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
-                    ),
+                child: Text(
+                  'Новый владелец получит полный контроль над командой. '
+                  'Вы станете администратором.',
+                  style: textTheme.bodySmall?.copyWith(
+                    color: colorScheme.onTertiaryContainer,
                   ),
                 ),
-              )
-            else
-              for (int i = 0; i < candidates.length; i++)
-                _CandidateTile(
-                  member: candidates[i],
-                  selected: _selectedMemberId == candidates[i].userId,
-                  onTap: () =>
-                      setState(() => _selectedMemberId = candidates[i].userId),
-                  colorScheme: colorScheme,
-                  textTheme: textTheme,
-                ),
-          ],
+              ),
+              const SizedBox(height: 16),
+              if (candidates.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: Center(
+                    child: Text(
+                      'Нет подходящих участников.\n'
+                      'Сначала пригласите кого-нибудь в команду.',
+                      textAlign: TextAlign.center,
+                      style: textTheme.bodyMedium?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
+                )
+              else
+                for (int i = 0; i < candidates.length; i++)
+                  _CandidateTile(
+                    member: candidates[i],
+                    selected: _selectedMemberId == candidates[i].userId,
+                    onTap: () => setState(
+                      () => _selectedMemberId = candidates[i].userId,
+                    ),
+                    colorScheme: colorScheme,
+                    textTheme: textTheme,
+                  ),
+            ],
+          ),
         ),
       ),
       actions: [
@@ -152,10 +156,10 @@ class _CandidateTile extends StatelessWidget {
           ? Text(email, style: textTheme.bodySmall)
           : null,
       trailing: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
         decoration: BoxDecoration(
           color: colorScheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(8),
         ),
         child: Text(
           _roleLabel(member.role),

@@ -39,48 +39,53 @@ class _ChangeRoleDialogState extends State<ChangeRoleDialog> {
 
     return AlertDialog(
       title: const Text('Изменить роль'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Информация об участнике
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              children: [
-                Icon(Icons.person, color: colorScheme.onSurfaceVariant),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    name,
-                    style: textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
+      content: ConstrainedBox(
+        constraints: const BoxConstraints(minWidth: 480, maxWidth: 480),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Информация об участнике
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: colorScheme.surfaceContainerHighest.withValues(
+                  alpha: 0.5,
+                ),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.person, color: colorScheme.onSurfaceVariant),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      name,
+                      style: textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 20),
+            const SizedBox(height: 20),
 
-          // Выбор роли
-          Text(
-            'Новая роль',
-            style: textTheme.titleSmall?.copyWith(
-              fontWeight: FontWeight.w600,
+            // Выбор роли
+            Text(
+              'Новая роль',
+              style: textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
             ),
-          ),
-          const SizedBox(height: 12),
+            const SizedBox(height: 12),
 
-          RoleSelector(
-            selectedRole: _selectedRole,
-            onRoleChanged: (role) => setState(() => _selectedRole = role),
-          ),
-        ],
+            RoleSelector(
+              selectedRole: _selectedRole,
+              onRoleChanged: (role) => setState(() => _selectedRole = role),
+            ),
+          ],
+        ),
       ),
       actions: [
         TextButton(

@@ -16,6 +16,13 @@ fields:
   recommendedVersion: Version?, relation(name=version_recommendation, optional, onDelete=SetNull)
   recommendingVersions: List<Version>?, relation(name=version_recommendation)
 
+  ### Настройки частоты показа рекомендации обновления
+  recommendationFrequency: RecommendationFrequencyType?
+  ### Интервал для типа "everyNthLaunch" (от 2 до 50)
+  recommendationEveryNthLaunch: int?
+  ### Интервал для типа "oncePer" в часах
+  recommendationPeriodHours: int?
+
   checkLogs: List<VersionCheckLog>?, relation(name=version_check_logs)
 
   createdAt: DateTime, default=now

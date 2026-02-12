@@ -43,82 +43,85 @@ class _DeleteTeamDialogState extends State<DeleteTeamDialog> {
           const Expanded(child: Text('Удалить команду')),
         ],
       ),
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Предупреждение
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: colorScheme.errorContainer.withValues(alpha: 0.3),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                'Это действие необратимо. Команда «${widget.team.name}» '
-                'с $membersCount участниками будет удалена.',
-                style: textTheme.bodyMedium?.copyWith(
-                  color: colorScheme.onErrorContainer,
+      content: ConstrainedBox(
+        constraints: const BoxConstraints(minWidth: 480, maxWidth: 480),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Предупреждение
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: colorScheme.errorContainer.withValues(alpha: 0.3),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  'Это действие необратимо. Команда «${widget.team.name}» '
+                  'с $membersCount участниками будет удалена.',
+                  style: textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onErrorContainer,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
+              const SizedBox(height: 20),
 
-            // Выбор варианта
-            Text(
-              'Что делать с приложениями команды?',
-              style: textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.w600,
+              // Выбор варианта
+              Text(
+                'Что делать с приложениями команды?',
+                style: textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-            ),
-            const SizedBox(height: 12),
+              const SizedBox(height: 12),
 
-            // Вариант А: Удалить всё
-            _OptionTile(
-              selected: !_transferApps,
-              onTap: () => setState(() => _transferApps = false),
-              icon: Icons.delete_forever,
-              iconColor: colorScheme.error,
-              title: 'Удалить команду и все приложения',
-              subtitle:
-                  'Все приложения, версии и статистика будут безвозвратно удалены.',
-              colorScheme: colorScheme,
-              textTheme: textTheme,
-            ),
-            const SizedBox(height: 8),
-
-            // Вариант Б: Оставить приложения себе
-            _OptionTile(
-              selected: _transferApps,
-              onTap: () => setState(() => _transferApps = true),
-              icon: Icons.move_to_inbox,
-              iconColor: colorScheme.primary,
-              title: 'Удалить команду, оставить приложения себе',
-              subtitle:
-                  'Приложения станут вашими личными. Участники потеряют доступ.',
-              colorScheme: colorScheme,
-              textTheme: textTheme,
-            ),
-            const SizedBox(height: 20),
-
-            // Подтверждение
-            Text(
-              'Для подтверждения введите название команды:',
-              style: textTheme.bodySmall?.copyWith(
-                color: colorScheme.onSurfaceVariant,
+              // Вариант А: Удалить всё
+              _OptionTile(
+                selected: !_transferApps,
+                onTap: () => setState(() => _transferApps = false),
+                icon: Icons.delete_forever,
+                iconColor: colorScheme.error,
+                title: 'Удалить команду и все приложения',
+                subtitle:
+                    'Все приложения, версии и статистика будут безвозвратно удалены.',
+                colorScheme: colorScheme,
+                textTheme: textTheme,
               ),
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _confirmController,
-              decoration: InputDecoration(
-                hintText: widget.team.name,
-                border: const OutlineInputBorder(),
+              const SizedBox(height: 8),
+
+              // Вариант Б: Оставить приложения себе
+              _OptionTile(
+                selected: _transferApps,
+                onTap: () => setState(() => _transferApps = true),
+                icon: Icons.move_to_inbox,
+                iconColor: colorScheme.primary,
+                title: 'Удалить команду, оставить приложения себе',
+                subtitle:
+                    'Приложения станут вашими личными. Участники потеряют доступ.',
+                colorScheme: colorScheme,
+                textTheme: textTheme,
               ),
-              onChanged: (_) => setState(() {}),
-            ),
-          ],
+              const SizedBox(height: 20),
+
+              // Подтверждение
+              Text(
+                'Для подтверждения введите название команды:',
+                style: textTheme.bodySmall?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                controller: _confirmController,
+                decoration: InputDecoration(
+                  hintText: widget.team.name,
+                  border: const OutlineInputBorder(),
+                ),
+                onChanged: (_) => setState(() {}),
+              ),
+            ],
+          ),
         ),
       ),
       actions: [

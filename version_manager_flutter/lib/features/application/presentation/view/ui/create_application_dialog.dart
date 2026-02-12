@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:version_manager_client/version_manager_client.dart';
+import 'package:version_manager_flutter/features/application/domain/repository/application_repository.dart';
 import 'package:version_manager_flutter/features/application/presentation/bloc/application_bloc.dart';
+import 'package:version_manager_flutter/features/application/presentation/view/ui/regenerate_api_key_dialog.dart';
+import 'package:version_manager_flutter/features/create_application/presentation/bloc/create_application_bloc.dart';
+import 'package:version_manager_flutter/shared/services/notification_service.dart';
 
 /// Диалог создания нового приложения.
 class CreateApplicationDialog extends StatefulWidget {
@@ -29,6 +33,16 @@ class _CreateApplicationDialogState extends State<CreateApplicationDialog> {
   bool _showPlatformError = false;
   bool _showStoreLinkErrors = false;
 
+  late final CreateApplicationBloc _createBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _createBloc = CreateApplicationBloc(
+      applicationRepository: context.read<ApplicationRepository>(),
+    );
+  }
+
   @override
   void dispose() {
     _namespaceController.dispose();
@@ -40,11 +54,45 @@ class _CreateApplicationDialogState extends State<CreateApplicationDialog> {
         entry.dispose();
       }
     }
+    _createBloc.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    return BlocProvider.value(
+      value: _createBloc,
+      child: BlocListener<CreateApplicationBloc, CreateApplicationState>(
+        listener: (context, state) {
+          switch (state) {
+            case CreateApplicationSuccess(:final apiKey):
+              Navigator.pop(context);
+              NotificationService.showSuccess(context, 'Приложение создано');
+              // Перезагружаем список приложений
+              context.read<ApplicationBloc>().add(
+                const ApplicationEvent.loadApplications(),
+              );
+              // Показать диалог с API ключом
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (_) => ApiKeyDisplayDialog(
+                  apiKey: apiKey,
+                  title: 'API ключ создан',
+                ),
+              );
+            case CreateApplicationError(:final message):
+              NotificationService.showError(context, message);
+            default:
+              break;
+          }
+        },
+        child: _buildDialog(context),
+      ),
+    );
+  }
+
+  Widget _buildDialog(BuildContext context) {
     return AlertDialog(
       title: Text(
         widget.preselectedTeam != null
@@ -52,7 +100,7 @@ class _CreateApplicationDialogState extends State<CreateApplicationDialog> {
             : 'Создать личное приложение',
       ),
       content: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 480),
+        constraints: const BoxConstraints(minWidth: 480, maxWidth: 480),
         child: SingleChildScrollView(
           child: Form(
             key: _formKey,
@@ -193,9 +241,21 @@ class _CreateApplicationDialogState extends State<CreateApplicationDialog> {
           onPressed: () => Navigator.pop(context),
           child: const Text('Отмена'),
         ),
-        FilledButton(
-          onPressed: _submit,
-          child: const Text('Создать'),
+        BlocBuilder<CreateApplicationBloc, CreateApplicationState>(
+          bloc: _createBloc,
+          builder: (context, state) {
+            final isLoading = state is CreateApplicationLoading;
+            return FilledButton(
+              onPressed: isLoading ? null : _submit,
+              child: isLoading
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Text('Создать'),
+            );
+          },
         ),
       ],
     );
@@ -248,11 +308,9 @@ class _CreateApplicationDialogState extends State<CreateApplicationDialog> {
       }
     }
 
-    final bloc = context.read<ApplicationBloc>();
-    Navigator.pop(context);
-    bloc.add(
-      ApplicationEvent.createApplication(
-        namespace: _namespaceController.text.trim().toLowerCase(),
+    _createBloc.add(
+      CreateApplicationEvent.create(
+        namespace: _namespaceController.text.trim(),
         name: _nameController.text.trim(),
         description: _descriptionController.text.trim().isEmpty
             ? null

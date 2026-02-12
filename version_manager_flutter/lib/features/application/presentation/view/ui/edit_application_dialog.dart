@@ -79,7 +79,7 @@ class _EditApplicationDialogState extends State<EditApplicationDialog> {
     return AlertDialog(
       title: const Text('Редактировать приложение'),
       content: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 480),
+        constraints: const BoxConstraints(minWidth: 480, maxWidth: 480),
         child: SingleChildScrollView(
           child: Form(
             key: _formKey,

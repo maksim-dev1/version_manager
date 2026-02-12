@@ -21,6 +21,7 @@ fields:
   storeLinks: List<StoreLink>?, relation(name=application_store_links)
   versions: List<Version>?, relation(name=application_versions)
   checkLogs: List<VersionCheckLog>?, relation(name=application_check_logs)
+  dailySummaries: List<VersionCheckDailySummary>?, relation(name=application_daily_summaries)
 
   isActive: bool, default=true
 

@@ -24,27 +24,30 @@ class _CreateTeamDialogState extends State<CreateTeamDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Создать команду'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextField(
-            controller: _nameController,
-            decoration: const InputDecoration(
-              labelText: 'Название',
-              hintText: 'Введите название команды',
+      content: ConstrainedBox(
+        constraints: const BoxConstraints(minWidth: 480, maxWidth: 480),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: _nameController,
+              decoration: const InputDecoration(
+                labelText: 'Название',
+                hintText: 'Введите название команды',
+              ),
+              autofocus: true,
             ),
-            autofocus: true,
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _descriptionController,
-            decoration: const InputDecoration(
-              labelText: 'Описание',
-              hintText: 'Необязательно',
+            const SizedBox(height: 16),
+            TextField(
+              controller: _descriptionController,
+              decoration: const InputDecoration(
+                labelText: 'Описание',
+                hintText: 'Необязательно',
+              ),
+              maxLines: 3,
             ),
-            maxLines: 3,
-          ),
-        ],
+          ],
+        ),
       ),
       actions: [
         TextButton(

@@ -7,6 +7,7 @@ import 'package:version_manager_server/src/services/service_locator.dart';
 import 'src/generated/endpoints.dart';
 import 'src/generated/protocol.dart';
 import 'src/web/routes/app_config_route.dart';
+import 'src/web/routes/check_version_route.dart';
 import 'src/web/routes/root.dart';
 
 /// The starting point of the Serverpod server.
@@ -14,7 +15,6 @@ void run(List<String> args) async {
   // Инициализация сервисов
   Services().initialize(
     emailProvider: EmailProvider.google,
-    // emailTemplatesPath: 'email_templates',
   );
 
   // Initialize Serverpod and connect it with your generated code.
@@ -52,6 +52,10 @@ void run(List<String> args) async {
   // These are used by the default page.
   pod.webServer.addRoute(RootRoute(), '/');
   pod.webServer.addRoute(RootRoute(), '/index.html');
+
+  // Public API: проверка версии мобильного приложения
+  // POST /api/v1/check-version
+  pod.webServer.addRoute(CheckVersionRoute(), '/api/v1/check-version');
 
   // Serve all files in the web/static relative directory under /.
   // These are used by the default web page.

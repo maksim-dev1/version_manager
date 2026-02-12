@@ -13,9 +13,10 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
 import '../apps/application.dart' as _i2;
-import '../apps/version.dart' as _i3;
-import '../logs/version_check_log.dart' as _i4;
-import 'package:version_manager_server/src/generated/protocol.dart' as _i5;
+import '../versions/version.dart' as _i3;
+import '../enums/recommendation_frequency_type.dart' as _i4;
+import '../logs/version_check_log.dart' as _i5;
+import 'package:version_manager_server/src/generated/protocol.dart' as _i6;
 
 /// Версия приложения
 abstract class Version
@@ -32,6 +33,9 @@ abstract class Version
     this.recommendedVersionId,
     this.recommendedVersion,
     this.recommendingVersions,
+    this.recommendationFrequency,
+    this.recommendationEveryNthLaunch,
+    this.recommendationPeriodHours,
     this.checkLogs,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -51,7 +55,10 @@ abstract class Version
     _i1.UuidValue? recommendedVersionId,
     _i3.Version? recommendedVersion,
     List<_i3.Version>? recommendingVersions,
-    List<_i4.VersionCheckLog>? checkLogs,
+    _i4.RecommendationFrequencyType? recommendationFrequency,
+    int? recommendationEveryNthLaunch,
+    int? recommendationPeriodHours,
+    List<_i5.VersionCheckLog>? checkLogs,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) = _VersionImpl;
@@ -66,7 +73,7 @@ abstract class Version
       ),
       application: jsonSerialization['application'] == null
           ? null
-          : _i5.Protocol().deserialize<_i2.Application>(
+          : _i6.Protocol().deserialize<_i2.Application>(
               jsonSerialization['application'],
             ),
       versionNumber: jsonSerialization['versionNumber'] as String,
@@ -81,17 +88,27 @@ abstract class Version
             ),
       recommendedVersion: jsonSerialization['recommendedVersion'] == null
           ? null
-          : _i5.Protocol().deserialize<_i3.Version>(
+          : _i6.Protocol().deserialize<_i3.Version>(
               jsonSerialization['recommendedVersion'],
             ),
       recommendingVersions: jsonSerialization['recommendingVersions'] == null
           ? null
-          : _i5.Protocol().deserialize<List<_i3.Version>>(
+          : _i6.Protocol().deserialize<List<_i3.Version>>(
               jsonSerialization['recommendingVersions'],
             ),
+      recommendationFrequency:
+          jsonSerialization['recommendationFrequency'] == null
+          ? null
+          : _i4.RecommendationFrequencyType.fromJson(
+              (jsonSerialization['recommendationFrequency'] as String),
+            ),
+      recommendationEveryNthLaunch:
+          jsonSerialization['recommendationEveryNthLaunch'] as int?,
+      recommendationPeriodHours:
+          jsonSerialization['recommendationPeriodHours'] as int?,
       checkLogs: jsonSerialization['checkLogs'] == null
           ? null
-          : _i5.Protocol().deserialize<List<_i4.VersionCheckLog>>(
+          : _i6.Protocol().deserialize<List<_i5.VersionCheckLog>>(
               jsonSerialization['checkLogs'],
             ),
       createdAt: jsonSerialization['createdAt'] == null
@@ -130,7 +147,16 @@ abstract class Version
 
   List<_i3.Version>? recommendingVersions;
 
-  List<_i4.VersionCheckLog>? checkLogs;
+  /// Настройки частоты показа рекомендации обновления
+  _i4.RecommendationFrequencyType? recommendationFrequency;
+
+  /// Интервал для типа "everyNthLaunch" (от 2 до 50)
+  int? recommendationEveryNthLaunch;
+
+  /// Интервал для типа "oncePer" в часах
+  int? recommendationPeriodHours;
+
+  List<_i5.VersionCheckLog>? checkLogs;
 
   DateTime createdAt;
 
@@ -154,7 +180,10 @@ abstract class Version
     _i1.UuidValue? recommendedVersionId,
     _i3.Version? recommendedVersion,
     List<_i3.Version>? recommendingVersions,
-    List<_i4.VersionCheckLog>? checkLogs,
+    _i4.RecommendationFrequencyType? recommendationFrequency,
+    int? recommendationEveryNthLaunch,
+    int? recommendationPeriodHours,
+    List<_i5.VersionCheckLog>? checkLogs,
     DateTime? createdAt,
     DateTime? updatedAt,
   });
@@ -178,6 +207,12 @@ abstract class Version
         'recommendingVersions': recommendingVersions?.toJson(
           valueToJson: (v) => v.toJson(),
         ),
+      if (recommendationFrequency != null)
+        'recommendationFrequency': recommendationFrequency?.toJson(),
+      if (recommendationEveryNthLaunch != null)
+        'recommendationEveryNthLaunch': recommendationEveryNthLaunch,
+      if (recommendationPeriodHours != null)
+        'recommendationPeriodHours': recommendationPeriodHours,
       if (checkLogs != null)
         'checkLogs': checkLogs?.toJson(valueToJson: (v) => v.toJson()),
       'createdAt': createdAt.toJson(),
@@ -205,6 +240,12 @@ abstract class Version
         'recommendingVersions': recommendingVersions?.toJson(
           valueToJson: (v) => v.toJsonForProtocol(),
         ),
+      if (recommendationFrequency != null)
+        'recommendationFrequency': recommendationFrequency?.toJson(),
+      if (recommendationEveryNthLaunch != null)
+        'recommendationEveryNthLaunch': recommendationEveryNthLaunch,
+      if (recommendationPeriodHours != null)
+        'recommendationPeriodHours': recommendationPeriodHours,
       if (checkLogs != null)
         'checkLogs': checkLogs?.toJson(
           valueToJson: (v) => v.toJsonForProtocol(),
@@ -218,7 +259,7 @@ abstract class Version
     _i2.ApplicationInclude? application,
     _i3.VersionInclude? recommendedVersion,
     _i3.VersionIncludeList? recommendingVersions,
-    _i4.VersionCheckLogIncludeList? checkLogs,
+    _i5.VersionCheckLogIncludeList? checkLogs,
   }) {
     return VersionInclude._(
       application: application,
@@ -269,7 +310,10 @@ class _VersionImpl extends Version {
     _i1.UuidValue? recommendedVersionId,
     _i3.Version? recommendedVersion,
     List<_i3.Version>? recommendingVersions,
-    List<_i4.VersionCheckLog>? checkLogs,
+    _i4.RecommendationFrequencyType? recommendationFrequency,
+    int? recommendationEveryNthLaunch,
+    int? recommendationPeriodHours,
+    List<_i5.VersionCheckLog>? checkLogs,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) : super._(
@@ -284,6 +328,9 @@ class _VersionImpl extends Version {
          recommendedVersionId: recommendedVersionId,
          recommendedVersion: recommendedVersion,
          recommendingVersions: recommendingVersions,
+         recommendationFrequency: recommendationFrequency,
+         recommendationEveryNthLaunch: recommendationEveryNthLaunch,
+         recommendationPeriodHours: recommendationPeriodHours,
          checkLogs: checkLogs,
          createdAt: createdAt,
          updatedAt: updatedAt,
@@ -305,6 +352,9 @@ class _VersionImpl extends Version {
     Object? recommendedVersionId = _Undefined,
     Object? recommendedVersion = _Undefined,
     Object? recommendingVersions = _Undefined,
+    Object? recommendationFrequency = _Undefined,
+    Object? recommendationEveryNthLaunch = _Undefined,
+    Object? recommendationPeriodHours = _Undefined,
     Object? checkLogs = _Undefined,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -329,7 +379,17 @@ class _VersionImpl extends Version {
       recommendingVersions: recommendingVersions is List<_i3.Version>?
           ? recommendingVersions
           : this.recommendingVersions?.map((e0) => e0.copyWith()).toList(),
-      checkLogs: checkLogs is List<_i4.VersionCheckLog>?
+      recommendationFrequency:
+          recommendationFrequency is _i4.RecommendationFrequencyType?
+          ? recommendationFrequency
+          : this.recommendationFrequency,
+      recommendationEveryNthLaunch: recommendationEveryNthLaunch is int?
+          ? recommendationEveryNthLaunch
+          : this.recommendationEveryNthLaunch,
+      recommendationPeriodHours: recommendationPeriodHours is int?
+          ? recommendationPeriodHours
+          : this.recommendationPeriodHours,
+      checkLogs: checkLogs is List<_i5.VersionCheckLog>?
           ? checkLogs
           : this.checkLogs?.map((e0) => e0.copyWith()).toList(),
       createdAt: createdAt ?? this.createdAt,
@@ -381,6 +441,28 @@ class VersionUpdateTable extends _i1.UpdateTable<VersionTable> {
     value,
   );
 
+  _i1.ColumnValue<
+    _i4.RecommendationFrequencyType,
+    _i4.RecommendationFrequencyType
+  >
+  recommendationFrequency(_i4.RecommendationFrequencyType? value) =>
+      _i1.ColumnValue(
+        table.recommendationFrequency,
+        value,
+      );
+
+  _i1.ColumnValue<int, int> recommendationEveryNthLaunch(int? value) =>
+      _i1.ColumnValue(
+        table.recommendationEveryNthLaunch,
+        value,
+      );
+
+  _i1.ColumnValue<int, int> recommendationPeriodHours(int? value) =>
+      _i1.ColumnValue(
+        table.recommendationPeriodHours,
+        value,
+      );
+
   _i1.ColumnValue<DateTime, DateTime> createdAt(DateTime value) =>
       _i1.ColumnValue(
         table.createdAt,
@@ -426,6 +508,19 @@ class VersionTable extends _i1.Table<_i1.UuidValue?> {
       'recommendedVersionId',
       this,
     );
+    recommendationFrequency = _i1.ColumnEnum(
+      'recommendationFrequency',
+      this,
+      _i1.EnumSerialization.byName,
+    );
+    recommendationEveryNthLaunch = _i1.ColumnInt(
+      'recommendationEveryNthLaunch',
+      this,
+    );
+    recommendationPeriodHours = _i1.ColumnInt(
+      'recommendationPeriodHours',
+      this,
+    );
     createdAt = _i1.ColumnDateTime(
       'createdAt',
       this,
@@ -462,9 +557,19 @@ class VersionTable extends _i1.Table<_i1.UuidValue?> {
 
   _i1.ManyRelation<_i3.VersionTable>? _recommendingVersions;
 
-  _i4.VersionCheckLogTable? ___checkLogs;
+  /// Настройки частоты показа рекомендации обновления
+  late final _i1.ColumnEnum<_i4.RecommendationFrequencyType>
+  recommendationFrequency;
 
-  _i1.ManyRelation<_i4.VersionCheckLogTable>? _checkLogs;
+  /// Интервал для типа "everyNthLaunch" (от 2 до 50)
+  late final _i1.ColumnInt recommendationEveryNthLaunch;
+
+  /// Интервал для типа "oncePer" в часах
+  late final _i1.ColumnInt recommendationPeriodHours;
+
+  _i5.VersionCheckLogTable? ___checkLogs;
+
+  _i1.ManyRelation<_i5.VersionCheckLogTable>? _checkLogs;
 
   late final _i1.ColumnDateTime createdAt;
 
@@ -509,15 +614,15 @@ class VersionTable extends _i1.Table<_i1.UuidValue?> {
     return ___recommendingVersions!;
   }
 
-  _i4.VersionCheckLogTable get __checkLogs {
+  _i5.VersionCheckLogTable get __checkLogs {
     if (___checkLogs != null) return ___checkLogs!;
     ___checkLogs = _i1.createRelationTable(
       relationFieldName: '__checkLogs',
       field: Version.t.id,
-      foreignField: _i4.VersionCheckLog.t.versionId,
+      foreignField: _i5.VersionCheckLog.t.versionId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i4.VersionCheckLogTable(tableRelation: foreignTableRelation),
+          _i5.VersionCheckLogTable(tableRelation: foreignTableRelation),
     );
     return ___checkLogs!;
   }
@@ -541,19 +646,19 @@ class VersionTable extends _i1.Table<_i1.UuidValue?> {
     return _recommendingVersions!;
   }
 
-  _i1.ManyRelation<_i4.VersionCheckLogTable> get checkLogs {
+  _i1.ManyRelation<_i5.VersionCheckLogTable> get checkLogs {
     if (_checkLogs != null) return _checkLogs!;
     var relationTable = _i1.createRelationTable(
       relationFieldName: 'checkLogs',
       field: Version.t.id,
-      foreignField: _i4.VersionCheckLog.t.versionId,
+      foreignField: _i5.VersionCheckLog.t.versionId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i4.VersionCheckLogTable(tableRelation: foreignTableRelation),
+          _i5.VersionCheckLogTable(tableRelation: foreignTableRelation),
     );
-    _checkLogs = _i1.ManyRelation<_i4.VersionCheckLogTable>(
+    _checkLogs = _i1.ManyRelation<_i5.VersionCheckLogTable>(
       tableWithRelations: relationTable,
-      table: _i4.VersionCheckLogTable(
+      table: _i5.VersionCheckLogTable(
         tableRelation: relationTable.tableRelation!.lastRelation,
       ),
     );
@@ -570,6 +675,9 @@ class VersionTable extends _i1.Table<_i1.UuidValue?> {
     isBlocked,
     blockReason,
     recommendedVersionId,
+    recommendationFrequency,
+    recommendationEveryNthLaunch,
+    recommendationPeriodHours,
     createdAt,
     updatedAt,
   ];
@@ -597,7 +705,7 @@ class VersionInclude extends _i1.IncludeObject {
     _i2.ApplicationInclude? application,
     _i3.VersionInclude? recommendedVersion,
     _i3.VersionIncludeList? recommendingVersions,
-    _i4.VersionCheckLogIncludeList? checkLogs,
+    _i5.VersionCheckLogIncludeList? checkLogs,
   }) {
     _application = application;
     _recommendedVersion = recommendedVersion;
@@ -611,7 +719,7 @@ class VersionInclude extends _i1.IncludeObject {
 
   _i3.VersionIncludeList? _recommendingVersions;
 
-  _i4.VersionCheckLogIncludeList? _checkLogs;
+  _i5.VersionCheckLogIncludeList? _checkLogs;
 
   @override
   Map<String, _i1.Include?> get includes => {
@@ -945,7 +1053,7 @@ class VersionAttachRepository {
   Future<void> checkLogs(
     _i1.Session session,
     Version version,
-    List<_i4.VersionCheckLog> versionCheckLog, {
+    List<_i5.VersionCheckLog> versionCheckLog, {
     _i1.Transaction? transaction,
   }) async {
     if (versionCheckLog.any((e) => e.id == null)) {
@@ -958,9 +1066,9 @@ class VersionAttachRepository {
     var $versionCheckLog = versionCheckLog
         .map((e) => e.copyWith(versionId: version.id))
         .toList();
-    await session.db.update<_i4.VersionCheckLog>(
+    await session.db.update<_i5.VersionCheckLog>(
       $versionCheckLog,
-      columns: [_i4.VersionCheckLog.t.versionId],
+      columns: [_i5.VersionCheckLog.t.versionId],
       transaction: transaction,
     );
   }
@@ -1047,7 +1155,7 @@ class VersionAttachRowRepository {
   Future<void> checkLogs(
     _i1.Session session,
     Version version,
-    _i4.VersionCheckLog versionCheckLog, {
+    _i5.VersionCheckLog versionCheckLog, {
     _i1.Transaction? transaction,
   }) async {
     if (versionCheckLog.id == null) {
@@ -1058,9 +1166,9 @@ class VersionAttachRowRepository {
     }
 
     var $versionCheckLog = versionCheckLog.copyWith(versionId: version.id);
-    await session.db.updateRow<_i4.VersionCheckLog>(
+    await session.db.updateRow<_i5.VersionCheckLog>(
       $versionCheckLog,
-      columns: [_i4.VersionCheckLog.t.versionId],
+      columns: [_i5.VersionCheckLog.t.versionId],
       transaction: transaction,
     );
   }
@@ -1100,7 +1208,7 @@ class VersionDetachRepository {
   /// the related record.
   Future<void> checkLogs(
     _i1.Session session,
-    List<_i4.VersionCheckLog> versionCheckLog, {
+    List<_i5.VersionCheckLog> versionCheckLog, {
     _i1.Transaction? transaction,
   }) async {
     if (versionCheckLog.any((e) => e.id == null)) {
@@ -1110,9 +1218,9 @@ class VersionDetachRepository {
     var $versionCheckLog = versionCheckLog
         .map((e) => e.copyWith(versionId: null))
         .toList();
-    await session.db.update<_i4.VersionCheckLog>(
+    await session.db.update<_i5.VersionCheckLog>(
       $versionCheckLog,
-      columns: [_i4.VersionCheckLog.t.versionId],
+      columns: [_i5.VersionCheckLog.t.versionId],
       transaction: transaction,
     );
   }
@@ -1172,7 +1280,7 @@ class VersionDetachRowRepository {
   /// the related record.
   Future<void> checkLogs(
     _i1.Session session,
-    _i4.VersionCheckLog versionCheckLog, {
+    _i5.VersionCheckLog versionCheckLog, {
     _i1.Transaction? transaction,
   }) async {
     if (versionCheckLog.id == null) {
@@ -1180,9 +1288,9 @@ class VersionDetachRowRepository {
     }
 
     var $versionCheckLog = versionCheckLog.copyWith(versionId: null);
-    await session.db.updateRow<_i4.VersionCheckLog>(
+    await session.db.updateRow<_i5.VersionCheckLog>(
       $versionCheckLog,
-      columns: [_i4.VersionCheckLog.t.versionId],
+      columns: [_i5.VersionCheckLog.t.versionId],
       transaction: transaction,
     );
   }

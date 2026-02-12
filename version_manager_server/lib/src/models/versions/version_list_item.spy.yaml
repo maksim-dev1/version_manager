@@ -1,0 +1,16 @@
+### Элемент списка версий (краткая информация)
+class: VersionListItem
+fields:
+  id: UuidValue
+  versionNumber: String
+  buildNumber: int
+  changelog: String
+  isBlocked: bool
+  blockReason: String?
+  ### Номер рекомендуемой версии (если установлена)
+  recommendedVersionNumber: String?
+  ### Количество активных пользователей на этой версии
+  activeUsersCount: int
+  ### Является ли эта версия самой новой
+  isLatest: bool
+  createdAt: DateTime

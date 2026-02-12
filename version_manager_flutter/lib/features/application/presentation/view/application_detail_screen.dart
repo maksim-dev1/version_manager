@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:version_manager_client/version_manager_client.dart';
+import 'package:version_manager_flutter/features/application/domain/repository/application_repository.dart';
 import 'package:version_manager_flutter/features/application/presentation/bloc/application_bloc.dart';
+import 'package:version_manager_flutter/features/api_key/presentation/bloc/api_key_bloc.dart';
 import 'package:version_manager_flutter/features/application/presentation/view/ui/delete_application_dialog.dart';
 import 'package:version_manager_flutter/features/application/presentation/view/ui/edit_application_dialog.dart';
-import 'package:version_manager_flutter/features/application/presentation/view/ui/regenerate_api_key_dialog.dart';
+import 'package:version_manager_flutter/features/api_key/presentation/view/regenerate_api_key_dialog.dart';
 import 'package:version_manager_flutter/features/application/presentation/view/ui/transfer_application_dialog.dart';
+import 'package:version_manager_flutter/features/version/presentation/view/versions_screen.dart';
+import 'package:version_manager_flutter/shared/widgets/animated_copy_icon_button.dart';
 
 /// Экран деталей приложения с вкладками «Информация», «Версии» и «Статистика».
 class ApplicationDetailScreen extends StatelessWidget {
@@ -24,139 +27,6 @@ class ApplicationDetailScreen extends StatelessWidget {
   }
 }
 
-/// Кнопка «⋮» с действиями над приложением.
-class _ActionsMenu extends StatelessWidget {
-  final Application application;
-  final ColorScheme colorScheme;
-
-  const _ActionsMenu({required this.application, required this.colorScheme});
-
-  @override
-  Widget build(BuildContext context) {
-    final bloc = context.read<ApplicationBloc>();
-
-    return PopupMenuButton<String>(
-      icon: const Icon(Icons.more_vert),
-      onSelected: (value) {
-        switch (value) {
-          case 'toggle':
-            bloc.add(
-              ApplicationEvent.toggleApplicationStatus(
-                applicationId: application.id!,
-                isActive: !application.isActive,
-              ),
-            );
-            break;
-          case 'regenerate':
-            showDialog(
-              context: context,
-              builder: (_) => BlocProvider.value(
-                value: bloc,
-                child: RegenerateApiKeyDialog(application: application),
-              ),
-            );
-            break;
-          case 'edit':
-            showDialog(
-              context: context,
-              builder: (_) => BlocProvider.value(
-                value: bloc,
-                child: EditApplicationDialog(application: application),
-              ),
-            );
-            break;
-          case 'transfer':
-            showDialog(
-              context: context,
-              builder: (_) => BlocProvider.value(
-                value: bloc,
-                child: TransferApplicationDialog(application: application),
-              ),
-            );
-            break;
-          case 'delete':
-            showDialog(
-              context: context,
-              builder: (_) => BlocProvider.value(
-                value: bloc,
-                child: DeleteApplicationDialog(application: application),
-              ),
-            ).then((_) {
-              if (context.mounted) {
-                final state = bloc.state;
-                if (state is ApplicationLoaded) {
-                  final exists = state.applications.any(
-                    (a) => a.id == application.id,
-                  );
-                  if (!exists) Navigator.of(context).pop();
-                }
-              }
-            });
-            break;
-        }
-      },
-      itemBuilder: (context) => [
-        PopupMenuItem(
-          value: 'toggle',
-          child: ListTile(
-            leading: Icon(
-              application.isActive
-                  ? Icons.pause_circle_outlined
-                  : Icons.play_circle_outlined,
-              size: 20,
-            ),
-            title: Text(
-              application.isActive ? 'Деактивировать' : 'Активировать',
-            ),
-            contentPadding: EdgeInsets.zero,
-            dense: true,
-          ),
-        ),
-        const PopupMenuItem(
-          value: 'regenerate',
-          child: ListTile(
-            leading: Icon(Icons.key_outlined, size: 20),
-            title: Text('Регенерировать API ключ'),
-            contentPadding: EdgeInsets.zero,
-            dense: true,
-          ),
-        ),
-        const PopupMenuItem(
-          value: 'edit',
-          child: ListTile(
-            leading: Icon(Icons.edit_outlined, size: 20),
-            title: Text('Редактировать'),
-            contentPadding: EdgeInsets.zero,
-            dense: true,
-          ),
-        ),
-        const PopupMenuItem(
-          value: 'transfer',
-          child: ListTile(
-            leading: Icon(Icons.swap_horiz_outlined, size: 20),
-            title: Text('Передать владение'),
-            contentPadding: EdgeInsets.zero,
-            dense: true,
-          ),
-        ),
-        PopupMenuItem(
-          value: 'delete',
-          child: ListTile(
-            leading: Icon(
-              Icons.delete_outline,
-              size: 20,
-              color: colorScheme.error,
-            ),
-            title: Text('Удалить', style: TextStyle(color: colorScheme.error)),
-            contentPadding: EdgeInsets.zero,
-            dense: true,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
 class _ApplicationDetailBody extends StatelessWidget {
   final Application application;
 
@@ -164,7 +34,6 @@ class _ApplicationDetailBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     final isCompact = MediaQuery.sizeOf(context).width < 600;
 
     return BlocSelector<ApplicationBloc, ApplicationState, Application>(
@@ -184,9 +53,9 @@ class _ApplicationDetailBody extends StatelessWidget {
             appBar: AppBar(
               title: Text(app.name),
               elevation: 0,
-              actions: [
-                _ActionsMenu(application: app, colorScheme: colorScheme),
-              ],
+              // actions: [
+              //   _ActionsMenu(application: app, colorScheme: colorScheme),
+              // ],
               bottom: TabBar(
                 tabAlignment: isCompact
                     ? TabAlignment.fill
@@ -217,7 +86,7 @@ class _ApplicationDetailBody extends StatelessWidget {
             body: TabBarView(
               children: [
                 _InfoTab(application: app),
-                _VersionsTab(application: app),
+                VersionsScreen(application: app),
                 _StatisticsTab(application: app),
               ],
             ),
@@ -242,9 +111,6 @@ class _InfoTab extends StatefulWidget {
 }
 
 class _InfoTabState extends State<_InfoTab> {
-  /// API-ключ, показанный после регенерации / создания (виден до ухода).
-  String? _visibleApiKey;
-
   Application get app => widget.application;
 
   @override
@@ -262,197 +128,192 @@ class _InfoTabState extends State<_InfoTab> {
     // Последние 4 символа ключа (из поля apiKeyLast4 в БД)
     final apiKeyHint = '••••••••${app.apiKeyLast4}';
 
-    return BlocListener<ApplicationBloc, ApplicationState>(
-      listener: (context, state) {
-        if (state is ApplicationApiKeyRegenerated) {
-          setState(() => _visibleApiKey = state.apiKey);
-        }
-      },
-      child: ListView(
-        padding: EdgeInsets.all(padding),
-        children: [
-          // ── Основная информация ──
-          _SectionCard(
-            title: 'Основная информация',
-            icon: Icons.info_outline,
-            children: [
-              // Иконка + название + статус
-              Row(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: SizedBox(
-                      width: 56,
-                      height: 56,
-                      child: app.iconUrl != null
-                          ? Image.network(
-                              app.iconUrl!,
-                              fit: BoxFit.cover,
-                              errorBuilder: (_, _, _) =>
-                                  _IconPlaceholder(name: app.name),
-                            )
-                          : _IconPlaceholder(name: app.name),
-                    ),
+    return ListView(
+      padding: EdgeInsets.all(padding),
+      children: [
+        // ── Основная информация ──
+        _SectionCard(
+          title: 'Основная информация',
+          icon: Icons.info_outline,
+          children: [
+            // Иконка + название + статус
+            Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: SizedBox(
+                    width: 56,
+                    height: 56,
+                    child: app.iconUrl != null
+                        ? Image.network(
+                            app.iconUrl!,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, _, _) =>
+                                _IconPlaceholder(name: app.name),
+                          )
+                        : _IconPlaceholder(name: app.name),
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          app.name,
-                          style: textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                          overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        app.name,
+                        style: textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
                         ),
-                        const SizedBox(height: 4),
-                        _StatusBadge(isActive: app.isActive),
-                      ],
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 4),
+                      _StatusBadge(isActive: app.isActive),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            _InfoRow(label: 'Namespace', value: app.namespace, mono: true),
+            if (app.description.isNotEmpty)
+              _InfoRow(label: 'Описание', value: app.description),
+            _InfoRow(
+              label: 'Владелец',
+              child: Row(
+                children: [
+                  Icon(
+                    app.ownerType == OwnerType.user
+                        ? Icons.person_outlined
+                        : Icons.groups_outlined,
+                    size: 16,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                  const SizedBox(width: 6),
+                  Flexible(
+                    child: Text(ownerLabel, style: textTheme.bodyMedium),
+                  ),
+                ],
+              ),
+            ),
+            _InfoRow(
+              label: 'Создано',
+              value: _formatDateTime(app.createdAt),
+            ),
+            _InfoRow(
+              label: 'Обновлено',
+              value: _formatDateTime(app.updatedAt),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+
+        // ── Платформы и магазины ──
+        _PlatformsCard(app: app),
+        const SizedBox(height: 12),
+
+        // ── API ключ ──
+        _SectionCard(
+          title: 'API ключ',
+          icon: Icons.key,
+          children: [
+            _InfoRow(
+              label: 'Ключ',
+              child: Row(
+                children: [
+                  Text(
+                    apiKeyHint,
+                    style: textTheme.bodyMedium?.copyWith(
+                      fontFamily: 'monospace',
+                      letterSpacing: 1.5,
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
-              _InfoRow(label: 'Namespace', value: app.namespace, mono: true),
-              if (app.description.isNotEmpty)
-                _InfoRow(label: 'Описание', value: app.description),
+            ),
+            _InfoRow(
+              label: 'Создан',
+              value: _formatDateTime(app.apiKeyCreatedAt),
+            ),
+            if (app.apiKeyLastRegeneratedAt != null)
               _InfoRow(
-                label: 'Владелец',
-                child: Row(
-                  children: [
-                    Icon(
-                      app.ownerType == OwnerType.user
-                          ? Icons.person_outlined
-                          : Icons.groups_outlined,
-                      size: 16,
-                      color: colorScheme.onSurfaceVariant,
-                    ),
-                    const SizedBox(width: 6),
-                    Flexible(
-                      child: Text(ownerLabel, style: textTheme.bodyMedium),
-                    ),
-                  ],
-                ),
+                label: 'Перегенерирован',
+                value: _formatDateTime(app.apiKeyLastRegeneratedAt!),
               ),
-              _InfoRow(
-                label: 'Создано',
-                value: _formatDateTime(app.createdAt),
-              ),
-              _InfoRow(
-                label: 'Обновлено',
-                value: _formatDateTime(app.updatedAt),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
+            const SizedBox(height: 8),
 
-          // ── Платформы и магазины ──
-          _PlatformsCard(app: app),
-          const SizedBox(height: 12),
-
-          // ── API ключ ──
-          _SectionCard(
-            title: 'API ключ',
-            icon: Icons.key,
-            children: [
-              _InfoRow(
-                label: 'Ключ',
-                child: Row(
-                  children: [
-                    Text(
-                      apiKeyHint,
-                      style: textTheme.bodyMedium?.copyWith(
-                        fontFamily: 'monospace',
-                        letterSpacing: 1.5,
+            // Кнопка регенерации
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: colorScheme.errorContainer.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.warning_amber_rounded,
+                        size: 18,
+                        color: colorScheme.onErrorContainer,
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              _InfoRow(
-                label: 'Создан',
-                value: _formatDateTime(app.apiKeyCreatedAt),
-              ),
-              if (app.apiKeyLastRegeneratedAt != null)
-                _InfoRow(
-                  label: 'Перегенерирован',
-                  value: _formatDateTime(app.apiKeyLastRegeneratedAt!),
-                ),
-              const SizedBox(height: 8),
-
-              // Показать новый ключ после регенерации
-              if (_visibleApiKey != null)
-                _VisibleApiKeySection(
-                  apiKey: _visibleApiKey!,
-                  onCopy: () {
-                    Clipboard.setData(
-                      ClipboardData(text: _visibleApiKey!),
-                    );
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('API ключ скопирован'),
-                      ),
-                    );
-                  },
-                  onHide: () => setState(() => _visibleApiKey = null),
-                ),
-
-              // Кнопка регенерации
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: colorScheme.errorContainer.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.warning_amber_rounded,
-                          size: 18,
-                          color: colorScheme.onErrorContainer,
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Регенерация ключа потребует подтверждения по электронной почте. '
+                          'Старый ключ будет аннулирован.',
+                          style: textTheme.bodySmall?.copyWith(
+                            color: colorScheme.onErrorContainer,
+                          ),
                         ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            'Регенерация ключа потребует подтверждения по электронной почте. '
-                            'Старый ключ будет аннулирован.',
-                            style: textTheme.bodySmall?.copyWith(
-                              color: colorScheme.onErrorContainer,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  FilledButton.tonalIcon(
+                    icon: const Icon(Icons.refresh, size: 18),
+                    label: const Text('Регенерировать API ключ'),
+                    onPressed: () {
+                      final repo = context.read<ApplicationRepository>();
+                      showDialog(
+                        context: context,
+                        builder: (_) => RepositoryProvider.value(
+                          value: repo,
+                          child: MultiBlocProvider(
+                            providers: [
+                              BlocProvider.value(value: bloc),
+                              BlocProvider(
+                                create: (context) =>
+                                    ApiKeyBloc(
+                                      applicationRepository: context
+                                          .read<ApplicationRepository>(),
+                                    )..add(
+                                      ApiKeyEvent.fetchEmail(
+                                        applicationId: app.id!,
+                                      ),
+                                    ),
+                              ),
+                            ],
+                            child: RegenerateApiKeyDialog(
+                              application: app,
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    FilledButton.tonalIcon(
-                      icon: const Icon(Icons.refresh, size: 18),
-                      label: const Text('Регенерировать API ключ'),
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (_) => BlocProvider.value(
-                            value: bloc,
-                            child: RegenerateApiKeyDialog(application: app),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
+                      );
+                    },
+                  ),
+                ],
               ),
-            ],
-          ),
-          const SizedBox(height: 12),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
 
-          // ── Действия ──
-          _ActionsCard(application: app, bloc: bloc),
-          const SizedBox(height: 24),
-        ],
-      ),
+        // ── Действия ──
+        _ActionsCard(application: app),
+        const SizedBox(height: 24),
+      ],
     );
   }
 }
@@ -601,31 +462,10 @@ class _PlatformDetailCard extends StatelessWidget {
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                            SizedBox(
-                              width: 28,
-                              height: 28,
-                              child: IconButton(
-                                onPressed: () {
-                                  Clipboard.setData(
-                                    ClipboardData(text: links[i].url),
-                                  );
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        '${links[i].storeName} скопировано',
-                                      ),
-                                    ),
-                                  );
-                                },
-                                icon: Icon(
-                                  Icons.copy,
-                                  size: 14,
-                                  color: colorScheme.onSurfaceVariant,
-                                ),
-                                tooltip: 'Скопировать',
-                                padding: EdgeInsets.zero,
-                                visualDensity: VisualDensity.compact,
-                              ),
+                            AnimatedCopyIconButton(
+                              textToCopy: links[i].url,
+                              size: 14,
+                              color: colorScheme.onSurfaceVariant,
                             ),
                             SizedBox(
                               width: 28,
@@ -676,97 +516,6 @@ class _PlatformDetailCard extends StatelessWidget {
   }
 }
 
-/// Секция отображения нового API ключа после регенерации.
-class _VisibleApiKeySection extends StatelessWidget {
-  final String apiKey;
-  final VoidCallback onCopy;
-  final VoidCallback onHide;
-
-  const _VisibleApiKeySection({
-    required this.apiKey,
-    required this.onCopy,
-    required this.onHide,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: colorScheme.primaryContainer.withValues(alpha: 0.3),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: colorScheme.primary.withValues(alpha: 0.3),
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.vpn_key, size: 16, color: colorScheme.primary),
-                const SizedBox(width: 8),
-                Text(
-                  'Новый API ключ',
-                  style: textTheme.labelMedium?.copyWith(
-                    color: colorScheme.primary,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: SelectableText(
-                apiKey,
-                style: textTheme.bodySmall?.copyWith(
-                  fontFamily: 'monospace',
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                FilledButton.tonalIcon(
-                  icon: const Icon(Icons.copy, size: 16),
-                  label: const Text('Скопировать'),
-                  onPressed: onCopy,
-                ),
-                TextButton(
-                  onPressed: onHide,
-                  child: const Text('Скрыть'),
-                ),
-              ],
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'Сохраните ключ — он больше не будет показан.',
-              style: textTheme.bodySmall?.copyWith(
-                color: colorScheme.error,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class _IconPlaceholder extends StatelessWidget {
   final String name;
 
@@ -797,9 +546,8 @@ class _IconPlaceholder extends StatelessWidget {
 
 class _ActionsCard extends StatelessWidget {
   final Application application;
-  final ApplicationBloc bloc;
 
-  const _ActionsCard({required this.application, required this.bloc});
+  const _ActionsCard({required this.application});
 
   @override
   Widget build(BuildContext context) {
@@ -833,13 +581,11 @@ class _ActionsCard extends StatelessWidget {
             if (isCompact)
               _ActionsList(
                 application: application,
-                bloc: bloc,
                 isCompact: true,
               )
             else
               _ActionsList(
                 application: application,
-                bloc: bloc,
                 isCompact: false,
               ),
           ],
@@ -852,18 +598,17 @@ class _ActionsCard extends StatelessWidget {
 /// Список кнопок действий над приложением.
 class _ActionsList extends StatelessWidget {
   final Application application;
-  final ApplicationBloc bloc;
   final bool isCompact;
 
   const _ActionsList({
     required this.application,
-    required this.bloc,
     required this.isCompact,
   });
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final bloc = context.read<ApplicationBloc>();
     final spacing = isCompact
         ? const SizedBox(height: 8)
         : const SizedBox.shrink();
@@ -1134,77 +879,6 @@ class _StatusBadge extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-// ──────────────────────────────────────────────────────────────────
-// Вкладка «Версии»
-// ──────────────────────────────────────────────────────────────────
-
-class _VersionsTab extends StatelessWidget {
-  final Application application;
-
-  const _VersionsTab({required this.application});
-
-  @override
-  Widget build(BuildContext context) {
-    final padding = MediaQuery.sizeOf(context).width < 600 ? 16.0 : 24.0;
-
-    return ListView(
-      padding: EdgeInsets.all(padding),
-      children: [
-        _VersionsEmptyState(),
-      ],
-    );
-  }
-}
-
-/// Заглушка — версий ещё нет или эндпоинт не подключён.
-class _VersionsEmptyState extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.rocket_launch_outlined,
-              size: 56,
-              color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Версий пока нет',
-              style: textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Создайте первую версию, чтобы начать '
-              'управлять обновлениями приложения.',
-              textAlign: TextAlign.center,
-              style: textTheme.bodyMedium?.copyWith(
-                color: colorScheme.onSurfaceVariant,
-              ),
-            ),
-            const SizedBox(height: 24),
-            FilledButton.icon(
-              onPressed: () {
-                // TODO: создание версии (после реализации эндпоинта)
-              },
-              icon: const Icon(Icons.add),
-              label: const Text('Создать версию'),
-            ),
-          ],
-        ),
       ),
     );
   }

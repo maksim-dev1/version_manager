@@ -167,7 +167,7 @@ class AppEndpoint extends LoggedInEndpoint {
     // Проверка уникальности namespace
     final existing = await Application.db.findFirstRow(
       session,
-      where: (t) => t.namespace.equals(request.namespace.trim().toLowerCase()),
+      where: (t) => t.namespace.equals(request.namespace.trim()),
     );
 
     if (existing != null) {
@@ -210,7 +210,7 @@ class AppEndpoint extends LoggedInEndpoint {
 
     // Создание приложения
     final application = Application(
-      namespace: request.namespace.trim().toLowerCase(),
+      namespace: request.namespace.trim(),
       name: request.name.trim(),
       description: request.description?.trim() ?? '',
       iconUrl: request.iconUrl,
@@ -757,7 +757,7 @@ class AppEndpoint extends LoggedInEndpoint {
 
   /// Валидация namespace.
   void _validateNamespace(String namespace) {
-    final ns = namespace.trim().toLowerCase();
+    final ns = namespace.trim();
 
     if (ns.isEmpty) {
       throw InvalidDataException(
@@ -766,14 +766,16 @@ class AppEndpoint extends LoggedInEndpoint {
       );
     }
 
-    // Формат обратной доменной нотации
-    final namespaceRegex = RegExp(r'^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*){2,}$');
+    // Формат обратной доменной нотации (регистронезависимый)
+    final namespaceRegex = RegExp(
+      r'^[a-zA-Z][a-zA-Z0-9]*(\.[a-zA-Z][a-zA-Z0-9]*){2,}$',
+    );
     if (!namespaceRegex.hasMatch(ns)) {
       throw InvalidDataException(
         field: 'namespace',
         message:
             'Namespace должен быть в формате обратной доменной нотации '
-            '(например, com.example.app). '
+            '(например, com.example.myApp). '
             'Минимум 3 сегмента, допустимы латинские буквы, цифры и точки',
       );
     }

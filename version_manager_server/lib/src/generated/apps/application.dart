@@ -17,9 +17,10 @@ import '../enums/owner_type.dart' as _i3;
 import '../auth/user.dart' as _i4;
 import '../teams/team.dart' as _i5;
 import '../apps/store_link.dart' as _i6;
-import '../apps/version.dart' as _i7;
+import '../versions/version.dart' as _i7;
 import '../logs/version_check_log.dart' as _i8;
-import 'package:version_manager_server/src/generated/protocol.dart' as _i9;
+import '../logs/version_check_daily_summary.dart' as _i9;
+import 'package:version_manager_server/src/generated/protocol.dart' as _i10;
 
 /// Приложение для управления версиями
 abstract class Application
@@ -39,6 +40,7 @@ abstract class Application
     this.storeLinks,
     this.versions,
     this.checkLogs,
+    this.dailySummaries,
     bool? isActive,
     required this.apiKeyHash,
     String? apiKeyLast4,
@@ -68,6 +70,7 @@ abstract class Application
     List<_i6.StoreLink>? storeLinks,
     List<_i7.Version>? versions,
     List<_i8.VersionCheckLog>? checkLogs,
+    List<_i9.VersionCheckDailySummary>? dailySummaries,
     bool? isActive,
     required String apiKeyHash,
     String? apiKeyLast4,
@@ -86,7 +89,7 @@ abstract class Application
       name: jsonSerialization['name'] as String,
       description: jsonSerialization['description'] as String?,
       iconUrl: jsonSerialization['iconUrl'] as String?,
-      platforms: _i9.Protocol().deserialize<List<_i2.PlatformType>>(
+      platforms: _i10.Protocol().deserialize<List<_i2.PlatformType>>(
         jsonSerialization['platforms'],
       ),
       ownerType: _i3.OwnerType.fromJson(
@@ -99,7 +102,7 @@ abstract class Application
             ),
       ownerUser: jsonSerialization['ownerUser'] == null
           ? null
-          : _i9.Protocol().deserialize<_i4.User>(
+          : _i10.Protocol().deserialize<_i4.User>(
               jsonSerialization['ownerUser'],
             ),
       ownerTeamId: jsonSerialization['ownerTeamId'] == null
@@ -109,23 +112,28 @@ abstract class Application
             ),
       ownerTeam: jsonSerialization['ownerTeam'] == null
           ? null
-          : _i9.Protocol().deserialize<_i5.Team>(
+          : _i10.Protocol().deserialize<_i5.Team>(
               jsonSerialization['ownerTeam'],
             ),
       storeLinks: jsonSerialization['storeLinks'] == null
           ? null
-          : _i9.Protocol().deserialize<List<_i6.StoreLink>>(
+          : _i10.Protocol().deserialize<List<_i6.StoreLink>>(
               jsonSerialization['storeLinks'],
             ),
       versions: jsonSerialization['versions'] == null
           ? null
-          : _i9.Protocol().deserialize<List<_i7.Version>>(
+          : _i10.Protocol().deserialize<List<_i7.Version>>(
               jsonSerialization['versions'],
             ),
       checkLogs: jsonSerialization['checkLogs'] == null
           ? null
-          : _i9.Protocol().deserialize<List<_i8.VersionCheckLog>>(
+          : _i10.Protocol().deserialize<List<_i8.VersionCheckLog>>(
               jsonSerialization['checkLogs'],
+            ),
+      dailySummaries: jsonSerialization['dailySummaries'] == null
+          ? null
+          : _i10.Protocol().deserialize<List<_i9.VersionCheckDailySummary>>(
+              jsonSerialization['dailySummaries'],
             ),
       isActive: jsonSerialization['isActive'] as bool?,
       apiKeyHash: jsonSerialization['apiKeyHash'] as String,
@@ -183,6 +191,8 @@ abstract class Application
 
   List<_i8.VersionCheckLog>? checkLogs;
 
+  List<_i9.VersionCheckDailySummary>? dailySummaries;
+
   bool isActive;
 
   String apiKeyHash;
@@ -218,6 +228,7 @@ abstract class Application
     List<_i6.StoreLink>? storeLinks,
     List<_i7.Version>? versions,
     List<_i8.VersionCheckLog>? checkLogs,
+    List<_i9.VersionCheckDailySummary>? dailySummaries,
     bool? isActive,
     String? apiKeyHash,
     String? apiKeyLast4,
@@ -247,6 +258,10 @@ abstract class Application
         'versions': versions?.toJson(valueToJson: (v) => v.toJson()),
       if (checkLogs != null)
         'checkLogs': checkLogs?.toJson(valueToJson: (v) => v.toJson()),
+      if (dailySummaries != null)
+        'dailySummaries': dailySummaries?.toJson(
+          valueToJson: (v) => v.toJson(),
+        ),
       'isActive': isActive,
       'apiKeyHash': apiKeyHash,
       'apiKeyLast4': apiKeyLast4,
@@ -283,6 +298,10 @@ abstract class Application
         'checkLogs': checkLogs?.toJson(
           valueToJson: (v) => v.toJsonForProtocol(),
         ),
+      if (dailySummaries != null)
+        'dailySummaries': dailySummaries?.toJson(
+          valueToJson: (v) => v.toJsonForProtocol(),
+        ),
       'isActive': isActive,
       'apiKeyHash': apiKeyHash,
       'apiKeyLast4': apiKeyLast4,
@@ -300,6 +319,7 @@ abstract class Application
     _i6.StoreLinkIncludeList? storeLinks,
     _i7.VersionIncludeList? versions,
     _i8.VersionCheckLogIncludeList? checkLogs,
+    _i9.VersionCheckDailySummaryIncludeList? dailySummaries,
   }) {
     return ApplicationInclude._(
       ownerUser: ownerUser,
@@ -307,6 +327,7 @@ abstract class Application
       storeLinks: storeLinks,
       versions: versions,
       checkLogs: checkLogs,
+      dailySummaries: dailySummaries,
     );
   }
 
@@ -354,6 +375,7 @@ class _ApplicationImpl extends Application {
     List<_i6.StoreLink>? storeLinks,
     List<_i7.Version>? versions,
     List<_i8.VersionCheckLog>? checkLogs,
+    List<_i9.VersionCheckDailySummary>? dailySummaries,
     bool? isActive,
     required String apiKeyHash,
     String? apiKeyLast4,
@@ -376,6 +398,7 @@ class _ApplicationImpl extends Application {
          storeLinks: storeLinks,
          versions: versions,
          checkLogs: checkLogs,
+         dailySummaries: dailySummaries,
          isActive: isActive,
          apiKeyHash: apiKeyHash,
          apiKeyLast4: apiKeyLast4,
@@ -404,6 +427,7 @@ class _ApplicationImpl extends Application {
     Object? storeLinks = _Undefined,
     Object? versions = _Undefined,
     Object? checkLogs = _Undefined,
+    Object? dailySummaries = _Undefined,
     bool? isActive,
     String? apiKeyHash,
     String? apiKeyLast4,
@@ -441,6 +465,9 @@ class _ApplicationImpl extends Application {
       checkLogs: checkLogs is List<_i8.VersionCheckLog>?
           ? checkLogs
           : this.checkLogs?.map((e0) => e0.copyWith()).toList(),
+      dailySummaries: dailySummaries is List<_i9.VersionCheckDailySummary>?
+          ? dailySummaries
+          : this.dailySummaries?.map((e0) => e0.copyWith()).toList(),
       isActive: isActive ?? this.isActive,
       apiKeyHash: apiKeyHash ?? this.apiKeyHash,
       apiKeyLast4: apiKeyLast4 ?? this.apiKeyLast4,
@@ -652,6 +679,10 @@ class ApplicationTable extends _i1.Table<_i1.UuidValue?> {
 
   _i1.ManyRelation<_i8.VersionCheckLogTable>? _checkLogs;
 
+  _i9.VersionCheckDailySummaryTable? ___dailySummaries;
+
+  _i1.ManyRelation<_i9.VersionCheckDailySummaryTable>? _dailySummaries;
+
   late final _i1.ColumnBool isActive;
 
   late final _i1.ColumnString apiKeyHash;
@@ -731,6 +762,20 @@ class ApplicationTable extends _i1.Table<_i1.UuidValue?> {
     return ___checkLogs!;
   }
 
+  _i9.VersionCheckDailySummaryTable get __dailySummaries {
+    if (___dailySummaries != null) return ___dailySummaries!;
+    ___dailySummaries = _i1.createRelationTable(
+      relationFieldName: '__dailySummaries',
+      field: Application.t.id,
+      foreignField: _i9.VersionCheckDailySummary.t.applicationId,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) => _i9.VersionCheckDailySummaryTable(
+        tableRelation: foreignTableRelation,
+      ),
+    );
+    return ___dailySummaries!;
+  }
+
   _i1.ManyRelation<_i6.StoreLinkTable> get storeLinks {
     if (_storeLinks != null) return _storeLinks!;
     var relationTable = _i1.createRelationTable(
@@ -788,6 +833,26 @@ class ApplicationTable extends _i1.Table<_i1.UuidValue?> {
     return _checkLogs!;
   }
 
+  _i1.ManyRelation<_i9.VersionCheckDailySummaryTable> get dailySummaries {
+    if (_dailySummaries != null) return _dailySummaries!;
+    var relationTable = _i1.createRelationTable(
+      relationFieldName: 'dailySummaries',
+      field: Application.t.id,
+      foreignField: _i9.VersionCheckDailySummary.t.applicationId,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) => _i9.VersionCheckDailySummaryTable(
+        tableRelation: foreignTableRelation,
+      ),
+    );
+    _dailySummaries = _i1.ManyRelation<_i9.VersionCheckDailySummaryTable>(
+      tableWithRelations: relationTable,
+      table: _i9.VersionCheckDailySummaryTable(
+        tableRelation: relationTable.tableRelation!.lastRelation,
+      ),
+    );
+    return _dailySummaries!;
+  }
+
   @override
   List<_i1.Column> get columns => [
     id,
@@ -825,6 +890,9 @@ class ApplicationTable extends _i1.Table<_i1.UuidValue?> {
     if (relationField == 'checkLogs') {
       return __checkLogs;
     }
+    if (relationField == 'dailySummaries') {
+      return __dailySummaries;
+    }
     return null;
   }
 }
@@ -836,12 +904,14 @@ class ApplicationInclude extends _i1.IncludeObject {
     _i6.StoreLinkIncludeList? storeLinks,
     _i7.VersionIncludeList? versions,
     _i8.VersionCheckLogIncludeList? checkLogs,
+    _i9.VersionCheckDailySummaryIncludeList? dailySummaries,
   }) {
     _ownerUser = ownerUser;
     _ownerTeam = ownerTeam;
     _storeLinks = storeLinks;
     _versions = versions;
     _checkLogs = checkLogs;
+    _dailySummaries = dailySummaries;
   }
 
   _i4.UserInclude? _ownerUser;
@@ -854,6 +924,8 @@ class ApplicationInclude extends _i1.IncludeObject {
 
   _i8.VersionCheckLogIncludeList? _checkLogs;
 
+  _i9.VersionCheckDailySummaryIncludeList? _dailySummaries;
+
   @override
   Map<String, _i1.Include?> get includes => {
     'ownerUser': _ownerUser,
@@ -861,6 +933,7 @@ class ApplicationInclude extends _i1.IncludeObject {
     'storeLinks': _storeLinks,
     'versions': _versions,
     'checkLogs': _checkLogs,
+    'dailySummaries': _dailySummaries,
   };
 
   @override
@@ -1231,6 +1304,31 @@ class ApplicationAttachRepository {
       transaction: transaction,
     );
   }
+
+  /// Creates a relation between this [Application] and the given [VersionCheckDailySummary]s
+  /// by setting each [VersionCheckDailySummary]'s foreign key `applicationId` to refer to this [Application].
+  Future<void> dailySummaries(
+    _i1.Session session,
+    Application application,
+    List<_i9.VersionCheckDailySummary> versionCheckDailySummary, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (versionCheckDailySummary.any((e) => e.id == null)) {
+      throw ArgumentError.notNull('versionCheckDailySummary.id');
+    }
+    if (application.id == null) {
+      throw ArgumentError.notNull('application.id');
+    }
+
+    var $versionCheckDailySummary = versionCheckDailySummary
+        .map((e) => e.copyWith(applicationId: application.id))
+        .toList();
+    await session.db.update<_i9.VersionCheckDailySummary>(
+      $versionCheckDailySummary,
+      columns: [_i9.VersionCheckDailySummary.t.applicationId],
+      transaction: transaction,
+    );
+  }
 }
 
 class ApplicationAttachRowRepository {
@@ -1352,6 +1450,31 @@ class ApplicationAttachRowRepository {
       transaction: transaction,
     );
   }
+
+  /// Creates a relation between this [Application] and the given [VersionCheckDailySummary]
+  /// by setting the [VersionCheckDailySummary]'s foreign key `applicationId` to refer to this [Application].
+  Future<void> dailySummaries(
+    _i1.Session session,
+    Application application,
+    _i9.VersionCheckDailySummary versionCheckDailySummary, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (versionCheckDailySummary.id == null) {
+      throw ArgumentError.notNull('versionCheckDailySummary.id');
+    }
+    if (application.id == null) {
+      throw ArgumentError.notNull('application.id');
+    }
+
+    var $versionCheckDailySummary = versionCheckDailySummary.copyWith(
+      applicationId: application.id,
+    );
+    await session.db.updateRow<_i9.VersionCheckDailySummary>(
+      $versionCheckDailySummary,
+      columns: [_i9.VersionCheckDailySummary.t.applicationId],
+      transaction: transaction,
+    );
+  }
 }
 
 class ApplicationDetachRepository {
@@ -1423,6 +1546,30 @@ class ApplicationDetachRepository {
     await session.db.update<_i8.VersionCheckLog>(
       $versionCheckLog,
       columns: [_i8.VersionCheckLog.t.applicationId],
+      transaction: transaction,
+    );
+  }
+
+  /// Detaches the relation between this [Application] and the given [VersionCheckDailySummary]
+  /// by setting the [VersionCheckDailySummary]'s foreign key `applicationId` to `null`.
+  ///
+  /// This removes the association between the two models without deleting
+  /// the related record.
+  Future<void> dailySummaries(
+    _i1.Session session,
+    List<_i9.VersionCheckDailySummary> versionCheckDailySummary, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (versionCheckDailySummary.any((e) => e.id == null)) {
+      throw ArgumentError.notNull('versionCheckDailySummary.id');
+    }
+
+    var $versionCheckDailySummary = versionCheckDailySummary
+        .map((e) => e.copyWith(applicationId: null))
+        .toList();
+    await session.db.update<_i9.VersionCheckDailySummary>(
+      $versionCheckDailySummary,
+      columns: [_i9.VersionCheckDailySummary.t.applicationId],
       transaction: transaction,
     );
   }
@@ -1537,6 +1684,30 @@ class ApplicationDetachRowRepository {
     await session.db.updateRow<_i8.VersionCheckLog>(
       $versionCheckLog,
       columns: [_i8.VersionCheckLog.t.applicationId],
+      transaction: transaction,
+    );
+  }
+
+  /// Detaches the relation between this [Application] and the given [VersionCheckDailySummary]
+  /// by setting the [VersionCheckDailySummary]'s foreign key `applicationId` to `null`.
+  ///
+  /// This removes the association between the two models without deleting
+  /// the related record.
+  Future<void> dailySummaries(
+    _i1.Session session,
+    _i9.VersionCheckDailySummary versionCheckDailySummary, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (versionCheckDailySummary.id == null) {
+      throw ArgumentError.notNull('versionCheckDailySummary.id');
+    }
+
+    var $versionCheckDailySummary = versionCheckDailySummary.copyWith(
+      applicationId: null,
+    );
+    await session.db.updateRow<_i9.VersionCheckDailySummary>(
+      $versionCheckDailySummary,
+      columns: [_i9.VersionCheckDailySummary.t.applicationId],
       transaction: transaction,
     );
   }

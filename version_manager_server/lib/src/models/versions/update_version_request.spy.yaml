@@ -1,0 +1,24 @@
+### Запрос на обновление версии приложения
+class: UpdateVersionRequest
+fields:
+  versionId: UuidValue
+  ### Семантическая версия в формате MAJOR.MINOR.PATCH
+  versionNumber: String?
+  ### Целое положительное число, уникальное для приложения
+  buildNumber: int?
+  ### Описание изменений (changelog), от 10 до 2000 символов
+  changelog: String?
+  ### Заблокировать версию (доступно если не самая новая)
+  isBlocked: bool?
+  ### Причина блокировки (обязательна если isBlocked = true), от 10 до 500 символов
+  blockReason: String?
+  ### ID рекомендуемой версии для обновления (только с большим buildNumber)
+  recommendedVersionId: UuidValue?
+  ### Снять рекомендацию (если true — очистить recommendedVersionId)
+  clearRecommendation: bool?, default=false
+  ### Тип частоты показа рекомендации
+  recommendationFrequency: RecommendationFrequencyType?
+  ### Интервал для everyNthLaunch (от 2 до 50)
+  recommendationEveryNthLaunch: int?
+  ### Период в часах для oncePer (24, 72, 168, 336, 720)
+  recommendationPeriodHours: int?

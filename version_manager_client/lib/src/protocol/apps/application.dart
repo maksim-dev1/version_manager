@@ -16,9 +16,10 @@ import '../enums/owner_type.dart' as _i3;
 import '../auth/user.dart' as _i4;
 import '../teams/team.dart' as _i5;
 import '../apps/store_link.dart' as _i6;
-import '../apps/version.dart' as _i7;
+import '../versions/version.dart' as _i7;
 import '../logs/version_check_log.dart' as _i8;
-import 'package:version_manager_client/src/protocol/protocol.dart' as _i9;
+import '../logs/version_check_daily_summary.dart' as _i9;
+import 'package:version_manager_client/src/protocol/protocol.dart' as _i10;
 
 /// Приложение для управления версиями
 abstract class Application implements _i1.SerializableModel {
@@ -37,6 +38,7 @@ abstract class Application implements _i1.SerializableModel {
     this.storeLinks,
     this.versions,
     this.checkLogs,
+    this.dailySummaries,
     bool? isActive,
     required this.apiKeyHash,
     String? apiKeyLast4,
@@ -66,6 +68,7 @@ abstract class Application implements _i1.SerializableModel {
     List<_i6.StoreLink>? storeLinks,
     List<_i7.Version>? versions,
     List<_i8.VersionCheckLog>? checkLogs,
+    List<_i9.VersionCheckDailySummary>? dailySummaries,
     bool? isActive,
     required String apiKeyHash,
     String? apiKeyLast4,
@@ -84,7 +87,7 @@ abstract class Application implements _i1.SerializableModel {
       name: jsonSerialization['name'] as String,
       description: jsonSerialization['description'] as String?,
       iconUrl: jsonSerialization['iconUrl'] as String?,
-      platforms: _i9.Protocol().deserialize<List<_i2.PlatformType>>(
+      platforms: _i10.Protocol().deserialize<List<_i2.PlatformType>>(
         jsonSerialization['platforms'],
       ),
       ownerType: _i3.OwnerType.fromJson(
@@ -97,7 +100,7 @@ abstract class Application implements _i1.SerializableModel {
             ),
       ownerUser: jsonSerialization['ownerUser'] == null
           ? null
-          : _i9.Protocol().deserialize<_i4.User>(
+          : _i10.Protocol().deserialize<_i4.User>(
               jsonSerialization['ownerUser'],
             ),
       ownerTeamId: jsonSerialization['ownerTeamId'] == null
@@ -107,23 +110,28 @@ abstract class Application implements _i1.SerializableModel {
             ),
       ownerTeam: jsonSerialization['ownerTeam'] == null
           ? null
-          : _i9.Protocol().deserialize<_i5.Team>(
+          : _i10.Protocol().deserialize<_i5.Team>(
               jsonSerialization['ownerTeam'],
             ),
       storeLinks: jsonSerialization['storeLinks'] == null
           ? null
-          : _i9.Protocol().deserialize<List<_i6.StoreLink>>(
+          : _i10.Protocol().deserialize<List<_i6.StoreLink>>(
               jsonSerialization['storeLinks'],
             ),
       versions: jsonSerialization['versions'] == null
           ? null
-          : _i9.Protocol().deserialize<List<_i7.Version>>(
+          : _i10.Protocol().deserialize<List<_i7.Version>>(
               jsonSerialization['versions'],
             ),
       checkLogs: jsonSerialization['checkLogs'] == null
           ? null
-          : _i9.Protocol().deserialize<List<_i8.VersionCheckLog>>(
+          : _i10.Protocol().deserialize<List<_i8.VersionCheckLog>>(
               jsonSerialization['checkLogs'],
+            ),
+      dailySummaries: jsonSerialization['dailySummaries'] == null
+          ? null
+          : _i10.Protocol().deserialize<List<_i9.VersionCheckDailySummary>>(
+              jsonSerialization['dailySummaries'],
             ),
       isActive: jsonSerialization['isActive'] as bool?,
       apiKeyHash: jsonSerialization['apiKeyHash'] as String,
@@ -179,6 +187,8 @@ abstract class Application implements _i1.SerializableModel {
 
   List<_i8.VersionCheckLog>? checkLogs;
 
+  List<_i9.VersionCheckDailySummary>? dailySummaries;
+
   bool isActive;
 
   String apiKeyHash;
@@ -211,6 +221,7 @@ abstract class Application implements _i1.SerializableModel {
     List<_i6.StoreLink>? storeLinks,
     List<_i7.Version>? versions,
     List<_i8.VersionCheckLog>? checkLogs,
+    List<_i9.VersionCheckDailySummary>? dailySummaries,
     bool? isActive,
     String? apiKeyHash,
     String? apiKeyLast4,
@@ -240,6 +251,10 @@ abstract class Application implements _i1.SerializableModel {
         'versions': versions?.toJson(valueToJson: (v) => v.toJson()),
       if (checkLogs != null)
         'checkLogs': checkLogs?.toJson(valueToJson: (v) => v.toJson()),
+      if (dailySummaries != null)
+        'dailySummaries': dailySummaries?.toJson(
+          valueToJson: (v) => v.toJson(),
+        ),
       'isActive': isActive,
       'apiKeyHash': apiKeyHash,
       'apiKeyLast4': apiKeyLast4,
@@ -275,6 +290,7 @@ class _ApplicationImpl extends Application {
     List<_i6.StoreLink>? storeLinks,
     List<_i7.Version>? versions,
     List<_i8.VersionCheckLog>? checkLogs,
+    List<_i9.VersionCheckDailySummary>? dailySummaries,
     bool? isActive,
     required String apiKeyHash,
     String? apiKeyLast4,
@@ -297,6 +313,7 @@ class _ApplicationImpl extends Application {
          storeLinks: storeLinks,
          versions: versions,
          checkLogs: checkLogs,
+         dailySummaries: dailySummaries,
          isActive: isActive,
          apiKeyHash: apiKeyHash,
          apiKeyLast4: apiKeyLast4,
@@ -325,6 +342,7 @@ class _ApplicationImpl extends Application {
     Object? storeLinks = _Undefined,
     Object? versions = _Undefined,
     Object? checkLogs = _Undefined,
+    Object? dailySummaries = _Undefined,
     bool? isActive,
     String? apiKeyHash,
     String? apiKeyLast4,
@@ -362,6 +380,9 @@ class _ApplicationImpl extends Application {
       checkLogs: checkLogs is List<_i8.VersionCheckLog>?
           ? checkLogs
           : this.checkLogs?.map((e0) => e0.copyWith()).toList(),
+      dailySummaries: dailySummaries is List<_i9.VersionCheckDailySummary>?
+          ? dailySummaries
+          : this.dailySummaries?.map((e0) => e0.copyWith()).toList(),
       isActive: isActive ?? this.isActive,
       apiKeyHash: apiKeyHash ?? this.apiKeyHash,
       apiKeyLast4: apiKeyLast4 ?? this.apiKeyLast4,

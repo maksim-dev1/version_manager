@@ -1,0 +1,4 @@
+### Запрос на удаление версии приложения
+class: DeleteVersionRequest
+fields:
+  versionId: UuidValue

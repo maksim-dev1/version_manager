@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:version_manager_flutter/features/auth/presentation/auth_proviedr.dart';
+import 'package:version_manager_flutter/features/auth/presentation/auth_provider.dart';
 import 'package:version_manager_flutter/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:version_manager_flutter/features/email_check/presentation/view/email_screen.dart';
 import 'package:version_manager_flutter/features/email_check/email_check_provider.dart';
@@ -52,7 +52,7 @@ class AppAuth extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AuthProviedr(
+    return AuthProvider(
       child: BlocBuilder<AuthBloc, AuthState>(
         builder: (context, state) => switch (state) {
           Authenticated() => HomeScreen(

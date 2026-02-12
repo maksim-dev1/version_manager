@@ -1,0 +1,10 @@
+### Запрос на создание версии приложения
+class: CreateVersionRequest
+fields:
+  applicationId: UuidValue
+  ### Семантическая версия в формате MAJOR.MINOR.PATCH
+  versionNumber: String
+  ### Целое положительное число, уникальное для приложения
+  buildNumber: int
+  ### Описание изменений (changelog), от 10 до 2000 символов
+  changelog: String

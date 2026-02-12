@@ -1,0 +1,8 @@
+### Запрос на быструю блокировку/разблокировку версии
+class: ToggleVersionBlockRequest
+fields:
+  versionId: UuidValue
+  ### true — заблокировать, false — разблокировать
+  isBlocked: bool
+  ### Причина блокировки (обязательна при isBlocked = true), от 10 до 500 символов
+  blockReason: String?

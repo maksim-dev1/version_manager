@@ -1,0 +1,7 @@
+### Ответ с предложенным следующим номером сборки
+class: NextBuildNumberResponse
+fields:
+  ### Следующий рекомендуемый номер сборки
+  nextBuildNumber: int
+  ### Текущий максимальный номер сборки (0 если версий нет)
+  currentMaxBuildNumber: int

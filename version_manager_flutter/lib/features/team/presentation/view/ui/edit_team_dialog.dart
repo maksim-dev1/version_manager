@@ -40,41 +40,44 @@ class _EditTeamDialogState extends State<EditTeamDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Редактировать команду'),
-      content: Form(
-        key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextFormField(
-              controller: _nameController,
-              decoration: const InputDecoration(
-                labelText: 'Название',
-                hintText: 'Введите название команды',
+      content: ConstrainedBox(
+        constraints: const BoxConstraints(minWidth: 480, maxWidth: 480),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                controller: _nameController,
+                decoration: const InputDecoration(
+                  labelText: 'Название',
+                  hintText: 'Введите название команды',
+                ),
+                autofocus: true,
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Введите название';
+                  }
+                  if (value.trim().length < 2) {
+                    return 'Минимум 2 символа';
+                  }
+                  if (value.trim().length > 100) {
+                    return 'Максимум 100 символов';
+                  }
+                  return null;
+                },
               ),
-              autofocus: true,
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return 'Введите название';
-                }
-                if (value.trim().length < 2) {
-                  return 'Минимум 2 символа';
-                }
-                if (value.trim().length > 100) {
-                  return 'Максимум 100 символов';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _descriptionController,
-              decoration: const InputDecoration(
-                labelText: 'Описание',
-                hintText: 'Необязательно',
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _descriptionController,
+                decoration: const InputDecoration(
+                  labelText: 'Описание',
+                  hintText: 'Необязательно',
+                ),
+                maxLines: 3,
               ),
-              maxLines: 3,
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       actions: [

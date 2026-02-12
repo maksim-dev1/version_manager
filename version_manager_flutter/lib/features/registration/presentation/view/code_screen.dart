@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pinput/pinput.dart';
-import 'package:version_manager_flutter/features/registration/presentation/bloc/registration_bloc.dart';
+import 'package:version_manager_flutter/features/code_verification/presentation/bloc/code_verification_bloc.dart';
 import 'package:version_manager_flutter/features/registration/presentation/view/ui/code_confirm_button.dart';
 
 class CodeScreen extends StatefulWidget {
@@ -45,8 +45,8 @@ class _CodeScreenState extends State<CodeScreen> {
   }
 
   void _resendCode() {
-    context.read<RegistrationBloc>().add(
-      RegistrationEvent.resendCode(
+    context.read<CodeVerificationBloc>().add(
+      CodeVerificationEvent.resendCode(
         email: widget.email,
       ),
     );
@@ -55,8 +55,8 @@ class _CodeScreenState extends State<CodeScreen> {
 
   void _submit() {
     final code = _pinController.text.trim();
-    context.read<RegistrationBloc>().add(
-      RegistrationEvent.verifyCode(
+    context.read<CodeVerificationBloc>().add(
+      CodeVerificationEvent.verifyCode(
         email: widget.email,
         code: code,
       ),
@@ -173,12 +173,13 @@ class _CodeScreenState extends State<CodeScreen> {
                             Center(
                               child:
                                   BlocBuilder<
-                                    RegistrationBloc,
-                                    RegistrationState
+                                    CodeVerificationBloc,
+                                    CodeVerificationState
                                   >(
                                     builder: (context, state) {
                                       final isDisabled =
-                                          state is AttemptsExhausted;
+                                          state is CodeVerificationError &&
+                                          state.isAttemptsExhausted;
 
                                       return Pinput(
                                         controller: _pinController,

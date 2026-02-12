@@ -1,0 +1,13 @@
+### Запрос на установку рекомендуемой версии для обновления
+class: SetVersionRecommendationRequest
+fields:
+  ### ID версии, для которой устанавливается рекомендация
+  versionId: UuidValue
+  ### ID рекомендуемой версии (null — снять рекомендацию)
+  recommendedVersionId: UuidValue?
+  ### Тип частоты показа рекомендации (обязателен если recommendedVersionId != null)
+  recommendationFrequency: RecommendationFrequencyType?
+  ### Интервал для everyNthLaunch (от 2 до 50)
+  recommendationEveryNthLaunch: int?
+  ### Период в часах для oncePer (24, 72, 168, 336, 720)
+  recommendationPeriodHours: int?

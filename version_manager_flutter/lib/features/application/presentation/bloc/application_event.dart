@@ -6,18 +6,6 @@ sealed class ApplicationEvent with _$ApplicationEvent {
   /// Загрузить приложения пользователя.
   const factory ApplicationEvent.loadApplications() = _LoadApplications;
 
-  /// Создать новое приложение.
-  const factory ApplicationEvent.createApplication({
-    required String namespace,
-    required String name,
-    String? description,
-    String? iconUrl,
-    required List<PlatformType> platforms,
-    required OwnerType ownerType,
-    UuidValue? teamId,
-    List<StoreLinkEntry>? storeLinks,
-  }) = _CreateApplication;
-
   /// Обновить приложение.
   const factory ApplicationEvent.updateApplication({
     required UuidValue applicationId,
@@ -33,22 +21,6 @@ sealed class ApplicationEvent with _$ApplicationEvent {
     required UuidValue applicationId,
     required String confirmationName,
   }) = _DeleteApplication;
-
-  /// Запросить код подтверждения для регенерации API ключа.
-  const factory ApplicationEvent.requestApiKeyRegeneration({
-    required UuidValue applicationId,
-  }) = _RequestApiKeyRegeneration;
-
-  /// Получить замаскированный email владельца для регенерации.
-  const factory ApplicationEvent.fetchRegenerationEmail({
-    required UuidValue applicationId,
-  }) = _FetchRegenerationEmail;
-
-  /// Регенерировать API ключ с кодом подтверждения.
-  const factory ApplicationEvent.regenerateApiKey({
-    required UuidValue applicationId,
-    required String code,
-  }) = _RegenerateApiKey;
 
   /// Активировать / деактивировать приложение.
   const factory ApplicationEvent.toggleApplicationStatus({

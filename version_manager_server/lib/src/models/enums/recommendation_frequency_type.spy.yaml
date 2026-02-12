@@ -1,0 +1,12 @@
+### Тип частоты показа рекомендации обновления
+enum: RecommendationFrequencyType
+serialized: byName
+values:
+  ### Каждый запуск приложения
+  - everyLaunch
+  ### Каждый N-й запуск (задаётся параметром recommendationEveryNthLaunch)
+  - everyNthLaunch
+  ### Раз в период (задаётся параметром recommendationPeriodHours)
+  - oncePer
+  ### Показать один раз и больше не показывать
+  - once

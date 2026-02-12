@@ -1,0 +1,7 @@
+### Ответ со списком версий приложения
+class: VersionListResponse
+fields:
+  ### Приложение (название, иконка)
+  application: Application
+  ### Список версий, отсортированный по buildNumber DESC
+  versions: List<VersionListItem>

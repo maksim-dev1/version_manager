@@ -33,7 +33,7 @@ class ProfileHeader extends StatelessWidget {
                   initials,
                   style: textTheme.headlineMedium?.copyWith(
                     color: colorScheme.onPrimaryContainer,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w600,
                   ),
                 )
               : null,
@@ -42,7 +42,7 @@ class ProfileHeader extends StatelessWidget {
         Text(
           displayName.isNotEmpty ? displayName : user.email,
           style: textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w600,
           ),
         ),
         const SizedBox(height: 4),

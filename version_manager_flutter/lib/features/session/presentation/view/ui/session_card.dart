@@ -83,8 +83,8 @@ class SessionCard extends StatelessWidget {
                               padding: const EdgeInsets.only(left: 8),
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 2,
+                                  horizontal: 10,
+                                  vertical: 3,
                                 ),
                                 decoration: BoxDecoration(
                                   color: colorScheme.primaryContainer,
@@ -93,7 +93,7 @@ class SessionCard extends StatelessWidget {
                                 child: Text(
                                   'Текущая',
                                   style: TextStyle(
-                                    fontSize: 11,
+                                    fontSize: 12,
                                     fontWeight: FontWeight.w600,
                                     color: colorScheme.onPrimaryContainer,
                                   ),
@@ -180,6 +180,8 @@ class _DetailChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -187,8 +189,7 @@ class _DetailChip extends StatelessWidget {
         const SizedBox(width: 4),
         Text(
           label,
-          style: TextStyle(
-            fontSize: 12,
+          style: textTheme.bodySmall?.copyWith(
             color: colorScheme.onSurfaceVariant,
           ),
         ),

@@ -1,0 +1,33 @@
+### Информация о рекомендуемой версии для обновления.
+###
+### Содержит все данные, необходимые клиентскому приложению
+### для показа диалога обновления: номер версии, ссылки на магазины,
+### описание изменений и настройки частоты показа.
+class: RecommendedVersionInfo
+fields:
+  ### Семантическая версия (MAJOR.MINOR.PATCH)
+  versionNumber: String
+
+  ### Номер сборки
+  buildNumber: int
+
+  ### Описание изменений (changelog)
+  changelog: String
+
+  ### Ссылки на магазины для текущей платформы.
+  ### Отфильтрованы по платформе из запроса.
+  storeLinks: List<StoreLinkInfo>
+
+  ### Настройки частоты показа рекомендации обновления.
+  ### Позволяют клиенту управлять навязчивостью уведомлений:
+  ### - everyLaunch: каждый запуск
+  ### - everyNthLaunch: каждый N-й запуск
+  ### - oncePer: раз в заданный период
+  ### - once: показать один раз
+  recommendationFrequency: RecommendationFrequencyType?
+
+  ### Интервал для типа everyNthLaunch (от 2 до 50)
+  recommendationEveryNthLaunch: int?
+
+  ### Период в часах для типа oncePer
+  recommendationPeriodHours: int?

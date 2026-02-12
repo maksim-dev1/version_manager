@@ -1,0 +1,12 @@
+### Детальная информация о версии (для редактирования)
+class: VersionDetailResponse
+fields:
+  version: Version
+  ### Является ли эта версия самой новой
+  isLatest: bool
+  ### Список версий с большим buildNumber (для выбора рекомендуемой)
+  newerVersions: List<Version>
+  ### Количество активных пользователей
+  activeUsersCount: int
+  ### Количество версий, которые рекомендуют обновление на эту версию
+  recommendingVersionsCount: int

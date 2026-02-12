@@ -1,0 +1,223 @@
+{
+  "__className__": "serverpod.DatabaseMigration",
+  "actions": [
+    {
+      "__className__": "serverpod.DatabaseMigrationAction",
+      "type": "alterTable",
+      "alterTable": {
+        "__className__": "serverpod.TableMigration",
+        "name": "version_check_daily_summaries",
+        "schema": "public",
+        "addColumns": [],
+        "deleteColumns": [
+          "consentGivenCount",
+          "avgAppLaunchCount",
+          "avgAppUsageDurationSec"
+        ],
+        "modifyColumns": [],
+        "addIndexes": [],
+        "deleteIndexes": [],
+        "addForeignKeys": [],
+        "deleteForeignKeys": [],
+        "warnings": [
+          {
+            "__className__": "serverpod.DatabaseMigrationWarning",
+            "type": "columnDropped",
+            "message": "Column \"consentGivenCount\" of table \"version_check_daily_summaries\" will be dropped.",
+            "table": "version_check_daily_summaries",
+            "columns": [
+              "consentGivenCount"
+            ],
+            "destrucive": true
+          },
+          {
+            "__className__": "serverpod.DatabaseMigrationWarning",
+            "type": "columnDropped",
+            "message": "Column \"avgAppLaunchCount\" of table \"version_check_daily_summaries\" will be dropped.",
+            "table": "version_check_daily_summaries",
+            "columns": [
+              "avgAppLaunchCount"
+            ],
+            "destrucive": true
+          },
+          {
+            "__className__": "serverpod.DatabaseMigrationWarning",
+            "type": "columnDropped",
+            "message": "Column \"avgAppUsageDurationSec\" of table \"version_check_daily_summaries\" will be dropped.",
+            "table": "version_check_daily_summaries",
+            "columns": [
+              "avgAppUsageDurationSec"
+            ],
+            "destrucive": true
+          }
+        ]
+      }
+    },
+    {
+      "__className__": "serverpod.DatabaseMigrationAction",
+      "type": "alterTable",
+      "alterTable": {
+        "__className__": "serverpod.TableMigration",
+        "name": "version_check_logs",
+        "schema": "public",
+        "addColumns": [],
+        "deleteColumns": [
+          "appInstallTime",
+          "appLaunchCount",
+          "lastUpdateCheckAt",
+          "appUsageDurationSec",
+          "consentGiven"
+        ],
+        "modifyColumns": [],
+        "addIndexes": [],
+        "deleteIndexes": [
+          "log_response_status_idx",
+          "log_build_type_idx",
+          "log_app_version_composite_idx",
+          "log_app_status_composite_idx",
+          "log_locale_idx",
+          "log_country_idx",
+          "log_sdk_version_idx",
+          "log_consent_idx"
+        ],
+        "addForeignKeys": [],
+        "deleteForeignKeys": [],
+        "warnings": [
+          {
+            "__className__": "serverpod.DatabaseMigrationWarning",
+            "type": "columnDropped",
+            "message": "Column \"appInstallTime\" of table \"version_check_logs\" will be dropped.",
+            "table": "version_check_logs",
+            "columns": [
+              "appInstallTime"
+            ],
+            "destrucive": true
+          },
+          {
+            "__className__": "serverpod.DatabaseMigrationWarning",
+            "type": "columnDropped",
+            "message": "Column \"appLaunchCount\" of table \"version_check_logs\" will be dropped.",
+            "table": "version_check_logs",
+            "columns": [
+              "appLaunchCount"
+            ],
+            "destrucive": true
+          },
+          {
+            "__className__": "serverpod.DatabaseMigrationWarning",
+            "type": "columnDropped",
+            "message": "Column \"lastUpdateCheckAt\" of table \"version_check_logs\" will be dropped.",
+            "table": "version_check_logs",
+            "columns": [
+              "lastUpdateCheckAt"
+            ],
+            "destrucive": true
+          },
+          {
+            "__className__": "serverpod.DatabaseMigrationWarning",
+            "type": "columnDropped",
+            "message": "Column \"appUsageDurationSec\" of table \"version_check_logs\" will be dropped.",
+            "table": "version_check_logs",
+            "columns": [
+              "appUsageDurationSec"
+            ],
+            "destrucive": true
+          },
+          {
+            "__className__": "serverpod.DatabaseMigrationWarning",
+            "type": "columnDropped",
+            "message": "Column \"consentGiven\" of table \"version_check_logs\" will be dropped.",
+            "table": "version_check_logs",
+            "columns": [
+              "consentGiven"
+            ],
+            "destrucive": true
+          }
+        ]
+      }
+    }
+  ],
+  "warnings": [
+    {
+      "__className__": "serverpod.DatabaseMigrationWarning",
+      "type": "columnDropped",
+      "message": "Column \"consentGivenCount\" of table \"version_check_daily_summaries\" will be dropped.",
+      "table": "version_check_daily_summaries",
+      "columns": [
+        "consentGivenCount"
+      ],
+      "destrucive": true
+    },
+    {
+      "__className__": "serverpod.DatabaseMigrationWarning",
+      "type": "columnDropped",
+      "message": "Column \"avgAppLaunchCount\" of table \"version_check_daily_summaries\" will be dropped.",
+      "table": "version_check_daily_summaries",
+      "columns": [
+        "avgAppLaunchCount"
+      ],
+      "destrucive": true
+    },
+    {
+      "__className__": "serverpod.DatabaseMigrationWarning",
+      "type": "columnDropped",
+      "message": "Column \"avgAppUsageDurationSec\" of table \"version_check_daily_summaries\" will be dropped.",
+      "table": "version_check_daily_summaries",
+      "columns": [
+        "avgAppUsageDurationSec"
+      ],
+      "destrucive": true
+    },
+    {
+      "__className__": "serverpod.DatabaseMigrationWarning",
+      "type": "columnDropped",
+      "message": "Column \"appInstallTime\" of table \"version_check_logs\" will be dropped.",
+      "table": "version_check_logs",
+      "columns": [
+        "appInstallTime"
+      ],
+      "destrucive": true
+    },
+    {
+      "__className__": "serverpod.DatabaseMigrationWarning",
+      "type": "columnDropped",
+      "message": "Column \"appLaunchCount\" of table \"version_check_logs\" will be dropped.",
+      "table": "version_check_logs",
+      "columns": [
+        "appLaunchCount"
+      ],
+      "destrucive": true
+    },
+    {
+      "__className__": "serverpod.DatabaseMigrationWarning",
+      "type": "columnDropped",
+      "message": "Column \"lastUpdateCheckAt\" of table \"version_check_logs\" will be dropped.",
+      "table": "version_check_logs",
+      "columns": [
+        "lastUpdateCheckAt"
+      ],
+      "destrucive": true
+    },
+    {
+      "__className__": "serverpod.DatabaseMigrationWarning",
+      "type": "columnDropped",
+      "message": "Column \"appUsageDurationSec\" of table \"version_check_logs\" will be dropped.",
+      "table": "version_check_logs",
+      "columns": [
+        "appUsageDurationSec"
+      ],
+      "destrucive": true
+    },
+    {
+      "__className__": "serverpod.DatabaseMigrationWarning",
+      "type": "columnDropped",
+      "message": "Column \"consentGiven\" of table \"version_check_logs\" will be dropped.",
+      "table": "version_check_logs",
+      "columns": [
+        "consentGiven"
+      ],
+      "destrucive": true
+    }
+  ],
+  "migrationApiVersion": 1
+}

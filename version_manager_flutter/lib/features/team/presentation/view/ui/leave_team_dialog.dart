@@ -25,26 +25,29 @@ class LeaveTeamDialog extends StatelessWidget {
           const Expanded(child: Text('Покинуть команду')),
         ],
       ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: colorScheme.errorContainer.withValues(alpha: 0.3),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              'Вы потеряете доступ ко всем приложениям команды '
-              '«${team.name}». Это действие нельзя отменить самостоятельно — '
-              'для возврата потребуется новое приглашение.',
-              style: textTheme.bodyMedium?.copyWith(
-                color: colorScheme.onErrorContainer,
+      content: ConstrainedBox(
+        constraints: const BoxConstraints(minWidth: 480, maxWidth: 480),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: colorScheme.errorContainer.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                'Вы потеряете доступ ко всем приложениям команды '
+                '«${team.name}». Это действие нельзя отменить самостоятельно — '
+                'для возврата потребуется новое приглашение.',
+                style: textTheme.bodyMedium?.copyWith(
+                  color: colorScheme.onErrorContainer,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       actions: [
         TextButton(

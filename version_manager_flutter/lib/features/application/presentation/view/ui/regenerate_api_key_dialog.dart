@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:version_manager_client/version_manager_client.dart';
+import 'package:version_manager_flutter/features/api_key/presentation/bloc/api_key_bloc.dart';
+import 'package:version_manager_flutter/features/application/domain/repository/application_repository.dart';
 import 'package:version_manager_flutter/features/application/presentation/bloc/application_bloc.dart';
+import 'package:version_manager_flutter/shared/widgets/animated_copy_icon_button.dart';
 
 /// Диалог регенерации API ключа с подтверждением через email.
 ///
@@ -33,20 +36,24 @@ class _RegenerateApiKeyDialogState extends State<RegenerateApiKeyDialog> {
   String? _maskedEmail;
   bool _isLoadingEmail = true;
 
+  late final ApiKeyBloc _apiKeyBloc;
+
   @override
   void initState() {
     super.initState();
-    context.read<ApplicationBloc>().add(
-      ApplicationEvent.fetchRegenerationEmail(
-        applicationId: widget.application.id!,
-      ),
-    );
+    _apiKeyBloc =
+        ApiKeyBloc(
+          applicationRepository: context.read<ApplicationRepository>(),
+        )..add(
+          ApiKeyEvent.fetchEmail(applicationId: widget.application.id!),
+        );
   }
 
   @override
   void dispose() {
     _codeController.dispose();
     _retryTimer?.cancel();
+    _apiKeyBloc.close();
     super.dispose();
   }
 
@@ -68,10 +75,8 @@ class _RegenerateApiKeyDialogState extends State<RegenerateApiKeyDialog> {
       _isSending = true;
       _errorText = null;
     });
-    context.read<ApplicationBloc>().add(
-      ApplicationEvent.requestApiKeyRegeneration(
-        applicationId: widget.application.id!,
-      ),
+    _apiKeyBloc.add(
+      ApiKeyEvent.requestCode(applicationId: widget.application.id!),
     );
   }
 
@@ -85,8 +90,8 @@ class _RegenerateApiKeyDialogState extends State<RegenerateApiKeyDialog> {
       _step = _DialogStep.loading;
       _errorText = null;
     });
-    context.read<ApplicationBloc>().add(
-      ApplicationEvent.regenerateApiKey(
+    _apiKeyBloc.add(
+      ApiKeyEvent.regenerate(
         applicationId: widget.application.id!,
         code: code,
       ),
@@ -98,104 +103,126 @@ class _RegenerateApiKeyDialogState extends State<RegenerateApiKeyDialog> {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
-    return BlocListener<ApplicationBloc, ApplicationState>(
-      listener: (context, state) {
-        if (state is ApplicationRegenerationEmailLoaded) {
-          setState(() {
-            _maskedEmail = state.maskedEmail;
-            _isLoadingEmail = false;
-          });
-        } else if (state is ApplicationApiKeyRegenerationCodeSent) {
-          setState(() {
-            _isSending = false;
-            _step = _DialogStep.enterCode;
-            if (state.maskedEmail != null) {
-              _maskedEmail = state.maskedEmail;
-            }
-          });
-          if (state.retryAfterSeconds != null) {
-            _startRetryTimer(state.retryAfterSeconds!);
+    return BlocProvider.value(
+      value: _apiKeyBloc,
+      child: BlocListener<ApiKeyBloc, ApiKeyState>(
+        listener: (context, state) {
+          switch (state) {
+            case ApiKeyLoaded(:final result):
+              switch (result) {
+                case ApiKeyEmailLoaded(:final maskedEmail):
+                  setState(() {
+                    _maskedEmail = maskedEmail;
+                    _isLoadingEmail = false;
+                  });
+                case ApiKeyCodeSent(
+                  :final maskedEmail,
+                  :final retryAfterSeconds,
+                ):
+                  setState(() {
+                    _isSending = false;
+                    _step = _DialogStep.enterCode;
+                    if (maskedEmail != null) {
+                      _maskedEmail = maskedEmail;
+                    }
+                  });
+                  if (retryAfterSeconds != null) {
+                    _startRetryTimer(retryAfterSeconds);
+                  }
+                case ApiKeyRegenerated(:final apiKey):
+                  setState(() {
+                    _newApiKey = apiKey;
+                    _step = _DialogStep.success;
+                  });
+                  // Перезагружаем список приложений
+                  context.read<ApplicationBloc>().add(
+                    const ApplicationEvent.loadApplications(),
+                  );
+              }
+            case ApiKeyError(:final message):
+              setState(() {
+                _isSending = false;
+                if (_step == _DialogStep.loading) {
+                  _step = _DialogStep.enterCode;
+                }
+                _errorText = message.contains('code')
+                    ? 'Неверный или истёкший код'
+                    : message;
+              });
+            default:
+              break;
           }
-        } else if (state is ApplicationApiKeyRegenerated) {
-          setState(() {
-            _newApiKey = state.apiKey;
-            _step = _DialogStep.success;
-          });
-        } else if (state is ApplicationError) {
-          setState(() {
-            _isSending = false;
-            if (_step == _DialogStep.loading) {
-              _step = _DialogStep.enterCode;
-            }
-            _errorText = state.message.contains('code')
-                ? 'Неверный или истёкший код'
-                : state.message;
-          });
-        }
-      },
-      child: AlertDialog(
-        title: Row(
-          children: [
-            Icon(Icons.key, color: colorScheme.primary),
-            const SizedBox(width: 8),
-            const Expanded(child: Text('Регенерировать API ключ')),
-          ],
-        ),
-        content: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 400),
-          child: AnimatedSize(
-            duration: const Duration(milliseconds: 200),
-            child: switch (_step) {
-              _DialogStep.confirm => _buildConfirmStep(colorScheme, textTheme),
-              _DialogStep.enterCode => _buildCodeStep(colorScheme, textTheme),
-              _DialogStep.loading => _buildLoadingStep(textTheme),
-              _DialogStep.success => _buildSuccessStep(colorScheme, textTheme),
-            },
-          ),
-        ),
-        actions: switch (_step) {
-          _DialogStep.confirm => [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Отмена'),
-            ),
-            FilledButton(
-              onPressed: (_isSending || _isLoadingEmail) ? null : _sendCode,
-              child: _isSending
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Text('Отправить код'),
-            ),
-          ],
-          _DialogStep.enterCode => [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Отмена'),
-            ),
-            TextButton(
-              onPressed: _retryAfterSeconds > 0 ? null : _sendCode,
-              child: Text(
-                _retryAfterSeconds > 0
-                    ? 'Повторно (${_retryAfterSeconds}с)'
-                    : 'Отправить повторно',
-              ),
-            ),
-            FilledButton(
-              onPressed: _submitCode,
-              child: const Text('Подтвердить'),
-            ),
-          ],
-          _DialogStep.loading => [],
-          _DialogStep.success => [
-            FilledButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Закрыть'),
-            ),
-          ],
         },
+        child: AlertDialog(
+          title: Row(
+            children: [
+              Icon(Icons.key, color: colorScheme.primary),
+              const SizedBox(width: 8),
+              const Expanded(child: Text('Регенерировать API ключ')),
+            ],
+          ),
+          content: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 400),
+            child: AnimatedSize(
+              duration: const Duration(milliseconds: 200),
+              child: switch (_step) {
+                _DialogStep.confirm => _buildConfirmStep(
+                  colorScheme,
+                  textTheme,
+                ),
+                _DialogStep.enterCode => _buildCodeStep(colorScheme, textTheme),
+                _DialogStep.loading => _buildLoadingStep(textTheme),
+                _DialogStep.success => _buildSuccessStep(
+                  colorScheme,
+                  textTheme,
+                ),
+              },
+            ),
+          ),
+          actions: switch (_step) {
+            _DialogStep.confirm => [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Отмена'),
+              ),
+              FilledButton(
+                onPressed: (_isSending || _isLoadingEmail) ? null : _sendCode,
+                child: _isSending
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Text('Отправить код'),
+              ),
+            ],
+            _DialogStep.enterCode => [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Отмена'),
+              ),
+              TextButton(
+                onPressed: _retryAfterSeconds > 0 ? null : _sendCode,
+                child: Text(
+                  _retryAfterSeconds > 0
+                      ? 'Повторно (${_retryAfterSeconds}с)'
+                      : 'Отправить повторно',
+                ),
+              ),
+              FilledButton(
+                onPressed: _submitCode,
+                child: const Text('Подтвердить'),
+              ),
+            ],
+            _DialogStep.loading => [],
+            _DialogStep.success => [
+              FilledButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Закрыть'),
+              ),
+            ],
+          },
+        ),
       ),
     );
   }
@@ -394,19 +421,10 @@ class _RegenerateApiKeyDialogState extends State<RegenerateApiKeyDialog> {
                   ),
                 ),
               ),
-              IconButton(
-                onPressed: () {
-                  Clipboard.setData(ClipboardData(text: _newApiKey ?? ''));
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('API ключ скопирован'),
-                      behavior: SnackBarBehavior.floating,
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
-                },
-                icon: const Icon(Icons.copy, size: 20),
-                tooltip: 'Скопировать',
+              AnimatedCopyIconButton(
+                textToCopy: _newApiKey ?? '',
+                size: 20,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ],
           ),
@@ -451,7 +469,7 @@ class ApiKeyDisplayDialog extends StatelessWidget {
         ],
       ),
       content: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 480),
+        constraints: const BoxConstraints(minWidth: 480, maxWidth: 480),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -503,19 +521,10 @@ class ApiKeyDisplayDialog extends StatelessWidget {
                       ),
                     ),
                   ),
-                  IconButton(
-                    onPressed: () {
-                      Clipboard.setData(ClipboardData(text: apiKey));
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('API ключ скопирован'),
-                          behavior: SnackBarBehavior.floating,
-                          duration: Duration(seconds: 2),
-                        ),
-                      );
-                    },
-                    icon: const Icon(Icons.copy, size: 20),
-                    tooltip: 'Скопировать',
+                  AnimatedCopyIconButton(
+                    textToCopy: apiKey,
+                    size: 20,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ],
               ),

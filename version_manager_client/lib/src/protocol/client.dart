@@ -82,9 +82,27 @@ import 'package:version_manager_client/src/protocol/teams/transfer_team_ownershi
     as _i38;
 import 'package:version_manager_client/src/protocol/teams/delete_team_request.dart'
     as _i39;
-import 'package:version_manager_client/src/protocol/greetings/greeting.dart'
+import 'package:version_manager_client/src/protocol/versions/version_list_response.dart'
     as _i40;
-import 'protocol.dart' as _i41;
+import 'package:version_manager_client/src/protocol/versions/version_detail_response.dart'
+    as _i41;
+import 'package:version_manager_client/src/protocol/versions/next_build_number_response.dart'
+    as _i42;
+import 'package:version_manager_client/src/protocol/versions/version.dart'
+    as _i43;
+import 'package:version_manager_client/src/protocol/versions/create_version_request.dart'
+    as _i44;
+import 'package:version_manager_client/src/protocol/versions/update_version_request.dart'
+    as _i45;
+import 'package:version_manager_client/src/protocol/versions/toggle_version_block_request.dart'
+    as _i46;
+import 'package:version_manager_client/src/protocol/versions/set_version_recommendation_request.dart'
+    as _i47;
+import 'package:version_manager_client/src/protocol/versions/delete_version_request.dart'
+    as _i48;
+import 'package:version_manager_client/src/protocol/greetings/greeting.dart'
+    as _i49;
+import 'protocol.dart' as _i50;
 
 /// Эндпоинт для управления приложениями.
 ///
@@ -892,6 +910,131 @@ class EndpointTeam extends EndpointLoggedIn {
   );
 }
 
+/// Эндпоинт для управления версиями приложений.
+///
+/// Предоставляет функционал для:
+/// - Получения списка версий приложения
+/// - Создания, редактирования и удаления версий
+/// - Быстрой блокировки/разблокировки версий
+/// - Установки рекомендуемой версии для обновления
+/// - Получения детальной информации о версии
+/// - Получения следующего номера сборки
+///
+/// Наследуется от [LoggedInEndpoint] — требует авторизации.
+/// {@category Endpoint}
+class EndpointVersion extends EndpointLoggedIn {
+  EndpointVersion(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'version';
+
+  /// Получить список всех версий приложения.
+  ///
+  /// Возвращает приложение с информацией и список версий,
+  /// отсортированный по номеру сборки по убыванию (самая новая сверху).
+  /// Для каждой версии подсчитывается количество активных пользователей.
+  _i2.Future<_i40.VersionListResponse> getVersions({
+    required _i1.UuidValue applicationId,
+  }) => caller.callServerEndpoint<_i40.VersionListResponse>(
+    'version',
+    'getVersions',
+    {'applicationId': applicationId},
+  );
+
+  /// Получить детальную информацию о версии (для редактирования).
+  ///
+  /// Возвращает полную информацию о версии, включая:
+  /// - Является ли версия самой новой
+  /// - Список более новых версий (для выбора рекомендуемой)
+  /// - Количество активных пользователей
+  /// - Количество версий, рекомендующих обновление на эту
+  _i2.Future<_i41.VersionDetailResponse> getVersionDetail({
+    required _i1.UuidValue versionId,
+  }) => caller.callServerEndpoint<_i41.VersionDetailResponse>(
+    'version',
+    'getVersionDetail',
+    {'versionId': versionId},
+  );
+
+  /// Получить следующий рекомендуемый номер сборки.
+  ///
+  /// Возвращает текущий максимальный номер сборки и предложенный следующий.
+  _i2.Future<_i42.NextBuildNumberResponse> getNextBuildNumber({
+    required _i1.UuidValue applicationId,
+  }) => caller.callServerEndpoint<_i42.NextBuildNumberResponse>(
+    'version',
+    'getNextBuildNumber',
+    {'applicationId': applicationId},
+  );
+
+  /// Создать новую версию приложения.
+  ///
+  /// Принимает только базовые поля:
+  /// - Номер версии (формат MAJOR.MINOR.PATCH)
+  /// - Номер сборки (уникальное положительное число)
+  /// - Описание изменений (changelog)
+  ///
+  /// Блокировка, рекомендации и настройки частоты при создании недоступны.
+  _i2.Future<_i43.Version> createVersion({
+    required _i44.CreateVersionRequest request,
+  }) => caller.callServerEndpoint<_i43.Version>(
+    'version',
+    'createVersion',
+    {'request': request},
+  );
+
+  /// Обновить данные версии.
+  ///
+  /// Базовые поля (versionNumber, buildNumber, changelog) доступны всегда.
+  /// Дополнительные поля (блокировка, рекомендация, частота) доступны
+  /// только если версия не является самой новой.
+  _i2.Future<_i43.Version> updateVersion({
+    required _i45.UpdateVersionRequest request,
+  }) => caller.callServerEndpoint<_i43.Version>(
+    'version',
+    'updateVersion',
+    {'request': request},
+  );
+
+  /// Быстрая блокировка/разблокировка версии.
+  ///
+  /// Переключатель в карточке/строке версии.
+  /// Недоступна для самой новой версии.
+  _i2.Future<_i43.Version> toggleVersionBlock({
+    required _i46.ToggleVersionBlockRequest request,
+  }) => caller.callServerEndpoint<_i43.Version>(
+    'version',
+    'toggleVersionBlock',
+    {'request': request},
+  );
+
+  /// Установить или снять рекомендуемую версию для обновления.
+  ///
+  /// Позволяет указать рекомендуемую версию и настройки частоты показа.
+  /// Доступно только если версия не самая новая.
+  _i2.Future<_i43.Version> setVersionRecommendation({
+    required _i47.SetVersionRecommendationRequest request,
+  }) => caller.callServerEndpoint<_i43.Version>(
+    'version',
+    'setVersionRecommendation',
+    {'request': request},
+  );
+
+  /// Удалить версию приложения.
+  ///
+  /// Ограничения:
+  /// - Нельзя удалить последнюю оставшуюся версию приложения
+  /// - При удалении версии, которая рекомендуется другим, возвращается
+  ///   предупреждение (но удаление проходит, т.к. onDelete=SetNull)
+  _i2.Future<_i7.SuccessResponse> deleteVersion({
+    required _i48.DeleteVersionRequest request,
+  }) => caller.callServerEndpoint<_i7.SuccessResponse>(
+    'version',
+    'deleteVersion',
+    {'request': request},
+  );
+}
+
 /// This is an example endpoint that returns a greeting message through
 /// its [hello] method.
 ///
@@ -904,8 +1047,8 @@ class EndpointGreeting extends EndpointLoggedIn {
   String get name => 'greeting';
 
   /// Returns a personalized greeting message: "Hello {name}".
-  _i2.Future<_i40.Greeting> hello(String name) =>
-      caller.callServerEndpoint<_i40.Greeting>(
+  _i2.Future<_i49.Greeting> hello(String name) =>
+      caller.callServerEndpoint<_i49.Greeting>(
         'greeting',
         'hello',
         {'name': name},
@@ -932,7 +1075,7 @@ class Client extends _i1.ServerpodClientShared {
     bool? disconnectStreamsOnLostInternetConnection,
   }) : super(
          host,
-         _i41.Protocol(),
+         _i50.Protocol(),
          securityContext: securityContext,
          streamingConnectionTimeout: streamingConnectionTimeout,
          connectionTimeout: connectionTimeout,
@@ -945,6 +1088,7 @@ class Client extends _i1.ServerpodClientShared {
     auth = EndpointAuth(this);
     session = EndpointSession(this);
     team = EndpointTeam(this);
+    version = EndpointVersion(this);
     greeting = EndpointGreeting(this);
   }
 
@@ -956,6 +1100,8 @@ class Client extends _i1.ServerpodClientShared {
 
   late final EndpointTeam team;
 
+  late final EndpointVersion version;
+
   late final EndpointGreeting greeting;
 
   @override
@@ -964,6 +1110,7 @@ class Client extends _i1.ServerpodClientShared {
     'auth': auth,
     'session': session,
     'team': team,
+    'version': version,
     'greeting': greeting,
   };
 

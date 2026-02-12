@@ -84,7 +84,7 @@ class TeamCard extends StatelessWidget {
                     team.name[0].toUpperCase(),
                     style: TextStyle(
                       color: colorScheme.onSecondaryContainer,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
@@ -488,7 +488,7 @@ class _MemberTile extends StatelessWidget {
                         color: _isInvited
                             ? colorScheme.onSurfaceVariant
                             : colorScheme.onPrimaryContainer,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w600,
                       ),
                     )
                   : null,
@@ -527,8 +527,8 @@ class _MemberTile extends StatelessWidget {
                           padding: const EdgeInsets.only(left: 6),
                           child: Container(
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 6,
-                              vertical: 2,
+                              horizontal: 10,
+                              vertical: 3,
                             ),
                             decoration: BoxDecoration(
                               color: colorScheme.tertiaryContainer,
@@ -536,9 +536,10 @@ class _MemberTile extends StatelessWidget {
                             ),
                             child: Text(
                               'Приглашён',
-                              style: textTheme.labelSmall?.copyWith(
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
                                 color: colorScheme.onTertiaryContainer,
-                                fontSize: 10,
                               ),
                             ),
                           ),
@@ -664,10 +665,10 @@ class _RoleBadge extends StatelessWidget {
         isOwnerOrAdmin && !isCurrentUser && !isMemberOwner && !isInvited;
 
     final badge = Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
       decoration: BoxDecoration(
         color: _roleBadgeColor(member.role).withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -702,7 +703,7 @@ class _RoleBadge extends StatelessWidget {
           child: ChangeRoleDialog(member: member),
         ),
       ),
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(8),
       child: badge,
     );
   }
@@ -739,6 +740,8 @@ class _DetailChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -746,8 +749,7 @@ class _DetailChip extends StatelessWidget {
         const SizedBox(width: 4),
         Text(
           label,
-          style: TextStyle(
-            fontSize: 12,
+          style: textTheme.bodySmall?.copyWith(
             color: colorScheme.onSurfaceVariant,
           ),
         ),

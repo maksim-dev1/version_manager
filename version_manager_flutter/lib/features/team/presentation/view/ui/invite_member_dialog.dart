@@ -32,47 +32,50 @@ class _InviteMemberDialogState extends State<InviteMemberDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Пригласить участника'),
-      content: Form(
-        key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            TextFormField(
-              controller: _emailController,
-              decoration: const InputDecoration(
-                labelText: 'Email',
-                hintText: 'user@example.com',
-                prefixIcon: Icon(Icons.email_outlined),
+      content: ConstrainedBox(
+        constraints: const BoxConstraints(minWidth: 480, maxWidth: 480),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              TextFormField(
+                controller: _emailController,
+                decoration: const InputDecoration(
+                  labelText: 'Email',
+                  hintText: 'user@example.com',
+                  prefixIcon: Icon(Icons.email_outlined),
+                ),
+                keyboardType: TextInputType.emailAddress,
+                autofocus: true,
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Введите email';
+                  }
+                  final emailRegex = RegExp(
+                    r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+                  );
+                  if (!emailRegex.hasMatch(value.trim())) {
+                    return 'Некорректный email';
+                  }
+                  return null;
+                },
               ),
-              keyboardType: TextInputType.emailAddress,
-              autofocus: true,
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return 'Введите email';
-                }
-                final emailRegex = RegExp(
-                  r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
-                );
-                if (!emailRegex.hasMatch(value.trim())) {
-                  return 'Некорректный email';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 20),
-            Text(
-              'Роль',
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.w600,
+              const SizedBox(height: 20),
+              Text(
+                'Роль',
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            RoleSelector(
-              selectedRole: _selectedRole,
-              onRoleChanged: (role) => setState(() => _selectedRole = role),
-            ),
-          ],
+              const SizedBox(height: 8),
+              RoleSelector(
+                selectedRole: _selectedRole,
+                onRoleChanged: (role) => setState(() => _selectedRole = role),
+              ),
+            ],
+          ),
         ),
       ),
       actions: [

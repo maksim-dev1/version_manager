@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:version_manager_client/version_manager_client.dart';
+import 'package:version_manager_flutter/features/application/domain/repository/application_repository.dart';
 import 'package:version_manager_flutter/features/application/presentation/bloc/application_bloc.dart';
+import 'package:version_manager_flutter/features/api_key/presentation/bloc/api_key_bloc.dart';
 import 'package:version_manager_flutter/features/application/presentation/view/application_detail_screen.dart';
 import 'package:version_manager_flutter/features/application/presentation/view/ui/delete_application_dialog.dart';
 import 'package:version_manager_flutter/features/application/presentation/view/ui/edit_application_dialog.dart';
-import 'package:version_manager_flutter/features/application/presentation/view/ui/regenerate_api_key_dialog.dart';
+import 'package:version_manager_flutter/features/api_key/presentation/view/regenerate_api_key_dialog.dart';
 import 'package:version_manager_flutter/features/application/presentation/view/ui/transfer_application_dialog.dart';
 
 /// Минималистичная квадратная карточка приложения.
@@ -89,12 +91,16 @@ class ApplicationCard extends StatelessWidget {
 
   void _openDetail(BuildContext context) {
     final bloc = context.read<ApplicationBloc>();
+    final repo = context.read<ApplicationRepository>();
 
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => BlocProvider.value(
-          value: bloc,
-          child: ApplicationDetailScreen(application: application),
+        builder: (_) => RepositoryProvider.value(
+          value: repo,
+          child: BlocProvider.value(
+            value: bloc,
+            child: ApplicationDetailScreen(application: application),
+          ),
         ),
       ),
     );
@@ -167,12 +173,29 @@ class ApplicationCard extends StatelessWidget {
               leading: const Icon(Icons.key_outlined),
               title: const Text('Регенерировать API ключ'),
               onTap: () {
+                final repo = context.read<ApplicationRepository>();
                 Navigator.pop(sheetContext);
                 showDialog(
                   context: context,
-                  builder: (_) => BlocProvider.value(
-                    value: bloc,
-                    child: RegenerateApiKeyDialog(application: application),
+                  builder: (_) => RepositoryProvider.value(
+                    value: repo,
+                    child: MultiBlocProvider(
+                      providers: [
+                        BlocProvider.value(value: bloc),
+                        BlocProvider(
+                          create: (context) =>
+                              ApiKeyBloc(
+                                applicationRepository: context
+                                    .read<ApplicationRepository>(),
+                              )..add(
+                                ApiKeyEvent.fetchEmail(
+                                  applicationId: application.id!,
+                                ),
+                              ),
+                        ),
+                      ],
+                      child: RegenerateApiKeyDialog(application: application),
+                    ),
                   ),
                 );
               },

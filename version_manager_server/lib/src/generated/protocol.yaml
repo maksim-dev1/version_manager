@@ -38,5 +38,14 @@ team:
   - leaveTeam:
   - transferOwnership:
   - deleteTeam:
+version:
+  - getVersions:
+  - getVersionDetail:
+  - getNextBuildNumber:
+  - createVersion:
+  - updateVersion:
+  - toggleVersionBlock:
+  - setVersionRecommendation:
+  - deleteVersion:
 greeting:
   - hello:

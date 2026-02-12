@@ -7,13 +7,16 @@ part 'application_bloc.freezed.dart';
 part 'application_event.dart';
 part 'application_state.dart';
 
-/// BLoC для управления приложениями.
+/// BLoC для управления списком приложений.
 ///
 /// Отвечает за:
 /// - Загрузку списка приложений пользователя
-/// - Создание, редактирование и удаление приложений
-/// - Управление API ключами
+/// - Редактирование и удаление приложений
 /// - Активацию / деактивацию
+/// - Передачу владения
+///
+/// Создание вынесено в CreateApplicationBloc.
+/// Регенерация API ключа — в ApiKeyBloc.
 class ApplicationBloc extends Bloc<ApplicationEvent, ApplicationState> {
   final ApplicationRepository _applicationRepository;
 
@@ -24,27 +27,6 @@ class ApplicationBloc extends Bloc<ApplicationEvent, ApplicationState> {
     on<ApplicationEvent>(
       (event, emit) => switch (event) {
         _LoadApplications() => _onLoadApplications(emit: emit),
-        _CreateApplication(
-          :final namespace,
-          :final name,
-          :final description,
-          :final iconUrl,
-          :final platforms,
-          :final ownerType,
-          :final teamId,
-          :final storeLinks,
-        ) =>
-          _onCreateApplication(
-            namespace: namespace,
-            name: name,
-            description: description,
-            iconUrl: iconUrl,
-            platforms: platforms,
-            ownerType: ownerType,
-            teamId: teamId,
-            storeLinks: storeLinks,
-            emit: emit,
-          ),
         _UpdateApplication(
           :final applicationId,
           :final name,
@@ -66,22 +48,6 @@ class ApplicationBloc extends Bloc<ApplicationEvent, ApplicationState> {
           _onDeleteApplication(
             applicationId: applicationId,
             confirmationName: confirmationName,
-            emit: emit,
-          ),
-        _RegenerateApiKey(:final applicationId, :final code) =>
-          _onRegenerateApiKey(
-            applicationId: applicationId,
-            code: code,
-            emit: emit,
-          ),
-        _RequestApiKeyRegeneration(:final applicationId) =>
-          _onRequestApiKeyRegeneration(
-            applicationId: applicationId,
-            emit: emit,
-          ),
-        _FetchRegenerationEmail(:final applicationId) =>
-          _onFetchRegenerationEmail(
-            applicationId: applicationId,
             emit: emit,
           ),
         _ToggleApplicationStatus(:final applicationId, :final isActive) =>
@@ -107,14 +73,6 @@ class ApplicationBloc extends Bloc<ApplicationEvent, ApplicationState> {
 
   // ── Загрузка ──
 
-  Future<void> _emitLoaded(Emitter<ApplicationState> emit) async {
-    final (applications, teams) = await (
-      _applicationRepository.getMyApplications(),
-      _applicationRepository.getMyTeams(),
-    ).wait;
-    emit(ApplicationState.loaded(applications: applications, teams: teams));
-  }
-
   Future<void> _onLoadApplications({
     required Emitter<ApplicationState> emit,
   }) async {
@@ -122,46 +80,13 @@ class ApplicationBloc extends Bloc<ApplicationEvent, ApplicationState> {
       emit(const ApplicationState.loading());
     }
     try {
-      await _emitLoaded(emit);
-    } catch (e) {
-      emit(ApplicationState.error(message: e.toString()));
-    }
-  }
-
-  // ── Создание ──
-
-  Future<void> _onCreateApplication({
-    required String namespace,
-    required String name,
-    String? description,
-    String? iconUrl,
-    required List<PlatformType> platforms,
-    required OwnerType ownerType,
-    UuidValue? teamId,
-    List<StoreLinkEntry>? storeLinks,
-    required Emitter<ApplicationState> emit,
-  }) async {
-    try {
-      final response = await _applicationRepository.createApplication(
-        namespace: namespace,
-        name: name,
-        description: description,
-        iconUrl: iconUrl,
-        platforms: platforms,
-        ownerType: ownerType,
-        teamId: teamId,
-        storeLinks: storeLinks,
-      );
+      final applications = await _applicationRepository.getMyApplications();
+      final teams = await _applicationRepository.getMyTeams();
       emit(
-        ApplicationState.created(
-          application: response.application,
-          apiKey: response.apiKey,
-        ),
+        ApplicationState.loaded(applications: applications, teams: teams),
       );
-      await _emitLoaded(emit);
     } catch (e) {
       emit(ApplicationState.error(message: e.toString()));
-      await _emitLoaded(emit);
     }
   }
 
@@ -185,10 +110,13 @@ class ApplicationBloc extends Bloc<ApplicationEvent, ApplicationState> {
         platforms: platforms,
         storeLinks: storeLinks,
       );
-      await _emitLoaded(emit);
+      final applications = await _applicationRepository.getMyApplications();
+      final teams = await _applicationRepository.getMyTeams();
+      emit(
+        ApplicationState.loaded(applications: applications, teams: teams),
+      );
     } catch (e) {
       emit(ApplicationState.error(message: e.toString()));
-      await _emitLoaded(emit);
     }
   }
 
@@ -204,78 +132,11 @@ class ApplicationBloc extends Bloc<ApplicationEvent, ApplicationState> {
         applicationId: applicationId,
         confirmationName: confirmationName,
       );
-      await _emitLoaded(emit);
-    } catch (e) {
-      emit(ApplicationState.error(message: e.toString()));
-      await _emitLoaded(emit);
-    }
-  }
-
-  // ── API ключ ──
-
-  Future<void> _onRequestApiKeyRegeneration({
-    required UuidValue applicationId,
-    required Emitter<ApplicationState> emit,
-  }) async {
-    try {
-      final response = await _applicationRepository.requestApiKeyRegeneration(
-        applicationId: applicationId,
-      );
-      if (response.codeSent) {
-        emit(
-          ApplicationState.apiKeyRegenerationCodeSent(
-            maskedEmail: response.maskedEmail,
-          ),
-        );
-      } else {
-        emit(
-          ApplicationState.apiKeyRegenerationCodeSent(
-            retryAfterSeconds: response.retryAfterSeconds,
-            maskedEmail: response.maskedEmail,
-          ),
-        );
-      }
-    } catch (e) {
-      emit(ApplicationState.error(message: e.toString()));
-    }
-  }
-
-  Future<void> _onFetchRegenerationEmail({
-    required UuidValue applicationId,
-    required Emitter<ApplicationState> emit,
-  }) async {
-    try {
-      final maskedEmail = await _applicationRepository
-          .getRegenerationTargetEmail(
-            applicationId: applicationId,
-          );
+      final applications = await _applicationRepository.getMyApplications();
+      final teams = await _applicationRepository.getMyTeams();
       emit(
-        ApplicationState.regenerationEmailLoaded(
-          maskedEmail: maskedEmail,
-        ),
+        ApplicationState.loaded(applications: applications, teams: teams),
       );
-    } catch (e) {
-      emit(ApplicationState.error(message: e.toString()));
-    }
-  }
-
-  Future<void> _onRegenerateApiKey({
-    required UuidValue applicationId,
-    required String code,
-    required Emitter<ApplicationState> emit,
-  }) async {
-    try {
-      final response = await _applicationRepository.regenerateApiKey(
-        applicationId: applicationId,
-        code: code,
-      );
-      emit(
-        ApplicationState.apiKeyRegenerated(
-          apiKey: response.apiKey,
-          regeneratedAt: response.regeneratedAt,
-        ),
-      );
-      await _emitLoaded(emit);
     } catch (e) {
       emit(ApplicationState.error(message: e.toString()));
     }
@@ -293,10 +154,13 @@ class ApplicationBloc extends Bloc<ApplicationEvent, ApplicationState> {
         applicationId: applicationId,
         isActive: isActive,
       );
-      await _emitLoaded(emit);
+      final applications = await _applicationRepository.getMyApplications();
+      final teams = await _applicationRepository.getMyTeams();
+      emit(
+        ApplicationState.loaded(applications: applications, teams: teams),
+      );
     } catch (e) {
       emit(ApplicationState.error(message: e.toString()));
-      await _emitLoaded(emit);
     }
   }
 
@@ -314,10 +178,13 @@ class ApplicationBloc extends Bloc<ApplicationEvent, ApplicationState> {
         newOwnerType: newOwnerType,
         newTeamId: newTeamId,
       );
-      await _emitLoaded(emit);
+      final applications = await _applicationRepository.getMyApplications();
+      final teams = await _applicationRepository.getMyTeams();
+      emit(
+        ApplicationState.loaded(applications: applications, teams: teams),
+      );
     } catch (e) {
       emit(ApplicationState.error(message: e.toString()));
-      await _emitLoaded(emit);
     }
   }
 }

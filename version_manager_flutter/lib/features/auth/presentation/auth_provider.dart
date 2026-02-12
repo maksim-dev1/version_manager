@@ -5,9 +5,9 @@ import 'package:version_manager_flutter/features/auth/domain/repository/auth_rep
 import 'package:version_manager_flutter/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:version_manager_flutter/shared/services/client_service.dart';
 
-class AuthProviedr extends StatelessWidget {
+class AuthProvider extends StatelessWidget {
   final Widget child;
-  const AuthProviedr({
+  const AuthProvider({
     super.key,
     required this.child,
   });
