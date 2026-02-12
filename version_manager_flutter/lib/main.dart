@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:version_manager_flutter/shared/services/client_service.dart';
@@ -36,6 +37,16 @@ void main() async {
 
 /// Получает URL сервера из переменных окружения или возвращает значение по умолчанию.
 String _getServerUrl() {
-  final urlFromEnv = const String.fromEnvironment('SERVER_URL');
-  return urlFromEnv.isNotEmpty ? urlFromEnv : 'http://localhost:8080/';
+  const urlFromEnv = String.fromEnvironment('SERVER_URL');
+  if (urlFromEnv.isNotEmpty) {
+    return urlFromEnv;
+  }
+  
+  // Для web используем текущий домен
+  if (kIsWeb) {
+    return '${Uri.base.scheme}://${Uri.base.host}';
+  }
+  
+  return 'http://localhost:8080/';
 }
+
