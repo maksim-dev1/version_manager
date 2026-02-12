@@ -12,9 +12,8 @@ WORKDIR /app/version_manager_flutter
 # Получаем зависимости
 RUN flutter pub get
 
-# Собираем Flutter web приложение с загрузкой env файла
-RUN flutter build web --release \
-    --dart-define-from-file="lib/.env.json"
+# Собираем Flutter web приложение
+RUN flutter build web --release 
 
 # Этап 2: Nginx для раздачи статики
 FROM nginx:alpine

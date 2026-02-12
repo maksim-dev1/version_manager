@@ -64,8 +64,8 @@ services:
 
   flutter_web:
     build:
-      context: ./version_manager_flutter
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./version_manager_flutter/Dockerfile
     container_name: version_manager_web
     ports:
       - "127.0.0.1:9083:80"
