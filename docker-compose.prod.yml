@@ -61,8 +61,8 @@ services:
     volumes:
       - ./version_manager_server/config:/app/config:ro
       - ./version_manager_server/migrations:/app/migrations:ro
-      
-flutter_web:
+
+  flutter_web:
     build:
       context: ./version_manager_flutter
       dockerfile: Dockerfile
