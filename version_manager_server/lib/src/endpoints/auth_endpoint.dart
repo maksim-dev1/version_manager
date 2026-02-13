@@ -135,6 +135,11 @@ class AuthEndpoint extends Endpoint {
       purpose: VerificationPurposeType.sign_up,
     );
 
+    session.log(
+      'checkEmailAndSendCode: результат создания кода для $email: ${result.code}, waitTime: ${result.waitTime}',
+      level: LogLevel.debug,
+    );
+
     // Rate limit
     if (result.waitTime != null) {
       session.log(
