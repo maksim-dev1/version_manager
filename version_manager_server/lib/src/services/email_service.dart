@@ -119,51 +119,23 @@ class EmailService {
     }
   }
 
-  // SmtpServer _getSmtpServer() {
-  //   final credentials = _getCredentials();
-
-  //   switch (provider) {
-  //     case EmailProvider.google:
-  //       return gmail(credentials['username']!, credentials['password']!);
-
-  //     case EmailProvider.yandex:
-  //       return SmtpServer(
-  //         'smtp.yandex.com',
-  //         port: 465,
-  //         ssl: true,
-  //         username: credentials['username']!,
-  //         password: credentials['password']!,
-  //       );
-  //   }
-  // }
-
   SmtpServer _getSmtpServer() {
-  final credentials = _getCredentials();
+    final credentials = _getCredentials();
 
-  switch (provider) {
-    case EmailProvider.google:
-      // Используем localhost:2525 (reverse SSH tunnel через Raspberry Pi)
-      return SmtpServer(
-        'localhost',  // Через туннель
-        port: 2525,   // Gmail SMTP 465 пробрасывается через Pi на порт 2525
-        ssl: true,
-        username: credentials['username']!,
-        password: credentials['password']!,
-        allowInsecure: false,
-      );
+    switch (provider) {
+      case EmailProvider.google:
+        return gmail(credentials['username']!, credentials['password']!);
 
-    case EmailProvider.yandex:
-      // Яндекс через туннель на порту 2587
-      return SmtpServer(
-        'localhost',
-        port: 2587,   // Яндекс SMTP через туннель (если настроили)
-        ssl: true,
-        username: credentials['username']!,
-        password: credentials['password']!,
-      );
+      case EmailProvider.yandex:
+        return SmtpServer(
+          'smtp.yandex.com',
+          port: 465,
+          ssl: true,
+          username: credentials['username']!,
+          password: credentials['password']!,
+        );
+    }
   }
-}
-
 
   /// Обрабатывает HTML-шаблон и заменяет переменные и условные блоки.
   ///
