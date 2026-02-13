@@ -138,7 +138,7 @@ class AuthEndpoint extends Endpoint {
     // Rate limit
     if (result.waitTime != null) {
       session.log(
-        'checkEmailAndSendCode: rate limit для $email, ожидание ${result.waitTime!.inSeconds}с',
+        'checkEmailAndSendCode: rate limit для $email, ожидание ${result.waitTime!.inSeconds}с код: ${result.code}',
         level: LogLevel.warning,
       );
       return CheckEmailAndSendCodeResponse(
