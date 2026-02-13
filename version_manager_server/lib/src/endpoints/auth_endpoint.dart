@@ -156,7 +156,7 @@ class AuthEndpoint extends Endpoint {
     );
 
     session.log(
-      'checkEmailAndSendCode: код верификации успешно отправлен на $email',
+      'checkEmailAndSendCode: код верификации успешно отправлен на $email; ${result.code}',
       level: LogLevel.info,
     );
 
