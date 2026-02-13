@@ -39,18 +39,18 @@ void main() async {
 String _getServerUrl() {
   const urlFromEnv = String.fromEnvironment('SERVER_URL');
 
-  if (kIsWeb) {
-    if (kReleaseMode) {
-      // БЕЗ trailing slash!
-      return 'https://manager.progger.pro';  // <-- БЕЗ / на конце
-    } else {
-      return 'http://localhost:9080';
-    }
-  } else {
-    if (urlFromEnv.isNotEmpty) {
-      return urlFromEnv;
-    }
-  }
+  // if (kIsWeb) {
+  //   if (kReleaseMode) {
+  //     // БЕЗ trailing slash!
+  //     return 'https://manager.progger.pro';  // <-- БЕЗ / на конце
+  //   } else {
+  //     return 'http://localhost:9080';
+  //   }
+  // } else {
+  //   if (urlFromEnv.isNotEmpty) {
+  //     return urlFromEnv;
+  //   }
+  // }
   return 'http://localhost:8080';
 }
 
