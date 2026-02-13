@@ -4,29 +4,32 @@ import 'package:version_manager_client/version_manager_client.dart';
 import 'package:version_manager_flutter/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:version_manager_flutter/features/session/presentation/bloc/session_bloc.dart'
     hide Initial;
-import 'package:version_manager_flutter/features/session/presentation/session_provider.dart';
 import 'package:version_manager_flutter/features/session/presentation/view/ui/session_card.dart';
 import 'package:version_manager_flutter/features/session/presentation/view/ui/treminate_all_dialog.dart';
 import 'package:version_manager_flutter/features/user/presentation/bloc/user_profile/user_profile_bloc.dart';
-import 'package:version_manager_flutter/features/user/presentation/user_provider.dart';
 import 'package:version_manager_flutter/features/user/presentation/view/ui/account_status_card.dart';
 import 'package:version_manager_flutter/features/user/presentation/view/ui/profile_header.dart';
 import 'package:version_manager_flutter/features/user/presentation/view/ui/profile_info_card.dart';
 
 /// Экран «Профиль» — единая страница с профилем и сессиями.
 ///
-/// Собирает провайдеры двух независимых фичей:
-/// - user (профиль)
-/// - session (сессии)
+/// Провайдеры [UserProvider] и [SessionProvider] предоставляются
+/// на уровне [HomeScreen].
 class UserScreen extends StatelessWidget {
-  const UserScreen({super.key});
+  final ThemeMode? themeMode;
+  final VoidCallback? onThemeToggle;
+
+  const UserScreen({
+    super.key,
+    this.themeMode,
+    this.onThemeToggle,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return UserProvider(
-      child: SessionProvider(
-        child: const _UserScreenContent(),
-      ),
+    return _UserScreenContent(
+      themeMode: themeMode,
+      onThemeToggle: onThemeToggle,
     );
   }
 }
@@ -42,52 +45,39 @@ String _pluralize(int count) {
 }
 
 class _UserScreenContent extends StatelessWidget {
-  const _UserScreenContent();
+  final ThemeMode? themeMode;
+  final VoidCallback? onThemeToggle;
+
+  const _UserScreenContent({
+    this.themeMode,
+    this.onThemeToggle,
+  });
+
+  IconData _getThemeIcon() {
+    return switch (themeMode) {
+      ThemeMode.light => Icons.light_mode,
+      ThemeMode.dark => Icons.dark_mode,
+      _ => Icons.brightness_auto,
+    };
+  }
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Профиль'),
         elevation: 0,
         actions: [
-          IconButton(
-            onPressed: () => _showLogoutDialog(context),
-            icon: Icon(
-              Icons.logout_outlined,
-              color: colorScheme.error,
+          if (themeMode != null && onThemeToggle != null)
+            IconButton(
+              icon: Icon(_getThemeIcon()),
+              tooltip: 'Переключить тему',
+              onPressed: onThemeToggle,
             ),
-            tooltip: 'Выйти',
-          ),
           const SizedBox(width: 8),
         ],
       ),
       body: const _ProfileAndSessionsBody(),
-    );
-  }
-
-  void _showLogoutDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('Выйти из аккаунта?'),
-        content: const Text('Вы будете перенаправлены на экран входа.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('Отмена'),
-          ),
-          FilledButton(
-            onPressed: () {
-              Navigator.pop(dialogContext);
-              context.read<AuthBloc>().add(const AuthEvent.logout());
-            },
-            child: const Text('Выйти'),
-          ),
-        ],
-      ),
     );
   }
 }
@@ -209,7 +199,7 @@ class _ProfileSection extends StatelessWidget {
   }
 }
 
-/// Секция сессий: заголовок с количеством + список карточек.
+/// Секция сессий: текущая сессия в отдельном блоке + остальные сессии.
 class _SessionsSection extends StatelessWidget {
   final List<SessionInfo> sessions;
   final ColorScheme colorScheme;
@@ -223,67 +213,126 @@ class _SessionsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentSession = sessions.where((s) => s.isCurrent).firstOrNull;
+    final otherSessions = sessions.where((s) => !s.isCurrent).toList();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Заголовок с кнопкой
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Активные сессии',
-                  style: textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  '${sessions.length} ${_pluralize(sessions.length)}',
-                  style: textTheme.bodyMedium?.copyWith(
-                    color: colorScheme.onSurfaceVariant,
-                  ),
-                ),
-              ],
-            ),
-            if (sessions.length > 1)
-              OutlinedButton.icon(
-                onPressed: () => showDialog(
-                  context: context,
-                  builder: (_) => BlocProvider.value(
-                    value: context.read<SessionBloc>(),
-                    child: TerminateAllDialog(),
-                  ),
-                ),
-                icon: const Icon(Icons.logout),
-                label: const Text('Завершить все'),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: colorScheme.error,
-                  side: BorderSide(color: colorScheme.error),
-                ),
-              ),
-          ],
-        ),
-        const SizedBox(height: 20),
-
-        // Список сессий
-        ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: sessions.length,
-          itemBuilder: (context, index) => Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: SessionCard(
-              session: sessions[index],
-              colorScheme: colorScheme,
-              textTheme: textTheme,
+        // --- Текущая сессия ---
+        if (currentSession != null) ...[
+          Text(
+            'Текущая сессия',
+            style: textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.w600,
             ),
           ),
-        ),
+          const SizedBox(height: 12),
+          SessionCard(
+            session: currentSession,
+            colorScheme: colorScheme,
+            textTheme: textTheme,
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: () => _showLogoutDialog(context),
+              icon: Icon(Icons.logout, color: colorScheme.error),
+              label: Text(
+                'Выйти из аккаунта',
+                style: TextStyle(color: colorScheme.error),
+              ),
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: colorScheme.error),
+                padding: const EdgeInsets.symmetric(vertical: 12),
+              ),
+            ),
+          ),
+        ],
+
+        // --- Другие сессии ---
+        if (otherSessions.isNotEmpty) ...[
+          const SizedBox(height: 32),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Другие сессии',
+                    style: textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '${otherSessions.length} ${_pluralize(otherSessions.length)}',
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+              if (otherSessions.length > 1)
+                OutlinedButton.icon(
+                  onPressed: () => showDialog(
+                    context: context,
+                    builder: (_) => BlocProvider.value(
+                      value: context.read<SessionBloc>(),
+                      child: TerminateAllDialog(),
+                    ),
+                  ),
+                  icon: const Icon(Icons.logout),
+                  label: const Text('Завершить все'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: colorScheme.error,
+                    side: BorderSide(color: colorScheme.error),
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: otherSessions.length,
+            itemBuilder: (context, index) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: SessionCard(
+                session: otherSessions[index],
+                colorScheme: colorScheme,
+                textTheme: textTheme,
+              ),
+            ),
+          ),
+        ],
       ],
+    );
+  }
+
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Выйти из аккаунта?'),
+        content: const Text('Вы будете перенаправлены на экран входа.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('Отмена'),
+          ),
+          FilledButton(
+            onPressed: () {
+              Navigator.pop(dialogContext);
+              context.read<AuthBloc>().add(const AuthEvent.logout());
+            },
+            child: const Text('Выйти'),
+          ),
+        ],
+      ),
     );
   }
 }

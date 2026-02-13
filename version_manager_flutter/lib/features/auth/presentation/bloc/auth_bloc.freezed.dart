@@ -317,11 +317,11 @@ extension AuthStatePatterns on AuthState {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( Loading value)?  loading,TResult Function( Authenticated value)?  authenticated,TResult Function( Unauthenticated value)?  unauthenticated,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( AuthLoading value)?  authLoading,TResult Function( Authenticated value)?  authenticated,TResult Function( Unauthenticated value)?  unauthenticated,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
-case Loading() when loading != null:
-return loading(_that);case Authenticated() when authenticated != null:
+case AuthLoading() when authLoading != null:
+return authLoading(_that);case Authenticated() when authenticated != null:
 return authenticated(_that);case Unauthenticated() when unauthenticated != null:
 return unauthenticated(_that);case _:
   return orElse();
@@ -341,11 +341,11 @@ return unauthenticated(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( Loading value)  loading,required TResult Function( Authenticated value)  authenticated,required TResult Function( Unauthenticated value)  unauthenticated,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( AuthLoading value)  authLoading,required TResult Function( Authenticated value)  authenticated,required TResult Function( Unauthenticated value)  unauthenticated,}){
 final _that = this;
 switch (_that) {
-case Loading():
-return loading(_that);case Authenticated():
+case AuthLoading():
+return authLoading(_that);case Authenticated():
 return authenticated(_that);case Unauthenticated():
 return unauthenticated(_that);}
 }
@@ -361,11 +361,11 @@ return unauthenticated(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( Loading value)?  loading,TResult? Function( Authenticated value)?  authenticated,TResult? Function( Unauthenticated value)?  unauthenticated,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( AuthLoading value)?  authLoading,TResult? Function( Authenticated value)?  authenticated,TResult? Function( Unauthenticated value)?  unauthenticated,}){
 final _that = this;
 switch (_that) {
-case Loading() when loading != null:
-return loading(_that);case Authenticated() when authenticated != null:
+case AuthLoading() when authLoading != null:
+return authLoading(_that);case Authenticated() when authenticated != null:
 return authenticated(_that);case Unauthenticated() when unauthenticated != null:
 return unauthenticated(_that);case _:
   return null;
@@ -384,10 +384,10 @@ return unauthenticated(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  loading,TResult Function()?  authenticated,TResult Function()?  unauthenticated,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  authLoading,TResult Function()?  authenticated,TResult Function()?  unauthenticated,required TResult orElse(),}) {final _that = this;
 switch (_that) {
-case Loading() when loading != null:
-return loading();case Authenticated() when authenticated != null:
+case AuthLoading() when authLoading != null:
+return authLoading();case Authenticated() when authenticated != null:
 return authenticated();case Unauthenticated() when unauthenticated != null:
 return unauthenticated();case _:
   return orElse();
@@ -407,10 +407,10 @@ return unauthenticated();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  loading,required TResult Function()  authenticated,required TResult Function()  unauthenticated,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  authLoading,required TResult Function()  authenticated,required TResult Function()  unauthenticated,}) {final _that = this;
 switch (_that) {
-case Loading():
-return loading();case Authenticated():
+case AuthLoading():
+return authLoading();case Authenticated():
 return authenticated();case Unauthenticated():
 return unauthenticated();}
 }
@@ -426,10 +426,10 @@ return unauthenticated();}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  loading,TResult? Function()?  authenticated,TResult? Function()?  unauthenticated,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  authLoading,TResult? Function()?  authenticated,TResult? Function()?  unauthenticated,}) {final _that = this;
 switch (_that) {
-case Loading() when loading != null:
-return loading();case Authenticated() when authenticated != null:
+case AuthLoading() when authLoading != null:
+return authLoading();case Authenticated() when authenticated != null:
 return authenticated();case Unauthenticated() when unauthenticated != null:
 return unauthenticated();case _:
   return null;
@@ -442,8 +442,8 @@ return unauthenticated();case _:
 /// @nodoc
 
 
-class Loading implements AuthState {
-  const Loading();
+class AuthLoading implements AuthState {
+  const AuthLoading();
   
 
 
@@ -453,7 +453,7 @@ class Loading implements AuthState {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Loading);
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthLoading);
 }
 
 
@@ -462,7 +462,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'AuthState.loading()';
+  return 'AuthState.authLoading()';
 }
 
 

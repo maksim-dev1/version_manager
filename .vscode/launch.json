@@ -1,10 +1,52 @@
 {
     "configurations": [
         {
-            "name": "Flutter",
+            "name": "version_manager_flutter DEV DEBUGE",
+            "flutterMode": "debug",
+            "deviceId": "chrome",
             "type": "dart",
             "request": "launch",
-            "program": "version_manager_flutter/lib/main.dart"
+            "program": "version_manager_flutter/lib/main.dart",
+            "args": [
+                "--dart-define-from-file",
+                "lib/env.dev.json",
+            ]
+        },
+        {
+            "name": "version_manager_flutter PROD DEBUGE",
+            "flutterMode": "debug",
+            "deviceId": "chrome",
+            "type": "dart",
+            "request": "launch",
+            "program": "version_manager_flutter/lib/main.dart",
+            "args": [
+                "--dart-define-from-file",
+                "lib/env.prod.json",
+            ]
+        },
+        {
+            "name": "version_manager_flutter DEV RELEASE",
+            "flutterMode": "release",
+            "deviceId": "chrome",
+            "type": "dart",
+            "request": "launch",
+            "program": "version_manager_flutter/lib/main.dart",
+            "args": [
+                "--dart-define-from-file",
+                "lib/env.dev.json",
+            ]
+        },
+        {
+            "name": "version_manager_flutter PROD RELEASE",
+            "flutterMode": "release",
+            "deviceId": "chrome",
+            "type": "dart",
+            "request": "launch",
+            "program": "version_manager_flutter/lib/main.dart",
+            "args": [
+                "--dart-define-from-file",
+                "lib/env.prod.json",
+            ]
         },
     ]
 }

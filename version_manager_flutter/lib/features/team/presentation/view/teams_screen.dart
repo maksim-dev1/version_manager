@@ -9,7 +9,7 @@ import 'package:version_manager_flutter/features/team/presentation/view/ui/team_
 import 'package:version_manager_flutter/features/team/presentation/view/ui/teams_empty_state.dart';
 import 'package:version_manager_flutter/features/team_member/presentation/bloc/team_member_bloc.dart';
 import 'package:version_manager_flutter/features/team_member/presentation/team_member_provider.dart';
-import 'package:version_manager_flutter/shared/services/notification_service.dart';
+import 'package:version_manager_flutter/shared/services/app_notification.dart';
 
 /// Экран «Команды» — отдельная страница навигации.
 ///

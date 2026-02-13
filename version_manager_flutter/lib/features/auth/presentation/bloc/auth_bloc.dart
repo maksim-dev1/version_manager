@@ -29,7 +29,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc({
     required AuthRepository authRepository,
   }) : _authRepository = authRepository,
-       super(const AuthState.loading()) {
+       super(const AuthState.authLoading()) {
     // ===== Регистрация обработчиков событий =====
     on<AuthEvent>(
       (event, emit) => switch (event) {
@@ -51,7 +51,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   /// - Если токены есть → состояние `authenticated`
   /// - Если токенов нет → состояние `unauthenticated`
   Future<void> _onCheckAuth({required Emitter<AuthState> emit}) async {
-    emit(const AuthState.loading());
+    emit(const AuthState.authLoading());
     try {
       final isAuth = await _authRepository.checkAuth();
 
@@ -71,7 +71,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   /// Отправляет запрос на сервер и очищает локальные токены.
   Future<void> _onLogout({required Emitter<AuthState> emit}) async {
     try {
-      emit(const AuthState.loading());
+      emit(const AuthState.authLoading());
       await _authRepository.logout();
       emit(const AuthState.unauthenticated());
     } catch (e) {
@@ -85,7 +85,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   /// Завершает все активные сессии пользователя на всех устройствах.
   Future<void> _onLogoutAll({required Emitter<AuthState> emit}) async {
     try {
-      emit(const AuthState.loading());
+      emit(const AuthState.authLoading());
       await _authRepository.logoutAll();
       emit(const AuthState.unauthenticated());
     } catch (e) {

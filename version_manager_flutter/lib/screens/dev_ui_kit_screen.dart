@@ -432,7 +432,7 @@ class DevUiKitScreen extends StatelessWidget {
   void _showSnackBar(BuildContext context) {
     NotificationService.showInfo(
       context,
-      'This is a SnackBar message',
+      'This is a notification message',
     );
   }
 

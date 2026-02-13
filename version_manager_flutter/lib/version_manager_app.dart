@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:version_manager_flutter/common/constants/storage_keys.dart';
 import 'package:version_manager_flutter/features/auth/presentation/auth_provider.dart';
 import 'package:version_manager_flutter/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:version_manager_flutter/features/email_check/presentation/view/email_screen.dart';
 import 'package:version_manager_flutter/features/email_check/email_check_provider.dart';
 import 'package:version_manager_flutter/screens/home_screen.dart';
+import 'package:version_manager_flutter/shared/services/storage_service.dart';
 import 'package:version_manager_flutter/theme/snow_ui/snow_theme.dart';
 
 class VersionManagerApp extends StatefulWidget {
@@ -17,12 +19,25 @@ class VersionManagerApp extends StatefulWidget {
 class _VersionManagerAppState extends State<VersionManagerApp> {
   ThemeMode _themeMode = ThemeMode.dark;
 
+  @override
+  void initState() {
+    super.initState();
+    _themeMode =
+        context.read<StorageService>().getString(themeModeKey) == 'light'
+        ? ThemeMode.light
+        : ThemeMode.dark;
+  }
+
   void _toggleTheme() {
     setState(() {
       _themeMode = _themeMode == ThemeMode.light
           ? ThemeMode.dark
           : ThemeMode.light;
     });
+    context.read<StorageService>().setString(
+      themeModeKey,
+      _themeMode == ThemeMode.light ? 'light' : 'dark',
+    );
   }
 
   @override
@@ -60,10 +75,8 @@ class AppAuth extends StatelessWidget {
             onThemeToggle: onThemeToggle,
           ),
           Unauthenticated() => EmailCheckProvider(child: EmailScreen()),
-          _ => Scaffold(
-            body: Center(
-              child: Text('Не обработанное состояние AuthState: $state'),
-            ),
+          AuthLoading() => const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
           ),
         },
       ),

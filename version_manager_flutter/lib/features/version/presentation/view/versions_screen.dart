@@ -11,7 +11,7 @@ import 'package:version_manager_flutter/features/version_action/presentation/vie
 import 'package:version_manager_flutter/features/version_detail/presentation/bloc/version_detail_bloc.dart';
 import 'package:version_manager_flutter/features/version/presentation/view/ui/version_card.dart';
 import 'package:version_manager_flutter/features/version_action/presentation/bloc/version_action_bloc.dart';
-import 'package:version_manager_flutter/shared/services/notification_service.dart';
+import 'package:version_manager_flutter/shared/services/app_notification.dart';
 
 /// Экран списка версий приложения.
 ///

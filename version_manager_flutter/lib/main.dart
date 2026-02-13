@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:version_manager_flutter/shared/services/client_service.dart';
@@ -39,18 +38,6 @@ void main() async {
 String _getServerUrl() {
   const urlFromEnv = String.fromEnvironment('SERVER_URL');
 
-  // if (kIsWeb) {
-  //   if (kReleaseMode) {
-  //     // БЕЗ trailing slash!
-  //     return 'https://manager.progger.pro';  // <-- БЕЗ / на конце
-  //   } else {
-  //     return 'http://localhost:9080';
-  //   }
-  // } else {
-  //   if (urlFromEnv.isNotEmpty) {
-  //     return urlFromEnv;
-  //   }
-  // }
-  return 'http://localhost:8080';
+  return urlFromEnv;
 }
 

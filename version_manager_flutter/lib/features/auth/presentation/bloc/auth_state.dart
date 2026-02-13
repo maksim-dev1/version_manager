@@ -14,7 +14,7 @@ sealed class AuthState with _$AuthState {
   /// - Проверке авторизации при запуске приложения
   /// - Обновлении токенов (refresh)
   /// - Выходе из системы (logout)
-  const factory AuthState.loading() = Loading;
+  const factory AuthState.authLoading() = AuthLoading;
 
   /// Состояние: пользователь авторизован
   ///

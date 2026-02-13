@@ -5,7 +5,7 @@ import 'package:version_manager_flutter/features/application/domain/repository/a
 import 'package:version_manager_flutter/features/application/presentation/bloc/application_bloc.dart';
 import 'package:version_manager_flutter/features/application/presentation/view/ui/regenerate_api_key_dialog.dart';
 import 'package:version_manager_flutter/features/create_application/presentation/bloc/create_application_bloc.dart';
-import 'package:version_manager_flutter/shared/services/notification_service.dart';
+import 'package:version_manager_flutter/shared/services/app_notification.dart';
 
 /// Диалог создания нового приложения.
 class CreateApplicationDialog extends StatefulWidget {

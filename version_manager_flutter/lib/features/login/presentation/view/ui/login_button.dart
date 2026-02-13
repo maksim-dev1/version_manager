@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:version_manager_flutter/features/login/presentation/bloc/login_bloc.dart';
-import 'package:version_manager_flutter/shared/services/notification_service.dart';
+import 'package:version_manager_flutter/shared/services/app_notification.dart';
 import 'package:version_manager_flutter/version_manager_app.dart';
 
 class LoginButton extends StatelessWidget {
