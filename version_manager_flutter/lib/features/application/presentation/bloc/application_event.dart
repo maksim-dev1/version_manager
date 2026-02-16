@@ -9,6 +9,7 @@ sealed class ApplicationEvent with _$ApplicationEvent {
   /// Обновить приложение.
   const factory ApplicationEvent.updateApplication({
     required UuidValue applicationId,
+    String? namespace,
     String? name,
     String? description,
     String? iconUrl,

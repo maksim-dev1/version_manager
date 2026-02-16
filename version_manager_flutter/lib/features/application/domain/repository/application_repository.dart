@@ -33,6 +33,7 @@ abstract interface class ApplicationRepository {
   /// Обновляет данные приложения.
   Future<Application> updateApplication({
     required UuidValue applicationId,
+    String? namespace,
     String? name,
     String? description,
     String? iconUrl,

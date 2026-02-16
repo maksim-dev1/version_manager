@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:version_manager_flutter/shared/services/notification_service.dart';
+import 'package:version_manager_flutter/shared/services/app_notification.dart';
 import 'package:version_manager_flutter/theme/snow_ui/snow_spacing.dart';
 
 /// Экран UI Kit — доступен только в debug-режиме.

@@ -3,7 +3,7 @@
         {
             "name": "version_manager_flutter DEV DEBUGE",
             "flutterMode": "debug",
-            "deviceId": "chrome",
+            // "deviceId": "chrome",
             "type": "dart",
             "request": "launch",
             "program": "version_manager_flutter/lib/main.dart",

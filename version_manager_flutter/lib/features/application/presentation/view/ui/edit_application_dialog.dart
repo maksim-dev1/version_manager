@@ -5,8 +5,7 @@ import 'package:version_manager_flutter/features/application/presentation/bloc/a
 
 /// Диалог редактирования приложения.
 ///
-/// Позволяет изменить: название, описание, иконку, платформы, ссылки на магазины.
-/// Namespace изменить нельзя.
+/// Позволяет изменить: namespace, название, описание, иконку, платформы, ссылки на магазины.
 class EditApplicationDialog extends StatefulWidget {
   final Application application;
 
@@ -18,6 +17,7 @@ class EditApplicationDialog extends StatefulWidget {
 
 class _EditApplicationDialogState extends State<EditApplicationDialog> {
   final _formKey = GlobalKey<FormState>();
+  late final TextEditingController _namespaceController;
   late final TextEditingController _nameController;
   late final TextEditingController _descriptionController;
   late final TextEditingController _iconUrlController;
@@ -25,11 +25,14 @@ class _EditApplicationDialogState extends State<EditApplicationDialog> {
   late final Map<PlatformType, List<_StoreLinkFormEntry>> _platformStoreLinks;
 
   bool _showPlatformError = false;
-  bool _showStoreLinkErrors = false;
+  final Set<PlatformType> _platformsWithLinkErrors = {};
 
   @override
   void initState() {
     super.initState();
+    _namespaceController = TextEditingController(
+      text: widget.application.namespace,
+    );
     _nameController = TextEditingController(text: widget.application.name);
     _descriptionController = TextEditingController(
       text: widget.application.description,
@@ -39,7 +42,6 @@ class _EditApplicationDialogState extends State<EditApplicationDialog> {
     );
     _selectedPlatforms = Set.from(widget.application.platforms);
 
-    // Группируем storeLinks по платформам
     _platformStoreLinks = {};
     for (final platform in _selectedPlatforms) {
       _platformStoreLinks[platform] = [];
@@ -49,7 +51,6 @@ class _EditApplicationDialogState extends State<EditApplicationDialog> {
           .putIfAbsent(link.platform, () => [])
           .add(_StoreLinkFormEntry(storeName: link.storeName, url: link.url));
     }
-    // Гарантируем хотя бы одну пустую запись для каждой платформы
     for (final platform in _selectedPlatforms) {
       final links = _platformStoreLinks[platform];
       if (links == null || links.isEmpty) {
@@ -60,6 +61,7 @@ class _EditApplicationDialogState extends State<EditApplicationDialog> {
 
   @override
   void dispose() {
+    _namespaceController.dispose();
     _nameController.dispose();
     _descriptionController.dispose();
     _iconUrlController.dispose();
@@ -71,197 +73,118 @@ class _EditApplicationDialogState extends State<EditApplicationDialog> {
     super.dispose();
   }
 
+  String? _validateUrl(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return null;
+    }
+
+    final url = value.trim();
+
+    final uri = Uri.tryParse(url);
+    if (uri == null) {
+      return 'Некорректный формат URL';
+    }
+
+    if (!uri.hasScheme) {
+      return 'URL должен начинаться с http:// или https://';
+    }
+
+    if (uri.scheme != 'http' && uri.scheme != 'https') {
+      return 'Используйте http:// или https://';
+    }
+
+    if (!uri.hasAuthority || uri.host.isEmpty) {
+      return 'URL должен содержать домен';
+    }
+
+    if (!uri.host.contains('.')) {
+      return 'Укажите полный домен (например, example.com)';
+    }
+
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-
-    return AlertDialog(
-      title: const Text('Редактировать приложение'),
-      content: ConstrainedBox(
-        constraints: const BoxConstraints(minWidth: 480, maxWidth: 480),
-        child: SingleChildScrollView(
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Namespace (нередактируемый)
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: colorScheme.surfaceContainerHighest.withValues(
-                      alpha: 0.5,
-                    ),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.lock_outlined,
-                        size: 16,
-                        color: colorScheme.onSurfaceVariant,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        widget.application.namespace,
-                        style: textTheme.bodyMedium?.copyWith(
-                          fontFamily: 'monospace',
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                // Название
-                TextFormField(
-                  controller: _nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Название',
-                    hintText: 'Моё приложение',
-                  ),
-                  autofocus: true,
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Введите название';
-                    }
-                    if (value.trim().length < 3) {
-                      return 'Минимум 3 символа';
-                    }
-                    if (value.trim().length > 50) {
-                      return 'Максимум 50 символов';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-
-                // Описание
-                TextFormField(
-                  controller: _descriptionController,
-                  decoration: const InputDecoration(
-                    labelText: 'Описание',
-                    hintText: 'Краткое описание приложения',
-                    helperText: 'Необязательно',
-                  ),
-                  maxLines: 3,
-                  validator: (value) {
-                    if (value != null && value.trim().isNotEmpty) {
-                      if (value.trim().length < 10) {
-                        return 'Минимум 10 символов';
-                      }
-                      if (value.trim().length > 500) {
-                        return 'Максимум 500 символов';
-                      }
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-
-                // URL иконки
-                TextFormField(
-                  controller: _iconUrlController,
-                  decoration: const InputDecoration(
-                    labelText: 'URL иконки',
-                    hintText: 'https://example.com/icon.png',
-                    helperText: 'Необязательно',
-                  ),
-                ),
-                const SizedBox(height: 20),
-
-                // ── Платформы и ссылки на магазины ──
-                _PlatformAndStoreLinksSection(
-                  selectedPlatforms: _selectedPlatforms,
-                  platformStoreLinks: _platformStoreLinks,
-                  showPlatformError: _showPlatformError,
-                  showStoreLinkErrors: _showStoreLinkErrors,
-                  onPlatformToggled: (platform, selected) {
-                    setState(() {
-                      if (selected) {
-                        _selectedPlatforms.add(platform);
-                        _platformStoreLinks[platform] = [
-                          _StoreLinkFormEntry(),
-                        ];
-                      } else {
-                        _selectedPlatforms.remove(platform);
-                        final entries = _platformStoreLinks.remove(platform);
-                        if (entries != null) {
-                          for (final e in entries) {
-                            e.dispose();
-                          }
-                        }
-                      }
-                      _showPlatformError = false;
-                      _showStoreLinkErrors = false;
-                    });
-                  },
-                  onAddLink: (platform) {
-                    setState(() {
-                      _platformStoreLinks
-                          .putIfAbsent(platform, () => [])
-                          .add(_StoreLinkFormEntry());
-                    });
-                  },
-                  onRemoveLink: (platform, i) {
-                    final links = _platformStoreLinks[platform] ?? [];
-                    setState(() {
-                      links[i].dispose();
-                      links.removeAt(i);
-                    });
-                  },
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Отмена'),
-        ),
-        FilledButton(
-          onPressed: _submit,
-          child: const Text('Сохранить'),
-        ),
-      ],
+    return _EditApplicationDialogContent(
+      application: widget.application,
+      formKey: _formKey,
+      namespaceController: _namespaceController,
+      nameController: _nameController,
+      descriptionController: _descriptionController,
+      iconUrlController: _iconUrlController,
+      selectedPlatforms: _selectedPlatforms,
+      platformStoreLinks: _platformStoreLinks,
+      showPlatformError: _showPlatformError,
+      platformsWithLinkErrors: _platformsWithLinkErrors,
+      validateUrl: _validateUrl,
+      onPlatformToggled: (platform, selected) {
+        setState(() {
+          if (selected) {
+            _selectedPlatforms.add(platform);
+            _platformStoreLinks[platform] = [
+              _StoreLinkFormEntry(),
+            ];
+          } else {
+            _selectedPlatforms.remove(platform);
+            _platformsWithLinkErrors.remove(platform);
+            final entries = _platformStoreLinks.remove(platform);
+            if (entries != null) {
+              for (final e in entries) {
+                e.dispose();
+              }
+            }
+          }
+          _showPlatformError = false;
+        });
+      },
+      onAddLink: (platform) {
+        setState(() {
+          _platformStoreLinks
+              .putIfAbsent(platform, () => [])
+              .add(_StoreLinkFormEntry());
+        });
+      },
+      onRemoveLink: (platform, i) {
+        final links = _platformStoreLinks[platform] ?? [];
+        setState(() {
+          links[i].dispose();
+          links.removeAt(i);
+        });
+      },
+      onSubmit: _submit,
     );
   }
 
   void _submit() {
     final formValid = _formKey.currentState?.validate() ?? false;
 
-    // Проверяем платформы
     final platformsValid = _selectedPlatforms.isNotEmpty;
     if (!platformsValid) {
       setState(() => _showPlatformError = true);
     }
 
-    // Проверяем что у каждой платформы есть хотя бы одна заполненная ссылка
-    bool storeLinksValid = true;
+    _platformsWithLinkErrors.clear();
     for (final platform in _selectedPlatforms) {
       final links = _platformStoreLinks[platform] ?? [];
-      final hasValid = links.any(
+      bool hasValid = links.any(
         (e) =>
             e.storeNameController.text.trim().isNotEmpty &&
             e.urlController.text.trim().isNotEmpty,
       );
+
       if (!hasValid) {
-        storeLinksValid = false;
-        break;
+        _platformsWithLinkErrors.add(platform);
       }
     }
-    if (!storeLinksValid) {
-      setState(() => _showStoreLinkErrors = true);
+
+    final storeLinksValid = _platformsWithLinkErrors.isEmpty;
+
+    if (!formValid || !platformsValid || !storeLinksValid) {
+      setState(() {});
+      return;
     }
 
-    if (!formValid || !platformsValid || !storeLinksValid) return;
-
-    // Собираем ссылки
     final storeLinks = <StoreLinkEntry>[];
     for (final entry in _platformStoreLinks.entries) {
       for (final link in entry.value) {
@@ -283,6 +206,7 @@ class _EditApplicationDialogState extends State<EditApplicationDialog> {
     bloc.add(
       ApplicationEvent.updateApplication(
         applicationId: widget.application.id!,
+        namespace: _namespaceController.text.trim(),
         name: _nameController.text.trim(),
         description: _descriptionController.text.trim(),
         iconUrl: _iconUrlController.text.trim().isEmpty
@@ -296,26 +220,186 @@ class _EditApplicationDialogState extends State<EditApplicationDialog> {
 }
 
 // ──────────────────────────────────────────────────────────────────
-// Единая секция: платформы + ссылки на магазины
+// Контент диалога
+// ──────────────────────────────────────────────────────────────────
+
+class _EditApplicationDialogContent extends StatelessWidget {
+  final Application application;
+  final GlobalKey<FormState> formKey;
+  final TextEditingController namespaceController;
+  final TextEditingController nameController;
+  final TextEditingController descriptionController;
+  final TextEditingController iconUrlController;
+  final Set<PlatformType> selectedPlatforms;
+  final Map<PlatformType, List<_StoreLinkFormEntry>> platformStoreLinks;
+  final bool showPlatformError;
+  final Set<PlatformType> platformsWithLinkErrors;
+  final String? Function(String?) validateUrl;
+  final void Function(PlatformType platform, bool selected) onPlatformToggled;
+  final void Function(PlatformType platform) onAddLink;
+  final void Function(PlatformType platform, int index) onRemoveLink;
+  final VoidCallback onSubmit;
+
+  const _EditApplicationDialogContent({
+    required this.application,
+    required this.formKey,
+    required this.namespaceController,
+    required this.nameController,
+    required this.descriptionController,
+    required this.iconUrlController,
+    required this.selectedPlatforms,
+    required this.platformStoreLinks,
+    required this.showPlatformError,
+    required this.platformsWithLinkErrors,
+    required this.validateUrl,
+    required this.onPlatformToggled,
+    required this.onAddLink,
+    required this.onRemoveLink,
+    required this.onSubmit,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Редактировать приложение'),
+      content: ConstrainedBox(
+        constraints: const BoxConstraints(minWidth: 540, maxWidth: 540),
+        child: SingleChildScrollView(
+          child: Form(
+            key: formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                TextFormField(
+                  controller: namespaceController,
+                  decoration: const InputDecoration(
+                    labelText: 'Namespace',
+                    hintText: 'com.example.myapp',
+                    helperText:
+                        'Обратная доменная нотация (минимум 3 сегмента)',
+                  ),
+                  autofocus: true,
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Введите namespace';
+                    }
+                    final ns = value.trim().toLowerCase();
+                    final regex = RegExp(
+                      r'^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*){2,}$',
+                    );
+                    if (!regex.hasMatch(ns)) {
+                      return 'Формат: com.example.app (мин. 3 сегмента)';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: nameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Название',
+                    hintText: 'Моё приложение',
+                  ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Введите название';
+                    }
+                    if (value.trim().length < 3) {
+                      return 'Минимум 3 символа';
+                    }
+                    if (value.trim().length > 50) {
+                      return 'Максимум 50 символов';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: descriptionController,
+                  decoration: const InputDecoration(
+                    labelText: 'Описание',
+                    hintText: 'Краткое описание приложения',
+                    helperText: 'Необязательно',
+                  ),
+                  maxLines: 3,
+                  validator: (value) {
+                    if (value != null && value.trim().isNotEmpty) {
+                      if (value.trim().length < 10) {
+                        return 'Минимум 10 символов';
+                      }
+                      if (value.trim().length > 500) {
+                        return 'Максимум 500 символов';
+                      }
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: iconUrlController,
+                  decoration: const InputDecoration(
+                    labelText: 'URL иконки',
+                    hintText: 'https://example.com/icon.png',
+                    helperText: 'Необязательно',
+                  ),
+                  validator: validateUrl,
+                ),
+                const SizedBox(height: 32),
+                Divider(color: Theme.of(context).colorScheme.outlineVariant),
+                const SizedBox(height: 24),
+                _PlatformAndStoreLinksSection(
+                  selectedPlatforms: selectedPlatforms,
+                  platformStoreLinks: platformStoreLinks,
+                  showPlatformError: showPlatformError,
+                  platformsWithLinkErrors: platformsWithLinkErrors,
+                  onPlatformToggled: onPlatformToggled,
+                  onAddLink: onAddLink,
+                  onRemoveLink: onRemoveLink,
+                  validateUrl: validateUrl,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Отмена'),
+        ),
+        FilledButton(
+          onPressed: onSubmit,
+          child: const Text('Сохранить'),
+        ),
+      ],
+    );
+  }
+}
+
+// ──────────────────────────────────────────────────────────────────
+// Секция платформ и ссылок
 // ──────────────────────────────────────────────────────────────────
 
 class _PlatformAndStoreLinksSection extends StatelessWidget {
   final Set<PlatformType> selectedPlatforms;
   final Map<PlatformType, List<_StoreLinkFormEntry>> platformStoreLinks;
   final bool showPlatformError;
-  final bool showStoreLinkErrors;
+  final Set<PlatformType> platformsWithLinkErrors;
   final void Function(PlatformType platform, bool selected) onPlatformToggled;
   final void Function(PlatformType platform) onAddLink;
   final void Function(PlatformType platform, int index) onRemoveLink;
+  final String? Function(String?) validateUrl;
 
   const _PlatformAndStoreLinksSection({
     required this.selectedPlatforms,
     required this.platformStoreLinks,
     required this.showPlatformError,
-    required this.showStoreLinkErrors,
+    required this.platformsWithLinkErrors,
     required this.onPlatformToggled,
     required this.onAddLink,
     required this.onRemoveLink,
+    required this.validateUrl,
   });
 
   @override
@@ -328,68 +412,180 @@ class _PlatformAndStoreLinksSection extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          'Платформы и ссылки на магазины',
-          style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+          'Платформы и магазины',
+          style: textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w600,
+            letterSpacing: -0.5,
+          ),
         ),
         const SizedBox(height: 4),
         Text(
-          'Для каждой платформы укажите хотя бы одну ссылку на магазин',
+          'Выберите платформы и добавьте ссылки на магазины приложений',
           style: textTheme.bodySmall?.copyWith(
             color: colorScheme.onSurfaceVariant,
+            height: 1.4,
           ),
         ),
         const SizedBox(height: 12),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: List.generate(
-            PlatformType.values.length,
-            (index) {
-              final p = PlatformType.values[index];
-              return FilterChip(
-                selected: selectedPlatforms.contains(p),
-                label: Text(_platformLabel(p)),
-                avatar: Icon(_platformIcon(p), size: 18),
-                onSelected: (s) => onPlatformToggled(p, s),
-              );
-            },
-          ),
+        _StoreLinksInfoBanner(),
+        _PlatformErrorMessage(showPlatformError: showPlatformError),
+        const SizedBox(height: 16),
+        ListView.separated(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: PlatformType.values.length,
+          separatorBuilder: (context, index) => const SizedBox.shrink(),
+          itemBuilder: (context, index) {
+            final platform = PlatformType.values[index];
+            final isSelected = selectedPlatforms.contains(platform);
+            final links = platformStoreLinks[platform] ?? [];
+            final hasLinkError = platformsWithLinkErrors.contains(platform);
+
+            return _PlatformItem(
+              platform: platform,
+              isSelected: isSelected,
+              links: links,
+              hasLinkError: hasLinkError,
+              onToggle: (value) => onPlatformToggled(platform, value ?? false),
+              onAddLink: () => onAddLink(platform),
+              onRemoveLink: (index) => onRemoveLink(platform, index),
+              validateUrl: validateUrl,
+            );
+          },
         ),
-        if (showPlatformError)
-          Padding(
-            padding: const EdgeInsets.only(top: 6),
-            child: Text(
-              'Выберите хотя бы одну платформу',
-              style: textTheme.bodySmall?.copyWith(color: colorScheme.error),
-            ),
-          ),
-        for (final platform in selectedPlatforms.toList())
-          _PlatformLinksCard(
-            platform: platform,
-            links: platformStoreLinks[platform] ?? [],
-            showError: showStoreLinkErrors,
-            onAddLink: () => onAddLink(platform),
-            onRemoveLink: (i) => onRemoveLink(platform, i),
-          ),
       ],
     );
   }
 }
 
-/// Карточка ссылок одной платформы.
-class _PlatformLinksCard extends StatelessWidget {
+// ──────────────────────────────────────────────────────────────────
+// Сообщение об ошибке платформ
+// ──────────────────────────────────────────────────────────────────
+
+class _PlatformErrorMessage extends StatelessWidget {
+  final bool showPlatformError;
+
+  const _PlatformErrorMessage({
+    required this.showPlatformError,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (!showPlatformError) return const SizedBox.shrink();
+
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Row(
+        children: [
+          Icon(Icons.error_outline, size: 16, color: colorScheme.error),
+          const SizedBox(width: 6),
+          Text(
+            'Выберите хотя бы одну платформу',
+            style: textTheme.bodySmall?.copyWith(
+              color: colorScheme.error,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ──────────────────────────────────────────────────────────────────
+// Виджет одной платформы
+// ──────────────────────────────────────────────────────────────────
+
+class _PlatformItem extends StatelessWidget {
   final PlatformType platform;
+  final bool isSelected;
   final List<_StoreLinkFormEntry> links;
-  final bool showError;
+  final bool hasLinkError;
+  final ValueChanged<bool?> onToggle;
   final VoidCallback onAddLink;
   final ValueChanged<int> onRemoveLink;
+  final String? Function(String?) validateUrl;
 
-  const _PlatformLinksCard({
+  const _PlatformItem({
     required this.platform,
+    required this.isSelected,
     required this.links,
-    required this.showError,
+    required this.hasLinkError,
+    required this.onToggle,
     required this.onAddLink,
     required this.onRemoveLink,
+    required this.validateUrl,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    final backgroundColor = hasLinkError
+        ? colorScheme.errorContainer.withValues(alpha: 0.1)
+        : isSelected
+        ? colorScheme.surfaceContainerHighest
+        : colorScheme.surface;
+
+    final borderColor = hasLinkError
+        ? colorScheme.error
+        : isSelected
+        ? colorScheme.primary.withValues(alpha: 0.3)
+        : colorScheme.outlineVariant.withValues(alpha: 0.4);
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: borderColor,
+            width: hasLinkError ? 2 : 1,
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _PlatformHeader(
+              platform: platform,
+              isSelected: isSelected,
+              linksCount: links.length,
+              onToggle: onToggle,
+            ),
+            _PlatformLinksContent(
+              isSelected: isSelected,
+              hasLinkError: hasLinkError,
+              links: links,
+              onRemoveLink: onRemoveLink,
+              validateUrl: validateUrl,
+              onAddLink: onAddLink,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ──────────────────────────────────────────────────────────────────
+// Заголовок платформы
+// ──────────────────────────────────────────────────────────────────
+
+class _PlatformHeader extends StatelessWidget {
+  final PlatformType platform;
+  final bool isSelected;
+  final int linksCount;
+  final ValueChanged<bool?> onToggle;
+
+  const _PlatformHeader({
+    required this.platform,
+    required this.isSelected,
+    required this.linksCount,
+    required this.onToggle,
   });
 
   @override
@@ -397,157 +593,275 @@ class _PlatformLinksCard extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
-    final hasValid = links.any(
-      (e) =>
-          e.storeNameController.text.trim().isNotEmpty &&
-          e.urlController.text.trim().isNotEmpty,
-    );
-    final hasError = showError && !hasValid;
-
-    return Padding(
-      padding: const EdgeInsets.only(top: 12),
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: hasError ? colorScheme.error : colorScheme.outlineVariant,
-          ),
-          borderRadius: BorderRadius.circular(12),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => onToggle(!isSelected),
+        borderRadius: const BorderRadius.vertical(
+          top: Radius.circular(16),
+          bottom: Radius.circular(16),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Заголовок платформы
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
-                color: colorScheme.surfaceContainerHighest.withValues(
-                  alpha: 0.3,
-                ),
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(11),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 14,
+          ),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 24,
+                height: 24,
+                child: Checkbox(
+                  value: isSelected,
+                  onChanged: onToggle,
+                  visualDensity: VisualDensity.compact,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(6),
+                  ),
                 ),
               ),
-              child: Row(
-                children: [
-                  Icon(
-                    _platformIcon(platform),
-                    size: 18,
-                    color: colorScheme.primary,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    _platformLabel(platform),
-                    style: textTheme.labelLarge?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const Spacer(),
-                  SizedBox(
-                    height: 28,
-                    child: TextButton.icon(
-                      onPressed: onAddLink,
-                      icon: const Icon(Icons.add, size: 14),
-                      label: const Text('Ещё'),
-                      style: TextButton.styleFrom(
-                        visualDensity: VisualDensity.compact,
-                        textStyle: const TextStyle(fontSize: 12),
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                      ),
-                    ),
-                  ),
+              const SizedBox(width: 14),
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? colorScheme.primaryContainer
+                      : colorScheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(
+                  _platformIcon(platform),
+                  size: 20,
+                  color: isSelected
+                      ? colorScheme.onPrimaryContainer
+                      : colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                _platformLabel(platform),
+                style: textTheme.bodyLarge?.copyWith(
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: -0.2,
+                ),
+              ),
+              _LinkCountBadge(
+                isSelected: isSelected,
+                linksCount: linksCount,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ──────────────────────────────────────────────────────────────────
+// Badge с количеством ссылок
+// ──────────────────────────────────────────────────────────────────
+
+class _LinkCountBadge extends StatelessWidget {
+  final bool isSelected;
+  final int linksCount;
+
+  const _LinkCountBadge({
+    required this.isSelected,
+    required this.linksCount,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (!isSelected || linksCount == 0) return const SizedBox.shrink();
+
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Padding(
+      padding: const EdgeInsets.only(left: 10),
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 8,
+          vertical: 3,
+        ),
+        decoration: BoxDecoration(
+          color: colorScheme.primary.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Text(
+          '$linksCount',
+          style: textTheme.labelSmall?.copyWith(
+            color: colorScheme.primary,
+            fontWeight: FontWeight.w600,
+            fontSize: 11,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ──────────────────────────────────────────────────────────────────
+// Контент с ссылками платформы
+// ──────────────────────────────────────────────────────────────────
+
+class _PlatformLinksContent extends StatelessWidget {
+  final bool isSelected;
+  final bool hasLinkError;
+  final List<_StoreLinkFormEntry> links;
+  final ValueChanged<int> onRemoveLink;
+  final String? Function(String?) validateUrl;
+  final VoidCallback onAddLink;
+
+  const _PlatformLinksContent({
+    required this.isSelected,
+    required this.hasLinkError,
+    required this.links,
+    required this.onRemoveLink,
+    required this.validateUrl,
+    required this.onAddLink,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (!isSelected) return const SizedBox.shrink();
+
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            height: 1,
+            margin: const EdgeInsets.only(bottom: 16),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  colorScheme.outlineVariant.withValues(alpha: 0),
+                  colorScheme.outlineVariant.withValues(alpha: 0.3),
+                  colorScheme.outlineVariant.withValues(alpha: 0),
                 ],
               ),
             ),
-            // Строки ссылок
-            Padding(
-              padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  for (int i = 0; i < links.length; i++)
-                    Padding(
-                      padding: EdgeInsets.only(top: i > 0 ? 8 : 0),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            flex: 2,
-                            child: TextField(
-                              controller: links[i].storeNameController,
-                              decoration: InputDecoration(
-                                hintText: 'App Store',
-                                isDense: true,
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 10,
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                              style: const TextStyle(fontSize: 13),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            flex: 3,
-                            child: TextField(
-                              controller: links[i].urlController,
-                              decoration: InputDecoration(
-                                hintText: 'https://...',
-                                isDense: true,
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 10,
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                              style: const TextStyle(fontSize: 13),
-                            ),
-                          ),
-                          if (links.length > 1)
-                            Padding(
-                              padding: const EdgeInsets.only(left: 4),
-                              child: SizedBox(
-                                width: 28,
-                                height: 28,
-                                child: IconButton(
-                                  onPressed: () => onRemoveLink(i),
-                                  icon: Icon(
-                                    Icons.remove_circle_outline,
-                                    size: 16,
-                                    color: colorScheme.error,
-                                  ),
-                                  padding: EdgeInsets.zero,
-                                  visualDensity: VisualDensity.compact,
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                  if (hasError)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 6),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.error_outline,
-                            size: 14,
-                            color: colorScheme.error,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            'Заполните название и URL',
-                            style: textTheme.bodySmall?.copyWith(
-                              color: colorScheme.error,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                ],
+          ),
+          _LinkErrorBanner(hasLinkError: hasLinkError),
+          ListView.separated(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: links.length,
+            separatorBuilder: (context, index) => const SizedBox(height: 12),
+            itemBuilder: (context, index) {
+              return _StoreLinkFields(
+                entry: links[index],
+                index: index,
+                canRemove: links.length > 1,
+                onRemove: () => onRemoveLink(index),
+                validateUrl: validateUrl,
+              );
+            },
+          ),
+          const SizedBox(height: 12),
+          _AddLinkButton(onAddLink: onAddLink),
+        ],
+      ),
+    );
+  }
+}
+
+// ──────────────────────────────────────────────────────────────────
+// Информационный баннер о видимости названий магазинов
+// ──────────────────────────────────────────────────────────────────
+
+class _StoreLinksInfoBanner extends StatelessWidget {
+  const _StoreLinksInfoBanner();
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: colorScheme.primaryContainer.withValues(alpha: 0.3),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: colorScheme.primary.withValues(alpha: 0.3),
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(
+            Icons.info_outline,
+            size: 18,
+            color: colorScheme.primary,
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              'Названия магазинов будут видны пользователям в приложении',
+              style: textTheme.bodySmall?.copyWith(
+                color: colorScheme.onSurface,
+                fontWeight: FontWeight.w500,
+                height: 1.4,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ──────────────────────────────────────────────────────────────────
+// Баннер с ошибкой ссылки
+// ──────────────────────────────────────────────────────────────────
+
+class _LinkErrorBanner extends StatelessWidget {
+  final bool hasLinkError;
+
+  const _LinkErrorBanner({
+    required this.hasLinkError,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (!hasLinkError) return const SizedBox.shrink();
+
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: colorScheme.errorContainer.withValues(alpha: 0.3),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: colorScheme.error.withValues(alpha: 0.3),
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 18,
+              color: colorScheme.error,
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                'Укажите хотя бы одну ссылку на магазин',
+                style: textTheme.bodySmall?.copyWith(
+                  color: colorScheme.error,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
           ],
@@ -556,6 +870,223 @@ class _PlatformLinksCard extends StatelessWidget {
     );
   }
 }
+
+// ──────────────────────────────────────────────────────────────────
+// Кнопка добавления ссылки
+// ──────────────────────────────────────────────────────────────────
+
+class _AddLinkButton extends StatelessWidget {
+  final VoidCallback onAddLink;
+
+  const _AddLinkButton({
+    required this.onAddLink,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return SizedBox(
+      width: double.infinity,
+      child: TextButton.icon(
+        onPressed: onAddLink,
+        icon: Icon(
+          Icons.add_circle_outline,
+          size: 18,
+          color: colorScheme.primary,
+        ),
+        label: Text(
+          'Добавить ссылку',
+          style: TextStyle(
+            color: colorScheme.primary,
+            fontWeight: FontWeight.w500,
+            fontSize: 13,
+          ),
+        ),
+        style: TextButton.styleFrom(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 12,
+          ),
+          backgroundColor: colorScheme.primary.withValues(alpha: 0.05),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ──────────────────────────────────────────────────────────────────
+// Поля для одной ссылки на магазин
+// ──────────────────────────────────────────────────────────────────
+
+class _StoreLinkFields extends StatelessWidget {
+  final _StoreLinkFormEntry entry;
+  final int index;
+  final bool canRemove;
+  final VoidCallback onRemove;
+  final String? Function(String?) validateUrl;
+
+  const _StoreLinkFields({
+    required this.entry,
+    required this.index,
+    required this.canRemove,
+    required this.onRemove,
+    required this.validateUrl,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                controller: entry.storeNameController,
+                decoration: InputDecoration(
+                  labelText: 'Название магазина',
+                  hintText: 'App Store',
+                  filled: true,
+                  fillColor: colorScheme.surface,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 14,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+                    ),
+                  ),
+                ),
+                style: const TextStyle(fontSize: 14),
+                validator: (value) {
+                  final storeName = value?.trim() ?? '';
+                  final url = entry.urlController.text.trim();
+
+                  if (storeName.isEmpty && url.isEmpty) return null;
+
+                  if (url.isNotEmpty && storeName.isEmpty) {
+                    return 'Введите название';
+                  }
+
+                  if (storeName.isNotEmpty && storeName.length < 2) {
+                    return 'Минимум 2 символа';
+                  }
+
+                  return null;
+                },
+              ),
+              const SizedBox(height: 10),
+              TextFormField(
+                controller: entry.urlController,
+                decoration: InputDecoration(
+                  labelText: 'URL',
+                  hintText: 'https://apps.apple.com/...',
+                  filled: true,
+                  fillColor: colorScheme.surface,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 14,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+                    ),
+                  ),
+                ),
+                style: const TextStyle(fontSize: 14),
+                keyboardType: TextInputType.url,
+                validator: (value) {
+                  final storeName = entry.storeNameController.text.trim();
+                  final url = value?.trim() ?? '';
+
+                  if (storeName.isEmpty && url.isEmpty) return null;
+
+                  if (storeName.isNotEmpty && url.isEmpty) {
+                    return 'Введите URL';
+                  }
+
+                  return validateUrl(value);
+                },
+              ),
+            ],
+          ),
+        ),
+        _RemoveButton(
+          canRemove: canRemove,
+          onRemove: onRemove,
+        ),
+      ],
+    );
+  }
+}
+
+// ──────────────────────────────────────────────────────────────────
+// Кнопка удаления ссылки
+// ──────────────────────────────────────────────────────────────────
+
+class _RemoveButton extends StatelessWidget {
+  final bool canRemove;
+  final VoidCallback onRemove;
+
+  const _RemoveButton({
+    required this.canRemove,
+    required this.onRemove,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (!canRemove) return const SizedBox.shrink();
+
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Padding(
+      padding: const EdgeInsets.only(left: 10, top: 8),
+      child: IconButton(
+        onPressed: onRemove,
+        icon: Icon(
+          Icons.close,
+          color: colorScheme.error.withValues(alpha: 0.7),
+          size: 20,
+        ),
+        tooltip: 'Удалить',
+        style: IconButton.styleFrom(
+          backgroundColor: colorScheme.error.withValues(alpha: 0.08),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          padding: const EdgeInsets.all(8),
+          minimumSize: const Size(36, 36),
+        ),
+      ),
+    );
+  }
+}
+
+// ──────────────────────────────────────────────────────────────────
+// Внутреннее состояние одной ссылки на магазин
+// ──────────────────────────────────────────────────────────────────
 
 class _StoreLinkFormEntry {
   final storeNameController = TextEditingController();
@@ -573,7 +1104,7 @@ class _StoreLinkFormEntry {
 }
 
 // ──────────────────────────────────────────────────────────────────
-// Хелперы для платформ
+// Хелперы
 // ──────────────────────────────────────────────────────────────────
 
 String _platformLabel(PlatformType platform) {

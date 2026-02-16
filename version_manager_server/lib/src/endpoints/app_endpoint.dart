@@ -145,8 +145,21 @@ class AppEndpoint extends LoggedInEndpoint {
       level: LogLevel.info,
     );
 
+    // Преобразование namespace с нижним подчеркиванием в camelCase для всех сегментов
+    String processedNamespace = request.namespace.trim();
+    if (processedNamespace.contains('_')) {
+      final parts = processedNamespace.split('.');
+      final processedParts = parts.map((part) {
+        return part.replaceAllMapped(
+          RegExp(r'_([a-zA-Z])'),
+          (m) => m.group(1)!.toUpperCase(),
+        );
+      }).toList();
+      processedNamespace = processedParts.join('.');
+    }
+
     // Валидация namespace
-    _validateNamespace(request.namespace);
+    _validateNamespace(processedNamespace);
 
     // Валидация имени
     _validateName(request.name);
@@ -167,7 +180,7 @@ class AppEndpoint extends LoggedInEndpoint {
     // Проверка уникальности namespace
     final existing = await Application.db.findFirstRow(
       session,
-      where: (t) => t.namespace.equals(request.namespace.trim()),
+      where: (t) => t.namespace.equals(processedNamespace),
     );
 
     if (existing != null) {
@@ -210,7 +223,7 @@ class AppEndpoint extends LoggedInEndpoint {
 
     // Создание приложения
     final application = Application(
-      namespace: request.namespace.trim(),
+      namespace: processedNamespace,
       name: request.name.trim(),
       description: request.description?.trim() ?? '',
       iconUrl: request.iconUrl,
@@ -224,17 +237,26 @@ class AppEndpoint extends LoggedInEndpoint {
       apiKeyCreatedAt: DateTime.now(),
     );
 
-    final createdApp = await Application.db.insertRow(session, application);
-
-    // Создание ссылок на магазины
-    if (request.storeLinks != null && request.storeLinks!.isNotEmpty) {
-      await _createStoreLinks(
+    final createdApp = await session.db.transaction((transaction) async {
+      final created = await Application.db.insertRow(
         session,
-        applicationId: createdApp.id!,
-        storeLinks: request.storeLinks!,
-        allowedPlatforms: request.platforms,
+        application,
+        transaction: transaction,
       );
-    }
+
+      // Создание ссылок на магазины
+      if (request.storeLinks != null && request.storeLinks!.isNotEmpty) {
+        await _createStoreLinks(
+          session,
+          applicationId: created.id!,
+          storeLinks: request.storeLinks!,
+          allowedPlatforms: request.platforms,
+          transaction: transaction,
+        );
+      }
+
+      return created;
+    });
 
     // Загружаем приложение с связями
     final result = await Application.db.findById(
@@ -284,6 +306,12 @@ class AppEndpoint extends LoggedInEndpoint {
     }
 
     await _checkAppWriteAccess(session, app: app, userId: userId);
+
+    // Валидация и обновление namespace
+    if (request.namespace != null) {
+      _validateNamespace(request.namespace!);
+      app.namespace = request.namespace!.trim();
+    }
 
     // Валидация и обновление имени
     if (request.name != null) {
@@ -825,6 +853,7 @@ class AppEndpoint extends LoggedInEndpoint {
     required UuidValue applicationId,
     required List<StoreLinkEntry> storeLinks,
     required List<PlatformType> allowedPlatforms,
+    Transaction? transaction,
   }) async {
     for (final entry in storeLinks) {
       // Проверяем, что платформа ссылки входит в платформы приложения
@@ -855,7 +884,11 @@ class AppEndpoint extends LoggedInEndpoint {
         url: entry.url.trim(),
       );
 
-      await StoreLink.db.insertRow(session, storeLink);
+      await StoreLink.db.insertRow(
+        session,
+        storeLink,
+        transaction: transaction,
+      );
     }
   }
 

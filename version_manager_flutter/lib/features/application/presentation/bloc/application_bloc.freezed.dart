@@ -128,11 +128,11 @@ return transferApplicationOwnership(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  loadApplications,TResult Function( UuidValue applicationId,  String? name,  String? description,  String? iconUrl,  List<PlatformType>? platforms,  List<StoreLinkEntry>? storeLinks)?  updateApplication,TResult Function( UuidValue applicationId,  String confirmationName)?  deleteApplication,TResult Function( UuidValue applicationId,  bool isActive)?  toggleApplicationStatus,TResult Function( UuidValue applicationId,  OwnerType newOwnerType,  UuidValue? newTeamId)?  transferApplicationOwnership,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  loadApplications,TResult Function( UuidValue applicationId,  String? namespace,  String? name,  String? description,  String? iconUrl,  List<PlatformType>? platforms,  List<StoreLinkEntry>? storeLinks)?  updateApplication,TResult Function( UuidValue applicationId,  String confirmationName)?  deleteApplication,TResult Function( UuidValue applicationId,  bool isActive)?  toggleApplicationStatus,TResult Function( UuidValue applicationId,  OwnerType newOwnerType,  UuidValue? newTeamId)?  transferApplicationOwnership,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _LoadApplications() when loadApplications != null:
 return loadApplications();case _UpdateApplication() when updateApplication != null:
-return updateApplication(_that.applicationId,_that.name,_that.description,_that.iconUrl,_that.platforms,_that.storeLinks);case _DeleteApplication() when deleteApplication != null:
+return updateApplication(_that.applicationId,_that.namespace,_that.name,_that.description,_that.iconUrl,_that.platforms,_that.storeLinks);case _DeleteApplication() when deleteApplication != null:
 return deleteApplication(_that.applicationId,_that.confirmationName);case _ToggleApplicationStatus() when toggleApplicationStatus != null:
 return toggleApplicationStatus(_that.applicationId,_that.isActive);case _TransferApplicationOwnership() when transferApplicationOwnership != null:
 return transferApplicationOwnership(_that.applicationId,_that.newOwnerType,_that.newTeamId);case _:
@@ -153,11 +153,11 @@ return transferApplicationOwnership(_that.applicationId,_that.newOwnerType,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  loadApplications,required TResult Function( UuidValue applicationId,  String? name,  String? description,  String? iconUrl,  List<PlatformType>? platforms,  List<StoreLinkEntry>? storeLinks)  updateApplication,required TResult Function( UuidValue applicationId,  String confirmationName)  deleteApplication,required TResult Function( UuidValue applicationId,  bool isActive)  toggleApplicationStatus,required TResult Function( UuidValue applicationId,  OwnerType newOwnerType,  UuidValue? newTeamId)  transferApplicationOwnership,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  loadApplications,required TResult Function( UuidValue applicationId,  String? namespace,  String? name,  String? description,  String? iconUrl,  List<PlatformType>? platforms,  List<StoreLinkEntry>? storeLinks)  updateApplication,required TResult Function( UuidValue applicationId,  String confirmationName)  deleteApplication,required TResult Function( UuidValue applicationId,  bool isActive)  toggleApplicationStatus,required TResult Function( UuidValue applicationId,  OwnerType newOwnerType,  UuidValue? newTeamId)  transferApplicationOwnership,}) {final _that = this;
 switch (_that) {
 case _LoadApplications():
 return loadApplications();case _UpdateApplication():
-return updateApplication(_that.applicationId,_that.name,_that.description,_that.iconUrl,_that.platforms,_that.storeLinks);case _DeleteApplication():
+return updateApplication(_that.applicationId,_that.namespace,_that.name,_that.description,_that.iconUrl,_that.platforms,_that.storeLinks);case _DeleteApplication():
 return deleteApplication(_that.applicationId,_that.confirmationName);case _ToggleApplicationStatus():
 return toggleApplicationStatus(_that.applicationId,_that.isActive);case _TransferApplicationOwnership():
 return transferApplicationOwnership(_that.applicationId,_that.newOwnerType,_that.newTeamId);}
@@ -174,11 +174,11 @@ return transferApplicationOwnership(_that.applicationId,_that.newOwnerType,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  loadApplications,TResult? Function( UuidValue applicationId,  String? name,  String? description,  String? iconUrl,  List<PlatformType>? platforms,  List<StoreLinkEntry>? storeLinks)?  updateApplication,TResult? Function( UuidValue applicationId,  String confirmationName)?  deleteApplication,TResult? Function( UuidValue applicationId,  bool isActive)?  toggleApplicationStatus,TResult? Function( UuidValue applicationId,  OwnerType newOwnerType,  UuidValue? newTeamId)?  transferApplicationOwnership,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  loadApplications,TResult? Function( UuidValue applicationId,  String? namespace,  String? name,  String? description,  String? iconUrl,  List<PlatformType>? platforms,  List<StoreLinkEntry>? storeLinks)?  updateApplication,TResult? Function( UuidValue applicationId,  String confirmationName)?  deleteApplication,TResult? Function( UuidValue applicationId,  bool isActive)?  toggleApplicationStatus,TResult? Function( UuidValue applicationId,  OwnerType newOwnerType,  UuidValue? newTeamId)?  transferApplicationOwnership,}) {final _that = this;
 switch (_that) {
 case _LoadApplications() when loadApplications != null:
 return loadApplications();case _UpdateApplication() when updateApplication != null:
-return updateApplication(_that.applicationId,_that.name,_that.description,_that.iconUrl,_that.platforms,_that.storeLinks);case _DeleteApplication() when deleteApplication != null:
+return updateApplication(_that.applicationId,_that.namespace,_that.name,_that.description,_that.iconUrl,_that.platforms,_that.storeLinks);case _DeleteApplication() when deleteApplication != null:
 return deleteApplication(_that.applicationId,_that.confirmationName);case _ToggleApplicationStatus() when toggleApplicationStatus != null:
 return toggleApplicationStatus(_that.applicationId,_that.isActive);case _TransferApplicationOwnership() when transferApplicationOwnership != null:
 return transferApplicationOwnership(_that.applicationId,_that.newOwnerType,_that.newTeamId);case _:
@@ -225,10 +225,11 @@ String toString() {
 
 
 class _UpdateApplication implements ApplicationEvent {
-  const _UpdateApplication({required this.applicationId, this.name, this.description, this.iconUrl, final  List<PlatformType>? platforms, final  List<StoreLinkEntry>? storeLinks}): _platforms = platforms,_storeLinks = storeLinks;
+  const _UpdateApplication({required this.applicationId, this.namespace, this.name, this.description, this.iconUrl, final  List<PlatformType>? platforms, final  List<StoreLinkEntry>? storeLinks}): _platforms = platforms,_storeLinks = storeLinks;
   
 
  final  UuidValue applicationId;
+ final  String? namespace;
  final  String? name;
  final  String? description;
  final  String? iconUrl;
@@ -261,16 +262,16 @@ _$UpdateApplicationCopyWith<_UpdateApplication> get copyWith => __$UpdateApplica
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UpdateApplication&&(identical(other.applicationId, applicationId) || other.applicationId == applicationId)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.iconUrl, iconUrl) || other.iconUrl == iconUrl)&&const DeepCollectionEquality().equals(other._platforms, _platforms)&&const DeepCollectionEquality().equals(other._storeLinks, _storeLinks));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UpdateApplication&&(identical(other.applicationId, applicationId) || other.applicationId == applicationId)&&(identical(other.namespace, namespace) || other.namespace == namespace)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.iconUrl, iconUrl) || other.iconUrl == iconUrl)&&const DeepCollectionEquality().equals(other._platforms, _platforms)&&const DeepCollectionEquality().equals(other._storeLinks, _storeLinks));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,applicationId,name,description,iconUrl,const DeepCollectionEquality().hash(_platforms),const DeepCollectionEquality().hash(_storeLinks));
+int get hashCode => Object.hash(runtimeType,applicationId,namespace,name,description,iconUrl,const DeepCollectionEquality().hash(_platforms),const DeepCollectionEquality().hash(_storeLinks));
 
 @override
 String toString() {
-  return 'ApplicationEvent.updateApplication(applicationId: $applicationId, name: $name, description: $description, iconUrl: $iconUrl, platforms: $platforms, storeLinks: $storeLinks)';
+  return 'ApplicationEvent.updateApplication(applicationId: $applicationId, namespace: $namespace, name: $name, description: $description, iconUrl: $iconUrl, platforms: $platforms, storeLinks: $storeLinks)';
 }
 
 
@@ -281,7 +282,7 @@ abstract mixin class _$UpdateApplicationCopyWith<$Res> implements $ApplicationEv
   factory _$UpdateApplicationCopyWith(_UpdateApplication value, $Res Function(_UpdateApplication) _then) = __$UpdateApplicationCopyWithImpl;
 @useResult
 $Res call({
- UuidValue applicationId, String? name, String? description, String? iconUrl, List<PlatformType>? platforms, List<StoreLinkEntry>? storeLinks
+ UuidValue applicationId, String? namespace, String? name, String? description, String? iconUrl, List<PlatformType>? platforms, List<StoreLinkEntry>? storeLinks
 });
 
 
@@ -298,10 +299,11 @@ class __$UpdateApplicationCopyWithImpl<$Res>
 
 /// Create a copy of ApplicationEvent
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? applicationId = null,Object? name = freezed,Object? description = freezed,Object? iconUrl = freezed,Object? platforms = freezed,Object? storeLinks = freezed,}) {
+@pragma('vm:prefer-inline') $Res call({Object? applicationId = null,Object? namespace = freezed,Object? name = freezed,Object? description = freezed,Object? iconUrl = freezed,Object? platforms = freezed,Object? storeLinks = freezed,}) {
   return _then(_UpdateApplication(
 applicationId: null == applicationId ? _self.applicationId : applicationId // ignore: cast_nullable_to_non_nullable
-as UuidValue,name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as UuidValue,namespace: freezed == namespace ? _self.namespace : namespace // ignore: cast_nullable_to_non_nullable
+as String?,name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String?,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String?,iconUrl: freezed == iconUrl ? _self.iconUrl : iconUrl // ignore: cast_nullable_to_non_nullable
 as String?,platforms: freezed == platforms ? _self._platforms : platforms // ignore: cast_nullable_to_non_nullable

@@ -20,6 +20,7 @@ abstract class UpdateApplicationRequest
     implements _i1.SerializableModel, _i1.ProtocolSerialization {
   UpdateApplicationRequest._({
     required this.applicationId,
+    this.namespace,
     this.name,
     this.description,
     this.iconUrl,
@@ -29,6 +30,7 @@ abstract class UpdateApplicationRequest
 
   factory UpdateApplicationRequest({
     required _i1.UuidValue applicationId,
+    String? namespace,
     String? name,
     String? description,
     String? iconUrl,
@@ -43,6 +45,7 @@ abstract class UpdateApplicationRequest
       applicationId: _i1.UuidValueJsonExtension.fromJson(
         jsonSerialization['applicationId'],
       ),
+      namespace: jsonSerialization['namespace'] as String?,
       name: jsonSerialization['name'] as String?,
       description: jsonSerialization['description'] as String?,
       iconUrl: jsonSerialization['iconUrl'] as String?,
@@ -61,6 +64,8 @@ abstract class UpdateApplicationRequest
 
   _i1.UuidValue applicationId;
 
+  String? namespace;
+
   String? name;
 
   String? description;
@@ -76,6 +81,7 @@ abstract class UpdateApplicationRequest
   @_i1.useResult
   UpdateApplicationRequest copyWith({
     _i1.UuidValue? applicationId,
+    String? namespace,
     String? name,
     String? description,
     String? iconUrl,
@@ -87,6 +93,7 @@ abstract class UpdateApplicationRequest
     return {
       '__className__': 'UpdateApplicationRequest',
       'applicationId': applicationId.toJson(),
+      if (namespace != null) 'namespace': namespace,
       if (name != null) 'name': name,
       if (description != null) 'description': description,
       if (iconUrl != null) 'iconUrl': iconUrl,
@@ -102,6 +109,7 @@ abstract class UpdateApplicationRequest
     return {
       '__className__': 'UpdateApplicationRequest',
       'applicationId': applicationId.toJson(),
+      if (namespace != null) 'namespace': namespace,
       if (name != null) 'name': name,
       if (description != null) 'description': description,
       if (iconUrl != null) 'iconUrl': iconUrl,
@@ -125,6 +133,7 @@ class _Undefined {}
 class _UpdateApplicationRequestImpl extends UpdateApplicationRequest {
   _UpdateApplicationRequestImpl({
     required _i1.UuidValue applicationId,
+    String? namespace,
     String? name,
     String? description,
     String? iconUrl,
@@ -132,6 +141,7 @@ class _UpdateApplicationRequestImpl extends UpdateApplicationRequest {
     List<_i3.StoreLinkEntry>? storeLinks,
   }) : super._(
          applicationId: applicationId,
+         namespace: namespace,
          name: name,
          description: description,
          iconUrl: iconUrl,
@@ -145,6 +155,7 @@ class _UpdateApplicationRequestImpl extends UpdateApplicationRequest {
   @override
   UpdateApplicationRequest copyWith({
     _i1.UuidValue? applicationId,
+    Object? namespace = _Undefined,
     Object? name = _Undefined,
     Object? description = _Undefined,
     Object? iconUrl = _Undefined,
@@ -153,6 +164,7 @@ class _UpdateApplicationRequestImpl extends UpdateApplicationRequest {
   }) {
     return UpdateApplicationRequest(
       applicationId: applicationId ?? this.applicationId,
+      namespace: namespace is String? ? namespace : this.namespace,
       name: name is String? ? name : this.name,
       description: description is String? ? description : this.description,
       iconUrl: iconUrl is String? ? iconUrl : this.iconUrl,

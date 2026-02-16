@@ -5,7 +5,7 @@ import 'package:version_manager_flutter/features/login/presentation/login_provid
 import 'package:version_manager_flutter/features/login/presentation/view/login_screen.dart';
 import 'package:version_manager_flutter/features/registration/presentation/registration_provider.dart';
 import 'package:version_manager_flutter/features/code_verification/presentation/view/code_screen.dart';
-import 'package:version_manager_flutter/shared/services/notification_service.dart';
+import 'package:version_manager_flutter/shared/services/app_notification.dart';
 
 class EmailNextButton extends StatelessWidget {
   final VoidCallback handleSubmit;

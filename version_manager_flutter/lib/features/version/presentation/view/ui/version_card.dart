@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:version_manager_client/version_manager_client.dart';
 import 'package:version_manager_flutter/features/version/presentation/bloc/version_bloc.dart';
-import 'package:version_manager_flutter/shared/services/notification_service.dart';
+import 'package:version_manager_flutter/shared/services/app_notification.dart';
 
 /// Карточка версии в списке.
 class VersionCard extends StatelessWidget {

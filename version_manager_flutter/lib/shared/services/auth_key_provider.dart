@@ -14,6 +14,7 @@ import 'package:version_manager_flutter/shared/services/storage_service.dart';
 /// - **Refresh Token**: 30 дней
 class AuthKeyProvider implements RefresherClientAuthKeyProvider {
   final StorageService _storageService;
+  Future<RefreshAuthKeyResult>? _pendingRefresh;
 
   /// Callback для выполнения refresh token.
   /// Устанавливается после инициализации клиента.
@@ -45,6 +46,22 @@ class AuthKeyProvider implements RefresherClientAuthKeyProvider {
   /// и повторяет исходный запрос при успехе.
   @override
   Future<RefreshAuthKeyResult> refreshAuthKey({bool force = false}) async {
+    final pendingRefresh = _pendingRefresh;
+    if (pendingRefresh != null) return pendingRefresh;
+
+    final refreshFuture = _performRefresh();
+    _pendingRefresh = refreshFuture;
+
+    try {
+      return await refreshFuture;
+    } finally {
+      if (identical(_pendingRefresh, refreshFuture)) {
+        _pendingRefresh = null;
+      }
+    }
+  }
+
+  Future<RefreshAuthKeyResult> _performRefresh() async {
     final currentRefreshToken = refreshToken;
     if (currentRefreshToken == null) {
       onAuthenticationFailed?.call();

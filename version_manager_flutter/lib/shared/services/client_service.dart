@@ -21,9 +21,7 @@ class ClientService {
   }) {
     _authKeyProvider = AuthKeyProvider(storageService: storageService);
 
-    _client = Client(
-      baseUrl,
-    )..authKeyProvider = MutexRefresherClientAuthKeyProvider(_authKeyProvider!);
+    _client = Client(baseUrl)..authKeyProvider = _authKeyProvider!;
 
     // Настраиваем callback для refresh token
     _authKeyProvider!.onRefreshToken = _performRefreshToken;

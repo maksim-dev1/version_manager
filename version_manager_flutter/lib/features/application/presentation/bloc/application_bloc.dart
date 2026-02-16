@@ -29,6 +29,7 @@ class ApplicationBloc extends Bloc<ApplicationEvent, ApplicationState> {
         _LoadApplications() => _onLoadApplications(emit: emit),
         _UpdateApplication(
           :final applicationId,
+          :final namespace,
           :final name,
           :final description,
           :final iconUrl,
@@ -37,6 +38,7 @@ class ApplicationBloc extends Bloc<ApplicationEvent, ApplicationState> {
         ) =>
           _onUpdateApplication(
             applicationId: applicationId,
+            namespace: namespace,
             name: name,
             description: description,
             iconUrl: iconUrl,
@@ -94,6 +96,7 @@ class ApplicationBloc extends Bloc<ApplicationEvent, ApplicationState> {
 
   Future<void> _onUpdateApplication({
     required UuidValue applicationId,
+    String? namespace,
     String? name,
     String? description,
     String? iconUrl,
@@ -104,6 +107,7 @@ class ApplicationBloc extends Bloc<ApplicationEvent, ApplicationState> {
     try {
       await _applicationRepository.updateApplication(
         applicationId: applicationId,
+        namespace: namespace,
         name: name,
         description: description,
         iconUrl: iconUrl,

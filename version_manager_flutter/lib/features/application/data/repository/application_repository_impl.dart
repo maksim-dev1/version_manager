@@ -60,6 +60,7 @@ class ApplicationRepositoryImpl implements ApplicationRepository {
   @override
   Future<Application> updateApplication({
     required UuidValue applicationId,
+    String? namespace,
     String? name,
     String? description,
     String? iconUrl,
@@ -69,6 +70,7 @@ class ApplicationRepositoryImpl implements ApplicationRepository {
     return await _appEndpoint.updateApplication(
       request: UpdateApplicationRequest(
         applicationId: applicationId,
+        namespace: namespace,
         name: name,
         description: description,
         iconUrl: iconUrl,

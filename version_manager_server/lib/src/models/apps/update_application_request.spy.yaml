@@ -2,6 +2,7 @@
 class: UpdateApplicationRequest
 fields:
   applicationId: UuidValue
+  namespace: String?
   name: String?
   description: String?
   iconUrl: String?
