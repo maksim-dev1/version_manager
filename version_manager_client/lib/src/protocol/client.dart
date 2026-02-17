@@ -59,50 +59,66 @@ import 'package:version_manager_client/src/protocol/sessions/session_info.dart'
     as _i26;
 import 'package:version_manager_client/src/protocol/sessions/terminate_session_request.dart'
     as _i27;
-import 'package:version_manager_client/src/protocol/teams/team.dart' as _i28;
-import 'package:version_manager_client/src/protocol/teams/create_team_request.dart'
+import 'package:version_manager_client/src/protocol/statistics/statistics_overview_response.dart'
+    as _i28;
+import 'package:version_manager_client/src/protocol/statistics/statistics_filter.dart'
     as _i29;
-import 'package:version_manager_client/src/protocol/teams/update_team_request.dart'
+import 'package:version_manager_client/src/protocol/statistics/daily_active_users_response.dart'
     as _i30;
-import 'package:version_manager_client/src/protocol/teams/invite_team_member_request.dart'
+import 'package:version_manager_client/src/protocol/statistics/version_statistics_response.dart'
     as _i31;
-import 'package:version_manager_client/src/protocol/teams/team_member.dart'
+import 'package:version_manager_client/src/protocol/statistics/platform_statistics_response.dart'
     as _i32;
-import 'package:version_manager_client/src/protocol/teams/respond_to_invitation_request.dart'
+import 'package:version_manager_client/src/protocol/statistics/geo_statistics_response.dart'
     as _i33;
-import 'package:version_manager_client/src/protocol/teams/revoke_invitation_request.dart'
+import 'package:version_manager_client/src/protocol/statistics/time_analytics_response.dart'
     as _i34;
-import 'package:version_manager_client/src/protocol/teams/update_member_role_request.dart'
+import 'package:version_manager_client/src/protocol/statistics/statistics_export_data.dart'
     as _i35;
-import 'package:version_manager_client/src/protocol/teams/remove_member_request.dart'
-    as _i36;
-import 'package:version_manager_client/src/protocol/teams/leave_team_request.dart'
+import 'package:version_manager_client/src/protocol/teams/team.dart' as _i36;
+import 'package:version_manager_client/src/protocol/teams/create_team_request.dart'
     as _i37;
-import 'package:version_manager_client/src/protocol/teams/transfer_team_ownership_request.dart'
+import 'package:version_manager_client/src/protocol/teams/update_team_request.dart'
     as _i38;
-import 'package:version_manager_client/src/protocol/teams/delete_team_request.dart'
+import 'package:version_manager_client/src/protocol/teams/invite_team_member_request.dart'
     as _i39;
-import 'package:version_manager_client/src/protocol/versions/version_list_response.dart'
+import 'package:version_manager_client/src/protocol/teams/team_member.dart'
     as _i40;
-import 'package:version_manager_client/src/protocol/versions/version_detail_response.dart'
+import 'package:version_manager_client/src/protocol/teams/respond_to_invitation_request.dart'
     as _i41;
-import 'package:version_manager_client/src/protocol/versions/next_build_number_response.dart'
+import 'package:version_manager_client/src/protocol/teams/revoke_invitation_request.dart'
     as _i42;
-import 'package:version_manager_client/src/protocol/versions/version.dart'
+import 'package:version_manager_client/src/protocol/teams/update_member_role_request.dart'
     as _i43;
-import 'package:version_manager_client/src/protocol/versions/create_version_request.dart'
+import 'package:version_manager_client/src/protocol/teams/remove_member_request.dart'
     as _i44;
-import 'package:version_manager_client/src/protocol/versions/update_version_request.dart'
+import 'package:version_manager_client/src/protocol/teams/leave_team_request.dart'
     as _i45;
-import 'package:version_manager_client/src/protocol/versions/toggle_version_block_request.dart'
+import 'package:version_manager_client/src/protocol/teams/transfer_team_ownership_request.dart'
     as _i46;
-import 'package:version_manager_client/src/protocol/versions/set_version_recommendation_request.dart'
+import 'package:version_manager_client/src/protocol/teams/delete_team_request.dart'
     as _i47;
-import 'package:version_manager_client/src/protocol/versions/delete_version_request.dart'
+import 'package:version_manager_client/src/protocol/versions/version_list_response.dart'
     as _i48;
-import 'package:version_manager_client/src/protocol/greetings/greeting.dart'
+import 'package:version_manager_client/src/protocol/versions/version_detail_response.dart'
     as _i49;
-import 'protocol.dart' as _i50;
+import 'package:version_manager_client/src/protocol/versions/next_build_number_response.dart'
+    as _i50;
+import 'package:version_manager_client/src/protocol/versions/version.dart'
+    as _i51;
+import 'package:version_manager_client/src/protocol/versions/create_version_request.dart'
+    as _i52;
+import 'package:version_manager_client/src/protocol/versions/update_version_request.dart'
+    as _i53;
+import 'package:version_manager_client/src/protocol/versions/toggle_version_block_request.dart'
+    as _i54;
+import 'package:version_manager_client/src/protocol/versions/set_version_recommendation_request.dart'
+    as _i55;
+import 'package:version_manager_client/src/protocol/versions/delete_version_request.dart'
+    as _i56;
+import 'package:version_manager_client/src/protocol/greetings/greeting.dart'
+    as _i57;
+import 'protocol.dart' as _i58;
 
 /// Эндпоинт для управления приложениями.
 ///
@@ -718,6 +734,132 @@ class EndpointSession extends EndpointLoggedIn {
       );
 }
 
+/// Эндпоинт для получения статистики и аналитики приложений.
+///
+/// Предоставляет функционал для:
+/// - Общей статистики (количество проверок за день/неделю/месяц)
+/// - Графиков активности по дням
+/// - Статистики по версиям (adoption rate, распределение, динамика)
+/// - Статистики по платформам (ОС, версии ОС, модели устройств)
+/// - Статистики по локалям
+/// - Временной аналитики (тепловая карта)
+/// - Экспорта полного отчёта
+///
+/// Все метрики основаны на количестве запросов (не уникальных устройств).
+/// Не собираются: deviceId, IP, User-Agent, GeoIP.
+///
+/// Наследуется от [LoggedInEndpoint] — требует авторизации.
+/// Доступ контролируется по принадлежности приложения пользователю или команде.
+/// {@category Endpoint}
+class EndpointStatistics extends EndpointLoggedIn {
+  EndpointStatistics(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'statistics';
+
+  /// Получить общую статистику приложения.
+  ///
+  /// Возвращает ключевые метрики:
+  /// - Общее количество проверок за всё время
+  /// - Проверки за последние 24 часа / 7 дней / 30 дней
+  /// - Количество проверок за период
+  /// - Количество заблокированных и активных версий
+  /// - Среднее время обработки запроса
+  _i2.Future<_i28.StatisticsOverviewResponse> getOverview({
+    required _i29.StatisticsFilter filter,
+  }) => caller.callServerEndpoint<_i28.StatisticsOverviewResponse>(
+    'statistics',
+    'getOverview',
+    {'filter': filter},
+  );
+
+  /// Получить данные активности по дням.
+  ///
+  /// Возвращает:
+  /// - Количество проверок по дням (для линейного графика)
+  /// - Кумулятивный рост общего количества проверок
+  _i2.Future<_i30.DailyActiveUsersResponse> getDailyActiveUsers({
+    required _i29.StatisticsFilter filter,
+  }) => caller.callServerEndpoint<_i30.DailyActiveUsersResponse>(
+    'statistics',
+    'getDailyActiveUsers',
+    {'filter': filter},
+  );
+
+  /// Получить статистику по версиям приложения.
+  ///
+  /// Возвращает:
+  /// - Распределение проверок по версиям (количество, процент)
+  /// - Adoption rate последней версии
+  /// - Количество и процент проверок на заблокированных версиях
+  /// - Возраст каждой версии в днях
+  /// - Timeline adoption по дням для каждой версии
+  _i2.Future<_i31.VersionStatisticsResponse> getVersionStatistics({
+    required _i29.StatisticsFilter filter,
+  }) => caller.callServerEndpoint<_i31.VersionStatisticsResponse>(
+    'statistics',
+    'getVersionStatistics',
+    {'filter': filter},
+  );
+
+  /// Получить статистику по платформам.
+  ///
+  /// Возвращает:
+  /// - Распределение по операционным системам (iOS, Android, Web и т.д.)
+  /// - Распределение по версиям ОС
+  /// - Топ-10 моделей устройств
+  _i2.Future<_i32.PlatformStatisticsResponse> getPlatformStatistics({
+    required _i29.StatisticsFilter filter,
+  }) => caller.callServerEndpoint<_i32.PlatformStatisticsResponse>(
+    'statistics',
+    'getPlatformStatistics',
+    {'filter': filter},
+  );
+
+  /// Получить статистику по локалям.
+  ///
+  /// Возвращает:
+  /// - Распределение по локалям (на основе клиентского locale)
+  ///
+  /// Страны не собираются (IP не сохраняется, GeoIP не используется).
+  _i2.Future<_i33.GeoStatisticsResponse> getGeoStatistics({
+    required _i29.StatisticsFilter filter,
+  }) => caller.callServerEndpoint<_i33.GeoStatisticsResponse>(
+    'statistics',
+    'getGeoStatistics',
+    {'filter': filter},
+  );
+
+  /// Получить временную аналитику.
+  ///
+  /// Возвращает:
+  /// - Тепловая карта активности (день недели × час суток)
+  ///
+  /// Retention Rate и скорость обновления не доступны (требуют deviceId).
+  _i2.Future<_i34.TimeAnalyticsResponse> getTimeAnalytics({
+    required _i29.StatisticsFilter filter,
+  }) => caller.callServerEndpoint<_i34.TimeAnalyticsResponse>(
+    'statistics',
+    'getTimeAnalytics',
+    {'filter': filter},
+  );
+
+  /// Получить полный отчёт по статистике приложения.
+  ///
+  /// Объединяет все разделы статистики в один ответ для экспорта.
+  /// Поддерживает все фильтры.
+  ///
+  /// Клиент может преобразовать полученные данные в CSV, Excel или JSON
+  /// на своей стороне.
+  _i2.Future<_i35.StatisticsExportData> getExportData({
+    required _i29.StatisticsFilter filter,
+  }) => caller.callServerEndpoint<_i35.StatisticsExportData>(
+    'statistics',
+    'getExportData',
+    {'filter': filter},
+  );
+}
+
 /// Эндпоинт для управления командами.
 ///
 /// Предоставляет функционал для:
@@ -755,8 +897,8 @@ class EndpointTeam extends EndpointLoggedIn {
   ///
   /// ### Исключения
   /// - [InvalidDataException] если название пустое или слишком короткое
-  _i2.Future<_i28.Team> createTeam({required _i29.CreateTeamRequest request}) =>
-      caller.callServerEndpoint<_i28.Team>(
+  _i2.Future<_i36.Team> createTeam({required _i37.CreateTeamRequest request}) =>
+      caller.callServerEndpoint<_i36.Team>(
         'team',
         'createTeam',
         {'request': request},
@@ -765,8 +907,8 @@ class EndpointTeam extends EndpointLoggedIn {
   /// Обновить информацию о команде.
   ///
   /// Доступно только владельцу и администраторам команды.
-  _i2.Future<_i28.Team> updateTeam({required _i30.UpdateTeamRequest request}) =>
-      caller.callServerEndpoint<_i28.Team>(
+  _i2.Future<_i36.Team> updateTeam({required _i38.UpdateTeamRequest request}) =>
+      caller.callServerEndpoint<_i36.Team>(
         'team',
         'updateTeam',
         {'request': request},
@@ -775,8 +917,8 @@ class EndpointTeam extends EndpointLoggedIn {
   /// Получить команду по ID.
   ///
   /// Доступно только активным участникам команды.
-  _i2.Future<_i28.Team> getTeam({required _i1.UuidValue teamId}) =>
-      caller.callServerEndpoint<_i28.Team>(
+  _i2.Future<_i36.Team> getTeam({required _i1.UuidValue teamId}) =>
+      caller.callServerEndpoint<_i36.Team>(
         'team',
         'getTeam',
         {'teamId': teamId},
@@ -786,8 +928,8 @@ class EndpointTeam extends EndpointLoggedIn {
   ///
   /// Возвращает команды, где пользователь является активным участником.
   /// Команды с приглашениями (status = invited) не включаются.
-  _i2.Future<List<_i28.Team>> getMyTeams() =>
-      caller.callServerEndpoint<List<_i28.Team>>(
+  _i2.Future<List<_i36.Team>> getMyTeams() =>
+      caller.callServerEndpoint<List<_i36.Team>>(
         'team',
         'getMyTeams',
         {},
@@ -798,7 +940,7 @@ class EndpointTeam extends EndpointLoggedIn {
   /// Отправляет приглашение пользователю по email.
   /// Доступно владельцу и администраторам.
   _i2.Future<_i7.SuccessResponse> inviteMember({
-    required _i31.InviteTeamMemberRequest request,
+    required _i39.InviteTeamMemberRequest request,
   }) => caller.callServerEndpoint<_i7.SuccessResponse>(
     'team',
     'inviteMember',
@@ -808,8 +950,8 @@ class EndpointTeam extends EndpointLoggedIn {
   /// Получить список приглашений для текущего пользователя.
   ///
   /// Возвращает все активные приглашения в команды.
-  _i2.Future<List<_i32.TeamMember>> getMyInvitations() =>
-      caller.callServerEndpoint<List<_i32.TeamMember>>(
+  _i2.Future<List<_i40.TeamMember>> getMyInvitations() =>
+      caller.callServerEndpoint<List<_i40.TeamMember>>(
         'team',
         'getMyInvitations',
         {},
@@ -817,7 +959,7 @@ class EndpointTeam extends EndpointLoggedIn {
 
   /// Принять или отклонить приглашение в команду.
   _i2.Future<_i7.SuccessResponse> respondToInvitation({
-    required _i33.RespondToInvitationRequest request,
+    required _i41.RespondToInvitationRequest request,
   }) => caller.callServerEndpoint<_i7.SuccessResponse>(
     'team',
     'respondToInvitation',
@@ -828,7 +970,7 @@ class EndpointTeam extends EndpointLoggedIn {
   ///
   /// Доступно владельцу и администраторам.
   _i2.Future<_i7.SuccessResponse> revokeInvitation({
-    required _i34.RevokeInvitationRequest request,
+    required _i42.RevokeInvitationRequest request,
   }) => caller.callServerEndpoint<_i7.SuccessResponse>(
     'team',
     'revokeInvitation',
@@ -839,9 +981,9 @@ class EndpointTeam extends EndpointLoggedIn {
   ///
   /// Возвращает всех участников (активных и приглашённых).
   /// Доступно всем активным участникам команды.
-  _i2.Future<List<_i32.TeamMember>> getTeamMembers({
+  _i2.Future<List<_i40.TeamMember>> getTeamMembers({
     required _i1.UuidValue teamId,
-  }) => caller.callServerEndpoint<List<_i32.TeamMember>>(
+  }) => caller.callServerEndpoint<List<_i40.TeamMember>>(
     'team',
     'getTeamMembers',
     {'teamId': teamId},
@@ -851,7 +993,7 @@ class EndpointTeam extends EndpointLoggedIn {
   ///
   /// Доступно владельцу и администраторам (с ограничениями).
   _i2.Future<_i7.SuccessResponse> updateMemberRole({
-    required _i35.UpdateMemberRoleRequest request,
+    required _i43.UpdateMemberRoleRequest request,
   }) => caller.callServerEndpoint<_i7.SuccessResponse>(
     'team',
     'updateMemberRole',
@@ -862,7 +1004,7 @@ class EndpointTeam extends EndpointLoggedIn {
   ///
   /// Доступно владельцу и администраторам.
   _i2.Future<_i7.SuccessResponse> removeMember({
-    required _i36.RemoveMemberRequest request,
+    required _i44.RemoveMemberRequest request,
   }) => caller.callServerEndpoint<_i7.SuccessResponse>(
     'team',
     'removeMember',
@@ -873,7 +1015,7 @@ class EndpointTeam extends EndpointLoggedIn {
   ///
   /// Владелец не может покинуть команду — нужно сначала передать владение.
   _i2.Future<_i7.SuccessResponse> leaveTeam({
-    required _i37.LeaveTeamRequest request,
+    required _i45.LeaveTeamRequest request,
   }) => caller.callServerEndpoint<_i7.SuccessResponse>(
     'team',
     'leaveTeam',
@@ -885,7 +1027,7 @@ class EndpointTeam extends EndpointLoggedIn {
   /// Доступно только владельцу.
   /// После передачи бывший владелец становится администратором.
   _i2.Future<_i7.SuccessResponse> transferOwnership({
-    required _i38.TransferTeamOwnershipRequest request,
+    required _i46.TransferTeamOwnershipRequest request,
   }) => caller.callServerEndpoint<_i7.SuccessResponse>(
     'team',
     'transferOwnership',
@@ -902,7 +1044,7 @@ class EndpointTeam extends EndpointLoggedIn {
   /// - [request.transferAppsToOwner] — true = забрать приложения, false = удалить
   /// - [request.confirmationName] — название команды для подтверждения
   _i2.Future<_i7.SuccessResponse> deleteTeam({
-    required _i39.DeleteTeamRequest request,
+    required _i47.DeleteTeamRequest request,
   }) => caller.callServerEndpoint<_i7.SuccessResponse>(
     'team',
     'deleteTeam',
@@ -933,9 +1075,9 @@ class EndpointVersion extends EndpointLoggedIn {
   /// Возвращает приложение с информацией и список версий,
   /// отсортированный по номеру сборки по убыванию (самая новая сверху).
   /// Для каждой версии подсчитывается количество активных пользователей.
-  _i2.Future<_i40.VersionListResponse> getVersions({
+  _i2.Future<_i48.VersionListResponse> getVersions({
     required _i1.UuidValue applicationId,
-  }) => caller.callServerEndpoint<_i40.VersionListResponse>(
+  }) => caller.callServerEndpoint<_i48.VersionListResponse>(
     'version',
     'getVersions',
     {'applicationId': applicationId},
@@ -948,9 +1090,9 @@ class EndpointVersion extends EndpointLoggedIn {
   /// - Список более новых версий (для выбора рекомендуемой)
   /// - Количество активных пользователей
   /// - Количество версий, рекомендующих обновление на эту
-  _i2.Future<_i41.VersionDetailResponse> getVersionDetail({
+  _i2.Future<_i49.VersionDetailResponse> getVersionDetail({
     required _i1.UuidValue versionId,
-  }) => caller.callServerEndpoint<_i41.VersionDetailResponse>(
+  }) => caller.callServerEndpoint<_i49.VersionDetailResponse>(
     'version',
     'getVersionDetail',
     {'versionId': versionId},
@@ -959,9 +1101,9 @@ class EndpointVersion extends EndpointLoggedIn {
   /// Получить следующий рекомендуемый номер сборки.
   ///
   /// Возвращает текущий максимальный номер сборки и предложенный следующий.
-  _i2.Future<_i42.NextBuildNumberResponse> getNextBuildNumber({
+  _i2.Future<_i50.NextBuildNumberResponse> getNextBuildNumber({
     required _i1.UuidValue applicationId,
-  }) => caller.callServerEndpoint<_i42.NextBuildNumberResponse>(
+  }) => caller.callServerEndpoint<_i50.NextBuildNumberResponse>(
     'version',
     'getNextBuildNumber',
     {'applicationId': applicationId},
@@ -975,9 +1117,9 @@ class EndpointVersion extends EndpointLoggedIn {
   /// - Описание изменений (changelog)
   ///
   /// Блокировка, рекомендации и настройки частоты при создании недоступны.
-  _i2.Future<_i43.Version> createVersion({
-    required _i44.CreateVersionRequest request,
-  }) => caller.callServerEndpoint<_i43.Version>(
+  _i2.Future<_i51.Version> createVersion({
+    required _i52.CreateVersionRequest request,
+  }) => caller.callServerEndpoint<_i51.Version>(
     'version',
     'createVersion',
     {'request': request},
@@ -988,9 +1130,9 @@ class EndpointVersion extends EndpointLoggedIn {
   /// Базовые поля (versionNumber, buildNumber, changelog) доступны всегда.
   /// Дополнительные поля (блокировка, рекомендация, частота) доступны
   /// только если версия не является самой новой.
-  _i2.Future<_i43.Version> updateVersion({
-    required _i45.UpdateVersionRequest request,
-  }) => caller.callServerEndpoint<_i43.Version>(
+  _i2.Future<_i51.Version> updateVersion({
+    required _i53.UpdateVersionRequest request,
+  }) => caller.callServerEndpoint<_i51.Version>(
     'version',
     'updateVersion',
     {'request': request},
@@ -1000,9 +1142,9 @@ class EndpointVersion extends EndpointLoggedIn {
   ///
   /// Переключатель в карточке/строке версии.
   /// Недоступна для самой новой версии.
-  _i2.Future<_i43.Version> toggleVersionBlock({
-    required _i46.ToggleVersionBlockRequest request,
-  }) => caller.callServerEndpoint<_i43.Version>(
+  _i2.Future<_i51.Version> toggleVersionBlock({
+    required _i54.ToggleVersionBlockRequest request,
+  }) => caller.callServerEndpoint<_i51.Version>(
     'version',
     'toggleVersionBlock',
     {'request': request},
@@ -1012,9 +1154,9 @@ class EndpointVersion extends EndpointLoggedIn {
   ///
   /// Позволяет указать рекомендуемую версию и настройки частоты показа.
   /// Доступно только если версия не самая новая.
-  _i2.Future<_i43.Version> setVersionRecommendation({
-    required _i47.SetVersionRecommendationRequest request,
-  }) => caller.callServerEndpoint<_i43.Version>(
+  _i2.Future<_i51.Version> setVersionRecommendation({
+    required _i55.SetVersionRecommendationRequest request,
+  }) => caller.callServerEndpoint<_i51.Version>(
     'version',
     'setVersionRecommendation',
     {'request': request},
@@ -1027,7 +1169,7 @@ class EndpointVersion extends EndpointLoggedIn {
   /// - При удалении версии, которая рекомендуется другим, возвращается
   ///   предупреждение (но удаление проходит, т.к. onDelete=SetNull)
   _i2.Future<_i7.SuccessResponse> deleteVersion({
-    required _i48.DeleteVersionRequest request,
+    required _i56.DeleteVersionRequest request,
   }) => caller.callServerEndpoint<_i7.SuccessResponse>(
     'version',
     'deleteVersion',
@@ -1047,8 +1189,8 @@ class EndpointGreeting extends EndpointLoggedIn {
   String get name => 'greeting';
 
   /// Returns a personalized greeting message: "Hello {name}".
-  _i2.Future<_i49.Greeting> hello(String name) =>
-      caller.callServerEndpoint<_i49.Greeting>(
+  _i2.Future<_i57.Greeting> hello(String name) =>
+      caller.callServerEndpoint<_i57.Greeting>(
         'greeting',
         'hello',
         {'name': name},
@@ -1075,7 +1217,7 @@ class Client extends _i1.ServerpodClientShared {
     bool? disconnectStreamsOnLostInternetConnection,
   }) : super(
          host,
-         _i50.Protocol(),
+         _i58.Protocol(),
          securityContext: securityContext,
          streamingConnectionTimeout: streamingConnectionTimeout,
          connectionTimeout: connectionTimeout,
@@ -1087,6 +1229,7 @@ class Client extends _i1.ServerpodClientShared {
     app = EndpointApp(this);
     auth = EndpointAuth(this);
     session = EndpointSession(this);
+    statistics = EndpointStatistics(this);
     team = EndpointTeam(this);
     version = EndpointVersion(this);
     greeting = EndpointGreeting(this);
@@ -1097,6 +1240,8 @@ class Client extends _i1.ServerpodClientShared {
   late final EndpointAuth auth;
 
   late final EndpointSession session;
+
+  late final EndpointStatistics statistics;
 
   late final EndpointTeam team;
 
@@ -1109,6 +1254,7 @@ class Client extends _i1.ServerpodClientShared {
     'app': app,
     'auth': auth,
     'session': session,
+    'statistics': statistics,
     'team': team,
     'version': version,
     'greeting': greeting,

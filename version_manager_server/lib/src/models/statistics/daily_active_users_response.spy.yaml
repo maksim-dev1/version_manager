@@ -1,0 +1,7 @@
+### Ответ с данными активности пользователей по дням.
+class: DailyActiveUsersResponse
+fields:
+  ### Данные по дням
+  entries: List<DailyActiveUsersEntry>
+  ### Кумулятивный рост общего количества пользователей по дням
+  cumulativeGrowth: List<CumulativeUsersEntry>

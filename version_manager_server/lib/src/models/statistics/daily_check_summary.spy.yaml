@@ -1,24 +1,24 @@
-### Агрегированная дневная статистика проверок версий.
+### Дневная агрегированная статистика проверок версий.
 ###
 ### Содержит преагрегированные метрики за один день для одного приложения,
-### одной платформы и одной версии. Используется для:
-### — быстрых дашбордов без тяжёлых запросов к version_check_logs
-### — хранения исторических данных после удаления детальных логов
+### одной платформы и одной версии (buildNumber). Используется для:
+### — быстрых дашбордов без тяжёлых запросов
+### — хранения исторических данных
 ### — аналитики трендов по дням
 ###
 ### Заполняется автоматически при каждом запросе check-version
-### (инкрементальное обновление) или через периодическую задачу (cron).
+### (инкрементальное обновление).
 ###
-### Retention policy: хранить бессрочно (компактные данные ~200 байт/запись).
-class: VersionCheckDailySummary
-table: version_check_daily_summaries
+### Retention policy: хранить бессрочно (~200 байт/запись).
+class: DailyCheckSummary
+table: daily_check_summaries
 fields:
   id: UuidValue?, defaultPersist=random_v7
 
   ### Приложение
-  application: Application?, relation(name=application_daily_summaries, onDelete=Cascade)
+  application: Application?, relation(name=application_check_summaries, onDelete=Cascade)
 
-  ### Дата агрегации (без времени, начало дня UTC)
+  ### Дата агрегации (начало дня UTC)
   date: DateTime
   ### Платформа
   platform: PlatformType
@@ -28,13 +28,20 @@ fields:
   versionNumber: String
 
   # ============================================================
+  # СЧЁТЧИКИ ПОЛЬЗОВАТЕЛЕЙ
+  # ============================================================
+
+  ### Уникальные устройства за день (по instanceId, точный подсчёт)
+  uniqueDevices: int, default=0
+  ### Новые устройства за день (firstSeenAt = сегодня)
+  newDevices: int, default=0
+
+  # ============================================================
   # СЧЁТЧИКИ ЗАПРОСОВ
   # ============================================================
 
   ### Общее количество проверок за день
   totalChecks: int, default=0
-  ### Количество уникальных устройств
-  uniqueDevices: int, default=0
   ### Проверки со статусом blocked
   blockedChecks: int, default=0
   ### Проверки со статусом update_available
@@ -43,15 +50,6 @@ fields:
   activeChecks: int, default=0
   ### Проверки со статусом error
   errorChecks: int, default=0
-
-  # ============================================================
-  # МЕТРИКИ УСТАНОВОК
-  # ============================================================
-
-  ### Количество первых проверок (новые устройства)
-  newInstalls: int, default=0
-  ### Количество обновлений (устройство сменило версию)
-  upgrades: int, default=0
 
   # ============================================================
   # МЕТРИКИ ПРОИЗВОДИТЕЛЬНОСТИ
@@ -66,14 +64,14 @@ fields:
   updatedAt: DateTime, default=now
 
 indexes:
-  summary_application_idx:
-    fields: applicationId
-  summary_date_idx:
-    fields: date
-  summary_app_date_platform_build_unique_idx:
+  dcs_app_date_platform_build_unique_idx:
     fields: applicationId, date, platform, buildNumber
     unique: true
-  summary_app_date_idx:
+  dcs_application_idx:
+    fields: applicationId
+  dcs_date_idx:
+    fields: date
+  dcs_app_date_idx:
     fields: applicationId, date
-  summary_platform_date_idx:
+  dcs_platform_date_idx:
     fields: platform, date

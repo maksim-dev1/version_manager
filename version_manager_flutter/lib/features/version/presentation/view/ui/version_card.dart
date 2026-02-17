@@ -28,211 +28,218 @@ class VersionCard extends StatelessWidget {
     final isCompact = MediaQuery.sizeOf(context).width < 600;
 
     return Card(
-      child: InkWell(
-        onTap: onEdit,
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // ── Верхняя строка: версия + статус + действия ──
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              'v${version.versionNumber}',
-                              style: textTheme.titleMedium?.copyWith(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // ── Верхняя строка: версия + статус + действия ──
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            'v${version.versionNumber}',
+                            style: textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: colorScheme.surfaceBright,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              '+${version.buildNumber}',
+                              style: textTheme.bodySmall?.copyWith(
+                                fontFamily: 'monospace',
                                 fontWeight: FontWeight.w600,
+                                color: colorScheme.onSurfaceVariant,
                               ),
                             ),
+                          ),
+                          if (version.isLatest) ...[
                             const SizedBox(width: 8),
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 2,
+                                horizontal: 10,
+                                vertical: 3,
                               ),
                               decoration: BoxDecoration(
-                                color: colorScheme.surfaceContainerHighest,
+                                color: colorScheme.primaryContainer,
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
-                                '#${version.buildNumber}',
+                                'Новейшая',
                                 style: textTheme.bodySmall?.copyWith(
-                                  fontFamily: 'monospace',
                                   fontWeight: FontWeight.w600,
-                                  color: colorScheme.onSurfaceVariant,
+                                  color: colorScheme.primary,
                                 ),
                               ),
                             ),
-                            if (version.isLatest) ...[
-                              const SizedBox(width: 8),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 3,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: colorScheme.primaryContainer,
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Text(
-                                  'Новейшая',
-                                  style: textTheme.bodySmall?.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                    color: colorScheme.primary,
-                                  ),
-                                ),
-                              ),
-                            ],
                           ],
-                        ),
-                        const SizedBox(height: 6),
-                        _VersionStatusBadge(version: version),
-                      ],
-                    ),
-                  ),
-                  // Действия
-                  if (!isCompact) ...[
-                    IconButton(
-                      onPressed: onEdit,
-                      icon: Icon(
-                        Icons.edit_outlined,
-                        color: colorScheme.onSurfaceVariant,
+                        ],
                       ),
-                      tooltip: 'Редактировать',
+                      const SizedBox(height: 6),
+                      _VersionStatusBadge(version: version),
+                    ],
+                  ),
+                ),
+                // Действия
+                if (!isCompact) ...[
+                  IconButton(
+                    onPressed: onEdit,
+                    icon: const Icon(
+                      Icons.edit,
+                      semanticLabel: 'Редактировать версию',
+                    ),
+                    color: colorScheme.primary,
+                    tooltip: 'Редактировать',
+                    visualDensity: VisualDensity.compact,
+                  ),
+                  if (!version.isLatest) ...[
+                    IconButton(
+                      onPressed: onRecommendation,
+                      icon: const Icon(
+                        Icons.star,
+                        semanticLabel: 'Сделать рекомендацией',
+                      ),
+                      color: colorScheme.tertiary,
+                      tooltip: 'Рекомендация',
                       visualDensity: VisualDensity.compact,
                     ),
-                    if (!version.isLatest) ...[
-                      IconButton(
-                        onPressed: onRecommendation,
-                        icon: Icon(
-                          Icons.system_update_alt,
-                          color: colorScheme.tertiary,
-                        ),
-                        tooltip: 'Рекомендация',
-                        visualDensity: VisualDensity.compact,
+                    _BlockToggleButton(
+                      version: version,
+                      applicationId: applicationId,
+                    ),
+                    IconButton(
+                      onPressed: onDelete,
+                      icon: const Icon(
+                        Icons.delete_forever,
+                        semanticLabel: 'Удалить версию',
                       ),
-                      _BlockToggleButton(
-                        version: version,
-                        applicationId: applicationId,
-                      ),
-                      IconButton(
-                        onPressed: onDelete,
-                        icon: Icon(
-                          Icons.delete_outline,
-                          color: colorScheme.error,
-                        ),
-                        tooltip: 'Удалить',
-                        visualDensity: VisualDensity.compact,
-                      ),
-                    ],
+                      color: colorScheme.error,
+                      tooltip: 'Удалить',
+                      visualDensity: VisualDensity.compact,
+                    ),
                   ],
                 ],
-              ),
-              const SizedBox(height: 12),
+              ],
+            ),
+            const SizedBox(height: 12),
 
-              // ── Changelog ──
-              Text(
-                version.changelog,
-                style: textTheme.bodyMedium?.copyWith(
-                  color: colorScheme.onSurfaceVariant,
+            // ── Changelog ──
+            Text(
+              version.changelog,
+              style: textTheme.bodyMedium?.copyWith(
+                color: colorScheme.onSurfaceVariant,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 12),
+
+            // ── Нижняя строка: дата + пользователи ──
+            Row(
+              children: [
+                const Icon(
+                  Icons.calendar_today,
+                  size: 14,
+                  semanticLabel: 'Дата создания',
                 ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 12),
+                const SizedBox(width: 4),
+                Text(
+                  _formatDate(version.createdAt),
+                  style: textTheme.bodySmall?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                const Icon(
+                  Icons.people,
+                  size: 14,
+                  semanticLabel: 'Активные пользователи',
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  '${version.activeUsersCount} ${_pluralUsers(version.activeUsersCount)}',
+                  style: textTheme.bodySmall?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
 
-              // ── Нижняя строка: дата + пользователи ──
+            // ── Мобильные действия ──
+            if (isCompact) ...[
+              const SizedBox(height: 12),
               Row(
                 children: [
-                  Icon(
-                    Icons.calendar_today_outlined,
-                    size: 14,
-                    color: colorScheme.onSurfaceVariant,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    _formatDate(version.createdAt),
-                    style: textTheme.bodySmall?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
+                  if (!version.isLatest) ...[
+                    _BlockToggleButton(
+                      version: version,
+                      applicationId: applicationId,
                     ),
-                  ),
-                  const SizedBox(width: 16),
-                  Icon(
-                    Icons.people_outline,
-                    size: 14,
-                    color: colorScheme.onSurfaceVariant,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    '${version.activeUsersCount} ${_pluralUsers(version.activeUsersCount)}',
-                    style: textTheme.bodySmall?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ],
-              ),
-
-              // ── Мобильные действия ──
-              if (isCompact) ...[
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    if (!version.isLatest) ...[
-                      _BlockToggleButton(
-                        version: version,
-                        applicationId: applicationId,
-                      ),
-                      const SizedBox(width: 8),
-                      OutlinedButton.icon(
-                        onPressed: onRecommendation,
-                        icon: const Icon(Icons.system_update_alt, size: 16),
-                        label: const Text('Рекомендация'),
-                        style: OutlinedButton.styleFrom(
-                          visualDensity: VisualDensity.compact,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                    ],
+                    const SizedBox(width: 8),
                     OutlinedButton.icon(
-                      onPressed: onEdit,
-                      icon: const Icon(Icons.edit_outlined, size: 16),
-                      label: const Text('Изменить'),
+                      onPressed: onRecommendation,
+                      icon: const Icon(
+                        Icons.star,
+                        size: 16,
+                        semanticLabel: 'Рекомендация',
+                      ),
+                      label: const Text('Рекомендация'),
                       style: OutlinedButton.styleFrom(
                         visualDensity: VisualDensity.compact,
                       ),
                     ),
-                    if (!version.isLatest) ...[
-                      const SizedBox(width: 8),
-                      OutlinedButton.icon(
-                        onPressed: onDelete,
-                        icon: Icon(
-                          Icons.delete_outline,
-                          size: 16,
-                          color: colorScheme.error,
-                        ),
-                        label: Text(
-                          'Удалить',
-                          style: TextStyle(color: colorScheme.error),
-                        ),
-                        style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: colorScheme.error),
-                          visualDensity: VisualDensity.compact,
-                        ),
-                      ),
-                    ],
+                    const SizedBox(width: 8),
                   ],
-                ),
-              ],
+                  OutlinedButton.icon(
+                    onPressed: onEdit,
+                    icon: const Icon(
+                      Icons.edit,
+                      size: 16,
+                      semanticLabel: 'Редактировать',
+                    ),
+                    label: const Text('Изменить'),
+                    style: OutlinedButton.styleFrom(
+                      visualDensity: VisualDensity.compact,
+                    ),
+                  ),
+                  if (!version.isLatest) ...[
+                    const SizedBox(width: 8),
+                    OutlinedButton.icon(
+                      onPressed: onDelete,
+                      icon: const Icon(
+                        Icons.delete_forever,
+                        size: 16,
+                        semanticLabel: 'Удалить',
+                      ),
+                      label: const Text(
+                        'Удалить',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: Colors.red),
+                        visualDensity: VisualDensity.compact,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
             ],
-          ),
+          ],
         ),
       ),
     );
@@ -263,7 +270,7 @@ class _VersionStatusBadge extends StatelessWidget {
 
     if (version.recommendedVersionNumber != null) {
       return _Badge(
-        icon: Icons.system_update_alt,
+        icon: Icons.star,
         label: 'Рекомендуется: ${version.recommendedVersionNumber}',
         color: colorScheme.tertiary,
         backgroundColor: colorScheme.tertiaryContainer.withValues(alpha: 0.3),
@@ -271,7 +278,7 @@ class _VersionStatusBadge extends StatelessWidget {
     }
 
     return _Badge(
-      icon: Icons.check_circle_outline,
+      icon: Icons.check_circle,
       label: 'Активна',
       color: Colors.green,
       backgroundColor: Colors.green.withValues(alpha: 0.15),
@@ -347,7 +354,8 @@ class _BlockToggleButton extends StatelessWidget {
             ),
           );
         },
-        icon: Icon(Icons.lock_open, color: colorScheme.primary),
+        icon: const Icon(Icons.lock_open, semanticLabel: 'Разблокировать'),
+        color: colorScheme.primary,
         tooltip: 'Разблокировать',
         visualDensity: VisualDensity.compact,
       );
@@ -355,7 +363,8 @@ class _BlockToggleButton extends StatelessWidget {
 
     return IconButton(
       onPressed: () => _showBlockReasonDialog(context),
-      icon: Icon(Icons.lock_outline, color: colorScheme.onSurfaceVariant),
+      icon: const Icon(Icons.lock, semanticLabel: 'Заблокировать'),
+      color: colorScheme.onSurfaceVariant,
       tooltip: 'Заблокировать',
       visualDensity: VisualDensity.compact,
     );
@@ -432,7 +441,6 @@ class _BlockToggleButton extends StatelessWidget {
         ],
       ),
     );
-    // Dispose controller when dialog closes
   }
 }
 

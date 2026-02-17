@@ -6,23 +6,21 @@ import 'package:version_manager_server/src/services/service_locator.dart';
 ///
 /// Инкапсулирует бизнес-логику публичного API `/api/v1/check-version`.
 /// Обрабатывает запросы от мобильных приложений, проверяет статус версии,
-/// формирует рекомендации по обновлению и ведёт подробную аналитику.
+/// формирует рекомендации по обновлению и ведёт анонимную аналитику.
 ///
-/// ## Основные функции
-/// - Валидация API ключа приложения
-/// - Проверка статуса версии (blocked/update_available/active)
-/// - Формирование рекомендаций по обновлению
-/// - Фильтрация ссылок на магазины по платформе
-/// - Сбор анонимной технической аналитики
-/// - Агрегация дневной статистики
+/// ## Хранение статистики
+/// Вся статистика хранится в агрегированных таблицах:
+/// — [DailyCheckSummary] — дневные счётчики по (app, date, platform, build)
+/// — [DailyDimensionSummary] — дневные счётчики по измерениям (os, model, locale, hour)
+/// — [AppInstance] — экземпляры приложений для уникальных пользователей
 ///
-/// ## Privacy
-/// Все собираемые данные являются анонимными техническими
-/// метриками устройства и приложения (non-PII):
-/// - IP-адреса анонимизируются (обрезаются до /24 для IPv4)
-/// - deviceId не привязывается к пользовательским аккаунтам
-/// - Не собираются персональные данные (email, имя, телефон)
-/// - Правовое основание: GDPR Art. 6(1)(f) — legitimate interest
+/// Сырые логи (version_check_logs) не используются.
+///
+/// ## Уникальные пользователи
+/// Используется per-app instance ID:
+/// — iOS: identifierForVendor (IDFV)
+/// — Android: App Instance ID
+/// Не требует ATT, consent popup или disclosure в магазинах.
 class CheckVersionService {
   final _tokenService = Services().tokenService;
 
@@ -411,9 +409,12 @@ class CheckVersionService {
 
   /// Логирует запрос проверки версии для аналитики.
   ///
-  /// Записывает все полученные данные без условий.
-  /// Все данные являются анонимными техническими метриками (non-PII).
-  /// IP-адрес анонимизируется (обрезается до /24 сети).
+  /// Агрегирует данные напрямую в summary-таблицы:
+  /// — [DailyCheckSummary] — основные счётчики
+  /// — [DailyDimensionSummary] — per-dimension breakdown
+  /// — [AppInstance] — уникальные пользователи (если instanceId передан)
+  ///
+  /// Сырые логи не сохраняются.
   Future<void> _logVersionCheck({
     required Session session,
     required Application application,
@@ -428,84 +429,37 @@ class CheckVersionService {
           .difference(startTime)
           .inMilliseconds;
 
-      // Определяем, первая ли это проверка с данного устройства
-      bool? isFirstCheck;
-      bool? isNewVersion;
+      // 1. Upsert app instance (если instanceId передан)
+      bool isNewDevice = false;
+      bool isFirstCheckToday = false;
 
-      if (request.deviceId != null) {
-        final existingLog = await VersionCheckLog.db.findFirstRow(
-          session,
-          where: (t) =>
-              t.applicationId.equals(application.id) &
-              t.deviceId.equals(request.deviceId),
+      if (request.instanceId != null && request.instanceId!.trim().isNotEmpty) {
+        final result = await _upsertAppInstance(
+          session: session,
+          application: application,
+          instanceId: request.instanceId!.trim(),
+          platform: request.platform,
         );
-        isFirstCheck = existingLog == null;
-
-        if (!isFirstCheck) {
-          // Проверяем, новая ли это версия для данного устройства
-          final existingVersionLog = await VersionCheckLog.db.findFirstRow(
-            session,
-            where: (t) =>
-                t.applicationId.equals(application.id) &
-                t.deviceId.equals(request.deviceId) &
-                t.buildNumber.equals(request.buildNumber),
-          );
-          isNewVersion = existingVersionLog == null;
-        } else {
-          isNewVersion = true;
-        }
+        isNewDevice = result.isNew;
+        isFirstCheckToday = result.isFirstCheckToday;
       }
 
-      final log = VersionCheckLog(
-        applicationId: application.id!,
-        application: application,
-        versionId: version?.id,
-        version: version,
-        // Обязательные данные
-        versionNumber: request.version,
-        buildNumber: request.buildNumber,
-        platform: request.platform,
-        // Данные устройства — сохраняем все полученные
-        osVersion: request.osVersion,
-        deviceId: request.deviceId,
-        locale: request.locale,
-        deviceModel: request.deviceModel,
-        screenWidth: request.screenWidth,
-        screenHeight: request.screenHeight,
-        timezone: request.timezone,
-        frameworkVersion: request.frameworkVersion,
-        connectionType: request.connectionType,
-        buildType: request.buildType,
-        cpuArchitecture: request.cpuArchitecture,
-        totalRamMb: request.totalRamMb,
-        freeStorageMb: request.freeStorageMb,
-        deviceLanguage: request.deviceLanguage,
-        isLowPowerMode: request.isLowPowerMode,
-        // Метаданные SDK
-        sdkVersion: request.sdkVersion,
-        // Серверные данные (IP анонимизируется)
-        ipAddress: null, // IP получаем из request в route, передаём отдельно
-        userAgent: null, // User-Agent получаем из request в route
-        country: null, // GeoIP lookup опционально
-        // Данные ответа
-        responseStatus: responseStatus,
-        updatePriority: updatePriority,
-        processingTimeMs: processingTimeMs,
-        isFirstCheck: isFirstCheck,
-        isNewVersion: isNewVersion,
-      );
-
-      await VersionCheckLog.db.insertRow(session, log);
-
-      // Обновляем дневную статистику
-      await _updateDailySummary(
+      // 2. Обновляем дневную статистику
+      await _updateDailyCheckSummary(
         session: session,
         application: application,
         request: request,
         responseStatus: responseStatus,
         processingTimeMs: processingTimeMs,
-        isFirstCheck: isFirstCheck ?? false,
-        isNewVersion: isNewVersion ?? false,
+        isNewDevice: isNewDevice,
+        isFirstCheckToday: isFirstCheckToday,
+      );
+
+      // 3. Обновляем per-dimension статистику
+      await _updateDimensionSummaries(
+        session: session,
+        application: application,
+        request: request,
       );
     } catch (e, stackTrace) {
       // Ошибки логирования не должны влиять на ответ клиенту
@@ -517,18 +471,71 @@ class CheckVersionService {
     }
   }
 
+  /// Upsert экземпляра приложения.
+  ///
+  /// Возвращает результат: новый ли это пользователь и первый ли чек за сегодня.
+  Future<({bool isNew, bool isFirstCheckToday})> _upsertAppInstance({
+    required Session session,
+    required Application application,
+    required String instanceId,
+    required PlatformType platform,
+  }) async {
+    final now = DateTime.now().toUtc();
+    final today = DateTime.utc(now.year, now.month, now.day);
+
+    // Ищем существующий экземпляр
+    final existing = await AppInstance.db.findFirstRow(
+      session,
+      where: (t) =>
+          t.applicationId.equals(application.id) &
+          t.instanceId.equals(instanceId),
+    );
+
+    if (existing != null) {
+      // Определяем, был ли уже чек сегодня
+      final existingDate = DateTime.utc(
+        existing.lastActiveDate.year,
+        existing.lastActiveDate.month,
+        existing.lastActiveDate.day,
+      );
+      final isFirstToday = existingDate.isBefore(today);
+
+      // Обновляем lastSeenAt и lastActiveDate
+      existing.lastSeenAt = now;
+      if (isFirstToday) {
+        existing.lastActiveDate = today;
+      }
+      await AppInstance.db.updateRow(session, existing);
+
+      return (isNew: false, isFirstCheckToday: isFirstToday);
+    }
+
+    // Создаём новый экземпляр
+    final instance = AppInstance(
+      applicationId: application.id!,
+      application: application,
+      instanceId: instanceId,
+      platform: platform,
+      firstSeenAt: now,
+      lastSeenAt: now,
+      lastActiveDate: today,
+    );
+    await AppInstance.db.insertRow(session, instance);
+    return (isNew: true, isFirstCheckToday: true);
+  }
+
   /// Обновляет дневную агрегированную статистику.
   ///
-  /// Использует upsert-логику: находит запись за текущий день для данного
-  /// приложения, платформы и сборки. Если не найдена — создаёт новую.
-  Future<void> _updateDailySummary({
+  /// Upsert по (app, date, platform, buildNumber).
+  /// Инкрементирует uniqueDevices только при первом чеке устройства за день.
+  Future<void> _updateDailyCheckSummary({
     required Session session,
     required Application application,
     required CheckVersionRequest request,
     required ResponseStatusType responseStatus,
     required int processingTimeMs,
-    required bool isFirstCheck,
-    required bool isNewVersion,
+    required bool isNewDevice,
+    required bool isFirstCheckToday,
   }) async {
     try {
       final today = DateTime.utc(
@@ -537,8 +544,7 @@ class CheckVersionService {
         DateTime.now().day,
       );
 
-      // Ищем существующую запись за сегодня
-      var summary = await VersionCheckDailySummary.db.findFirstRow(
+      var summary = await DailyCheckSummary.db.findFirstRow(
         session,
         where: (t) =>
             t.applicationId.equals(application.id) &
@@ -548,32 +554,35 @@ class CheckVersionService {
       );
 
       if (summary == null) {
-        // Создаём новую запись
-        summary = VersionCheckDailySummary(
+        summary = DailyCheckSummary(
           applicationId: application.id!,
           application: application,
           date: today,
           platform: request.platform,
           buildNumber: request.buildNumber,
           versionNumber: request.version,
+          uniqueDevices: isFirstCheckToday ? 1 : 0,
+          newDevices: isNewDevice ? 1 : 0,
           totalChecks: 1,
-          uniqueDevices: request.deviceId != null ? 1 : 0,
           blockedChecks: responseStatus == ResponseStatusType.blocked ? 1 : 0,
           updateAvailableChecks:
               responseStatus == ResponseStatusType.update_available ? 1 : 0,
           activeChecks: responseStatus == ResponseStatusType.active ? 1 : 0,
           errorChecks: responseStatus == ResponseStatusType.error ? 1 : 0,
-          newInstalls: isFirstCheck ? 1 : 0,
-          upgrades: isNewVersion && !isFirstCheck ? 1 : 0,
           avgProcessingTimeMs: processingTimeMs,
           maxProcessingTimeMs: processingTimeMs,
         );
-        await VersionCheckDailySummary.db.insertRow(session, summary);
+        await DailyCheckSummary.db.insertRow(session, summary);
       } else {
-        // Инкрементальное обновление
         summary.totalChecks += 1;
 
-        // Обновляем счётчики статусов
+        if (isFirstCheckToday) {
+          summary.uniqueDevices += 1;
+        }
+        if (isNewDevice) {
+          summary.newDevices += 1;
+        }
+
         switch (responseStatus) {
           case ResponseStatusType.blocked:
             summary.blockedChecks += 1;
@@ -589,11 +598,6 @@ class CheckVersionService {
             break;
         }
 
-        // Обновляем метрики установок
-        if (isFirstCheck) summary.newInstalls += 1;
-        if (isNewVersion && !isFirstCheck) summary.upgrades += 1;
-
-        // Обновляем метрики производительности (скользящее среднее)
         if (summary.avgProcessingTimeMs != null) {
           summary.avgProcessingTimeMs =
               ((summary.avgProcessingTimeMs! * (summary.totalChecks - 1)) +
@@ -608,29 +612,8 @@ class CheckVersionService {
           summary.maxProcessingTimeMs = processingTimeMs;
         }
 
-        // Подсчёт уникальных устройств — для точности потребуется
-        // отдельный подсчёт, но для аппроксимации инкрементируем
-        // при isFirstCheck (первый раз за всё время) или проверяем
-        // в логах за сегодня
-        if (request.deviceId != null) {
-          // Проверяем, первый ли это лог за сегодня для данного устройства
-          final todayLogs = await VersionCheckLog.db.count(
-            session,
-            where: (t) =>
-                t.applicationId.equals(application.id) &
-                t.deviceId.equals(request.deviceId) &
-                t.platform.equals(request.platform) &
-                t.buildNumber.equals(request.buildNumber) &
-                t.checkedAt.between(today, today.add(const Duration(days: 1))),
-          );
-
-          if (todayLogs <= 1) {
-            summary.uniqueDevices += 1;
-          }
-        }
-
         summary.updatedAt = DateTime.now();
-        await VersionCheckDailySummary.db.updateRow(session, summary);
+        await DailyCheckSummary.db.updateRow(session, summary);
       }
     } catch (e, stackTrace) {
       session.log(
@@ -641,31 +624,89 @@ class CheckVersionService {
     }
   }
 
-  /// Анонимизирует IP-адрес для GDPR compliance.
+  /// Обновляет per-dimension дневную статистику.
   ///
-  /// Обрезает IPv4 до /24 (xxx.xxx.xxx.0), IPv6 до /48.
-  /// Это сохраняет информацию о географии, но не позволяет
-  /// идентифицировать конкретного пользователя.
-  static String? anonymizeIp(String? ip) {
-    if (ip == null || ip.isEmpty) return null;
+  /// Записывает данные по измерениям: os_version, device_model, locale, hour.
+  Future<void> _updateDimensionSummaries({
+    required Session session,
+    required Application application,
+    required CheckVersionRequest request,
+  }) async {
+    try {
+      final now = DateTime.now().toUtc();
+      final today = DateTime.utc(now.year, now.month, now.day);
 
-    // IPv4: обрезаем последний октет
-    if (ip.contains('.')) {
-      final parts = ip.split('.');
-      if (parts.length == 4) {
-        return '${parts[0]}.${parts[1]}.${parts[2]}.0';
+      // Собираем пары (dimensionType, dimensionValue)
+      final dimensions = <(String, String)>[
+        // Час суток — для heatmap
+        ('hour', now.hour.toString()),
+      ];
+
+      if (request.osVersion != null) {
+        dimensions.add(('os_version', request.osVersion!));
       }
-    }
-
-    // IPv6: обрезаем до /48 (первые 3 группы)
-    if (ip.contains(':')) {
-      final parts = ip.split(':');
-      if (parts.length >= 3) {
-        return '${parts[0]}:${parts[1]}:${parts[2]}::';
+      if (request.deviceModel != null) {
+        dimensions.add(('device_model', request.deviceModel!));
       }
-    }
+      if (request.locale != null) {
+        dimensions.add(('locale', request.locale!));
+      }
 
-    return null;
+      for (final (dimType, dimValue) in dimensions) {
+        await _upsertDimensionSummary(
+          session: session,
+          applicationId: application.id!,
+          application: application,
+          date: today,
+          dimensionType: dimType,
+          dimensionValue: dimValue,
+          platform: request.platform,
+        );
+      }
+    } catch (e, stackTrace) {
+      session.log(
+        'Ошибка при обновлении dimension статистики: $e',
+        level: LogLevel.error,
+        stackTrace: stackTrace,
+      );
+    }
+  }
+
+  /// Upsert одной записи per-dimension статистики.
+  Future<void> _upsertDimensionSummary({
+    required Session session,
+    required UuidValue applicationId,
+    required Application application,
+    required DateTime date,
+    required String dimensionType,
+    required String dimensionValue,
+    required PlatformType platform,
+  }) async {
+    var existing = await DailyDimensionSummary.db.findFirstRow(
+      session,
+      where: (t) =>
+          t.applicationId.equals(applicationId) &
+          t.date.equals(date) &
+          t.dimensionType.equals(dimensionType) &
+          t.dimensionValue.equals(dimensionValue) &
+          t.platform.equals(platform),
+    );
+
+    if (existing != null) {
+      existing.checkCount += 1;
+      await DailyDimensionSummary.db.updateRow(session, existing);
+    } else {
+      final entry = DailyDimensionSummary(
+        applicationId: applicationId,
+        application: application,
+        date: date,
+        dimensionType: dimensionType,
+        dimensionValue: dimensionValue,
+        platform: platform,
+        checkCount: 1,
+      );
+      await DailyDimensionSummary.db.insertRow(session, entry);
+    }
   }
 
   /// Валидирует обязательные поля запроса.
@@ -726,15 +767,16 @@ class CheckVersionService {
   /// Предполагает, что обязательные поля уже провалидированы через [validateRequest].
   static CheckVersionRequest parseRequest(Map<String, dynamic> json) {
     return CheckVersionRequest(
-      namespace: json['namespace'] as String,
+      namespace: normalizeNamespace(json['namespace'] as String),
       version: json['version'] as String,
       buildNumber: json['buildNumber'] as int,
       platform: PlatformType.values.firstWhere(
         (e) => e.name == json['platform'],
       ),
+      // Идентификатор экземпляра (IDFV / App Instance ID)
+      instanceId: json['instanceId'] as String?,
       // Опциональные поля устройства
       osVersion: json['osVersion'] as String?,
-      deviceId: json['deviceId'] as String?,
       locale: json['locale'] as String?,
       deviceModel: json['deviceModel'] as String?,
       screenWidth: json['screenWidth'] as int?,
@@ -770,6 +812,14 @@ class CheckVersionService {
       'currentBuildNumber': response.currentBuildNumber,
       'serverTimestamp': response.serverTimestamp.toIso8601String(),
     };
+  }
+
+  /// Нормализует namespace для сравнения.
+  ///
+  /// Удаляет нижние подчёркивания и приводит к нижнему регистру.
+  /// Например: `Com_Example_My_App` → `comexamplemyapp`.
+  static String normalizeNamespace(String namespace) {
+    return namespace.replaceAll('_', '').toLowerCase();
   }
 
   /// Сериализует RecommendedVersionInfo в JSON Map.

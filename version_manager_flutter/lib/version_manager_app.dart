@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:version_manager_flutter/common/constants/storage_keys.dart';
 import 'package:version_manager_flutter/features/auth/presentation/auth_provider.dart';
 import 'package:version_manager_flutter/features/auth/presentation/bloc/auth_bloc.dart';
@@ -45,6 +46,7 @@ class _VersionManagerAppState extends State<VersionManagerApp> {
     return MaterialApp(
       title: 'Version Manager',
       debugShowCheckedModeBanner: false,
+      navigatorObservers: [SentryNavigatorObserver()],
       theme: SnowTheme.light(),
       darkTheme: SnowTheme.dark(),
       themeMode: _themeMode,

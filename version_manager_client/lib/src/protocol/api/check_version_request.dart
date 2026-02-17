@@ -20,29 +20,18 @@ import '../enums/platform_type.dart' as _i2;
 /// а также опциональные поля для сбора анонимной технической статистики.
 ///
 /// ⚠️ Все поля — исключительно технические метрики устройства (non-PII).
-/// Поведенческая аналитика (appInstallTime, appLaunchCount,
-/// lastUpdateCheckAt, appUsageDurationSec) намеренно НЕ собирается,
-/// т.к. попадает под tracking и может быть основанием для reject.
-///
-/// Правовое основание:
-/// — GDPR Art. 6(1)(f) — legitimate interest (анонимная аналитика)
-/// — ePrivacy Directive Art. 5(3) — strictly necessary / analytics exemption
-///
-/// Обязательное раскрытие в магазинах (без consent popup):
-/// — Apple App Privacy Details: Device ID → "Analytics", "Not Linked to User"
-/// — Google Play Data Safety: Device or other IDs → "Analytics", "Not shared"
-/// — Privacy Policy: обязательна для всех приложений
-///
-/// deviceId: ТОЛЬКО identifierForVendor (iOS) или App Instance ID (Android).
-/// ❌ IDFA (iOS) и Advertising ID (Android) запрещены без ATT/consent.
+/// Для уникальных пользователей используется per-app instance ID:
+/// — iOS: identifierForVendor (IDFV) — сбрасывается при удалении
+/// — Android: App Instance ID — привязан к экземпляру приложения
+/// Не требует ATT dialog, consent popup, disclosure в магазинах.
 abstract class CheckVersionRequest implements _i1.SerializableModel {
   CheckVersionRequest._({
     required this.namespace,
     required this.version,
     required this.buildNumber,
     required this.platform,
+    this.instanceId,
     this.osVersion,
-    this.deviceId,
     this.locale,
     this.deviceModel,
     this.screenWidth,
@@ -64,8 +53,8 @@ abstract class CheckVersionRequest implements _i1.SerializableModel {
     required String version,
     required int buildNumber,
     required _i2.PlatformType platform,
+    String? instanceId,
     String? osVersion,
-    String? deviceId,
     String? locale,
     String? deviceModel,
     int? screenWidth,
@@ -90,8 +79,8 @@ abstract class CheckVersionRequest implements _i1.SerializableModel {
       platform: _i2.PlatformType.fromJson(
         (jsonSerialization['platform'] as String),
       ),
+      instanceId: jsonSerialization['instanceId'] as String?,
       osVersion: jsonSerialization['osVersion'] as String?,
-      deviceId: jsonSerialization['deviceId'] as String?,
       locale: jsonSerialization['locale'] as String?,
       deviceModel: jsonSerialization['deviceModel'] as String?,
       screenWidth: jsonSerialization['screenWidth'] as int?,
@@ -121,15 +110,14 @@ abstract class CheckVersionRequest implements _i1.SerializableModel {
   /// Платформа устройства (ios, android, web, macos, windows, linux)
   _i2.PlatformType platform;
 
+  /// Идентификатор экземпляра приложения:
+  /// — iOS: identifierForVendor (IDFV)
+  /// — Android: App Instance ID
+  /// Опциональный — старые клиенты могут не отправлять.
+  String? instanceId;
+
   /// Версия операционной системы (например: "17.2.1", "14")
   String? osVersion;
-
-  /// Уникальный анонимный идентификатор устройства для статистики.
-  /// iOS: identifierForVendor (без разрешения, сброс при удалении всех приложений vendor).
-  /// Android: App Instance ID / FirebaseInstallations.getId() (без разрешения).
-  /// ❌ НЕ использовать IDFA (iOS) или Advertising ID (Android) — требуют ATT/consent.
-  /// Не содержит персональных данных и не привязан к аккаунту пользователя.
-  String? deviceId;
 
   /// Локаль пользователя (например: "ru_RU", "en_US")
   String? locale;
@@ -181,8 +169,8 @@ abstract class CheckVersionRequest implements _i1.SerializableModel {
     String? version,
     int? buildNumber,
     _i2.PlatformType? platform,
+    String? instanceId,
     String? osVersion,
-    String? deviceId,
     String? locale,
     String? deviceModel,
     int? screenWidth,
@@ -206,8 +194,8 @@ abstract class CheckVersionRequest implements _i1.SerializableModel {
       'version': version,
       'buildNumber': buildNumber,
       'platform': platform.toJson(),
+      if (instanceId != null) 'instanceId': instanceId,
       if (osVersion != null) 'osVersion': osVersion,
-      if (deviceId != null) 'deviceId': deviceId,
       if (locale != null) 'locale': locale,
       if (deviceModel != null) 'deviceModel': deviceModel,
       if (screenWidth != null) 'screenWidth': screenWidth,
@@ -239,8 +227,8 @@ class _CheckVersionRequestImpl extends CheckVersionRequest {
     required String version,
     required int buildNumber,
     required _i2.PlatformType platform,
+    String? instanceId,
     String? osVersion,
-    String? deviceId,
     String? locale,
     String? deviceModel,
     int? screenWidth,
@@ -260,8 +248,8 @@ class _CheckVersionRequestImpl extends CheckVersionRequest {
          version: version,
          buildNumber: buildNumber,
          platform: platform,
+         instanceId: instanceId,
          osVersion: osVersion,
-         deviceId: deviceId,
          locale: locale,
          deviceModel: deviceModel,
          screenWidth: screenWidth,
@@ -287,8 +275,8 @@ class _CheckVersionRequestImpl extends CheckVersionRequest {
     String? version,
     int? buildNumber,
     _i2.PlatformType? platform,
+    Object? instanceId = _Undefined,
     Object? osVersion = _Undefined,
-    Object? deviceId = _Undefined,
     Object? locale = _Undefined,
     Object? deviceModel = _Undefined,
     Object? screenWidth = _Undefined,
@@ -309,8 +297,8 @@ class _CheckVersionRequestImpl extends CheckVersionRequest {
       version: version ?? this.version,
       buildNumber: buildNumber ?? this.buildNumber,
       platform: platform ?? this.platform,
+      instanceId: instanceId is String? ? instanceId : this.instanceId,
       osVersion: osVersion is String? ? osVersion : this.osVersion,
-      deviceId: deviceId is String? ? deviceId : this.deviceId,
       locale: locale is String? ? locale : this.locale,
       deviceModel: deviceModel is String? ? deviceModel : this.deviceModel,
       screenWidth: screenWidth is int? ? screenWidth : this.screenWidth,

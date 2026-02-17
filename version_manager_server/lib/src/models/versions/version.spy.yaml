@@ -23,8 +23,6 @@ fields:
   ### Интервал для типа "oncePer" в часах
   recommendationPeriodHours: int?
 
-  checkLogs: List<VersionCheckLog>?, relation(name=version_check_logs)
-
   createdAt: DateTime, default=now
   updatedAt: DateTime, default=now
 

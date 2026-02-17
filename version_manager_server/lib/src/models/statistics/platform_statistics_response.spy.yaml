@@ -1,0 +1,9 @@
+### Полная статистика по платформам.
+class: PlatformStatisticsResponse
+fields:
+  ### Распределение по платформам
+  platforms: List<PlatformStatisticsEntry>
+  ### Распределение по версиям ОС
+  osVersions: List<OsVersionStatisticsEntry>
+  ### Топ моделей устройств
+  topDeviceModels: List<DeviceModelStatisticsEntry>

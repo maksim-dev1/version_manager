@@ -5,21 +5,10 @@
 ### а также опциональные поля для сбора анонимной технической статистики.
 ###
 ### ⚠️ Все поля — исключительно технические метрики устройства (non-PII).
-### Поведенческая аналитика (appInstallTime, appLaunchCount,
-### lastUpdateCheckAt, appUsageDurationSec) намеренно НЕ собирается,
-### т.к. попадает под tracking и может быть основанием для reject.
-###
-### Правовое основание:
-### — GDPR Art. 6(1)(f) — legitimate interest (анонимная аналитика)
-### — ePrivacy Directive Art. 5(3) — strictly necessary / analytics exemption
-###
-### Обязательное раскрытие в магазинах (без consent popup):
-### — Apple App Privacy Details: Device ID → "Analytics", "Not Linked to User"
-### — Google Play Data Safety: Device or other IDs → "Analytics", "Not shared"
-### — Privacy Policy: обязательна для всех приложений
-###
-### deviceId: ТОЛЬКО identifierForVendor (iOS) или App Instance ID (Android).
-### ❌ IDFA (iOS) и Advertising ID (Android) запрещены без ATT/consent.
+### Для уникальных пользователей используется per-app instance ID:
+### — iOS: identifierForVendor (IDFV) — сбрасывается при удалении
+### — Android: App Instance ID — привязан к экземпляру приложения
+### Не требует ATT dialog, consent popup, disclosure в магазинах.
 class: CheckVersionRequest
 fields:
   # ============================================================
@@ -39,18 +28,21 @@ fields:
   platform: PlatformType
 
   # ============================================================
+  # ИДЕНТИФИКАЦИЯ ЭКЗЕМПЛЯРА (для уникальных пользователей)
+  # ============================================================
+
+  ### Идентификатор экземпляра приложения:
+  ### — iOS: identifierForVendor (IDFV)
+  ### — Android: App Instance ID
+  ### Опциональный — старые клиенты могут не отправлять.
+  instanceId: String?
+
+  # ============================================================
   # ОПЦИОНАЛЬНЫЕ ПОЛЯ — ИНФОРМАЦИЯ ОБ УСТРОЙСТВЕ
   # ============================================================
 
   ### Версия операционной системы (например: "17.2.1", "14")
   osVersion: String?
-
-  ### Уникальный анонимный идентификатор устройства для статистики.
-  ### iOS: identifierForVendor (без разрешения, сброс при удалении всех приложений vendor).
-  ### Android: App Instance ID / FirebaseInstallations.getId() (без разрешения).
-  ### ❌ НЕ использовать IDFA (iOS) или Advertising ID (Android) — требуют ATT/consent.
-  ### Не содержит персональных данных и не привязан к аккаунту пользователя.
-  deviceId: String?
 
   ### Локаль пользователя (например: "ru_RU", "en_US")
   locale: String?

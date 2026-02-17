@@ -320,7 +320,7 @@ class AppEndpoint extends LoggedInEndpoint {
     }
 
     // Валидация и обновление описания
-    if (request.description != null) {
+    if (request.description != null && request.description!.trim().isNotEmpty) {
       _validateDescription(request.description!);
       app.description = request.description!.trim();
     }

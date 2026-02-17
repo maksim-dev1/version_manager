@@ -1,0 +1,48 @@
+### Дневная статистика по измерениям (dimensions).
+###
+### Хранит количество проверок за день, разбитое по различным измерениям:
+### — os_version: распределение по версиям ОС
+### — device_model: распределение по моделям устройств
+### — locale: распределение по локалям
+### — hour: распределение по часам суток (для heatmap)
+###
+### Заполняется автоматически при каждом запросе check-version.
+### Заменяет необходимость хранения сырых логов (version_check_logs).
+###
+### Retention policy: хранить бессрочно (~100 байт/запись).
+class: DailyDimensionSummary
+table: daily_dimension_summaries
+fields:
+  id: UuidValue?, defaultPersist=random_v7
+
+  ### Приложение
+  application: Application?, relation(name=application_dimension_summaries, onDelete=Cascade)
+
+  ### Дата агрегации (начало дня UTC)
+  date: DateTime
+
+  ### Тип измерения: "os_version", "device_model", "locale", "hour"
+  dimensionType: String
+
+  ### Значение измерения (например: "17.2.1", "iPhone 15", "ru_RU", "14")
+  dimensionValue: String
+
+  ### Платформа (для os_version и device_model — платформа запроса;
+  ### для locale и hour — платформа запроса для per-platform breakdown)
+  platform: PlatformType
+
+  ### Количество проверок
+  checkCount: int, default=0
+
+indexes:
+  dds_app_date_dim_val_plat_unique_idx:
+    fields: applicationId, date, dimensionType, dimensionValue, platform
+    unique: true
+  dds_application_idx:
+    fields: applicationId
+  dds_app_date_idx:
+    fields: applicationId, date
+  dds_app_dim_type_idx:
+    fields: applicationId, dimensionType
+  dds_app_date_dim_idx:
+    fields: applicationId, date, dimensionType

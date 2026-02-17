@@ -1,0 +1,21 @@
+### Полный отчёт по статистике приложения (для экспорта).
+class: StatisticsExportData
+fields:
+  ### Основные метрики
+  overview: StatisticsOverviewResponse
+  ### Активность по дням
+  dailyUsers: DailyActiveUsersResponse
+  ### Статистика по версиям
+  versions: VersionStatisticsResponse
+  ### Статистика по платформам
+  platforms: PlatformStatisticsResponse
+  ### Географическая статистика
+  geo: GeoStatisticsResponse
+  ### Временная аналитика
+  timeAnalytics: TimeAnalyticsResponse
+  ### Период отчёта
+  periodFrom: DateTime
+  ### Период отчёта
+  periodTo: DateTime
+  ### Дата генерации отчёта
+  generatedAt: DateTime

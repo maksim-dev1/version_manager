@@ -1,0 +1,11 @@
+### Статистика по версии ОС.
+class: OsVersionStatisticsEntry
+fields:
+  ### Платформа
+  platform: PlatformType
+  ### Версия ОС
+  osVersion: String
+  ### Количество проверок
+  checkCount: int
+  ### Процент от общего числа
+  percentage: double

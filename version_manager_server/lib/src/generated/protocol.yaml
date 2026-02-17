@@ -23,6 +23,14 @@ session:
   - getActiveSessions:
   - terminateSession:
   - terminateAllOtherSessions:
+statistics:
+  - getOverview:
+  - getDailyActiveUsers:
+  - getVersionStatistics:
+  - getPlatformStatistics:
+  - getGeoStatistics:
+  - getTimeAnalytics:
+  - getExportData:
 team:
   - createTeam:
   - updateTeam:

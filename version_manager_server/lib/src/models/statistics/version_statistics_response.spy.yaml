@@ -1,0 +1,13 @@
+### Полная статистика по версиям приложения.
+class: VersionStatisticsResponse
+fields:
+  ### Распределение проверок по версиям
+  versions: List<VersionStatisticsEntry>
+  ### Adoption rate последней версии (% проверок на последней версии)
+  latestVersionAdoptionRate: double
+  ### Количество проверок на заблокированных версиях
+  checksOnBlockedVersions: int
+  ### Процент проверок на заблокированных версиях
+  blockedVersionsPercentage: double
+  ### Динамика проверок по версиям (по дням)
+  adoptionTimeline: List<VersionAdoptionTimelineEntry>

@@ -14,8 +14,7 @@ import 'package:serverpod_client/serverpod_client.dart' as _i1;
 import '../apps/application.dart' as _i2;
 import '../versions/version.dart' as _i3;
 import '../enums/recommendation_frequency_type.dart' as _i4;
-import '../logs/version_check_log.dart' as _i5;
-import 'package:version_manager_client/src/protocol/protocol.dart' as _i6;
+import 'package:version_manager_client/src/protocol/protocol.dart' as _i5;
 
 /// Версия приложения
 abstract class Version implements _i1.SerializableModel {
@@ -34,7 +33,6 @@ abstract class Version implements _i1.SerializableModel {
     this.recommendationFrequency,
     this.recommendationEveryNthLaunch,
     this.recommendationPeriodHours,
-    this.checkLogs,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) : isBlocked = isBlocked ?? false,
@@ -56,7 +54,6 @@ abstract class Version implements _i1.SerializableModel {
     _i4.RecommendationFrequencyType? recommendationFrequency,
     int? recommendationEveryNthLaunch,
     int? recommendationPeriodHours,
-    List<_i5.VersionCheckLog>? checkLogs,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) = _VersionImpl;
@@ -71,7 +68,7 @@ abstract class Version implements _i1.SerializableModel {
       ),
       application: jsonSerialization['application'] == null
           ? null
-          : _i6.Protocol().deserialize<_i2.Application>(
+          : _i5.Protocol().deserialize<_i2.Application>(
               jsonSerialization['application'],
             ),
       versionNumber: jsonSerialization['versionNumber'] as String,
@@ -86,12 +83,12 @@ abstract class Version implements _i1.SerializableModel {
             ),
       recommendedVersion: jsonSerialization['recommendedVersion'] == null
           ? null
-          : _i6.Protocol().deserialize<_i3.Version>(
+          : _i5.Protocol().deserialize<_i3.Version>(
               jsonSerialization['recommendedVersion'],
             ),
       recommendingVersions: jsonSerialization['recommendingVersions'] == null
           ? null
-          : _i6.Protocol().deserialize<List<_i3.Version>>(
+          : _i5.Protocol().deserialize<List<_i3.Version>>(
               jsonSerialization['recommendingVersions'],
             ),
       recommendationFrequency:
@@ -104,11 +101,6 @@ abstract class Version implements _i1.SerializableModel {
           jsonSerialization['recommendationEveryNthLaunch'] as int?,
       recommendationPeriodHours:
           jsonSerialization['recommendationPeriodHours'] as int?,
-      checkLogs: jsonSerialization['checkLogs'] == null
-          ? null
-          : _i6.Protocol().deserialize<List<_i5.VersionCheckLog>>(
-              jsonSerialization['checkLogs'],
-            ),
       createdAt: jsonSerialization['createdAt'] == null
           ? null
           : _i1.DateTimeJsonExtension.fromJson(jsonSerialization['createdAt']),
@@ -152,8 +144,6 @@ abstract class Version implements _i1.SerializableModel {
   /// Интервал для типа "oncePer" в часах
   int? recommendationPeriodHours;
 
-  List<_i5.VersionCheckLog>? checkLogs;
-
   DateTime createdAt;
 
   DateTime updatedAt;
@@ -176,7 +166,6 @@ abstract class Version implements _i1.SerializableModel {
     _i4.RecommendationFrequencyType? recommendationFrequency,
     int? recommendationEveryNthLaunch,
     int? recommendationPeriodHours,
-    List<_i5.VersionCheckLog>? checkLogs,
     DateTime? createdAt,
     DateTime? updatedAt,
   });
@@ -206,8 +195,6 @@ abstract class Version implements _i1.SerializableModel {
         'recommendationEveryNthLaunch': recommendationEveryNthLaunch,
       if (recommendationPeriodHours != null)
         'recommendationPeriodHours': recommendationPeriodHours,
-      if (checkLogs != null)
-        'checkLogs': checkLogs?.toJson(valueToJson: (v) => v.toJson()),
       'createdAt': createdAt.toJson(),
       'updatedAt': updatedAt.toJson(),
     };
@@ -237,7 +224,6 @@ class _VersionImpl extends Version {
     _i4.RecommendationFrequencyType? recommendationFrequency,
     int? recommendationEveryNthLaunch,
     int? recommendationPeriodHours,
-    List<_i5.VersionCheckLog>? checkLogs,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) : super._(
@@ -255,7 +241,6 @@ class _VersionImpl extends Version {
          recommendationFrequency: recommendationFrequency,
          recommendationEveryNthLaunch: recommendationEveryNthLaunch,
          recommendationPeriodHours: recommendationPeriodHours,
-         checkLogs: checkLogs,
          createdAt: createdAt,
          updatedAt: updatedAt,
        );
@@ -279,7 +264,6 @@ class _VersionImpl extends Version {
     Object? recommendationFrequency = _Undefined,
     Object? recommendationEveryNthLaunch = _Undefined,
     Object? recommendationPeriodHours = _Undefined,
-    Object? checkLogs = _Undefined,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -313,9 +297,6 @@ class _VersionImpl extends Version {
       recommendationPeriodHours: recommendationPeriodHours is int?
           ? recommendationPeriodHours
           : this.recommendationPeriodHours,
-      checkLogs: checkLogs is List<_i5.VersionCheckLog>?
-          ? checkLogs
-          : this.checkLogs?.map((e0) => e0.copyWith()).toList(),
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );

@@ -1199,24 +1199,28 @@ class VersionEndpoint extends LoggedInEndpoint {
     return maxBuildVersion != null && maxBuildVersion.id == version.id;
   }
 
-  /// Подсчитывает количество уникальных активных пользователей (по deviceId)
-  /// на данной версии за последние 30 дней.
+  /// Подсчитывает количество проверок (активность) на данной версии за последние 30 дней.
+  ///
+  /// Используется для отображения популярности версии в списке.
+  /// Основано на агрегированных данных [DailyCheckSummary].
   Future<int> _getActiveUsersCount(
     Session session, {
     required UuidValue versionId,
   }) async {
     final thirtyDaysAgo = DateTime.now().subtract(Duration(days: 30));
 
-    final logs = await VersionCheckLog.db.find(
+    // Находим версию для получения buildNumber и applicationId
+    final version = await Version.db.findById(session, versionId);
+    if (version == null) return 0;
+
+    final summaries = await DailyCheckSummary.db.find(
       session,
       where: (t) =>
-          (t.versionId.equals(versionId)) &
-          (t.checkedAt > thirtyDaysAgo) &
-          t.deviceId.notEquals(null),
+          t.applicationId.equals(version.applicationId) &
+          t.buildNumber.equals(version.buildNumber) &
+          (t.date > thirtyDaysAgo),
     );
 
-    // Подсчитываем уникальные deviceId
-    final uniqueDevices = logs.map((l) => l.deviceId).toSet();
-    return uniqueDevices.length;
+    return summaries.fold<int>(0, (sum, s) => sum + s.totalChecks);
   }
 }

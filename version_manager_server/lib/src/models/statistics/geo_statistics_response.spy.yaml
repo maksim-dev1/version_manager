@@ -1,0 +1,6 @@
+### Статистика по локалям.
+### Страны не собираются (IP не сохраняется, GeoIP не используется).
+class: GeoStatisticsResponse
+fields:
+  ### Распределение по локалям
+  locales: List<LocaleStatisticsEntry>

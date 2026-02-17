@@ -15,20 +15,20 @@ import '../apps/application.dart' as _i2;
 import '../enums/platform_type.dart' as _i3;
 import 'package:version_manager_client/src/protocol/protocol.dart' as _i4;
 
-/// Агрегированная дневная статистика проверок версий.
+/// Дневная агрегированная статистика проверок версий.
 ///
 /// Содержит преагрегированные метрики за один день для одного приложения,
-/// одной платформы и одной версии. Используется для:
-/// — быстрых дашбордов без тяжёлых запросов к version_check_logs
-/// — хранения исторических данных после удаления детальных логов
+/// одной платформы и одной версии (buildNumber). Используется для:
+/// — быстрых дашбордов без тяжёлых запросов
+/// — хранения исторических данных
 /// — аналитики трендов по дням
 ///
 /// Заполняется автоматически при каждом запросе check-version
-/// (инкрементальное обновление) или через периодическую задачу (cron).
+/// (инкрементальное обновление).
 ///
-/// Retention policy: хранить бессрочно (компактные данные ~200 байт/запись).
-abstract class VersionCheckDailySummary implements _i1.SerializableModel {
-  VersionCheckDailySummary._({
+/// Retention policy: хранить бессрочно (~200 байт/запись).
+abstract class DailyCheckSummary implements _i1.SerializableModel {
+  DailyCheckSummary._({
     this.id,
     required this.applicationId,
     this.application,
@@ -36,30 +36,28 @@ abstract class VersionCheckDailySummary implements _i1.SerializableModel {
     required this.platform,
     required this.buildNumber,
     required this.versionNumber,
-    int? totalChecks,
     int? uniqueDevices,
+    int? newDevices,
+    int? totalChecks,
     int? blockedChecks,
     int? updateAvailableChecks,
     int? activeChecks,
     int? errorChecks,
-    int? newInstalls,
-    int? upgrades,
     this.avgProcessingTimeMs,
     this.maxProcessingTimeMs,
     DateTime? createdAt,
     DateTime? updatedAt,
-  }) : totalChecks = totalChecks ?? 0,
-       uniqueDevices = uniqueDevices ?? 0,
+  }) : uniqueDevices = uniqueDevices ?? 0,
+       newDevices = newDevices ?? 0,
+       totalChecks = totalChecks ?? 0,
        blockedChecks = blockedChecks ?? 0,
        updateAvailableChecks = updateAvailableChecks ?? 0,
        activeChecks = activeChecks ?? 0,
        errorChecks = errorChecks ?? 0,
-       newInstalls = newInstalls ?? 0,
-       upgrades = upgrades ?? 0,
        createdAt = createdAt ?? DateTime.now(),
        updatedAt = updatedAt ?? DateTime.now();
 
-  factory VersionCheckDailySummary({
+  factory DailyCheckSummary({
     _i1.UuidValue? id,
     required _i1.UuidValue applicationId,
     _i2.Application? application,
@@ -67,24 +65,21 @@ abstract class VersionCheckDailySummary implements _i1.SerializableModel {
     required _i3.PlatformType platform,
     required int buildNumber,
     required String versionNumber,
-    int? totalChecks,
     int? uniqueDevices,
+    int? newDevices,
+    int? totalChecks,
     int? blockedChecks,
     int? updateAvailableChecks,
     int? activeChecks,
     int? errorChecks,
-    int? newInstalls,
-    int? upgrades,
     int? avgProcessingTimeMs,
     int? maxProcessingTimeMs,
     DateTime? createdAt,
     DateTime? updatedAt,
-  }) = _VersionCheckDailySummaryImpl;
+  }) = _DailyCheckSummaryImpl;
 
-  factory VersionCheckDailySummary.fromJson(
-    Map<String, dynamic> jsonSerialization,
-  ) {
-    return VersionCheckDailySummary(
+  factory DailyCheckSummary.fromJson(Map<String, dynamic> jsonSerialization) {
+    return DailyCheckSummary(
       id: jsonSerialization['id'] == null
           ? null
           : _i1.UuidValueJsonExtension.fromJson(jsonSerialization['id']),
@@ -102,14 +97,13 @@ abstract class VersionCheckDailySummary implements _i1.SerializableModel {
       ),
       buildNumber: jsonSerialization['buildNumber'] as int,
       versionNumber: jsonSerialization['versionNumber'] as String,
-      totalChecks: jsonSerialization['totalChecks'] as int?,
       uniqueDevices: jsonSerialization['uniqueDevices'] as int?,
+      newDevices: jsonSerialization['newDevices'] as int?,
+      totalChecks: jsonSerialization['totalChecks'] as int?,
       blockedChecks: jsonSerialization['blockedChecks'] as int?,
       updateAvailableChecks: jsonSerialization['updateAvailableChecks'] as int?,
       activeChecks: jsonSerialization['activeChecks'] as int?,
       errorChecks: jsonSerialization['errorChecks'] as int?,
-      newInstalls: jsonSerialization['newInstalls'] as int?,
-      upgrades: jsonSerialization['upgrades'] as int?,
       avgProcessingTimeMs: jsonSerialization['avgProcessingTimeMs'] as int?,
       maxProcessingTimeMs: jsonSerialization['maxProcessingTimeMs'] as int?,
       createdAt: jsonSerialization['createdAt'] == null
@@ -131,7 +125,7 @@ abstract class VersionCheckDailySummary implements _i1.SerializableModel {
   /// Приложение
   _i2.Application? application;
 
-  /// Дата агрегации (без времени, начало дня UTC)
+  /// Дата агрегации (начало дня UTC)
   DateTime date;
 
   /// Платформа
@@ -143,11 +137,14 @@ abstract class VersionCheckDailySummary implements _i1.SerializableModel {
   /// Номер версии (для отображения)
   String versionNumber;
 
+  /// Уникальные устройства за день (по instanceId, точный подсчёт)
+  int uniqueDevices;
+
+  /// Новые устройства за день (firstSeenAt = сегодня)
+  int newDevices;
+
   /// Общее количество проверок за день
   int totalChecks;
-
-  /// Количество уникальных устройств
-  int uniqueDevices;
 
   /// Проверки со статусом blocked
   int blockedChecks;
@@ -161,12 +158,6 @@ abstract class VersionCheckDailySummary implements _i1.SerializableModel {
   /// Проверки со статусом error
   int errorChecks;
 
-  /// Количество первых проверок (новые устройства)
-  int newInstalls;
-
-  /// Количество обновлений (устройство сменило версию)
-  int upgrades;
-
   /// Среднее время обработки запроса (мс)
   int? avgProcessingTimeMs;
 
@@ -177,10 +168,10 @@ abstract class VersionCheckDailySummary implements _i1.SerializableModel {
 
   DateTime updatedAt;
 
-  /// Returns a shallow copy of this [VersionCheckDailySummary]
+  /// Returns a shallow copy of this [DailyCheckSummary]
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
-  VersionCheckDailySummary copyWith({
+  DailyCheckSummary copyWith({
     _i1.UuidValue? id,
     _i1.UuidValue? applicationId,
     _i2.Application? application,
@@ -188,14 +179,13 @@ abstract class VersionCheckDailySummary implements _i1.SerializableModel {
     _i3.PlatformType? platform,
     int? buildNumber,
     String? versionNumber,
-    int? totalChecks,
     int? uniqueDevices,
+    int? newDevices,
+    int? totalChecks,
     int? blockedChecks,
     int? updateAvailableChecks,
     int? activeChecks,
     int? errorChecks,
-    int? newInstalls,
-    int? upgrades,
     int? avgProcessingTimeMs,
     int? maxProcessingTimeMs,
     DateTime? createdAt,
@@ -204,7 +194,7 @@ abstract class VersionCheckDailySummary implements _i1.SerializableModel {
   @override
   Map<String, dynamic> toJson() {
     return {
-      '__className__': 'VersionCheckDailySummary',
+      '__className__': 'DailyCheckSummary',
       if (id != null) 'id': id?.toJson(),
       'applicationId': applicationId.toJson(),
       if (application != null) 'application': application?.toJson(),
@@ -212,14 +202,13 @@ abstract class VersionCheckDailySummary implements _i1.SerializableModel {
       'platform': platform.toJson(),
       'buildNumber': buildNumber,
       'versionNumber': versionNumber,
-      'totalChecks': totalChecks,
       'uniqueDevices': uniqueDevices,
+      'newDevices': newDevices,
+      'totalChecks': totalChecks,
       'blockedChecks': blockedChecks,
       'updateAvailableChecks': updateAvailableChecks,
       'activeChecks': activeChecks,
       'errorChecks': errorChecks,
-      'newInstalls': newInstalls,
-      'upgrades': upgrades,
       if (avgProcessingTimeMs != null)
         'avgProcessingTimeMs': avgProcessingTimeMs,
       if (maxProcessingTimeMs != null)
@@ -237,8 +226,8 @@ abstract class VersionCheckDailySummary implements _i1.SerializableModel {
 
 class _Undefined {}
 
-class _VersionCheckDailySummaryImpl extends VersionCheckDailySummary {
-  _VersionCheckDailySummaryImpl({
+class _DailyCheckSummaryImpl extends DailyCheckSummary {
+  _DailyCheckSummaryImpl({
     _i1.UuidValue? id,
     required _i1.UuidValue applicationId,
     _i2.Application? application,
@@ -246,14 +235,13 @@ class _VersionCheckDailySummaryImpl extends VersionCheckDailySummary {
     required _i3.PlatformType platform,
     required int buildNumber,
     required String versionNumber,
-    int? totalChecks,
     int? uniqueDevices,
+    int? newDevices,
+    int? totalChecks,
     int? blockedChecks,
     int? updateAvailableChecks,
     int? activeChecks,
     int? errorChecks,
-    int? newInstalls,
-    int? upgrades,
     int? avgProcessingTimeMs,
     int? maxProcessingTimeMs,
     DateTime? createdAt,
@@ -266,25 +254,24 @@ class _VersionCheckDailySummaryImpl extends VersionCheckDailySummary {
          platform: platform,
          buildNumber: buildNumber,
          versionNumber: versionNumber,
-         totalChecks: totalChecks,
          uniqueDevices: uniqueDevices,
+         newDevices: newDevices,
+         totalChecks: totalChecks,
          blockedChecks: blockedChecks,
          updateAvailableChecks: updateAvailableChecks,
          activeChecks: activeChecks,
          errorChecks: errorChecks,
-         newInstalls: newInstalls,
-         upgrades: upgrades,
          avgProcessingTimeMs: avgProcessingTimeMs,
          maxProcessingTimeMs: maxProcessingTimeMs,
          createdAt: createdAt,
          updatedAt: updatedAt,
        );
 
-  /// Returns a shallow copy of this [VersionCheckDailySummary]
+  /// Returns a shallow copy of this [DailyCheckSummary]
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
   @override
-  VersionCheckDailySummary copyWith({
+  DailyCheckSummary copyWith({
     Object? id = _Undefined,
     _i1.UuidValue? applicationId,
     Object? application = _Undefined,
@@ -292,20 +279,19 @@ class _VersionCheckDailySummaryImpl extends VersionCheckDailySummary {
     _i3.PlatformType? platform,
     int? buildNumber,
     String? versionNumber,
-    int? totalChecks,
     int? uniqueDevices,
+    int? newDevices,
+    int? totalChecks,
     int? blockedChecks,
     int? updateAvailableChecks,
     int? activeChecks,
     int? errorChecks,
-    int? newInstalls,
-    int? upgrades,
     Object? avgProcessingTimeMs = _Undefined,
     Object? maxProcessingTimeMs = _Undefined,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
-    return VersionCheckDailySummary(
+    return DailyCheckSummary(
       id: id is _i1.UuidValue? ? id : this.id,
       applicationId: applicationId ?? this.applicationId,
       application: application is _i2.Application?
@@ -315,15 +301,14 @@ class _VersionCheckDailySummaryImpl extends VersionCheckDailySummary {
       platform: platform ?? this.platform,
       buildNumber: buildNumber ?? this.buildNumber,
       versionNumber: versionNumber ?? this.versionNumber,
-      totalChecks: totalChecks ?? this.totalChecks,
       uniqueDevices: uniqueDevices ?? this.uniqueDevices,
+      newDevices: newDevices ?? this.newDevices,
+      totalChecks: totalChecks ?? this.totalChecks,
       blockedChecks: blockedChecks ?? this.blockedChecks,
       updateAvailableChecks:
           updateAvailableChecks ?? this.updateAvailableChecks,
       activeChecks: activeChecks ?? this.activeChecks,
       errorChecks: errorChecks ?? this.errorChecks,
-      newInstalls: newInstalls ?? this.newInstalls,
-      upgrades: upgrades ?? this.upgrades,
       avgProcessingTimeMs: avgProcessingTimeMs is int?
           ? avgProcessingTimeMs
           : this.avgProcessingTimeMs,

@@ -14,66 +14,69 @@ import 'package:serverpod/serverpod.dart' as _i1;
 import '../endpoints/app_endpoint.dart' as _i2;
 import '../endpoints/auth_endpoint.dart' as _i3;
 import '../endpoints/session_endpoint.dart' as _i4;
-import '../endpoints/team_endpoint.dart' as _i5;
-import '../endpoints/version_endpoint.dart' as _i6;
-import '../greetings/greeting_endpoint.dart' as _i7;
+import '../endpoints/statistics_endpoint.dart' as _i5;
+import '../endpoints/team_endpoint.dart' as _i6;
+import '../endpoints/version_endpoint.dart' as _i7;
+import '../greetings/greeting_endpoint.dart' as _i8;
 import 'package:version_manager_server/src/generated/apps/create_application_request.dart'
-    as _i8;
-import 'package:version_manager_server/src/generated/apps/update_application_request.dart'
     as _i9;
-import 'package:version_manager_server/src/generated/apps/delete_application_request.dart'
+import 'package:version_manager_server/src/generated/apps/update_application_request.dart'
     as _i10;
-import 'package:version_manager_server/src/generated/apps/request_api_key_regeneration_request.dart'
+import 'package:version_manager_server/src/generated/apps/delete_application_request.dart'
     as _i11;
-import 'package:version_manager_server/src/generated/apps/regenerate_api_key_request.dart'
+import 'package:version_manager_server/src/generated/apps/request_api_key_regeneration_request.dart'
     as _i12;
-import 'package:version_manager_server/src/generated/apps/toggle_application_status_request.dart'
+import 'package:version_manager_server/src/generated/apps/regenerate_api_key_request.dart'
     as _i13;
-import 'package:version_manager_server/src/generated/apps/transfer_application_ownership_request.dart'
+import 'package:version_manager_server/src/generated/apps/toggle_application_status_request.dart'
     as _i14;
-import 'package:version_manager_server/src/generated/auth/check_email.dart'
+import 'package:version_manager_server/src/generated/apps/transfer_application_ownership_request.dart'
     as _i15;
-import 'package:version_manager_server/src/generated/auth/register_send_code.dart'
+import 'package:version_manager_server/src/generated/auth/check_email.dart'
     as _i16;
-import 'package:version_manager_server/src/generated/auth/register_verify_code.dart'
+import 'package:version_manager_server/src/generated/auth/register_send_code.dart'
     as _i17;
-import 'package:version_manager_server/src/generated/auth/register.dart'
+import 'package:version_manager_server/src/generated/auth/register_verify_code.dart'
     as _i18;
-import 'package:version_manager_server/src/generated/auth/login.dart' as _i19;
+import 'package:version_manager_server/src/generated/auth/register.dart'
+    as _i19;
+import 'package:version_manager_server/src/generated/auth/login.dart' as _i20;
 import 'package:version_manager_server/src/generated/auth/refresh_token.dart'
-    as _i20;
-import 'package:version_manager_server/src/generated/sessions/terminate_session_request.dart'
     as _i21;
-import 'package:version_manager_server/src/generated/teams/create_team_request.dart'
+import 'package:version_manager_server/src/generated/sessions/terminate_session_request.dart'
     as _i22;
-import 'package:version_manager_server/src/generated/teams/update_team_request.dart'
+import 'package:version_manager_server/src/generated/statistics/statistics_filter.dart'
     as _i23;
-import 'package:version_manager_server/src/generated/teams/invite_team_member_request.dart'
+import 'package:version_manager_server/src/generated/teams/create_team_request.dart'
     as _i24;
-import 'package:version_manager_server/src/generated/teams/respond_to_invitation_request.dart'
+import 'package:version_manager_server/src/generated/teams/update_team_request.dart'
     as _i25;
-import 'package:version_manager_server/src/generated/teams/revoke_invitation_request.dart'
+import 'package:version_manager_server/src/generated/teams/invite_team_member_request.dart'
     as _i26;
-import 'package:version_manager_server/src/generated/teams/update_member_role_request.dart'
+import 'package:version_manager_server/src/generated/teams/respond_to_invitation_request.dart'
     as _i27;
-import 'package:version_manager_server/src/generated/teams/remove_member_request.dart'
+import 'package:version_manager_server/src/generated/teams/revoke_invitation_request.dart'
     as _i28;
-import 'package:version_manager_server/src/generated/teams/leave_team_request.dart'
+import 'package:version_manager_server/src/generated/teams/update_member_role_request.dart'
     as _i29;
-import 'package:version_manager_server/src/generated/teams/transfer_team_ownership_request.dart'
+import 'package:version_manager_server/src/generated/teams/remove_member_request.dart'
     as _i30;
-import 'package:version_manager_server/src/generated/teams/delete_team_request.dart'
+import 'package:version_manager_server/src/generated/teams/leave_team_request.dart'
     as _i31;
-import 'package:version_manager_server/src/generated/versions/create_version_request.dart'
+import 'package:version_manager_server/src/generated/teams/transfer_team_ownership_request.dart'
     as _i32;
-import 'package:version_manager_server/src/generated/versions/update_version_request.dart'
+import 'package:version_manager_server/src/generated/teams/delete_team_request.dart'
     as _i33;
-import 'package:version_manager_server/src/generated/versions/toggle_version_block_request.dart'
+import 'package:version_manager_server/src/generated/versions/create_version_request.dart'
     as _i34;
-import 'package:version_manager_server/src/generated/versions/set_version_recommendation_request.dart'
+import 'package:version_manager_server/src/generated/versions/update_version_request.dart'
     as _i35;
-import 'package:version_manager_server/src/generated/versions/delete_version_request.dart'
+import 'package:version_manager_server/src/generated/versions/toggle_version_block_request.dart'
     as _i36;
+import 'package:version_manager_server/src/generated/versions/set_version_recommendation_request.dart'
+    as _i37;
+import 'package:version_manager_server/src/generated/versions/delete_version_request.dart'
+    as _i38;
 
 class Endpoints extends _i1.EndpointDispatch {
   @override
@@ -97,19 +100,25 @@ class Endpoints extends _i1.EndpointDispatch {
           'session',
           null,
         ),
-      'team': _i5.TeamEndpoint()
+      'statistics': _i5.StatisticsEndpoint()
+        ..initialize(
+          server,
+          'statistics',
+          null,
+        ),
+      'team': _i6.TeamEndpoint()
         ..initialize(
           server,
           'team',
           null,
         ),
-      'version': _i6.VersionEndpoint()
+      'version': _i7.VersionEndpoint()
         ..initialize(
           server,
           'version',
           null,
         ),
-      'greeting': _i7.GreetingEndpoint()
+      'greeting': _i8.GreetingEndpoint()
         ..initialize(
           server,
           'greeting',
@@ -153,7 +162,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i8.CreateApplicationRequest>(),
+              type: _i1.getType<_i9.CreateApplicationRequest>(),
               nullable: false,
             ),
           },
@@ -172,7 +181,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i9.UpdateApplicationRequest>(),
+              type: _i1.getType<_i10.UpdateApplicationRequest>(),
               nullable: false,
             ),
           },
@@ -191,7 +200,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i10.DeleteApplicationRequest>(),
+              type: _i1.getType<_i11.DeleteApplicationRequest>(),
               nullable: false,
             ),
           },
@@ -229,7 +238,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i11.RequestApiKeyRegenerationRequest>(),
+              type: _i1.getType<_i12.RequestApiKeyRegenerationRequest>(),
               nullable: false,
             ),
           },
@@ -248,7 +257,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i12.RegenerateApiKeyRequest>(),
+              type: _i1.getType<_i13.RegenerateApiKeyRequest>(),
               nullable: false,
             ),
           },
@@ -266,7 +275,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i13.ToggleApplicationStatusRequest>(),
+              type: _i1.getType<_i14.ToggleApplicationStatusRequest>(),
               nullable: false,
             ),
           },
@@ -285,7 +294,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i14.TransferApplicationOwnershipRequest>(),
+              type: _i1.getType<_i15.TransferApplicationOwnershipRequest>(),
               nullable: false,
             ),
           },
@@ -310,7 +319,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i15.CheckEmailRequest>(),
+              type: _i1.getType<_i16.CheckEmailRequest>(),
               nullable: false,
             ),
           },
@@ -329,7 +338,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i16.RegisterSendCodeRequest>(),
+              type: _i1.getType<_i17.RegisterSendCodeRequest>(),
               nullable: false,
             ),
           },
@@ -347,7 +356,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i17.RegisterVerifyCodeRequest>(),
+              type: _i1.getType<_i18.RegisterVerifyCodeRequest>(),
               nullable: false,
             ),
           },
@@ -366,7 +375,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i18.RegisterRequest>(),
+              type: _i1.getType<_i19.RegisterRequest>(),
               nullable: false,
             ),
           },
@@ -384,7 +393,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i19.LoginRequest>(),
+              type: _i1.getType<_i20.LoginRequest>(),
               nullable: false,
             ),
           },
@@ -402,7 +411,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i20.RefreshTokenRequest>(),
+              type: _i1.getType<_i21.RefreshTokenRequest>(),
               nullable: false,
             ),
           },
@@ -467,7 +476,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i21.TerminateSessionRequest>(),
+              type: _i1.getType<_i22.TerminateSessionRequest>(),
               nullable: false,
             ),
           },
@@ -493,6 +502,145 @@ class Endpoints extends _i1.EndpointDispatch {
         ),
       },
     );
+    connectors['statistics'] = _i1.EndpointConnector(
+      name: 'statistics',
+      endpoint: endpoints['statistics']!,
+      methodConnectors: {
+        'getOverview': _i1.MethodConnector(
+          name: 'getOverview',
+          params: {
+            'filter': _i1.ParameterDescription(
+              name: 'filter',
+              type: _i1.getType<_i23.StatisticsFilter>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['statistics'] as _i5.StatisticsEndpoint)
+                  .getOverview(
+                    session,
+                    filter: params['filter'],
+                  ),
+        ),
+        'getDailyActiveUsers': _i1.MethodConnector(
+          name: 'getDailyActiveUsers',
+          params: {
+            'filter': _i1.ParameterDescription(
+              name: 'filter',
+              type: _i1.getType<_i23.StatisticsFilter>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['statistics'] as _i5.StatisticsEndpoint)
+                  .getDailyActiveUsers(
+                    session,
+                    filter: params['filter'],
+                  ),
+        ),
+        'getVersionStatistics': _i1.MethodConnector(
+          name: 'getVersionStatistics',
+          params: {
+            'filter': _i1.ParameterDescription(
+              name: 'filter',
+              type: _i1.getType<_i23.StatisticsFilter>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['statistics'] as _i5.StatisticsEndpoint)
+                  .getVersionStatistics(
+                    session,
+                    filter: params['filter'],
+                  ),
+        ),
+        'getPlatformStatistics': _i1.MethodConnector(
+          name: 'getPlatformStatistics',
+          params: {
+            'filter': _i1.ParameterDescription(
+              name: 'filter',
+              type: _i1.getType<_i23.StatisticsFilter>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['statistics'] as _i5.StatisticsEndpoint)
+                  .getPlatformStatistics(
+                    session,
+                    filter: params['filter'],
+                  ),
+        ),
+        'getGeoStatistics': _i1.MethodConnector(
+          name: 'getGeoStatistics',
+          params: {
+            'filter': _i1.ParameterDescription(
+              name: 'filter',
+              type: _i1.getType<_i23.StatisticsFilter>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['statistics'] as _i5.StatisticsEndpoint)
+                  .getGeoStatistics(
+                    session,
+                    filter: params['filter'],
+                  ),
+        ),
+        'getTimeAnalytics': _i1.MethodConnector(
+          name: 'getTimeAnalytics',
+          params: {
+            'filter': _i1.ParameterDescription(
+              name: 'filter',
+              type: _i1.getType<_i23.StatisticsFilter>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['statistics'] as _i5.StatisticsEndpoint)
+                  .getTimeAnalytics(
+                    session,
+                    filter: params['filter'],
+                  ),
+        ),
+        'getExportData': _i1.MethodConnector(
+          name: 'getExportData',
+          params: {
+            'filter': _i1.ParameterDescription(
+              name: 'filter',
+              type: _i1.getType<_i23.StatisticsFilter>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['statistics'] as _i5.StatisticsEndpoint)
+                  .getExportData(
+                    session,
+                    filter: params['filter'],
+                  ),
+        ),
+      },
+    );
     connectors['team'] = _i1.EndpointConnector(
       name: 'team',
       endpoint: endpoints['team']!,
@@ -502,7 +650,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i22.CreateTeamRequest>(),
+              type: _i1.getType<_i24.CreateTeamRequest>(),
               nullable: false,
             ),
           },
@@ -510,7 +658,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['team'] as _i5.TeamEndpoint).createTeam(
+              ) async => (endpoints['team'] as _i6.TeamEndpoint).createTeam(
                 session,
                 request: params['request'],
               ),
@@ -520,7 +668,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i23.UpdateTeamRequest>(),
+              type: _i1.getType<_i25.UpdateTeamRequest>(),
               nullable: false,
             ),
           },
@@ -528,7 +676,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['team'] as _i5.TeamEndpoint).updateTeam(
+              ) async => (endpoints['team'] as _i6.TeamEndpoint).updateTeam(
                 session,
                 request: params['request'],
               ),
@@ -546,7 +694,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['team'] as _i5.TeamEndpoint).getTeam(
+              ) async => (endpoints['team'] as _i6.TeamEndpoint).getTeam(
                 session,
                 teamId: params['teamId'],
               ),
@@ -559,14 +707,14 @@ class Endpoints extends _i1.EndpointDispatch {
                 _i1.Session session,
                 Map<String, dynamic> params,
               ) async =>
-                  (endpoints['team'] as _i5.TeamEndpoint).getMyTeams(session),
+                  (endpoints['team'] as _i6.TeamEndpoint).getMyTeams(session),
         ),
         'inviteMember': _i1.MethodConnector(
           name: 'inviteMember',
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i24.InviteTeamMemberRequest>(),
+              type: _i1.getType<_i26.InviteTeamMemberRequest>(),
               nullable: false,
             ),
           },
@@ -574,7 +722,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['team'] as _i5.TeamEndpoint).inviteMember(
+              ) async => (endpoints['team'] as _i6.TeamEndpoint).inviteMember(
                 session,
                 request: params['request'],
               ),
@@ -586,7 +734,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['team'] as _i5.TeamEndpoint)
+              ) async => (endpoints['team'] as _i6.TeamEndpoint)
                   .getMyInvitations(session),
         ),
         'respondToInvitation': _i1.MethodConnector(
@@ -594,7 +742,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i25.RespondToInvitationRequest>(),
+              type: _i1.getType<_i27.RespondToInvitationRequest>(),
               nullable: false,
             ),
           },
@@ -603,7 +751,7 @@ class Endpoints extends _i1.EndpointDispatch {
                 _i1.Session session,
                 Map<String, dynamic> params,
               ) async =>
-                  (endpoints['team'] as _i5.TeamEndpoint).respondToInvitation(
+                  (endpoints['team'] as _i6.TeamEndpoint).respondToInvitation(
                     session,
                     request: params['request'],
                   ),
@@ -613,7 +761,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i26.RevokeInvitationRequest>(),
+              type: _i1.getType<_i28.RevokeInvitationRequest>(),
               nullable: false,
             ),
           },
@@ -622,7 +770,7 @@ class Endpoints extends _i1.EndpointDispatch {
                 _i1.Session session,
                 Map<String, dynamic> params,
               ) async =>
-                  (endpoints['team'] as _i5.TeamEndpoint).revokeInvitation(
+                  (endpoints['team'] as _i6.TeamEndpoint).revokeInvitation(
                     session,
                     request: params['request'],
                   ),
@@ -640,7 +788,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['team'] as _i5.TeamEndpoint).getTeamMembers(
+              ) async => (endpoints['team'] as _i6.TeamEndpoint).getTeamMembers(
                 session,
                 teamId: params['teamId'],
               ),
@@ -650,7 +798,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i27.UpdateMemberRoleRequest>(),
+              type: _i1.getType<_i29.UpdateMemberRoleRequest>(),
               nullable: false,
             ),
           },
@@ -659,7 +807,7 @@ class Endpoints extends _i1.EndpointDispatch {
                 _i1.Session session,
                 Map<String, dynamic> params,
               ) async =>
-                  (endpoints['team'] as _i5.TeamEndpoint).updateMemberRole(
+                  (endpoints['team'] as _i6.TeamEndpoint).updateMemberRole(
                     session,
                     request: params['request'],
                   ),
@@ -669,7 +817,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i28.RemoveMemberRequest>(),
+              type: _i1.getType<_i30.RemoveMemberRequest>(),
               nullable: false,
             ),
           },
@@ -677,7 +825,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['team'] as _i5.TeamEndpoint).removeMember(
+              ) async => (endpoints['team'] as _i6.TeamEndpoint).removeMember(
                 session,
                 request: params['request'],
               ),
@@ -687,7 +835,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i29.LeaveTeamRequest>(),
+              type: _i1.getType<_i31.LeaveTeamRequest>(),
               nullable: false,
             ),
           },
@@ -695,7 +843,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['team'] as _i5.TeamEndpoint).leaveTeam(
+              ) async => (endpoints['team'] as _i6.TeamEndpoint).leaveTeam(
                 session,
                 request: params['request'],
               ),
@@ -705,7 +853,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i30.TransferTeamOwnershipRequest>(),
+              type: _i1.getType<_i32.TransferTeamOwnershipRequest>(),
               nullable: false,
             ),
           },
@@ -714,7 +862,7 @@ class Endpoints extends _i1.EndpointDispatch {
                 _i1.Session session,
                 Map<String, dynamic> params,
               ) async =>
-                  (endpoints['team'] as _i5.TeamEndpoint).transferOwnership(
+                  (endpoints['team'] as _i6.TeamEndpoint).transferOwnership(
                     session,
                     request: params['request'],
                   ),
@@ -724,7 +872,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i31.DeleteTeamRequest>(),
+              type: _i1.getType<_i33.DeleteTeamRequest>(),
               nullable: false,
             ),
           },
@@ -732,7 +880,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['team'] as _i5.TeamEndpoint).deleteTeam(
+              ) async => (endpoints['team'] as _i6.TeamEndpoint).deleteTeam(
                 session,
                 request: params['request'],
               ),
@@ -757,7 +905,7 @@ class Endpoints extends _i1.EndpointDispatch {
                 _i1.Session session,
                 Map<String, dynamic> params,
               ) async =>
-                  (endpoints['version'] as _i6.VersionEndpoint).getVersions(
+                  (endpoints['version'] as _i7.VersionEndpoint).getVersions(
                     session,
                     applicationId: params['applicationId'],
                   ),
@@ -775,7 +923,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['version'] as _i6.VersionEndpoint)
+              ) async => (endpoints['version'] as _i7.VersionEndpoint)
                   .getVersionDetail(
                     session,
                     versionId: params['versionId'],
@@ -794,7 +942,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['version'] as _i6.VersionEndpoint)
+              ) async => (endpoints['version'] as _i7.VersionEndpoint)
                   .getNextBuildNumber(
                     session,
                     applicationId: params['applicationId'],
@@ -805,7 +953,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i32.CreateVersionRequest>(),
+              type: _i1.getType<_i34.CreateVersionRequest>(),
               nullable: false,
             ),
           },
@@ -814,7 +962,7 @@ class Endpoints extends _i1.EndpointDispatch {
                 _i1.Session session,
                 Map<String, dynamic> params,
               ) async =>
-                  (endpoints['version'] as _i6.VersionEndpoint).createVersion(
+                  (endpoints['version'] as _i7.VersionEndpoint).createVersion(
                     session,
                     request: params['request'],
                   ),
@@ -824,7 +972,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i33.UpdateVersionRequest>(),
+              type: _i1.getType<_i35.UpdateVersionRequest>(),
               nullable: false,
             ),
           },
@@ -833,7 +981,7 @@ class Endpoints extends _i1.EndpointDispatch {
                 _i1.Session session,
                 Map<String, dynamic> params,
               ) async =>
-                  (endpoints['version'] as _i6.VersionEndpoint).updateVersion(
+                  (endpoints['version'] as _i7.VersionEndpoint).updateVersion(
                     session,
                     request: params['request'],
                   ),
@@ -843,7 +991,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i34.ToggleVersionBlockRequest>(),
+              type: _i1.getType<_i36.ToggleVersionBlockRequest>(),
               nullable: false,
             ),
           },
@@ -851,7 +999,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['version'] as _i6.VersionEndpoint)
+              ) async => (endpoints['version'] as _i7.VersionEndpoint)
                   .toggleVersionBlock(
                     session,
                     request: params['request'],
@@ -862,7 +1010,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i35.SetVersionRecommendationRequest>(),
+              type: _i1.getType<_i37.SetVersionRecommendationRequest>(),
               nullable: false,
             ),
           },
@@ -870,7 +1018,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['version'] as _i6.VersionEndpoint)
+              ) async => (endpoints['version'] as _i7.VersionEndpoint)
                   .setVersionRecommendation(
                     session,
                     request: params['request'],
@@ -881,7 +1029,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'request': _i1.ParameterDescription(
               name: 'request',
-              type: _i1.getType<_i36.DeleteVersionRequest>(),
+              type: _i1.getType<_i38.DeleteVersionRequest>(),
               nullable: false,
             ),
           },
@@ -890,7 +1038,7 @@ class Endpoints extends _i1.EndpointDispatch {
                 _i1.Session session,
                 Map<String, dynamic> params,
               ) async =>
-                  (endpoints['version'] as _i6.VersionEndpoint).deleteVersion(
+                  (endpoints['version'] as _i7.VersionEndpoint).deleteVersion(
                     session,
                     request: params['request'],
                   ),
@@ -914,7 +1062,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['greeting'] as _i7.GreetingEndpoint).hello(
+              ) async => (endpoints['greeting'] as _i8.GreetingEndpoint).hello(
                 session,
                 params['name'],
               ),

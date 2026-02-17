@@ -1,0 +1,5 @@
+### Временная аналитика.
+class: TimeAnalyticsResponse
+fields:
+  ### Тепловая карта активности (день недели × час)
+  heatmap: List<HeatmapEntry>

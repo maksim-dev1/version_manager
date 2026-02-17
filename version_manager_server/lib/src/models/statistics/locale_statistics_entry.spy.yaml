@@ -1,0 +1,9 @@
+### Статистика по языку/локали.
+class: LocaleStatisticsEntry
+fields:
+  ### Локаль (например: "ru_RU", "en_US")
+  locale: String
+  ### Количество проверок
+  checkCount: int
+  ### Процент от общего числа
+  percentage: double

@@ -1,0 +1,11 @@
+### Данные активности по дням.
+class: DailyActiveUsersEntry
+fields:
+  ### Дата (YYYY-MM-DD)
+  date: DateTime
+  ### Общее количество проверок
+  totalChecks: int
+  ### Уникальных пользователей за день (по fingerprint)
+  activeUsers: int
+  ### Новых пользователей за день
+  newUsers: int

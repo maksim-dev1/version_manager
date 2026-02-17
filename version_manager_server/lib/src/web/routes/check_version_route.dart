@@ -211,8 +211,9 @@ class CheckVersionRoute extends Route {
       // 5. Парсинг запроса
       final checkRequest = CheckVersionService.parseRequest(json);
 
-      // 6. Проверка соответствия namespace
-      if (checkRequest.namespace != application.namespace) {
+      // 6. Проверка соответствия namespace (нормализованное сравнение)
+      if (checkRequest.namespace !=
+          CheckVersionService.normalizeNamespace(application.namespace)) {
         return _corsResponse(
           _errorResponse(
             statusCode: 404,
@@ -231,10 +232,7 @@ class CheckVersionRoute extends Route {
         checkRequest,
       );
 
-      // 8. Обновляем IP и User-Agent в последнем логе (если есть)
-      unawaited(_updateLogWithRequestInfo(session, application, request));
-
-      // 9. Формирование и возврат ответа
+      // 8. Формирование и возврат ответа
       final responseJson = CheckVersionService.serializeResponse(response);
 
       session.log(
@@ -265,60 +263,6 @@ class CheckVersionRoute extends Route {
           errorCode: 'internal_error',
           message: 'Внутренняя ошибка сервера. Попробуйте позже.',
         ),
-      );
-    }
-  }
-
-  /// Обновляет последний лог с серверной информацией (IP, User-Agent).
-  ///
-  /// Вызывается асинхронно после формирования ответа, чтобы не задерживать клиента.
-  Future<void> _updateLogWithRequestInfo(
-    Session session,
-    Application application,
-    Request request,
-  ) async {
-    try {
-      // Получаем IP из X-Forwarded-For (если есть reverse proxy) или из connection
-      String? clientIp;
-      final xForwardedFor = request.headers['x-forwarded-for'];
-      if (xForwardedFor != null && xForwardedFor.toString().isNotEmpty) {
-        // Берём первый IP из цепочки (реальный клиент)
-        final value = xForwardedFor is List
-            ? xForwardedFor.first
-            : xForwardedFor.toString();
-        clientIp = value.split(',').first.trim();
-      } else {
-        // Fallback на connection info
-        try {
-          clientIp = request.connectionInfo.remote.address.toString();
-        } catch (_) {
-          clientIp = null;
-        }
-      }
-
-      // Анонимизируем IP (GDPR)
-      final anonymizedIp = CheckVersionService.anonymizeIp(clientIp);
-
-      // Получаем User-Agent
-      final userAgent = request.headers['user-agent']?.toString();
-
-      // Обновляем последний лог
-      final lastLog = await VersionCheckLog.db.findFirstRow(
-        session,
-        where: (t) => t.applicationId.equals(application.id),
-        orderBy: (t) => t.checkedAt,
-        orderDescending: true,
-      );
-
-      if (lastLog != null) {
-        lastLog.ipAddress = anonymizedIp;
-        lastLog.userAgent = userAgent;
-        await VersionCheckLog.db.updateRow(session, lastLog);
-      }
-    } catch (e) {
-      session.log(
-        'Ошибка при обновлении лога с request info: $e',
-        level: LogLevel.warning,
       );
     }
   }

@@ -1,0 +1,13 @@
+### Точка временной шкалы adoption rate версии.
+class: VersionAdoptionTimelineEntry
+fields:
+  ### Дата
+  date: DateTime
+  ### Номер версии
+  versionNumber: String
+  ### Номер сборки
+  buildNumber: int
+  ### Количество проверок этой версии в этот день
+  checkCount: int
+  ### Процент от общего числа проверок в этот день
+  percentage: double

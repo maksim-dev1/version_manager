@@ -1,0 +1,57 @@
+### Экземпляр приложения для подсчёта уникальных пользователей.
+###
+### Хранит идентификатор экземпляра приложения:
+### — iOS: identifierForVendor (IDFV) — уникален для приложения, сбрасывается при удалении
+### — Android: App Instance ID — генерируется для конкретного экземпляра
+###
+### Это НЕ персональные данные (not PII):
+### — Привязан только к приложению, не к устройству глобально
+### — Не позволяет отслеживать пользователя между приложениями
+### — Сбрасывается при переустановке приложения
+### — Не требует ATT dialog, consent popup, disclosure в магазинах
+###
+### Используется для:
+### — Подсчёта уникальных пользователей (DAU/WAU/MAU)
+### — Определения новых пользователей (firstSeenAt)
+### — Кумулятивного роста пользовательской базы
+class: AppInstance
+table: app_instances
+fields:
+  id: UuidValue?, defaultPersist=random_v7
+
+  ### Приложение
+  application: Application?, relation(name=application_instances, onDelete=Cascade)
+
+  ### Идентификатор экземпляра (IDFV на iOS / App Instance ID на Android)
+  instanceId: String
+
+  ### Платформа
+  platform: PlatformType
+
+  ### Дата первого появления
+  firstSeenAt: DateTime, default=now
+
+  ### Дата последнего появления
+  lastSeenAt: DateTime, default=now
+
+  ### Дата последней активности (только дата, без времени, UTC)
+  ### Используется для точного подсчёта уникальных устройств за день.
+  lastActiveDate: DateTime, default=now
+
+indexes:
+  ### Уникальность instanceId в рамках приложения
+  ai_app_instance_unique_idx:
+    fields: applicationId, instanceId
+    unique: true
+  ### Поиск по приложению
+  ai_application_idx:
+    fields: applicationId
+  ### Поиск новых пользователей (firstSeenAt за период)
+  ai_first_seen_idx:
+    fields: applicationId, firstSeenAt
+  ### Поиск активных пользователей (lastSeenAt за период)
+  ai_last_seen_idx:
+    fields: applicationId, lastSeenAt
+  ### Фильтрация по платформе
+  ai_app_platform_idx:
+    fields: applicationId, platform

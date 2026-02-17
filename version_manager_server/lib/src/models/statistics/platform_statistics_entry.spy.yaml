@@ -1,0 +1,9 @@
+### Статистика по одной платформе.
+class: PlatformStatisticsEntry
+fields:
+  ### Платформа
+  platform: PlatformType
+  ### Количество проверок
+  checkCount: int
+  ### Процент от общего числа
+  percentage: double

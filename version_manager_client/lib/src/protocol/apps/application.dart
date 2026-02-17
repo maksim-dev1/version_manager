@@ -17,9 +17,10 @@ import '../auth/user.dart' as _i4;
 import '../teams/team.dart' as _i5;
 import '../apps/store_link.dart' as _i6;
 import '../versions/version.dart' as _i7;
-import '../logs/version_check_log.dart' as _i8;
-import '../logs/version_check_daily_summary.dart' as _i9;
-import 'package:version_manager_client/src/protocol/protocol.dart' as _i10;
+import '../statistics/app_instance.dart' as _i8;
+import '../statistics/daily_check_summary.dart' as _i9;
+import '../statistics/daily_dimension_summary.dart' as _i10;
+import 'package:version_manager_client/src/protocol/protocol.dart' as _i11;
 
 /// Приложение для управления версиями
 abstract class Application implements _i1.SerializableModel {
@@ -37,8 +38,9 @@ abstract class Application implements _i1.SerializableModel {
     this.ownerTeam,
     this.storeLinks,
     this.versions,
-    this.checkLogs,
-    this.dailySummaries,
+    this.appInstances,
+    this.checkSummaries,
+    this.dimensionSummaries,
     bool? isActive,
     required this.apiKeyHash,
     String? apiKeyLast4,
@@ -67,8 +69,9 @@ abstract class Application implements _i1.SerializableModel {
     _i5.Team? ownerTeam,
     List<_i6.StoreLink>? storeLinks,
     List<_i7.Version>? versions,
-    List<_i8.VersionCheckLog>? checkLogs,
-    List<_i9.VersionCheckDailySummary>? dailySummaries,
+    List<_i8.AppInstance>? appInstances,
+    List<_i9.DailyCheckSummary>? checkSummaries,
+    List<_i10.DailyDimensionSummary>? dimensionSummaries,
     bool? isActive,
     required String apiKeyHash,
     String? apiKeyLast4,
@@ -87,7 +90,7 @@ abstract class Application implements _i1.SerializableModel {
       name: jsonSerialization['name'] as String,
       description: jsonSerialization['description'] as String?,
       iconUrl: jsonSerialization['iconUrl'] as String?,
-      platforms: _i10.Protocol().deserialize<List<_i2.PlatformType>>(
+      platforms: _i11.Protocol().deserialize<List<_i2.PlatformType>>(
         jsonSerialization['platforms'],
       ),
       ownerType: _i3.OwnerType.fromJson(
@@ -100,7 +103,7 @@ abstract class Application implements _i1.SerializableModel {
             ),
       ownerUser: jsonSerialization['ownerUser'] == null
           ? null
-          : _i10.Protocol().deserialize<_i4.User>(
+          : _i11.Protocol().deserialize<_i4.User>(
               jsonSerialization['ownerUser'],
             ),
       ownerTeamId: jsonSerialization['ownerTeamId'] == null
@@ -110,28 +113,33 @@ abstract class Application implements _i1.SerializableModel {
             ),
       ownerTeam: jsonSerialization['ownerTeam'] == null
           ? null
-          : _i10.Protocol().deserialize<_i5.Team>(
+          : _i11.Protocol().deserialize<_i5.Team>(
               jsonSerialization['ownerTeam'],
             ),
       storeLinks: jsonSerialization['storeLinks'] == null
           ? null
-          : _i10.Protocol().deserialize<List<_i6.StoreLink>>(
+          : _i11.Protocol().deserialize<List<_i6.StoreLink>>(
               jsonSerialization['storeLinks'],
             ),
       versions: jsonSerialization['versions'] == null
           ? null
-          : _i10.Protocol().deserialize<List<_i7.Version>>(
+          : _i11.Protocol().deserialize<List<_i7.Version>>(
               jsonSerialization['versions'],
             ),
-      checkLogs: jsonSerialization['checkLogs'] == null
+      appInstances: jsonSerialization['appInstances'] == null
           ? null
-          : _i10.Protocol().deserialize<List<_i8.VersionCheckLog>>(
-              jsonSerialization['checkLogs'],
+          : _i11.Protocol().deserialize<List<_i8.AppInstance>>(
+              jsonSerialization['appInstances'],
             ),
-      dailySummaries: jsonSerialization['dailySummaries'] == null
+      checkSummaries: jsonSerialization['checkSummaries'] == null
           ? null
-          : _i10.Protocol().deserialize<List<_i9.VersionCheckDailySummary>>(
-              jsonSerialization['dailySummaries'],
+          : _i11.Protocol().deserialize<List<_i9.DailyCheckSummary>>(
+              jsonSerialization['checkSummaries'],
+            ),
+      dimensionSummaries: jsonSerialization['dimensionSummaries'] == null
+          ? null
+          : _i11.Protocol().deserialize<List<_i10.DailyDimensionSummary>>(
+              jsonSerialization['dimensionSummaries'],
             ),
       isActive: jsonSerialization['isActive'] as bool?,
       apiKeyHash: jsonSerialization['apiKeyHash'] as String,
@@ -185,9 +193,11 @@ abstract class Application implements _i1.SerializableModel {
 
   List<_i7.Version>? versions;
 
-  List<_i8.VersionCheckLog>? checkLogs;
+  List<_i8.AppInstance>? appInstances;
 
-  List<_i9.VersionCheckDailySummary>? dailySummaries;
+  List<_i9.DailyCheckSummary>? checkSummaries;
+
+  List<_i10.DailyDimensionSummary>? dimensionSummaries;
 
   bool isActive;
 
@@ -220,8 +230,9 @@ abstract class Application implements _i1.SerializableModel {
     _i5.Team? ownerTeam,
     List<_i6.StoreLink>? storeLinks,
     List<_i7.Version>? versions,
-    List<_i8.VersionCheckLog>? checkLogs,
-    List<_i9.VersionCheckDailySummary>? dailySummaries,
+    List<_i8.AppInstance>? appInstances,
+    List<_i9.DailyCheckSummary>? checkSummaries,
+    List<_i10.DailyDimensionSummary>? dimensionSummaries,
     bool? isActive,
     String? apiKeyHash,
     String? apiKeyLast4,
@@ -249,10 +260,14 @@ abstract class Application implements _i1.SerializableModel {
         'storeLinks': storeLinks?.toJson(valueToJson: (v) => v.toJson()),
       if (versions != null)
         'versions': versions?.toJson(valueToJson: (v) => v.toJson()),
-      if (checkLogs != null)
-        'checkLogs': checkLogs?.toJson(valueToJson: (v) => v.toJson()),
-      if (dailySummaries != null)
-        'dailySummaries': dailySummaries?.toJson(
+      if (appInstances != null)
+        'appInstances': appInstances?.toJson(valueToJson: (v) => v.toJson()),
+      if (checkSummaries != null)
+        'checkSummaries': checkSummaries?.toJson(
+          valueToJson: (v) => v.toJson(),
+        ),
+      if (dimensionSummaries != null)
+        'dimensionSummaries': dimensionSummaries?.toJson(
           valueToJson: (v) => v.toJson(),
         ),
       'isActive': isActive,
@@ -289,8 +304,9 @@ class _ApplicationImpl extends Application {
     _i5.Team? ownerTeam,
     List<_i6.StoreLink>? storeLinks,
     List<_i7.Version>? versions,
-    List<_i8.VersionCheckLog>? checkLogs,
-    List<_i9.VersionCheckDailySummary>? dailySummaries,
+    List<_i8.AppInstance>? appInstances,
+    List<_i9.DailyCheckSummary>? checkSummaries,
+    List<_i10.DailyDimensionSummary>? dimensionSummaries,
     bool? isActive,
     required String apiKeyHash,
     String? apiKeyLast4,
@@ -312,8 +328,9 @@ class _ApplicationImpl extends Application {
          ownerTeam: ownerTeam,
          storeLinks: storeLinks,
          versions: versions,
-         checkLogs: checkLogs,
-         dailySummaries: dailySummaries,
+         appInstances: appInstances,
+         checkSummaries: checkSummaries,
+         dimensionSummaries: dimensionSummaries,
          isActive: isActive,
          apiKeyHash: apiKeyHash,
          apiKeyLast4: apiKeyLast4,
@@ -341,8 +358,9 @@ class _ApplicationImpl extends Application {
     Object? ownerTeam = _Undefined,
     Object? storeLinks = _Undefined,
     Object? versions = _Undefined,
-    Object? checkLogs = _Undefined,
-    Object? dailySummaries = _Undefined,
+    Object? appInstances = _Undefined,
+    Object? checkSummaries = _Undefined,
+    Object? dimensionSummaries = _Undefined,
     bool? isActive,
     String? apiKeyHash,
     String? apiKeyLast4,
@@ -377,12 +395,16 @@ class _ApplicationImpl extends Application {
       versions: versions is List<_i7.Version>?
           ? versions
           : this.versions?.map((e0) => e0.copyWith()).toList(),
-      checkLogs: checkLogs is List<_i8.VersionCheckLog>?
-          ? checkLogs
-          : this.checkLogs?.map((e0) => e0.copyWith()).toList(),
-      dailySummaries: dailySummaries is List<_i9.VersionCheckDailySummary>?
-          ? dailySummaries
-          : this.dailySummaries?.map((e0) => e0.copyWith()).toList(),
+      appInstances: appInstances is List<_i8.AppInstance>?
+          ? appInstances
+          : this.appInstances?.map((e0) => e0.copyWith()).toList(),
+      checkSummaries: checkSummaries is List<_i9.DailyCheckSummary>?
+          ? checkSummaries
+          : this.checkSummaries?.map((e0) => e0.copyWith()).toList(),
+      dimensionSummaries:
+          dimensionSummaries is List<_i10.DailyDimensionSummary>?
+          ? dimensionSummaries
+          : this.dimensionSummaries?.map((e0) => e0.copyWith()).toList(),
       isActive: isActive ?? this.isActive,
       apiKeyHash: apiKeyHash ?? this.apiKeyHash,
       apiKeyLast4: apiKeyLast4 ?? this.apiKeyLast4,

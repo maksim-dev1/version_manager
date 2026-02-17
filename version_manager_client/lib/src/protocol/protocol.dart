@@ -57,39 +57,57 @@ import 'enums/verification_putpose_type.dart' as _i44;
 import 'exceptions/invalid_data_exception.dart' as _i45;
 import 'exceptions/too_many_attempts_exception.dart' as _i46;
 import 'greetings/greeting.dart' as _i47;
-import 'logs/version_check_daily_summary.dart' as _i48;
-import 'logs/version_check_log.dart' as _i49;
-import 'sessions/session_info.dart' as _i50;
-import 'sessions/terminate_session_request.dart' as _i51;
-import 'teams/create_team_request.dart' as _i52;
-import 'teams/delete_team_request.dart' as _i53;
-import 'teams/invite_team_member_request.dart' as _i54;
-import 'teams/leave_team_request.dart' as _i55;
-import 'teams/remove_member_request.dart' as _i56;
-import 'teams/respond_to_invitation_request.dart' as _i57;
-import 'teams/revoke_invitation_request.dart' as _i58;
-import 'teams/team.dart' as _i59;
-import 'teams/team_member.dart' as _i60;
-import 'teams/transfer_team_ownership_request.dart' as _i61;
-import 'teams/update_member_role_request.dart' as _i62;
-import 'teams/update_team_request.dart' as _i63;
-import 'versions/create_version_request.dart' as _i64;
-import 'versions/delete_version_request.dart' as _i65;
-import 'versions/next_build_number_response.dart' as _i66;
-import 'versions/set_version_recommendation_request.dart' as _i67;
-import 'versions/toggle_version_block_request.dart' as _i68;
-import 'versions/update_version_request.dart' as _i69;
-import 'versions/version.dart' as _i70;
-import 'versions/version_detail_response.dart' as _i71;
-import 'versions/version_list_item.dart' as _i72;
-import 'versions/version_list_response.dart' as _i73;
+import 'sessions/session_info.dart' as _i48;
+import 'sessions/terminate_session_request.dart' as _i49;
+import 'statistics/app_instance.dart' as _i50;
+import 'statistics/cumulative_users_entry.dart' as _i51;
+import 'statistics/daily_active_users_entry.dart' as _i52;
+import 'statistics/daily_active_users_response.dart' as _i53;
+import 'statistics/daily_check_summary.dart' as _i54;
+import 'statistics/daily_dimension_summary.dart' as _i55;
+import 'statistics/device_model_statistics_entry.dart' as _i56;
+import 'statistics/geo_statistics_response.dart' as _i57;
+import 'statistics/heatmap_entry.dart' as _i58;
+import 'statistics/locale_statistics_entry.dart' as _i59;
+import 'statistics/os_version_statistics_entry.dart' as _i60;
+import 'statistics/platform_statistics_entry.dart' as _i61;
+import 'statistics/platform_statistics_response.dart' as _i62;
+import 'statistics/statistics_export_data.dart' as _i63;
+import 'statistics/statistics_filter.dart' as _i64;
+import 'statistics/statistics_overview_response.dart' as _i65;
+import 'statistics/time_analytics_response.dart' as _i66;
+import 'statistics/version_adoption_timeline_entry.dart' as _i67;
+import 'statistics/version_statistics_entry.dart' as _i68;
+import 'statistics/version_statistics_response.dart' as _i69;
+import 'teams/create_team_request.dart' as _i70;
+import 'teams/delete_team_request.dart' as _i71;
+import 'teams/invite_team_member_request.dart' as _i72;
+import 'teams/leave_team_request.dart' as _i73;
+import 'teams/remove_member_request.dart' as _i74;
+import 'teams/respond_to_invitation_request.dart' as _i75;
+import 'teams/revoke_invitation_request.dart' as _i76;
+import 'teams/team.dart' as _i77;
+import 'teams/team_member.dart' as _i78;
+import 'teams/transfer_team_ownership_request.dart' as _i79;
+import 'teams/update_member_role_request.dart' as _i80;
+import 'teams/update_team_request.dart' as _i81;
+import 'versions/create_version_request.dart' as _i82;
+import 'versions/delete_version_request.dart' as _i83;
+import 'versions/next_build_number_response.dart' as _i84;
+import 'versions/set_version_recommendation_request.dart' as _i85;
+import 'versions/toggle_version_block_request.dart' as _i86;
+import 'versions/update_version_request.dart' as _i87;
+import 'versions/version.dart' as _i88;
+import 'versions/version_detail_response.dart' as _i89;
+import 'versions/version_list_item.dart' as _i90;
+import 'versions/version_list_response.dart' as _i91;
 import 'package:version_manager_client/src/protocol/apps/application.dart'
-    as _i74;
+    as _i92;
 import 'package:version_manager_client/src/protocol/sessions/session_info.dart'
-    as _i75;
-import 'package:version_manager_client/src/protocol/teams/team.dart' as _i76;
+    as _i93;
+import 'package:version_manager_client/src/protocol/teams/team.dart' as _i94;
 import 'package:version_manager_client/src/protocol/teams/team_member.dart'
-    as _i77;
+    as _i95;
 export 'api/check_version_error_response.dart';
 export 'api/check_version_request.dart';
 export 'api/check_version_response.dart';
@@ -136,10 +154,28 @@ export 'enums/verification_putpose_type.dart';
 export 'exceptions/invalid_data_exception.dart';
 export 'exceptions/too_many_attempts_exception.dart';
 export 'greetings/greeting.dart';
-export 'logs/version_check_daily_summary.dart';
-export 'logs/version_check_log.dart';
 export 'sessions/session_info.dart';
 export 'sessions/terminate_session_request.dart';
+export 'statistics/app_instance.dart';
+export 'statistics/cumulative_users_entry.dart';
+export 'statistics/daily_active_users_entry.dart';
+export 'statistics/daily_active_users_response.dart';
+export 'statistics/daily_check_summary.dart';
+export 'statistics/daily_dimension_summary.dart';
+export 'statistics/device_model_statistics_entry.dart';
+export 'statistics/geo_statistics_response.dart';
+export 'statistics/heatmap_entry.dart';
+export 'statistics/locale_statistics_entry.dart';
+export 'statistics/os_version_statistics_entry.dart';
+export 'statistics/platform_statistics_entry.dart';
+export 'statistics/platform_statistics_response.dart';
+export 'statistics/statistics_export_data.dart';
+export 'statistics/statistics_filter.dart';
+export 'statistics/statistics_overview_response.dart';
+export 'statistics/time_analytics_response.dart';
+export 'statistics/version_adoption_timeline_entry.dart';
+export 'statistics/version_statistics_entry.dart';
+export 'statistics/version_statistics_response.dart';
 export 'teams/create_team_request.dart';
 export 'teams/delete_team_request.dart';
 export 'teams/invite_team_member_request.dart';
@@ -336,83 +372,137 @@ class Protocol extends _i1.SerializationManager {
     if (t == _i47.Greeting) {
       return _i47.Greeting.fromJson(data) as T;
     }
-    if (t == _i48.VersionCheckDailySummary) {
-      return _i48.VersionCheckDailySummary.fromJson(data) as T;
+    if (t == _i48.SessionInfo) {
+      return _i48.SessionInfo.fromJson(data) as T;
     }
-    if (t == _i49.VersionCheckLog) {
-      return _i49.VersionCheckLog.fromJson(data) as T;
+    if (t == _i49.TerminateSessionRequest) {
+      return _i49.TerminateSessionRequest.fromJson(data) as T;
     }
-    if (t == _i50.SessionInfo) {
-      return _i50.SessionInfo.fromJson(data) as T;
+    if (t == _i50.AppInstance) {
+      return _i50.AppInstance.fromJson(data) as T;
     }
-    if (t == _i51.TerminateSessionRequest) {
-      return _i51.TerminateSessionRequest.fromJson(data) as T;
+    if (t == _i51.CumulativeUsersEntry) {
+      return _i51.CumulativeUsersEntry.fromJson(data) as T;
     }
-    if (t == _i52.CreateTeamRequest) {
-      return _i52.CreateTeamRequest.fromJson(data) as T;
+    if (t == _i52.DailyActiveUsersEntry) {
+      return _i52.DailyActiveUsersEntry.fromJson(data) as T;
     }
-    if (t == _i53.DeleteTeamRequest) {
-      return _i53.DeleteTeamRequest.fromJson(data) as T;
+    if (t == _i53.DailyActiveUsersResponse) {
+      return _i53.DailyActiveUsersResponse.fromJson(data) as T;
     }
-    if (t == _i54.InviteTeamMemberRequest) {
-      return _i54.InviteTeamMemberRequest.fromJson(data) as T;
+    if (t == _i54.DailyCheckSummary) {
+      return _i54.DailyCheckSummary.fromJson(data) as T;
     }
-    if (t == _i55.LeaveTeamRequest) {
-      return _i55.LeaveTeamRequest.fromJson(data) as T;
+    if (t == _i55.DailyDimensionSummary) {
+      return _i55.DailyDimensionSummary.fromJson(data) as T;
     }
-    if (t == _i56.RemoveMemberRequest) {
-      return _i56.RemoveMemberRequest.fromJson(data) as T;
+    if (t == _i56.DeviceModelStatisticsEntry) {
+      return _i56.DeviceModelStatisticsEntry.fromJson(data) as T;
     }
-    if (t == _i57.RespondToInvitationRequest) {
-      return _i57.RespondToInvitationRequest.fromJson(data) as T;
+    if (t == _i57.GeoStatisticsResponse) {
+      return _i57.GeoStatisticsResponse.fromJson(data) as T;
     }
-    if (t == _i58.RevokeInvitationRequest) {
-      return _i58.RevokeInvitationRequest.fromJson(data) as T;
+    if (t == _i58.HeatmapEntry) {
+      return _i58.HeatmapEntry.fromJson(data) as T;
     }
-    if (t == _i59.Team) {
-      return _i59.Team.fromJson(data) as T;
+    if (t == _i59.LocaleStatisticsEntry) {
+      return _i59.LocaleStatisticsEntry.fromJson(data) as T;
     }
-    if (t == _i60.TeamMember) {
-      return _i60.TeamMember.fromJson(data) as T;
+    if (t == _i60.OsVersionStatisticsEntry) {
+      return _i60.OsVersionStatisticsEntry.fromJson(data) as T;
     }
-    if (t == _i61.TransferTeamOwnershipRequest) {
-      return _i61.TransferTeamOwnershipRequest.fromJson(data) as T;
+    if (t == _i61.PlatformStatisticsEntry) {
+      return _i61.PlatformStatisticsEntry.fromJson(data) as T;
     }
-    if (t == _i62.UpdateMemberRoleRequest) {
-      return _i62.UpdateMemberRoleRequest.fromJson(data) as T;
+    if (t == _i62.PlatformStatisticsResponse) {
+      return _i62.PlatformStatisticsResponse.fromJson(data) as T;
     }
-    if (t == _i63.UpdateTeamRequest) {
-      return _i63.UpdateTeamRequest.fromJson(data) as T;
+    if (t == _i63.StatisticsExportData) {
+      return _i63.StatisticsExportData.fromJson(data) as T;
     }
-    if (t == _i64.CreateVersionRequest) {
-      return _i64.CreateVersionRequest.fromJson(data) as T;
+    if (t == _i64.StatisticsFilter) {
+      return _i64.StatisticsFilter.fromJson(data) as T;
     }
-    if (t == _i65.DeleteVersionRequest) {
-      return _i65.DeleteVersionRequest.fromJson(data) as T;
+    if (t == _i65.StatisticsOverviewResponse) {
+      return _i65.StatisticsOverviewResponse.fromJson(data) as T;
     }
-    if (t == _i66.NextBuildNumberResponse) {
-      return _i66.NextBuildNumberResponse.fromJson(data) as T;
+    if (t == _i66.TimeAnalyticsResponse) {
+      return _i66.TimeAnalyticsResponse.fromJson(data) as T;
     }
-    if (t == _i67.SetVersionRecommendationRequest) {
-      return _i67.SetVersionRecommendationRequest.fromJson(data) as T;
+    if (t == _i67.VersionAdoptionTimelineEntry) {
+      return _i67.VersionAdoptionTimelineEntry.fromJson(data) as T;
     }
-    if (t == _i68.ToggleVersionBlockRequest) {
-      return _i68.ToggleVersionBlockRequest.fromJson(data) as T;
+    if (t == _i68.VersionStatisticsEntry) {
+      return _i68.VersionStatisticsEntry.fromJson(data) as T;
     }
-    if (t == _i69.UpdateVersionRequest) {
-      return _i69.UpdateVersionRequest.fromJson(data) as T;
+    if (t == _i69.VersionStatisticsResponse) {
+      return _i69.VersionStatisticsResponse.fromJson(data) as T;
     }
-    if (t == _i70.Version) {
-      return _i70.Version.fromJson(data) as T;
+    if (t == _i70.CreateTeamRequest) {
+      return _i70.CreateTeamRequest.fromJson(data) as T;
     }
-    if (t == _i71.VersionDetailResponse) {
-      return _i71.VersionDetailResponse.fromJson(data) as T;
+    if (t == _i71.DeleteTeamRequest) {
+      return _i71.DeleteTeamRequest.fromJson(data) as T;
     }
-    if (t == _i72.VersionListItem) {
-      return _i72.VersionListItem.fromJson(data) as T;
+    if (t == _i72.InviteTeamMemberRequest) {
+      return _i72.InviteTeamMemberRequest.fromJson(data) as T;
     }
-    if (t == _i73.VersionListResponse) {
-      return _i73.VersionListResponse.fromJson(data) as T;
+    if (t == _i73.LeaveTeamRequest) {
+      return _i73.LeaveTeamRequest.fromJson(data) as T;
+    }
+    if (t == _i74.RemoveMemberRequest) {
+      return _i74.RemoveMemberRequest.fromJson(data) as T;
+    }
+    if (t == _i75.RespondToInvitationRequest) {
+      return _i75.RespondToInvitationRequest.fromJson(data) as T;
+    }
+    if (t == _i76.RevokeInvitationRequest) {
+      return _i76.RevokeInvitationRequest.fromJson(data) as T;
+    }
+    if (t == _i77.Team) {
+      return _i77.Team.fromJson(data) as T;
+    }
+    if (t == _i78.TeamMember) {
+      return _i78.TeamMember.fromJson(data) as T;
+    }
+    if (t == _i79.TransferTeamOwnershipRequest) {
+      return _i79.TransferTeamOwnershipRequest.fromJson(data) as T;
+    }
+    if (t == _i80.UpdateMemberRoleRequest) {
+      return _i80.UpdateMemberRoleRequest.fromJson(data) as T;
+    }
+    if (t == _i81.UpdateTeamRequest) {
+      return _i81.UpdateTeamRequest.fromJson(data) as T;
+    }
+    if (t == _i82.CreateVersionRequest) {
+      return _i82.CreateVersionRequest.fromJson(data) as T;
+    }
+    if (t == _i83.DeleteVersionRequest) {
+      return _i83.DeleteVersionRequest.fromJson(data) as T;
+    }
+    if (t == _i84.NextBuildNumberResponse) {
+      return _i84.NextBuildNumberResponse.fromJson(data) as T;
+    }
+    if (t == _i85.SetVersionRecommendationRequest) {
+      return _i85.SetVersionRecommendationRequest.fromJson(data) as T;
+    }
+    if (t == _i86.ToggleVersionBlockRequest) {
+      return _i86.ToggleVersionBlockRequest.fromJson(data) as T;
+    }
+    if (t == _i87.UpdateVersionRequest) {
+      return _i87.UpdateVersionRequest.fromJson(data) as T;
+    }
+    if (t == _i88.Version) {
+      return _i88.Version.fromJson(data) as T;
+    }
+    if (t == _i89.VersionDetailResponse) {
+      return _i89.VersionDetailResponse.fromJson(data) as T;
+    }
+    if (t == _i90.VersionListItem) {
+      return _i90.VersionListItem.fromJson(data) as T;
+    }
+    if (t == _i91.VersionListResponse) {
+      return _i91.VersionListResponse.fromJson(data) as T;
     }
     if (t == _i1.getType<_i2.CheckVersionErrorResponse?>()) {
       return (data != null
@@ -607,108 +697,189 @@ class Protocol extends _i1.SerializationManager {
     if (t == _i1.getType<_i47.Greeting?>()) {
       return (data != null ? _i47.Greeting.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i48.VersionCheckDailySummary?>()) {
+    if (t == _i1.getType<_i48.SessionInfo?>()) {
+      return (data != null ? _i48.SessionInfo.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i49.TerminateSessionRequest?>()) {
+      return (data != null ? _i49.TerminateSessionRequest.fromJson(data) : null)
+          as T;
+    }
+    if (t == _i1.getType<_i50.AppInstance?>()) {
+      return (data != null ? _i50.AppInstance.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i51.CumulativeUsersEntry?>()) {
+      return (data != null ? _i51.CumulativeUsersEntry.fromJson(data) : null)
+          as T;
+    }
+    if (t == _i1.getType<_i52.DailyActiveUsersEntry?>()) {
+      return (data != null ? _i52.DailyActiveUsersEntry.fromJson(data) : null)
+          as T;
+    }
+    if (t == _i1.getType<_i53.DailyActiveUsersResponse?>()) {
       return (data != null
-              ? _i48.VersionCheckDailySummary.fromJson(data)
+              ? _i53.DailyActiveUsersResponse.fromJson(data)
               : null)
           as T;
     }
-    if (t == _i1.getType<_i49.VersionCheckLog?>()) {
-      return (data != null ? _i49.VersionCheckLog.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i54.DailyCheckSummary?>()) {
+      return (data != null ? _i54.DailyCheckSummary.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i50.SessionInfo?>()) {
-      return (data != null ? _i50.SessionInfo.fromJson(data) : null) as T;
-    }
-    if (t == _i1.getType<_i51.TerminateSessionRequest?>()) {
-      return (data != null ? _i51.TerminateSessionRequest.fromJson(data) : null)
+    if (t == _i1.getType<_i55.DailyDimensionSummary?>()) {
+      return (data != null ? _i55.DailyDimensionSummary.fromJson(data) : null)
           as T;
     }
-    if (t == _i1.getType<_i52.CreateTeamRequest?>()) {
-      return (data != null ? _i52.CreateTeamRequest.fromJson(data) : null) as T;
-    }
-    if (t == _i1.getType<_i53.DeleteTeamRequest?>()) {
-      return (data != null ? _i53.DeleteTeamRequest.fromJson(data) : null) as T;
-    }
-    if (t == _i1.getType<_i54.InviteTeamMemberRequest?>()) {
-      return (data != null ? _i54.InviteTeamMemberRequest.fromJson(data) : null)
-          as T;
-    }
-    if (t == _i1.getType<_i55.LeaveTeamRequest?>()) {
-      return (data != null ? _i55.LeaveTeamRequest.fromJson(data) : null) as T;
-    }
-    if (t == _i1.getType<_i56.RemoveMemberRequest?>()) {
-      return (data != null ? _i56.RemoveMemberRequest.fromJson(data) : null)
-          as T;
-    }
-    if (t == _i1.getType<_i57.RespondToInvitationRequest?>()) {
+    if (t == _i1.getType<_i56.DeviceModelStatisticsEntry?>()) {
       return (data != null
-              ? _i57.RespondToInvitationRequest.fromJson(data)
+              ? _i56.DeviceModelStatisticsEntry.fromJson(data)
               : null)
           as T;
     }
-    if (t == _i1.getType<_i58.RevokeInvitationRequest?>()) {
-      return (data != null ? _i58.RevokeInvitationRequest.fromJson(data) : null)
+    if (t == _i1.getType<_i57.GeoStatisticsResponse?>()) {
+      return (data != null ? _i57.GeoStatisticsResponse.fromJson(data) : null)
           as T;
     }
-    if (t == _i1.getType<_i59.Team?>()) {
-      return (data != null ? _i59.Team.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i58.HeatmapEntry?>()) {
+      return (data != null ? _i58.HeatmapEntry.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i60.TeamMember?>()) {
-      return (data != null ? _i60.TeamMember.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i59.LocaleStatisticsEntry?>()) {
+      return (data != null ? _i59.LocaleStatisticsEntry.fromJson(data) : null)
+          as T;
     }
-    if (t == _i1.getType<_i61.TransferTeamOwnershipRequest?>()) {
+    if (t == _i1.getType<_i60.OsVersionStatisticsEntry?>()) {
       return (data != null
-              ? _i61.TransferTeamOwnershipRequest.fromJson(data)
+              ? _i60.OsVersionStatisticsEntry.fromJson(data)
               : null)
           as T;
     }
-    if (t == _i1.getType<_i62.UpdateMemberRoleRequest?>()) {
-      return (data != null ? _i62.UpdateMemberRoleRequest.fromJson(data) : null)
+    if (t == _i1.getType<_i61.PlatformStatisticsEntry?>()) {
+      return (data != null ? _i61.PlatformStatisticsEntry.fromJson(data) : null)
           as T;
     }
-    if (t == _i1.getType<_i63.UpdateTeamRequest?>()) {
-      return (data != null ? _i63.UpdateTeamRequest.fromJson(data) : null) as T;
-    }
-    if (t == _i1.getType<_i64.CreateVersionRequest?>()) {
-      return (data != null ? _i64.CreateVersionRequest.fromJson(data) : null)
-          as T;
-    }
-    if (t == _i1.getType<_i65.DeleteVersionRequest?>()) {
-      return (data != null ? _i65.DeleteVersionRequest.fromJson(data) : null)
-          as T;
-    }
-    if (t == _i1.getType<_i66.NextBuildNumberResponse?>()) {
-      return (data != null ? _i66.NextBuildNumberResponse.fromJson(data) : null)
-          as T;
-    }
-    if (t == _i1.getType<_i67.SetVersionRecommendationRequest?>()) {
+    if (t == _i1.getType<_i62.PlatformStatisticsResponse?>()) {
       return (data != null
-              ? _i67.SetVersionRecommendationRequest.fromJson(data)
+              ? _i62.PlatformStatisticsResponse.fromJson(data)
               : null)
           as T;
     }
-    if (t == _i1.getType<_i68.ToggleVersionBlockRequest?>()) {
+    if (t == _i1.getType<_i63.StatisticsExportData?>()) {
+      return (data != null ? _i63.StatisticsExportData.fromJson(data) : null)
+          as T;
+    }
+    if (t == _i1.getType<_i64.StatisticsFilter?>()) {
+      return (data != null ? _i64.StatisticsFilter.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i65.StatisticsOverviewResponse?>()) {
       return (data != null
-              ? _i68.ToggleVersionBlockRequest.fromJson(data)
+              ? _i65.StatisticsOverviewResponse.fromJson(data)
               : null)
           as T;
     }
-    if (t == _i1.getType<_i69.UpdateVersionRequest?>()) {
-      return (data != null ? _i69.UpdateVersionRequest.fromJson(data) : null)
+    if (t == _i1.getType<_i66.TimeAnalyticsResponse?>()) {
+      return (data != null ? _i66.TimeAnalyticsResponse.fromJson(data) : null)
           as T;
     }
-    if (t == _i1.getType<_i70.Version?>()) {
-      return (data != null ? _i70.Version.fromJson(data) : null) as T;
-    }
-    if (t == _i1.getType<_i71.VersionDetailResponse?>()) {
-      return (data != null ? _i71.VersionDetailResponse.fromJson(data) : null)
+    if (t == _i1.getType<_i67.VersionAdoptionTimelineEntry?>()) {
+      return (data != null
+              ? _i67.VersionAdoptionTimelineEntry.fromJson(data)
+              : null)
           as T;
     }
-    if (t == _i1.getType<_i72.VersionListItem?>()) {
-      return (data != null ? _i72.VersionListItem.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i68.VersionStatisticsEntry?>()) {
+      return (data != null ? _i68.VersionStatisticsEntry.fromJson(data) : null)
+          as T;
     }
-    if (t == _i1.getType<_i73.VersionListResponse?>()) {
-      return (data != null ? _i73.VersionListResponse.fromJson(data) : null)
+    if (t == _i1.getType<_i69.VersionStatisticsResponse?>()) {
+      return (data != null
+              ? _i69.VersionStatisticsResponse.fromJson(data)
+              : null)
+          as T;
+    }
+    if (t == _i1.getType<_i70.CreateTeamRequest?>()) {
+      return (data != null ? _i70.CreateTeamRequest.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i71.DeleteTeamRequest?>()) {
+      return (data != null ? _i71.DeleteTeamRequest.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i72.InviteTeamMemberRequest?>()) {
+      return (data != null ? _i72.InviteTeamMemberRequest.fromJson(data) : null)
+          as T;
+    }
+    if (t == _i1.getType<_i73.LeaveTeamRequest?>()) {
+      return (data != null ? _i73.LeaveTeamRequest.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i74.RemoveMemberRequest?>()) {
+      return (data != null ? _i74.RemoveMemberRequest.fromJson(data) : null)
+          as T;
+    }
+    if (t == _i1.getType<_i75.RespondToInvitationRequest?>()) {
+      return (data != null
+              ? _i75.RespondToInvitationRequest.fromJson(data)
+              : null)
+          as T;
+    }
+    if (t == _i1.getType<_i76.RevokeInvitationRequest?>()) {
+      return (data != null ? _i76.RevokeInvitationRequest.fromJson(data) : null)
+          as T;
+    }
+    if (t == _i1.getType<_i77.Team?>()) {
+      return (data != null ? _i77.Team.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i78.TeamMember?>()) {
+      return (data != null ? _i78.TeamMember.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i79.TransferTeamOwnershipRequest?>()) {
+      return (data != null
+              ? _i79.TransferTeamOwnershipRequest.fromJson(data)
+              : null)
+          as T;
+    }
+    if (t == _i1.getType<_i80.UpdateMemberRoleRequest?>()) {
+      return (data != null ? _i80.UpdateMemberRoleRequest.fromJson(data) : null)
+          as T;
+    }
+    if (t == _i1.getType<_i81.UpdateTeamRequest?>()) {
+      return (data != null ? _i81.UpdateTeamRequest.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i82.CreateVersionRequest?>()) {
+      return (data != null ? _i82.CreateVersionRequest.fromJson(data) : null)
+          as T;
+    }
+    if (t == _i1.getType<_i83.DeleteVersionRequest?>()) {
+      return (data != null ? _i83.DeleteVersionRequest.fromJson(data) : null)
+          as T;
+    }
+    if (t == _i1.getType<_i84.NextBuildNumberResponse?>()) {
+      return (data != null ? _i84.NextBuildNumberResponse.fromJson(data) : null)
+          as T;
+    }
+    if (t == _i1.getType<_i85.SetVersionRecommendationRequest?>()) {
+      return (data != null
+              ? _i85.SetVersionRecommendationRequest.fromJson(data)
+              : null)
+          as T;
+    }
+    if (t == _i1.getType<_i86.ToggleVersionBlockRequest?>()) {
+      return (data != null
+              ? _i86.ToggleVersionBlockRequest.fromJson(data)
+              : null)
+          as T;
+    }
+    if (t == _i1.getType<_i87.UpdateVersionRequest?>()) {
+      return (data != null ? _i87.UpdateVersionRequest.fromJson(data) : null)
+          as T;
+    }
+    if (t == _i1.getType<_i88.Version?>()) {
+      return (data != null ? _i88.Version.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i89.VersionDetailResponse?>()) {
+      return (data != null ? _i89.VersionDetailResponse.fromJson(data) : null)
+          as T;
+    }
+    if (t == _i1.getType<_i90.VersionListItem?>()) {
+      return (data != null ? _i90.VersionListItem.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i91.VersionListResponse?>()) {
+      return (data != null ? _i91.VersionListResponse.fromJson(data) : null)
           as T;
     }
     if (t == List<_i6.StoreLinkInfo>) {
@@ -735,40 +906,54 @@ class Protocol extends _i1.SerializationManager {
               : null)
           as T;
     }
-    if (t == List<_i70.Version>) {
-      return (data as List).map((e) => deserialize<_i70.Version>(e)).toList()
+    if (t == List<_i88.Version>) {
+      return (data as List).map((e) => deserialize<_i88.Version>(e)).toList()
           as T;
     }
-    if (t == _i1.getType<List<_i70.Version>?>()) {
+    if (t == _i1.getType<List<_i88.Version>?>()) {
       return (data != null
-              ? (data as List).map((e) => deserialize<_i70.Version>(e)).toList()
+              ? (data as List).map((e) => deserialize<_i88.Version>(e)).toList()
               : null)
           as T;
     }
-    if (t == List<_i49.VersionCheckLog>) {
+    if (t == List<_i50.AppInstance>) {
       return (data as List)
-              .map((e) => deserialize<_i49.VersionCheckLog>(e))
+              .map((e) => deserialize<_i50.AppInstance>(e))
               .toList()
           as T;
     }
-    if (t == _i1.getType<List<_i49.VersionCheckLog>?>()) {
+    if (t == _i1.getType<List<_i50.AppInstance>?>()) {
       return (data != null
               ? (data as List)
-                    .map((e) => deserialize<_i49.VersionCheckLog>(e))
+                    .map((e) => deserialize<_i50.AppInstance>(e))
                     .toList()
               : null)
           as T;
     }
-    if (t == List<_i48.VersionCheckDailySummary>) {
+    if (t == List<_i54.DailyCheckSummary>) {
       return (data as List)
-              .map((e) => deserialize<_i48.VersionCheckDailySummary>(e))
+              .map((e) => deserialize<_i54.DailyCheckSummary>(e))
               .toList()
           as T;
     }
-    if (t == _i1.getType<List<_i48.VersionCheckDailySummary>?>()) {
+    if (t == _i1.getType<List<_i54.DailyCheckSummary>?>()) {
       return (data != null
               ? (data as List)
-                    .map((e) => deserialize<_i48.VersionCheckDailySummary>(e))
+                    .map((e) => deserialize<_i54.DailyCheckSummary>(e))
+                    .toList()
+              : null)
+          as T;
+    }
+    if (t == List<_i55.DailyDimensionSummary>) {
+      return (data as List)
+              .map((e) => deserialize<_i55.DailyDimensionSummary>(e))
+              .toList()
+          as T;
+    }
+    if (t == _i1.getType<List<_i55.DailyDimensionSummary>?>()) {
+      return (data != null
+              ? (data as List)
+                    .map((e) => deserialize<_i55.DailyDimensionSummary>(e))
                     .toList()
               : null)
           as T;
@@ -823,23 +1008,23 @@ class Protocol extends _i1.SerializationManager {
               : null)
           as T;
     }
-    if (t == List<_i59.Team>) {
-      return (data as List).map((e) => deserialize<_i59.Team>(e)).toList() as T;
+    if (t == List<_i77.Team>) {
+      return (data as List).map((e) => deserialize<_i77.Team>(e)).toList() as T;
     }
-    if (t == _i1.getType<List<_i59.Team>?>()) {
+    if (t == _i1.getType<List<_i77.Team>?>()) {
       return (data != null
-              ? (data as List).map((e) => deserialize<_i59.Team>(e)).toList()
+              ? (data as List).map((e) => deserialize<_i77.Team>(e)).toList()
               : null)
           as T;
     }
-    if (t == List<_i60.TeamMember>) {
-      return (data as List).map((e) => deserialize<_i60.TeamMember>(e)).toList()
+    if (t == List<_i78.TeamMember>) {
+      return (data as List).map((e) => deserialize<_i78.TeamMember>(e)).toList()
           as T;
     }
-    if (t == _i1.getType<List<_i60.TeamMember>?>()) {
+    if (t == _i1.getType<List<_i78.TeamMember>?>()) {
       return (data != null
               ? (data as List)
-                    .map((e) => deserialize<_i60.TeamMember>(e))
+                    .map((e) => deserialize<_i78.TeamMember>(e))
                     .toList()
               : null)
           as T;
@@ -856,29 +1041,83 @@ class Protocol extends _i1.SerializationManager {
               : null)
           as T;
     }
-    if (t == List<_i72.VersionListItem>) {
+    if (t == List<_i52.DailyActiveUsersEntry>) {
       return (data as List)
-              .map((e) => deserialize<_i72.VersionListItem>(e))
+              .map((e) => deserialize<_i52.DailyActiveUsersEntry>(e))
               .toList()
           as T;
     }
-    if (t == List<_i74.Application>) {
+    if (t == List<_i51.CumulativeUsersEntry>) {
       return (data as List)
-              .map((e) => deserialize<_i74.Application>(e))
+              .map((e) => deserialize<_i51.CumulativeUsersEntry>(e))
               .toList()
           as T;
     }
-    if (t == List<_i75.SessionInfo>) {
+    if (t == List<_i59.LocaleStatisticsEntry>) {
       return (data as List)
-              .map((e) => deserialize<_i75.SessionInfo>(e))
+              .map((e) => deserialize<_i59.LocaleStatisticsEntry>(e))
               .toList()
           as T;
     }
-    if (t == List<_i76.Team>) {
-      return (data as List).map((e) => deserialize<_i76.Team>(e)).toList() as T;
+    if (t == List<_i61.PlatformStatisticsEntry>) {
+      return (data as List)
+              .map((e) => deserialize<_i61.PlatformStatisticsEntry>(e))
+              .toList()
+          as T;
     }
-    if (t == List<_i77.TeamMember>) {
-      return (data as List).map((e) => deserialize<_i77.TeamMember>(e)).toList()
+    if (t == List<_i60.OsVersionStatisticsEntry>) {
+      return (data as List)
+              .map((e) => deserialize<_i60.OsVersionStatisticsEntry>(e))
+              .toList()
+          as T;
+    }
+    if (t == List<_i56.DeviceModelStatisticsEntry>) {
+      return (data as List)
+              .map((e) => deserialize<_i56.DeviceModelStatisticsEntry>(e))
+              .toList()
+          as T;
+    }
+    if (t == List<_i58.HeatmapEntry>) {
+      return (data as List)
+              .map((e) => deserialize<_i58.HeatmapEntry>(e))
+              .toList()
+          as T;
+    }
+    if (t == List<_i68.VersionStatisticsEntry>) {
+      return (data as List)
+              .map((e) => deserialize<_i68.VersionStatisticsEntry>(e))
+              .toList()
+          as T;
+    }
+    if (t == List<_i67.VersionAdoptionTimelineEntry>) {
+      return (data as List)
+              .map((e) => deserialize<_i67.VersionAdoptionTimelineEntry>(e))
+              .toList()
+          as T;
+    }
+    if (t == List<_i90.VersionListItem>) {
+      return (data as List)
+              .map((e) => deserialize<_i90.VersionListItem>(e))
+              .toList()
+          as T;
+    }
+    if (t == List<_i92.Application>) {
+      return (data as List)
+              .map((e) => deserialize<_i92.Application>(e))
+              .toList()
+          as T;
+    }
+    if (t == List<_i93.SessionInfo>) {
+      return (data as List)
+              .map((e) => deserialize<_i93.SessionInfo>(e))
+              .toList()
+          as T;
+    }
+    if (t == List<_i94.Team>) {
+      return (data as List).map((e) => deserialize<_i94.Team>(e)).toList() as T;
+    }
+    if (t == List<_i95.TeamMember>) {
+      return (data as List).map((e) => deserialize<_i95.TeamMember>(e)).toList()
           as T;
     }
     return super.deserialize<T>(data, t);
@@ -935,32 +1174,50 @@ class Protocol extends _i1.SerializationManager {
       _i45.InvalidDataException => 'InvalidDataException',
       _i46.TooManyAttemptsException => 'TooManyAttemptsException',
       _i47.Greeting => 'Greeting',
-      _i48.VersionCheckDailySummary => 'VersionCheckDailySummary',
-      _i49.VersionCheckLog => 'VersionCheckLog',
-      _i50.SessionInfo => 'SessionInfo',
-      _i51.TerminateSessionRequest => 'TerminateSessionRequest',
-      _i52.CreateTeamRequest => 'CreateTeamRequest',
-      _i53.DeleteTeamRequest => 'DeleteTeamRequest',
-      _i54.InviteTeamMemberRequest => 'InviteTeamMemberRequest',
-      _i55.LeaveTeamRequest => 'LeaveTeamRequest',
-      _i56.RemoveMemberRequest => 'RemoveMemberRequest',
-      _i57.RespondToInvitationRequest => 'RespondToInvitationRequest',
-      _i58.RevokeInvitationRequest => 'RevokeInvitationRequest',
-      _i59.Team => 'Team',
-      _i60.TeamMember => 'TeamMember',
-      _i61.TransferTeamOwnershipRequest => 'TransferTeamOwnershipRequest',
-      _i62.UpdateMemberRoleRequest => 'UpdateMemberRoleRequest',
-      _i63.UpdateTeamRequest => 'UpdateTeamRequest',
-      _i64.CreateVersionRequest => 'CreateVersionRequest',
-      _i65.DeleteVersionRequest => 'DeleteVersionRequest',
-      _i66.NextBuildNumberResponse => 'NextBuildNumberResponse',
-      _i67.SetVersionRecommendationRequest => 'SetVersionRecommendationRequest',
-      _i68.ToggleVersionBlockRequest => 'ToggleVersionBlockRequest',
-      _i69.UpdateVersionRequest => 'UpdateVersionRequest',
-      _i70.Version => 'Version',
-      _i71.VersionDetailResponse => 'VersionDetailResponse',
-      _i72.VersionListItem => 'VersionListItem',
-      _i73.VersionListResponse => 'VersionListResponse',
+      _i48.SessionInfo => 'SessionInfo',
+      _i49.TerminateSessionRequest => 'TerminateSessionRequest',
+      _i50.AppInstance => 'AppInstance',
+      _i51.CumulativeUsersEntry => 'CumulativeUsersEntry',
+      _i52.DailyActiveUsersEntry => 'DailyActiveUsersEntry',
+      _i53.DailyActiveUsersResponse => 'DailyActiveUsersResponse',
+      _i54.DailyCheckSummary => 'DailyCheckSummary',
+      _i55.DailyDimensionSummary => 'DailyDimensionSummary',
+      _i56.DeviceModelStatisticsEntry => 'DeviceModelStatisticsEntry',
+      _i57.GeoStatisticsResponse => 'GeoStatisticsResponse',
+      _i58.HeatmapEntry => 'HeatmapEntry',
+      _i59.LocaleStatisticsEntry => 'LocaleStatisticsEntry',
+      _i60.OsVersionStatisticsEntry => 'OsVersionStatisticsEntry',
+      _i61.PlatformStatisticsEntry => 'PlatformStatisticsEntry',
+      _i62.PlatformStatisticsResponse => 'PlatformStatisticsResponse',
+      _i63.StatisticsExportData => 'StatisticsExportData',
+      _i64.StatisticsFilter => 'StatisticsFilter',
+      _i65.StatisticsOverviewResponse => 'StatisticsOverviewResponse',
+      _i66.TimeAnalyticsResponse => 'TimeAnalyticsResponse',
+      _i67.VersionAdoptionTimelineEntry => 'VersionAdoptionTimelineEntry',
+      _i68.VersionStatisticsEntry => 'VersionStatisticsEntry',
+      _i69.VersionStatisticsResponse => 'VersionStatisticsResponse',
+      _i70.CreateTeamRequest => 'CreateTeamRequest',
+      _i71.DeleteTeamRequest => 'DeleteTeamRequest',
+      _i72.InviteTeamMemberRequest => 'InviteTeamMemberRequest',
+      _i73.LeaveTeamRequest => 'LeaveTeamRequest',
+      _i74.RemoveMemberRequest => 'RemoveMemberRequest',
+      _i75.RespondToInvitationRequest => 'RespondToInvitationRequest',
+      _i76.RevokeInvitationRequest => 'RevokeInvitationRequest',
+      _i77.Team => 'Team',
+      _i78.TeamMember => 'TeamMember',
+      _i79.TransferTeamOwnershipRequest => 'TransferTeamOwnershipRequest',
+      _i80.UpdateMemberRoleRequest => 'UpdateMemberRoleRequest',
+      _i81.UpdateTeamRequest => 'UpdateTeamRequest',
+      _i82.CreateVersionRequest => 'CreateVersionRequest',
+      _i83.DeleteVersionRequest => 'DeleteVersionRequest',
+      _i84.NextBuildNumberResponse => 'NextBuildNumberResponse',
+      _i85.SetVersionRecommendationRequest => 'SetVersionRecommendationRequest',
+      _i86.ToggleVersionBlockRequest => 'ToggleVersionBlockRequest',
+      _i87.UpdateVersionRequest => 'UpdateVersionRequest',
+      _i88.Version => 'Version',
+      _i89.VersionDetailResponse => 'VersionDetailResponse',
+      _i90.VersionListItem => 'VersionListItem',
+      _i91.VersionListResponse => 'VersionListResponse',
       _ => null,
     };
   }
@@ -1070,57 +1327,93 @@ class Protocol extends _i1.SerializationManager {
         return 'TooManyAttemptsException';
       case _i47.Greeting():
         return 'Greeting';
-      case _i48.VersionCheckDailySummary():
-        return 'VersionCheckDailySummary';
-      case _i49.VersionCheckLog():
-        return 'VersionCheckLog';
-      case _i50.SessionInfo():
+      case _i48.SessionInfo():
         return 'SessionInfo';
-      case _i51.TerminateSessionRequest():
+      case _i49.TerminateSessionRequest():
         return 'TerminateSessionRequest';
-      case _i52.CreateTeamRequest():
+      case _i50.AppInstance():
+        return 'AppInstance';
+      case _i51.CumulativeUsersEntry():
+        return 'CumulativeUsersEntry';
+      case _i52.DailyActiveUsersEntry():
+        return 'DailyActiveUsersEntry';
+      case _i53.DailyActiveUsersResponse():
+        return 'DailyActiveUsersResponse';
+      case _i54.DailyCheckSummary():
+        return 'DailyCheckSummary';
+      case _i55.DailyDimensionSummary():
+        return 'DailyDimensionSummary';
+      case _i56.DeviceModelStatisticsEntry():
+        return 'DeviceModelStatisticsEntry';
+      case _i57.GeoStatisticsResponse():
+        return 'GeoStatisticsResponse';
+      case _i58.HeatmapEntry():
+        return 'HeatmapEntry';
+      case _i59.LocaleStatisticsEntry():
+        return 'LocaleStatisticsEntry';
+      case _i60.OsVersionStatisticsEntry():
+        return 'OsVersionStatisticsEntry';
+      case _i61.PlatformStatisticsEntry():
+        return 'PlatformStatisticsEntry';
+      case _i62.PlatformStatisticsResponse():
+        return 'PlatformStatisticsResponse';
+      case _i63.StatisticsExportData():
+        return 'StatisticsExportData';
+      case _i64.StatisticsFilter():
+        return 'StatisticsFilter';
+      case _i65.StatisticsOverviewResponse():
+        return 'StatisticsOverviewResponse';
+      case _i66.TimeAnalyticsResponse():
+        return 'TimeAnalyticsResponse';
+      case _i67.VersionAdoptionTimelineEntry():
+        return 'VersionAdoptionTimelineEntry';
+      case _i68.VersionStatisticsEntry():
+        return 'VersionStatisticsEntry';
+      case _i69.VersionStatisticsResponse():
+        return 'VersionStatisticsResponse';
+      case _i70.CreateTeamRequest():
         return 'CreateTeamRequest';
-      case _i53.DeleteTeamRequest():
+      case _i71.DeleteTeamRequest():
         return 'DeleteTeamRequest';
-      case _i54.InviteTeamMemberRequest():
+      case _i72.InviteTeamMemberRequest():
         return 'InviteTeamMemberRequest';
-      case _i55.LeaveTeamRequest():
+      case _i73.LeaveTeamRequest():
         return 'LeaveTeamRequest';
-      case _i56.RemoveMemberRequest():
+      case _i74.RemoveMemberRequest():
         return 'RemoveMemberRequest';
-      case _i57.RespondToInvitationRequest():
+      case _i75.RespondToInvitationRequest():
         return 'RespondToInvitationRequest';
-      case _i58.RevokeInvitationRequest():
+      case _i76.RevokeInvitationRequest():
         return 'RevokeInvitationRequest';
-      case _i59.Team():
+      case _i77.Team():
         return 'Team';
-      case _i60.TeamMember():
+      case _i78.TeamMember():
         return 'TeamMember';
-      case _i61.TransferTeamOwnershipRequest():
+      case _i79.TransferTeamOwnershipRequest():
         return 'TransferTeamOwnershipRequest';
-      case _i62.UpdateMemberRoleRequest():
+      case _i80.UpdateMemberRoleRequest():
         return 'UpdateMemberRoleRequest';
-      case _i63.UpdateTeamRequest():
+      case _i81.UpdateTeamRequest():
         return 'UpdateTeamRequest';
-      case _i64.CreateVersionRequest():
+      case _i82.CreateVersionRequest():
         return 'CreateVersionRequest';
-      case _i65.DeleteVersionRequest():
+      case _i83.DeleteVersionRequest():
         return 'DeleteVersionRequest';
-      case _i66.NextBuildNumberResponse():
+      case _i84.NextBuildNumberResponse():
         return 'NextBuildNumberResponse';
-      case _i67.SetVersionRecommendationRequest():
+      case _i85.SetVersionRecommendationRequest():
         return 'SetVersionRecommendationRequest';
-      case _i68.ToggleVersionBlockRequest():
+      case _i86.ToggleVersionBlockRequest():
         return 'ToggleVersionBlockRequest';
-      case _i69.UpdateVersionRequest():
+      case _i87.UpdateVersionRequest():
         return 'UpdateVersionRequest';
-      case _i70.Version():
+      case _i88.Version():
         return 'Version';
-      case _i71.VersionDetailResponse():
+      case _i89.VersionDetailResponse():
         return 'VersionDetailResponse';
-      case _i72.VersionListItem():
+      case _i90.VersionListItem():
         return 'VersionListItem';
-      case _i73.VersionListResponse():
+      case _i91.VersionListResponse():
         return 'VersionListResponse';
     }
     return null;
@@ -1272,83 +1565,137 @@ class Protocol extends _i1.SerializationManager {
     if (dataClassName == 'Greeting') {
       return deserialize<_i47.Greeting>(data['data']);
     }
-    if (dataClassName == 'VersionCheckDailySummary') {
-      return deserialize<_i48.VersionCheckDailySummary>(data['data']);
-    }
-    if (dataClassName == 'VersionCheckLog') {
-      return deserialize<_i49.VersionCheckLog>(data['data']);
-    }
     if (dataClassName == 'SessionInfo') {
-      return deserialize<_i50.SessionInfo>(data['data']);
+      return deserialize<_i48.SessionInfo>(data['data']);
     }
     if (dataClassName == 'TerminateSessionRequest') {
-      return deserialize<_i51.TerminateSessionRequest>(data['data']);
+      return deserialize<_i49.TerminateSessionRequest>(data['data']);
+    }
+    if (dataClassName == 'AppInstance') {
+      return deserialize<_i50.AppInstance>(data['data']);
+    }
+    if (dataClassName == 'CumulativeUsersEntry') {
+      return deserialize<_i51.CumulativeUsersEntry>(data['data']);
+    }
+    if (dataClassName == 'DailyActiveUsersEntry') {
+      return deserialize<_i52.DailyActiveUsersEntry>(data['data']);
+    }
+    if (dataClassName == 'DailyActiveUsersResponse') {
+      return deserialize<_i53.DailyActiveUsersResponse>(data['data']);
+    }
+    if (dataClassName == 'DailyCheckSummary') {
+      return deserialize<_i54.DailyCheckSummary>(data['data']);
+    }
+    if (dataClassName == 'DailyDimensionSummary') {
+      return deserialize<_i55.DailyDimensionSummary>(data['data']);
+    }
+    if (dataClassName == 'DeviceModelStatisticsEntry') {
+      return deserialize<_i56.DeviceModelStatisticsEntry>(data['data']);
+    }
+    if (dataClassName == 'GeoStatisticsResponse') {
+      return deserialize<_i57.GeoStatisticsResponse>(data['data']);
+    }
+    if (dataClassName == 'HeatmapEntry') {
+      return deserialize<_i58.HeatmapEntry>(data['data']);
+    }
+    if (dataClassName == 'LocaleStatisticsEntry') {
+      return deserialize<_i59.LocaleStatisticsEntry>(data['data']);
+    }
+    if (dataClassName == 'OsVersionStatisticsEntry') {
+      return deserialize<_i60.OsVersionStatisticsEntry>(data['data']);
+    }
+    if (dataClassName == 'PlatformStatisticsEntry') {
+      return deserialize<_i61.PlatformStatisticsEntry>(data['data']);
+    }
+    if (dataClassName == 'PlatformStatisticsResponse') {
+      return deserialize<_i62.PlatformStatisticsResponse>(data['data']);
+    }
+    if (dataClassName == 'StatisticsExportData') {
+      return deserialize<_i63.StatisticsExportData>(data['data']);
+    }
+    if (dataClassName == 'StatisticsFilter') {
+      return deserialize<_i64.StatisticsFilter>(data['data']);
+    }
+    if (dataClassName == 'StatisticsOverviewResponse') {
+      return deserialize<_i65.StatisticsOverviewResponse>(data['data']);
+    }
+    if (dataClassName == 'TimeAnalyticsResponse') {
+      return deserialize<_i66.TimeAnalyticsResponse>(data['data']);
+    }
+    if (dataClassName == 'VersionAdoptionTimelineEntry') {
+      return deserialize<_i67.VersionAdoptionTimelineEntry>(data['data']);
+    }
+    if (dataClassName == 'VersionStatisticsEntry') {
+      return deserialize<_i68.VersionStatisticsEntry>(data['data']);
+    }
+    if (dataClassName == 'VersionStatisticsResponse') {
+      return deserialize<_i69.VersionStatisticsResponse>(data['data']);
     }
     if (dataClassName == 'CreateTeamRequest') {
-      return deserialize<_i52.CreateTeamRequest>(data['data']);
+      return deserialize<_i70.CreateTeamRequest>(data['data']);
     }
     if (dataClassName == 'DeleteTeamRequest') {
-      return deserialize<_i53.DeleteTeamRequest>(data['data']);
+      return deserialize<_i71.DeleteTeamRequest>(data['data']);
     }
     if (dataClassName == 'InviteTeamMemberRequest') {
-      return deserialize<_i54.InviteTeamMemberRequest>(data['data']);
+      return deserialize<_i72.InviteTeamMemberRequest>(data['data']);
     }
     if (dataClassName == 'LeaveTeamRequest') {
-      return deserialize<_i55.LeaveTeamRequest>(data['data']);
+      return deserialize<_i73.LeaveTeamRequest>(data['data']);
     }
     if (dataClassName == 'RemoveMemberRequest') {
-      return deserialize<_i56.RemoveMemberRequest>(data['data']);
+      return deserialize<_i74.RemoveMemberRequest>(data['data']);
     }
     if (dataClassName == 'RespondToInvitationRequest') {
-      return deserialize<_i57.RespondToInvitationRequest>(data['data']);
+      return deserialize<_i75.RespondToInvitationRequest>(data['data']);
     }
     if (dataClassName == 'RevokeInvitationRequest') {
-      return deserialize<_i58.RevokeInvitationRequest>(data['data']);
+      return deserialize<_i76.RevokeInvitationRequest>(data['data']);
     }
     if (dataClassName == 'Team') {
-      return deserialize<_i59.Team>(data['data']);
+      return deserialize<_i77.Team>(data['data']);
     }
     if (dataClassName == 'TeamMember') {
-      return deserialize<_i60.TeamMember>(data['data']);
+      return deserialize<_i78.TeamMember>(data['data']);
     }
     if (dataClassName == 'TransferTeamOwnershipRequest') {
-      return deserialize<_i61.TransferTeamOwnershipRequest>(data['data']);
+      return deserialize<_i79.TransferTeamOwnershipRequest>(data['data']);
     }
     if (dataClassName == 'UpdateMemberRoleRequest') {
-      return deserialize<_i62.UpdateMemberRoleRequest>(data['data']);
+      return deserialize<_i80.UpdateMemberRoleRequest>(data['data']);
     }
     if (dataClassName == 'UpdateTeamRequest') {
-      return deserialize<_i63.UpdateTeamRequest>(data['data']);
+      return deserialize<_i81.UpdateTeamRequest>(data['data']);
     }
     if (dataClassName == 'CreateVersionRequest') {
-      return deserialize<_i64.CreateVersionRequest>(data['data']);
+      return deserialize<_i82.CreateVersionRequest>(data['data']);
     }
     if (dataClassName == 'DeleteVersionRequest') {
-      return deserialize<_i65.DeleteVersionRequest>(data['data']);
+      return deserialize<_i83.DeleteVersionRequest>(data['data']);
     }
     if (dataClassName == 'NextBuildNumberResponse') {
-      return deserialize<_i66.NextBuildNumberResponse>(data['data']);
+      return deserialize<_i84.NextBuildNumberResponse>(data['data']);
     }
     if (dataClassName == 'SetVersionRecommendationRequest') {
-      return deserialize<_i67.SetVersionRecommendationRequest>(data['data']);
+      return deserialize<_i85.SetVersionRecommendationRequest>(data['data']);
     }
     if (dataClassName == 'ToggleVersionBlockRequest') {
-      return deserialize<_i68.ToggleVersionBlockRequest>(data['data']);
+      return deserialize<_i86.ToggleVersionBlockRequest>(data['data']);
     }
     if (dataClassName == 'UpdateVersionRequest') {
-      return deserialize<_i69.UpdateVersionRequest>(data['data']);
+      return deserialize<_i87.UpdateVersionRequest>(data['data']);
     }
     if (dataClassName == 'Version') {
-      return deserialize<_i70.Version>(data['data']);
+      return deserialize<_i88.Version>(data['data']);
     }
     if (dataClassName == 'VersionDetailResponse') {
-      return deserialize<_i71.VersionDetailResponse>(data['data']);
+      return deserialize<_i89.VersionDetailResponse>(data['data']);
     }
     if (dataClassName == 'VersionListItem') {
-      return deserialize<_i72.VersionListItem>(data['data']);
+      return deserialize<_i90.VersionListItem>(data['data']);
     }
     if (dataClassName == 'VersionListResponse') {
-      return deserialize<_i73.VersionListResponse>(data['data']);
+      return deserialize<_i91.VersionListResponse>(data['data']);
     }
     return super.deserializeByClassName(data);
   }

@@ -1,0 +1,13 @@
+### Фильтры для запросов статистики.
+class: StatisticsFilter
+fields:
+  ### ID приложения
+  applicationId: UuidValue
+  ### Начало периода (включительно)
+  dateFrom: DateTime?
+  ### Конец периода (включительно)
+  dateTo: DateTime?
+  ### Фильтр по платформе
+  platform: PlatformType?
+  ### Фильтр по номеру сборки версии
+  buildNumber: int?

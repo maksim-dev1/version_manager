@@ -1,0 +1,9 @@
+### Точка графика кумулятивного роста.
+class: CumulativeUsersEntry
+fields:
+  ### Дата
+  date: DateTime
+  ### Накопленное общее количество проверок к этой дате
+  totalChecks: int
+  ### Накопленное количество уникальных пользователей к этой дате
+  totalUniqueUsers: int

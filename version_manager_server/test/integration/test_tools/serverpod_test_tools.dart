@@ -62,49 +62,65 @@ import 'package:version_manager_server/src/generated/sessions/session_info.dart'
     as _i27;
 import 'package:version_manager_server/src/generated/sessions/terminate_session_request.dart'
     as _i28;
-import 'package:version_manager_server/src/generated/teams/team.dart' as _i29;
-import 'package:version_manager_server/src/generated/teams/create_team_request.dart'
+import 'package:version_manager_server/src/generated/statistics/statistics_overview_response.dart'
+    as _i29;
+import 'package:version_manager_server/src/generated/statistics/statistics_filter.dart'
     as _i30;
-import 'package:version_manager_server/src/generated/teams/update_team_request.dart'
+import 'package:version_manager_server/src/generated/statistics/daily_active_users_response.dart'
     as _i31;
-import 'package:version_manager_server/src/generated/teams/invite_team_member_request.dart'
+import 'package:version_manager_server/src/generated/statistics/version_statistics_response.dart'
     as _i32;
-import 'package:version_manager_server/src/generated/teams/team_member.dart'
+import 'package:version_manager_server/src/generated/statistics/platform_statistics_response.dart'
     as _i33;
-import 'package:version_manager_server/src/generated/teams/respond_to_invitation_request.dart'
+import 'package:version_manager_server/src/generated/statistics/geo_statistics_response.dart'
     as _i34;
-import 'package:version_manager_server/src/generated/teams/revoke_invitation_request.dart'
+import 'package:version_manager_server/src/generated/statistics/time_analytics_response.dart'
     as _i35;
-import 'package:version_manager_server/src/generated/teams/update_member_role_request.dart'
+import 'package:version_manager_server/src/generated/statistics/statistics_export_data.dart'
     as _i36;
-import 'package:version_manager_server/src/generated/teams/remove_member_request.dart'
-    as _i37;
-import 'package:version_manager_server/src/generated/teams/leave_team_request.dart'
+import 'package:version_manager_server/src/generated/teams/team.dart' as _i37;
+import 'package:version_manager_server/src/generated/teams/create_team_request.dart'
     as _i38;
-import 'package:version_manager_server/src/generated/teams/transfer_team_ownership_request.dart'
+import 'package:version_manager_server/src/generated/teams/update_team_request.dart'
     as _i39;
-import 'package:version_manager_server/src/generated/teams/delete_team_request.dart'
+import 'package:version_manager_server/src/generated/teams/invite_team_member_request.dart'
     as _i40;
-import 'package:version_manager_server/src/generated/versions/version_list_response.dart'
+import 'package:version_manager_server/src/generated/teams/team_member.dart'
     as _i41;
-import 'package:version_manager_server/src/generated/versions/version_detail_response.dart'
+import 'package:version_manager_server/src/generated/teams/respond_to_invitation_request.dart'
     as _i42;
-import 'package:version_manager_server/src/generated/versions/next_build_number_response.dart'
+import 'package:version_manager_server/src/generated/teams/revoke_invitation_request.dart'
     as _i43;
-import 'package:version_manager_server/src/generated/versions/version.dart'
+import 'package:version_manager_server/src/generated/teams/update_member_role_request.dart'
     as _i44;
-import 'package:version_manager_server/src/generated/versions/create_version_request.dart'
+import 'package:version_manager_server/src/generated/teams/remove_member_request.dart'
     as _i45;
-import 'package:version_manager_server/src/generated/versions/update_version_request.dart'
+import 'package:version_manager_server/src/generated/teams/leave_team_request.dart'
     as _i46;
-import 'package:version_manager_server/src/generated/versions/toggle_version_block_request.dart'
+import 'package:version_manager_server/src/generated/teams/transfer_team_ownership_request.dart'
     as _i47;
-import 'package:version_manager_server/src/generated/versions/set_version_recommendation_request.dart'
+import 'package:version_manager_server/src/generated/teams/delete_team_request.dart'
     as _i48;
-import 'package:version_manager_server/src/generated/versions/delete_version_request.dart'
+import 'package:version_manager_server/src/generated/versions/version_list_response.dart'
     as _i49;
-import 'package:version_manager_server/src/generated/greetings/greeting.dart'
+import 'package:version_manager_server/src/generated/versions/version_detail_response.dart'
     as _i50;
+import 'package:version_manager_server/src/generated/versions/next_build_number_response.dart'
+    as _i51;
+import 'package:version_manager_server/src/generated/versions/version.dart'
+    as _i52;
+import 'package:version_manager_server/src/generated/versions/create_version_request.dart'
+    as _i53;
+import 'package:version_manager_server/src/generated/versions/update_version_request.dart'
+    as _i54;
+import 'package:version_manager_server/src/generated/versions/toggle_version_block_request.dart'
+    as _i55;
+import 'package:version_manager_server/src/generated/versions/set_version_recommendation_request.dart'
+    as _i56;
+import 'package:version_manager_server/src/generated/versions/delete_version_request.dart'
+    as _i57;
+import 'package:version_manager_server/src/generated/greetings/greeting.dart'
+    as _i58;
 import 'package:version_manager_server/src/generated/protocol.dart';
 import 'package:version_manager_server/src/generated/endpoints.dart';
 export 'package:serverpod_test/serverpod_test_public_exports.dart';
@@ -218,6 +234,8 @@ class TestEndpoints {
 
   late final _SessionEndpoint session;
 
+  late final _StatisticsEndpoint statistics;
+
   late final _TeamEndpoint team;
 
   late final _VersionEndpoint version;
@@ -241,6 +259,10 @@ class _InternalTestEndpoints extends TestEndpoints
       serializationManager,
     );
     session = _SessionEndpoint(
+      endpoints,
+      serializationManager,
+    );
+    statistics = _StatisticsEndpoint(
       endpoints,
       serializationManager,
     );
@@ -968,6 +990,234 @@ class _SessionEndpoint {
   }
 }
 
+class _StatisticsEndpoint {
+  _StatisticsEndpoint(
+    this._endpointDispatch,
+    this._serializationManager,
+  );
+
+  final _i2.EndpointDispatch _endpointDispatch;
+
+  final _i2.SerializationManager _serializationManager;
+
+  _i3.Future<_i29.StatisticsOverviewResponse> getOverview(
+    _i1.TestSessionBuilder sessionBuilder, {
+    required _i30.StatisticsFilter filter,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'statistics',
+            method: 'getOverview',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'statistics',
+          methodName: 'getOverview',
+          parameters: _i1.testObjectToJson({'filter': filter}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i29.StatisticsOverviewResponse>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i31.DailyActiveUsersResponse> getDailyActiveUsers(
+    _i1.TestSessionBuilder sessionBuilder, {
+    required _i30.StatisticsFilter filter,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'statistics',
+            method: 'getDailyActiveUsers',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'statistics',
+          methodName: 'getDailyActiveUsers',
+          parameters: _i1.testObjectToJson({'filter': filter}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i31.DailyActiveUsersResponse>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i32.VersionStatisticsResponse> getVersionStatistics(
+    _i1.TestSessionBuilder sessionBuilder, {
+    required _i30.StatisticsFilter filter,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'statistics',
+            method: 'getVersionStatistics',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'statistics',
+          methodName: 'getVersionStatistics',
+          parameters: _i1.testObjectToJson({'filter': filter}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i32.VersionStatisticsResponse>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i33.PlatformStatisticsResponse> getPlatformStatistics(
+    _i1.TestSessionBuilder sessionBuilder, {
+    required _i30.StatisticsFilter filter,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'statistics',
+            method: 'getPlatformStatistics',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'statistics',
+          methodName: 'getPlatformStatistics',
+          parameters: _i1.testObjectToJson({'filter': filter}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i33.PlatformStatisticsResponse>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i34.GeoStatisticsResponse> getGeoStatistics(
+    _i1.TestSessionBuilder sessionBuilder, {
+    required _i30.StatisticsFilter filter,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'statistics',
+            method: 'getGeoStatistics',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'statistics',
+          methodName: 'getGeoStatistics',
+          parameters: _i1.testObjectToJson({'filter': filter}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i34.GeoStatisticsResponse>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i35.TimeAnalyticsResponse> getTimeAnalytics(
+    _i1.TestSessionBuilder sessionBuilder, {
+    required _i30.StatisticsFilter filter,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'statistics',
+            method: 'getTimeAnalytics',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'statistics',
+          methodName: 'getTimeAnalytics',
+          parameters: _i1.testObjectToJson({'filter': filter}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i35.TimeAnalyticsResponse>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i36.StatisticsExportData> getExportData(
+    _i1.TestSessionBuilder sessionBuilder, {
+    required _i30.StatisticsFilter filter,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'statistics',
+            method: 'getExportData',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'statistics',
+          methodName: 'getExportData',
+          parameters: _i1.testObjectToJson({'filter': filter}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i36.StatisticsExportData>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+}
+
 class _TeamEndpoint {
   _TeamEndpoint(
     this._endpointDispatch,
@@ -978,9 +1228,9 @@ class _TeamEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i29.Team> createTeam(
+  _i3.Future<_i37.Team> createTeam(
     _i1.TestSessionBuilder sessionBuilder, {
-    required _i30.CreateTeamRequest request,
+    required _i38.CreateTeamRequest request,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1001,7 +1251,7 @@ class _TeamEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i29.Team>);
+                as _i3.Future<_i37.Team>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1009,9 +1259,9 @@ class _TeamEndpoint {
     });
   }
 
-  _i3.Future<_i29.Team> updateTeam(
+  _i3.Future<_i37.Team> updateTeam(
     _i1.TestSessionBuilder sessionBuilder, {
-    required _i31.UpdateTeamRequest request,
+    required _i39.UpdateTeamRequest request,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1032,7 +1282,7 @@ class _TeamEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i29.Team>);
+                as _i3.Future<_i37.Team>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1040,7 +1290,7 @@ class _TeamEndpoint {
     });
   }
 
-  _i3.Future<_i29.Team> getTeam(
+  _i3.Future<_i37.Team> getTeam(
     _i1.TestSessionBuilder sessionBuilder, {
     required _i2.UuidValue teamId,
   }) async {
@@ -1063,7 +1313,7 @@ class _TeamEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i29.Team>);
+                as _i3.Future<_i37.Team>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1071,7 +1321,7 @@ class _TeamEndpoint {
     });
   }
 
-  _i3.Future<List<_i29.Team>> getMyTeams(
+  _i3.Future<List<_i37.Team>> getMyTeams(
     _i1.TestSessionBuilder sessionBuilder,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
@@ -1093,7 +1343,7 @@ class _TeamEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<List<_i29.Team>>);
+                as _i3.Future<List<_i37.Team>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1103,7 +1353,7 @@ class _TeamEndpoint {
 
   _i3.Future<_i8.SuccessResponse> inviteMember(
     _i1.TestSessionBuilder sessionBuilder, {
-    required _i32.InviteTeamMemberRequest request,
+    required _i40.InviteTeamMemberRequest request,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1132,7 +1382,7 @@ class _TeamEndpoint {
     });
   }
 
-  _i3.Future<List<_i33.TeamMember>> getMyInvitations(
+  _i3.Future<List<_i41.TeamMember>> getMyInvitations(
     _i1.TestSessionBuilder sessionBuilder,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
@@ -1154,7 +1404,7 @@ class _TeamEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<List<_i33.TeamMember>>);
+                as _i3.Future<List<_i41.TeamMember>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1164,7 +1414,7 @@ class _TeamEndpoint {
 
   _i3.Future<_i8.SuccessResponse> respondToInvitation(
     _i1.TestSessionBuilder sessionBuilder, {
-    required _i34.RespondToInvitationRequest request,
+    required _i42.RespondToInvitationRequest request,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1195,7 +1445,7 @@ class _TeamEndpoint {
 
   _i3.Future<_i8.SuccessResponse> revokeInvitation(
     _i1.TestSessionBuilder sessionBuilder, {
-    required _i35.RevokeInvitationRequest request,
+    required _i43.RevokeInvitationRequest request,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1224,7 +1474,7 @@ class _TeamEndpoint {
     });
   }
 
-  _i3.Future<List<_i33.TeamMember>> getTeamMembers(
+  _i3.Future<List<_i41.TeamMember>> getTeamMembers(
     _i1.TestSessionBuilder sessionBuilder, {
     required _i2.UuidValue teamId,
   }) async {
@@ -1247,7 +1497,7 @@ class _TeamEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<List<_i33.TeamMember>>);
+                as _i3.Future<List<_i41.TeamMember>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1257,7 +1507,7 @@ class _TeamEndpoint {
 
   _i3.Future<_i8.SuccessResponse> updateMemberRole(
     _i1.TestSessionBuilder sessionBuilder, {
-    required _i36.UpdateMemberRoleRequest request,
+    required _i44.UpdateMemberRoleRequest request,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1288,7 +1538,7 @@ class _TeamEndpoint {
 
   _i3.Future<_i8.SuccessResponse> removeMember(
     _i1.TestSessionBuilder sessionBuilder, {
-    required _i37.RemoveMemberRequest request,
+    required _i45.RemoveMemberRequest request,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1319,7 +1569,7 @@ class _TeamEndpoint {
 
   _i3.Future<_i8.SuccessResponse> leaveTeam(
     _i1.TestSessionBuilder sessionBuilder, {
-    required _i38.LeaveTeamRequest request,
+    required _i46.LeaveTeamRequest request,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1350,7 +1600,7 @@ class _TeamEndpoint {
 
   _i3.Future<_i8.SuccessResponse> transferOwnership(
     _i1.TestSessionBuilder sessionBuilder, {
-    required _i39.TransferTeamOwnershipRequest request,
+    required _i47.TransferTeamOwnershipRequest request,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1381,7 +1631,7 @@ class _TeamEndpoint {
 
   _i3.Future<_i8.SuccessResponse> deleteTeam(
     _i1.TestSessionBuilder sessionBuilder, {
-    required _i40.DeleteTeamRequest request,
+    required _i48.DeleteTeamRequest request,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1421,7 +1671,7 @@ class _VersionEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i41.VersionListResponse> getVersions(
+  _i3.Future<_i49.VersionListResponse> getVersions(
     _i1.TestSessionBuilder sessionBuilder, {
     required _i2.UuidValue applicationId,
   }) async {
@@ -1444,7 +1694,7 @@ class _VersionEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i41.VersionListResponse>);
+                as _i3.Future<_i49.VersionListResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1452,7 +1702,7 @@ class _VersionEndpoint {
     });
   }
 
-  _i3.Future<_i42.VersionDetailResponse> getVersionDetail(
+  _i3.Future<_i50.VersionDetailResponse> getVersionDetail(
     _i1.TestSessionBuilder sessionBuilder, {
     required _i2.UuidValue versionId,
   }) async {
@@ -1475,7 +1725,7 @@ class _VersionEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i42.VersionDetailResponse>);
+                as _i3.Future<_i50.VersionDetailResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1483,7 +1733,7 @@ class _VersionEndpoint {
     });
   }
 
-  _i3.Future<_i43.NextBuildNumberResponse> getNextBuildNumber(
+  _i3.Future<_i51.NextBuildNumberResponse> getNextBuildNumber(
     _i1.TestSessionBuilder sessionBuilder, {
     required _i2.UuidValue applicationId,
   }) async {
@@ -1506,7 +1756,7 @@ class _VersionEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i43.NextBuildNumberResponse>);
+                as _i3.Future<_i51.NextBuildNumberResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1514,9 +1764,9 @@ class _VersionEndpoint {
     });
   }
 
-  _i3.Future<_i44.Version> createVersion(
+  _i3.Future<_i52.Version> createVersion(
     _i1.TestSessionBuilder sessionBuilder, {
-    required _i45.CreateVersionRequest request,
+    required _i53.CreateVersionRequest request,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1537,7 +1787,7 @@ class _VersionEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i44.Version>);
+                as _i3.Future<_i52.Version>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1545,9 +1795,9 @@ class _VersionEndpoint {
     });
   }
 
-  _i3.Future<_i44.Version> updateVersion(
+  _i3.Future<_i52.Version> updateVersion(
     _i1.TestSessionBuilder sessionBuilder, {
-    required _i46.UpdateVersionRequest request,
+    required _i54.UpdateVersionRequest request,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1568,7 +1818,7 @@ class _VersionEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i44.Version>);
+                as _i3.Future<_i52.Version>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1576,9 +1826,9 @@ class _VersionEndpoint {
     });
   }
 
-  _i3.Future<_i44.Version> toggleVersionBlock(
+  _i3.Future<_i52.Version> toggleVersionBlock(
     _i1.TestSessionBuilder sessionBuilder, {
-    required _i47.ToggleVersionBlockRequest request,
+    required _i55.ToggleVersionBlockRequest request,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1599,7 +1849,7 @@ class _VersionEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i44.Version>);
+                as _i3.Future<_i52.Version>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1607,9 +1857,9 @@ class _VersionEndpoint {
     });
   }
 
-  _i3.Future<_i44.Version> setVersionRecommendation(
+  _i3.Future<_i52.Version> setVersionRecommendation(
     _i1.TestSessionBuilder sessionBuilder, {
-    required _i48.SetVersionRecommendationRequest request,
+    required _i56.SetVersionRecommendationRequest request,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1630,7 +1880,7 @@ class _VersionEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i44.Version>);
+                as _i3.Future<_i52.Version>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1640,7 +1890,7 @@ class _VersionEndpoint {
 
   _i3.Future<_i8.SuccessResponse> deleteVersion(
     _i1.TestSessionBuilder sessionBuilder, {
-    required _i49.DeleteVersionRequest request,
+    required _i57.DeleteVersionRequest request,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1680,7 +1930,7 @@ class _GreetingEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i50.Greeting> hello(
+  _i3.Future<_i58.Greeting> hello(
     _i1.TestSessionBuilder sessionBuilder,
     String name,
   ) async {
@@ -1703,7 +1953,7 @@ class _GreetingEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i50.Greeting>);
+                as _i3.Future<_i58.Greeting>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();

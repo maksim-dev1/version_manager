@@ -1,0 +1,19 @@
+### Статистика по одной версии приложения.
+class: VersionStatisticsEntry
+fields:
+  ### ID версии
+  versionId: UuidValue
+  ### Номер версии
+  versionNumber: String
+  ### Номер сборки
+  buildNumber: int
+  ### Количество проверок (за период)
+  checkCount: int
+  ### Процент от общего числа проверок
+  percentage: double
+  ### Заблокирована ли версия
+  isBlocked: bool
+  ### Дата создания версии
+  createdAt: DateTime
+  ### Возраст версии в днях (дней с момента создания)
+  ageDays: int

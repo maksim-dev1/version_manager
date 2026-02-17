@@ -1,0 +1,11 @@
+### Статистика по модели устройства.
+class: DeviceModelStatisticsEntry
+fields:
+  ### Модель устройства
+  deviceModel: String
+  ### Платформа
+  platform: PlatformType
+  ### Количество проверок
+  checkCount: int
+  ### Процент от общего числа
+  percentage: double
