@@ -20,7 +20,7 @@ class TerminateDialog extends StatelessWidget {
         ],
       ),
       content: ConstrainedBox(
-        constraints: const BoxConstraints(minWidth: 480, maxWidth: 480),
+        constraints: const BoxConstraints(maxWidth: 480),
         child: Text(
           'Сессия на устройстве "${session.deviceInfo ?? 'Неизвестное'}" '
           'будет завершена.',

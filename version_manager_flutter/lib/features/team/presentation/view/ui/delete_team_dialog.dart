@@ -44,7 +44,7 @@ class _DeleteTeamDialogState extends State<DeleteTeamDialog> {
         ],
       ),
       content: ConstrainedBox(
-        constraints: const BoxConstraints(minWidth: 480, maxWidth: 480),
+        constraints: const BoxConstraints(maxWidth: 480),
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,

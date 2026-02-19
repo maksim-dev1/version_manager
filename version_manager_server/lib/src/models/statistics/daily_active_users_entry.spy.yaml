@@ -3,8 +3,8 @@ class: DailyActiveUsersEntry
 fields:
   ### Дата (YYYY-MM-DD)
   date: DateTime
-  ### Общее количество проверок
-  totalChecks: int
+  ### Общее количество уникальных пользователей за день
+  totalUsers: int
   ### Уникальных пользователей за день (по fingerprint)
   activeUsers: int
   ### Новых пользователей за день

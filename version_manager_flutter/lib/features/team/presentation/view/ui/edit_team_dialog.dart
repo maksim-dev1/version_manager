@@ -41,7 +41,7 @@ class _EditTeamDialogState extends State<EditTeamDialog> {
     return AlertDialog(
       title: const Text('Редактировать команду'),
       content: ConstrainedBox(
-        constraints: const BoxConstraints(minWidth: 480, maxWidth: 480),
+        constraints: const BoxConstraints(maxWidth: 480),
         child: Form(
           key: _formKey,
           child: Column(

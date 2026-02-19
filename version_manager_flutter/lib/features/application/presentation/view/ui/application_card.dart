@@ -36,7 +36,7 @@ class ApplicationCard extends StatelessWidget {
           onLongPress: () => _showActionsSheet(context),
           borderRadius: BorderRadius.circular(12),
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -46,6 +46,7 @@ class ApplicationCard extends StatelessWidget {
                       iconUrl: application.iconUrl,
                       name: application.name,
                       colorScheme: colorScheme,
+                      size: 36,
                     ),
                     const Spacer(),
                     if (!isActive)
@@ -61,6 +62,7 @@ class ApplicationCard extends StatelessWidget {
                   application.name,
                   style: textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.w600,
+                    fontSize: 13,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -71,12 +73,12 @@ class ApplicationCard extends StatelessWidget {
                   style: textTheme.bodySmall?.copyWith(
                     color: colorScheme.onSurfaceVariant,
                     fontFamily: 'monospace',
-                    fontSize: 11,
+                    fontSize: 10,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 6),
                 _PlatformIcons(
                   platforms: application.platforms,
                   colorScheme: colorScheme,

@@ -148,21 +148,24 @@ class TeamCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text.rich(
-                  TextSpan(
-                    text: 'Участники ($activeCount)',
-                    children: [
-                      if (invitedCount > 0)
-                        TextSpan(
-                          text: '  +$invitedCount приглаш.',
-                          style: textTheme.bodySmall?.copyWith(
-                            color: colorScheme.onSurfaceVariant,
+                Flexible(
+                  child: Text.rich(
+                    TextSpan(
+                      text: 'Участники ($activeCount)',
+                      children: [
+                        if (invitedCount > 0)
+                          TextSpan(
+                            text: '  +$invitedCount приглаш.',
+                            style: textTheme.bodySmall?.copyWith(
+                              color: colorScheme.onSurfaceVariant,
+                            ),
                           ),
-                        ),
-                    ],
-                  ),
-                  style: textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
+                      ],
+                    ),
+                    style: textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 // Приглашение — владелец и админ

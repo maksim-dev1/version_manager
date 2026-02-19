@@ -33,9 +33,6 @@ indexes:
     fields: buildNumber
   version_recommended_idx:
     fields: recommendedVersionId
-  version_app_version_unique_idx:
-    fields: applicationId, versionNumber
-    unique: true
   version_app_build_unique_idx:
     fields: applicationId, buildNumber
     unique: true

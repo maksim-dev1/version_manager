@@ -289,12 +289,19 @@ class _ApplicationsGrid extends StatelessWidget {
     return SliverPadding(
       padding: EdgeInsets.symmetric(horizontal: padding),
       sliver: SliverGrid(
-        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: isCompact ? 160 : 200,
-          mainAxisSpacing: isCompact ? 8 : 12,
-          crossAxisSpacing: isCompact ? 8 : 12,
-          childAspectRatio: 1,
-        ),
+        gridDelegate: isCompact
+            ? const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 8,
+                crossAxisSpacing: 8,
+                childAspectRatio: 1,
+              )
+            : const SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 200,
+                mainAxisSpacing: 12,
+                crossAxisSpacing: 12,
+                childAspectRatio: 1,
+              ),
         delegate: SliverChildBuilderDelegate(
           (context, index) {
             if (showCreateCard && index == applications.length) {

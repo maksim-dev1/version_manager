@@ -260,6 +260,12 @@ class Protocol extends _i1.SerializationManagerServer {
           dartType: 'DateTime',
           columnDefault: 'CURRENT_TIMESTAMP',
         ),
+        _i2.ColumnDefinition(
+          name: 'lastBuildNumber',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: true,
+          dartType: 'int?',
+        ),
       ],
       foreignKeys: [
         _i2.ForeignKeyDefinition(
@@ -1031,7 +1037,7 @@ class Protocol extends _i1.SerializationManagerServer {
           dartType: 'protocol:PlatformType',
         ),
         _i2.ColumnDefinition(
-          name: 'checkCount',
+          name: 'userCount',
           columnType: _i2.ColumnType.bigint,
           isNullable: false,
           dartType: 'int',
@@ -2041,23 +2047,6 @@ class Protocol extends _i1.SerializationManagerServer {
           ],
           type: 'btree',
           isUnique: false,
-          isPrimary: false,
-        ),
-        _i2.IndexDefinition(
-          indexName: 'version_app_version_unique_idx',
-          tableSpace: null,
-          elements: [
-            _i2.IndexElementDefinition(
-              type: _i2.IndexElementDefinitionType.column,
-              definition: 'applicationId',
-            ),
-            _i2.IndexElementDefinition(
-              type: _i2.IndexElementDefinitionType.column,
-              definition: 'versionNumber',
-            ),
-          ],
-          type: 'btree',
-          isUnique: true,
           isPrimary: false,
         ),
         _i2.IndexDefinition(

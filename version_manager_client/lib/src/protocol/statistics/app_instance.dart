@@ -41,6 +41,7 @@ abstract class AppInstance implements _i1.SerializableModel {
     DateTime? firstSeenAt,
     DateTime? lastSeenAt,
     DateTime? lastActiveDate,
+    this.lastBuildNumber,
   }) : firstSeenAt = firstSeenAt ?? DateTime.now(),
        lastSeenAt = lastSeenAt ?? DateTime.now(),
        lastActiveDate = lastActiveDate ?? DateTime.now();
@@ -54,6 +55,7 @@ abstract class AppInstance implements _i1.SerializableModel {
     DateTime? firstSeenAt,
     DateTime? lastSeenAt,
     DateTime? lastActiveDate,
+    int? lastBuildNumber,
   }) = _AppInstanceImpl;
 
   factory AppInstance.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -86,6 +88,7 @@ abstract class AppInstance implements _i1.SerializableModel {
           : _i1.DateTimeJsonExtension.fromJson(
               jsonSerialization['lastActiveDate'],
             ),
+      lastBuildNumber: jsonSerialization['lastBuildNumber'] as int?,
     );
   }
 
@@ -115,6 +118,10 @@ abstract class AppInstance implements _i1.SerializableModel {
   /// Используется для точного подсчёта уникальных устройств за день.
   DateTime lastActiveDate;
 
+  /// Последний номер сборки, на которой был пользователь.
+  /// Используется для подсчёта пользователей по текущей версии.
+  int? lastBuildNumber;
+
   /// Returns a shallow copy of this [AppInstance]
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
@@ -127,6 +134,7 @@ abstract class AppInstance implements _i1.SerializableModel {
     DateTime? firstSeenAt,
     DateTime? lastSeenAt,
     DateTime? lastActiveDate,
+    int? lastBuildNumber,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -140,6 +148,7 @@ abstract class AppInstance implements _i1.SerializableModel {
       'firstSeenAt': firstSeenAt.toJson(),
       'lastSeenAt': lastSeenAt.toJson(),
       'lastActiveDate': lastActiveDate.toJson(),
+      if (lastBuildNumber != null) 'lastBuildNumber': lastBuildNumber,
     };
   }
 
@@ -161,6 +170,7 @@ class _AppInstanceImpl extends AppInstance {
     DateTime? firstSeenAt,
     DateTime? lastSeenAt,
     DateTime? lastActiveDate,
+    int? lastBuildNumber,
   }) : super._(
          id: id,
          applicationId: applicationId,
@@ -170,6 +180,7 @@ class _AppInstanceImpl extends AppInstance {
          firstSeenAt: firstSeenAt,
          lastSeenAt: lastSeenAt,
          lastActiveDate: lastActiveDate,
+         lastBuildNumber: lastBuildNumber,
        );
 
   /// Returns a shallow copy of this [AppInstance]
@@ -185,6 +196,7 @@ class _AppInstanceImpl extends AppInstance {
     DateTime? firstSeenAt,
     DateTime? lastSeenAt,
     DateTime? lastActiveDate,
+    Object? lastBuildNumber = _Undefined,
   }) {
     return AppInstance(
       id: id is _i1.UuidValue? ? id : this.id,
@@ -197,6 +209,9 @@ class _AppInstanceImpl extends AppInstance {
       firstSeenAt: firstSeenAt ?? this.firstSeenAt,
       lastSeenAt: lastSeenAt ?? this.lastSeenAt,
       lastActiveDate: lastActiveDate ?? this.lastActiveDate,
+      lastBuildNumber: lastBuildNumber is int?
+          ? lastBuildNumber
+          : this.lastBuildNumber,
     );
   }
 }

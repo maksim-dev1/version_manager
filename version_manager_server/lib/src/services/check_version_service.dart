@@ -231,6 +231,7 @@ class CheckVersionService {
         application,
         version.recommendedVersion,
         request.platform,
+        currentVersion: version,
       );
 
       final response = CheckVersionResponse(
@@ -268,6 +269,7 @@ class CheckVersionService {
         application,
         recommended,
         request.platform,
+        currentVersion: version,
       );
 
       // Определяем приоритет на основе разницы версий и наличия рекомендации
@@ -323,12 +325,16 @@ class CheckVersionService {
   }
 
   /// Формирует информацию о рекомендуемой версии для ответа.
+  ///
+  /// Периодичность рекомендации ([recommendationFrequency] и связанные поля)
+  /// хранится на **текущей** (исходной) версии, а не на рекомендуемой.
   Future<RecommendedVersionInfo?> _buildRecommendedVersionInfo(
     Session session,
     Application application,
     Version? recommendedVersion,
-    PlatformType platform,
-  ) async {
+    PlatformType platform, {
+    Version? currentVersion,
+  }) async {
     if (recommendedVersion == null) return null;
 
     final storeLinks = await getStoreLinksForPlatform(
@@ -350,10 +356,10 @@ class CheckVersionService {
             ),
           )
           .toList(),
-      recommendationFrequency: recommendedVersion.recommendationFrequency,
+      recommendationFrequency: currentVersion?.recommendationFrequency,
       recommendationEveryNthLaunch:
-          recommendedVersion.recommendationEveryNthLaunch,
-      recommendationPeriodHours: recommendedVersion.recommendationPeriodHours,
+          currentVersion?.recommendationEveryNthLaunch,
+      recommendationPeriodHours: currentVersion?.recommendationPeriodHours,
     );
   }
 
@@ -439,6 +445,7 @@ class CheckVersionService {
           application: application,
           instanceId: request.instanceId!.trim(),
           platform: request.platform,
+          buildNumber: request.buildNumber,
         );
         isNewDevice = result.isNew;
         isFirstCheckToday = result.isFirstCheckToday;
@@ -460,6 +467,7 @@ class CheckVersionService {
         session: session,
         application: application,
         request: request,
+        isFirstCheckToday: isFirstCheckToday,
       );
     } catch (e, stackTrace) {
       // Ошибки логирования не должны влиять на ответ клиенту
@@ -479,6 +487,7 @@ class CheckVersionService {
     required Application application,
     required String instanceId,
     required PlatformType platform,
+    required int buildNumber,
   }) async {
     final now = DateTime.now().toUtc();
     final today = DateTime.utc(now.year, now.month, now.day);
@@ -500,8 +509,9 @@ class CheckVersionService {
       );
       final isFirstToday = existingDate.isBefore(today);
 
-      // Обновляем lastSeenAt и lastActiveDate
+      // Обновляем lastSeenAt, lastActiveDate и lastBuildNumber
       existing.lastSeenAt = now;
+      existing.lastBuildNumber = buildNumber;
       if (isFirstToday) {
         existing.lastActiveDate = today;
       }
@@ -519,6 +529,7 @@ class CheckVersionService {
       firstSeenAt: now,
       lastSeenAt: now,
       lastActiveDate: today,
+      lastBuildNumber: buildNumber,
     );
     await AppInstance.db.insertRow(session, instance);
     return (isNew: true, isFirstCheckToday: true);
@@ -631,28 +642,31 @@ class CheckVersionService {
     required Session session,
     required Application application,
     required CheckVersionRequest request,
+    required bool isFirstCheckToday,
   }) async {
     try {
       final now = DateTime.now().toUtc();
       final today = DateTime.utc(now.year, now.month, now.day);
 
-      // Собираем пары (dimensionType, dimensionValue)
-      final dimensions = <(String, String)>[
-        // Час суток — для heatmap
-        ('hour', now.hour.toString()),
+      // Собираем тройки (dimensionType, dimensionValue, countAllChecks)
+      // countAllChecks=true → считаем каждый запрос (для heatmap)
+      // countAllChecks=false → считаем только уникальных пользователей за день
+      final dimensions = <(String, String, bool)>[
+        // Час суток — для heatmap: считаем ВСЕ запросы, не уникальных
+        ('hour', now.hour.toString(), true),
       ];
 
       if (request.osVersion != null) {
-        dimensions.add(('os_version', request.osVersion!));
+        dimensions.add(('os_version', request.osVersion!, false));
       }
       if (request.deviceModel != null) {
-        dimensions.add(('device_model', request.deviceModel!));
+        dimensions.add(('device_model', request.deviceModel!, false));
       }
       if (request.locale != null) {
-        dimensions.add(('locale', request.locale!));
+        dimensions.add(('locale', request.locale!, false));
       }
 
-      for (final (dimType, dimValue) in dimensions) {
+      for (final (dimType, dimValue, countAll) in dimensions) {
         await _upsertDimensionSummary(
           session: session,
           applicationId: application.id!,
@@ -661,6 +675,8 @@ class CheckVersionService {
           dimensionType: dimType,
           dimensionValue: dimValue,
           platform: request.platform,
+          isFirstCheckToday: isFirstCheckToday,
+          countAllChecks: countAll,
         );
       }
     } catch (e, stackTrace) {
@@ -673,6 +689,10 @@ class CheckVersionService {
   }
 
   /// Upsert одной записи per-dimension статистики.
+  ///
+  /// Если [countAllChecks] = false — считает уникальных пользователей:
+  /// инкрементирует userCount только при первом чеке устройства за день.
+  /// Если [countAllChecks] = true — считает каждый запрос (для heatmap).
   Future<void> _upsertDimensionSummary({
     required Session session,
     required UuidValue applicationId,
@@ -681,7 +701,12 @@ class CheckVersionService {
     required String dimensionType,
     required String dimensionValue,
     required PlatformType platform,
+    required bool isFirstCheckToday,
+    bool countAllChecks = false,
   }) async {
+    // Для уникальных пользователей — считаем только первый чек за день
+    if (!countAllChecks && !isFirstCheckToday) return;
+
     var existing = await DailyDimensionSummary.db.findFirstRow(
       session,
       where: (t) =>
@@ -693,7 +718,7 @@ class CheckVersionService {
     );
 
     if (existing != null) {
-      existing.checkCount += 1;
+      existing.userCount += 1;
       await DailyDimensionSummary.db.updateRow(session, existing);
     } else {
       final entry = DailyDimensionSummary(
@@ -703,7 +728,7 @@ class CheckVersionService {
         dimensionType: dimensionType,
         dimensionValue: dimensionValue,
         platform: platform,
-        checkCount: 1,
+        userCount: 1,
       );
       await DailyDimensionSummary.db.insertRow(session, entry);
     }

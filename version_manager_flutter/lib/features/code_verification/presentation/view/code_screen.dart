@@ -152,10 +152,7 @@ class _CodeScreenState extends State<CodeScreen> {
 
                             Text(
                               'Подтвердите код',
-                              style: textTheme.headlineMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: colorScheme.onSurface,
-                              ),
+                              style: textTheme.headlineMedium,
                               textAlign: TextAlign.center,
                             ),
                             const SizedBox(height: 8),
@@ -251,12 +248,6 @@ class _CodeScreenState extends State<CodeScreen> {
                                 _remainingSeconds > 0
                                     ? 'Запросить код снова через $_remainingSecondsс'
                                     : 'Запросить код снова',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: _remainingSeconds == 0
-                                      ? colorScheme.primary
-                                      : colorScheme.onSurfaceVariant,
-                                ),
                               ),
                             ),
                           ],

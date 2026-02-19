@@ -3,7 +3,7 @@ class: PlatformStatisticsEntry
 fields:
   ### Платформа
   platform: PlatformType
-  ### Количество проверок
-  checkCount: int
+  ### Количество уникальных пользователей
+  userCount: int
   ### Процент от общего числа
   percentage: double

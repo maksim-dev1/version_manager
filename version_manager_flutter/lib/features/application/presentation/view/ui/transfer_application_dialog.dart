@@ -58,7 +58,7 @@ class _TransferApplicationDialogState extends State<TransferApplicationDialog> {
     return AlertDialog(
       title: const Text('Передать владение'),
       content: ConstrainedBox(
-        constraints: const BoxConstraints(minWidth: 480, maxWidth: 480),
+        constraints: const BoxConstraints(maxWidth: 480),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,

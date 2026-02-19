@@ -267,102 +267,105 @@ class _CreateApplicationDialogContent extends StatelessWidget {
             : 'Создать личное приложение',
       ),
       content: ConstrainedBox(
-        constraints: const BoxConstraints(minWidth: 540, maxWidth: 540),
-        child: SingleChildScrollView(
-          child: Form(
-            key: formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                TextFormField(
-                  controller: namespaceController,
-                  decoration: const InputDecoration(
-                    labelText: 'Namespace',
-                    hintText: 'com.example.myapp',
-                    helperText:
-                        'Обратная доменная нотация (минимум 3 сегмента)',
-                  ),
-                  autofocus: true,
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Введите namespace';
-                    }
-                    final ns = value.trim().toLowerCase();
-                    final regex = RegExp(
-                      r'^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*){2,}$',
-                    );
-                    if (!regex.hasMatch(ns)) {
-                      return 'Формат: com.example.app (мин. 3 сегмента)';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 20),
-                TextFormField(
-                  controller: nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Название',
-                    hintText: 'Моё приложение',
-                  ),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Введите название';
-                    }
-                    if (value.trim().length < 3) {
-                      return 'Минимум 3 символа';
-                    }
-                    if (value.trim().length > 50) {
-                      return 'Максимум 50 символов';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 20),
-                TextFormField(
-                  controller: descriptionController,
-                  decoration: const InputDecoration(
-                    labelText: 'Описание',
-                    hintText: 'Краткое описание приложения',
-                    helperText: 'Необязательно',
-                  ),
-                  maxLines: 3,
-                  validator: (value) {
-                    if (value != null && value.trim().isNotEmpty) {
-                      if (value.trim().length < 10) {
-                        return 'Минимум 10 символов';
+        constraints: const BoxConstraints(maxWidth: 540),
+        child: SizedBox(
+          width: double.maxFinite,
+          child: SingleChildScrollView(
+            child: Form(
+              key: formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  TextFormField(
+                    controller: namespaceController,
+                    decoration: const InputDecoration(
+                      labelText: 'Namespace',
+                      hintText: 'com.example.myapp',
+                      helperText:
+                          'Обратная доменная нотация (минимум 3 сегмента)',
+                    ),
+                    autofocus: true,
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Введите namespace';
                       }
-                      if (value.trim().length > 500) {
-                        return 'Максимум 500 символов';
+                      final ns = value.trim().toLowerCase();
+                      final regex = RegExp(
+                        r'^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*){2,}$',
+                      );
+                      if (!regex.hasMatch(ns)) {
+                        return 'Формат: com.example.app (мин. 3 сегмента)';
                       }
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 20),
-                TextFormField(
-                  controller: iconUrlController,
-                  decoration: const InputDecoration(
-                    labelText: 'URL иконки',
-                    hintText: 'https://example.com/icon.png',
-                    helperText: 'Необязательно',
+                      return null;
+                    },
                   ),
-                  validator: validateUrl,
-                ),
-                const SizedBox(height: 32),
-                Divider(color: Theme.of(context).colorScheme.outlineVariant),
-                const SizedBox(height: 24),
-                _PlatformAndStoreLinksSection(
-                  selectedPlatforms: selectedPlatforms,
-                  platformStoreLinks: platformStoreLinks,
-                  showPlatformError: showPlatformError,
-                  platformsWithLinkErrors: platformsWithLinkErrors,
-                  onPlatformToggled: onPlatformToggled,
-                  onAddLink: onAddLink,
-                  onRemoveLink: onRemoveLink,
-                  validateUrl: validateUrl,
-                ),
-              ],
+                  const SizedBox(height: 20),
+                  TextFormField(
+                    controller: nameController,
+                    decoration: const InputDecoration(
+                      labelText: 'Название',
+                      hintText: 'Моё приложение',
+                    ),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Введите название';
+                      }
+                      if (value.trim().length < 3) {
+                        return 'Минимум 3 символа';
+                      }
+                      if (value.trim().length > 50) {
+                        return 'Максимум 50 символов';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  TextFormField(
+                    controller: descriptionController,
+                    decoration: const InputDecoration(
+                      labelText: 'Описание',
+                      hintText: 'Краткое описание приложения',
+                      helperText: 'Необязательно',
+                    ),
+                    maxLines: 3,
+                    validator: (value) {
+                      if (value != null && value.trim().isNotEmpty) {
+                        if (value.trim().length < 10) {
+                          return 'Минимум 10 символов';
+                        }
+                        if (value.trim().length > 500) {
+                          return 'Максимум 500 символов';
+                        }
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  TextFormField(
+                    controller: iconUrlController,
+                    decoration: const InputDecoration(
+                      labelText: 'URL иконки',
+                      hintText: 'https://example.com/icon.png',
+                      helperText: 'Необязательно',
+                    ),
+                    validator: validateUrl,
+                  ),
+                  const SizedBox(height: 32),
+                  Divider(color: Theme.of(context).colorScheme.outlineVariant),
+                  const SizedBox(height: 24),
+                  _PlatformAndStoreLinksSection(
+                    selectedPlatforms: selectedPlatforms,
+                    platformStoreLinks: platformStoreLinks,
+                    showPlatformError: showPlatformError,
+                    platformsWithLinkErrors: platformsWithLinkErrors,
+                    onPlatformToggled: onPlatformToggled,
+                    onAddLink: onAddLink,
+                    onRemoveLink: onRemoveLink,
+                    validateUrl: validateUrl,
+                  ),
+                ],
+              ),
             ),
           ),
         ),

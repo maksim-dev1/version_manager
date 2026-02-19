@@ -98,7 +98,6 @@ class _RecommendationDialogState extends State<RecommendationDialog> {
         ),
         content: _isLoading
             ? const SizedBox(
-                width: 480,
                 height: 200,
                 child: Center(child: CircularProgressIndicator()),
               )
@@ -147,7 +146,6 @@ class _RecommendationDialogState extends State<RecommendationDialog> {
 
     return ConstrainedBox(
       constraints: const BoxConstraints(
-        minWidth: 480,
         maxWidth: 480,
         maxHeight: 500,
       ),
@@ -306,26 +304,23 @@ class _ErrorContent extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
-    return SizedBox(
-      width: 480,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.error_outline, size: 48, color: colorScheme.error),
-          const SizedBox(height: 16),
-          Text(
-            error,
-            textAlign: TextAlign.center,
-            style: textTheme.bodyLarge,
-          ),
-          const SizedBox(height: 16),
-          FilledButton.icon(
-            onPressed: onRetry,
-            icon: const Icon(Icons.refresh),
-            label: const Text('Повторить'),
-          ),
-        ],
-      ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(Icons.error_outline, size: 48, color: colorScheme.error),
+        const SizedBox(height: 16),
+        Text(
+          error,
+          textAlign: TextAlign.center,
+          style: textTheme.bodyLarge,
+        ),
+        const SizedBox(height: 16),
+        FilledButton.icon(
+          onPressed: onRetry,
+          icon: const Icon(Icons.refresh),
+          label: const Text('Повторить'),
+        ),
+      ],
     );
   }
 }

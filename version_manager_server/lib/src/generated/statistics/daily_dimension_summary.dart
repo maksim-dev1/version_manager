@@ -38,8 +38,8 @@ abstract class DailyDimensionSummary
     required this.dimensionType,
     required this.dimensionValue,
     required this.platform,
-    int? checkCount,
-  }) : checkCount = checkCount ?? 0;
+    int? userCount,
+  }) : userCount = userCount ?? 0;
 
   factory DailyDimensionSummary({
     _i1.UuidValue? id,
@@ -49,7 +49,7 @@ abstract class DailyDimensionSummary
     required String dimensionType,
     required String dimensionValue,
     required _i3.PlatformType platform,
-    int? checkCount,
+    int? userCount,
   }) = _DailyDimensionSummaryImpl;
 
   factory DailyDimensionSummary.fromJson(
@@ -73,7 +73,7 @@ abstract class DailyDimensionSummary
       platform: _i3.PlatformType.fromJson(
         (jsonSerialization['platform'] as String),
       ),
-      checkCount: jsonSerialization['checkCount'] as int?,
+      userCount: jsonSerialization['userCount'] as int?,
     );
   }
 
@@ -103,7 +103,7 @@ abstract class DailyDimensionSummary
   _i3.PlatformType platform;
 
   /// Количество проверок
-  int checkCount;
+  int userCount;
 
   @override
   _i1.Table<_i1.UuidValue?> get table => t;
@@ -119,7 +119,7 @@ abstract class DailyDimensionSummary
     String? dimensionType,
     String? dimensionValue,
     _i3.PlatformType? platform,
-    int? checkCount,
+    int? userCount,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -132,7 +132,7 @@ abstract class DailyDimensionSummary
       'dimensionType': dimensionType,
       'dimensionValue': dimensionValue,
       'platform': platform.toJson(),
-      'checkCount': checkCount,
+      'userCount': userCount,
     };
   }
 
@@ -147,7 +147,7 @@ abstract class DailyDimensionSummary
       'dimensionType': dimensionType,
       'dimensionValue': dimensionValue,
       'platform': platform.toJson(),
-      'checkCount': checkCount,
+      'userCount': userCount,
     };
   }
 
@@ -194,7 +194,7 @@ class _DailyDimensionSummaryImpl extends DailyDimensionSummary {
     required String dimensionType,
     required String dimensionValue,
     required _i3.PlatformType platform,
-    int? checkCount,
+    int? userCount,
   }) : super._(
          id: id,
          applicationId: applicationId,
@@ -203,7 +203,7 @@ class _DailyDimensionSummaryImpl extends DailyDimensionSummary {
          dimensionType: dimensionType,
          dimensionValue: dimensionValue,
          platform: platform,
-         checkCount: checkCount,
+         userCount: userCount,
        );
 
   /// Returns a shallow copy of this [DailyDimensionSummary]
@@ -218,7 +218,7 @@ class _DailyDimensionSummaryImpl extends DailyDimensionSummary {
     String? dimensionType,
     String? dimensionValue,
     _i3.PlatformType? platform,
-    int? checkCount,
+    int? userCount,
   }) {
     return DailyDimensionSummary(
       id: id is _i1.UuidValue? ? id : this.id,
@@ -230,7 +230,7 @@ class _DailyDimensionSummaryImpl extends DailyDimensionSummary {
       dimensionType: dimensionType ?? this.dimensionType,
       dimensionValue: dimensionValue ?? this.dimensionValue,
       platform: platform ?? this.platform,
-      checkCount: checkCount ?? this.checkCount,
+      userCount: userCount ?? this.userCount,
     );
   }
 }
@@ -270,8 +270,8 @@ class DailyDimensionSummaryUpdateTable
     value,
   );
 
-  _i1.ColumnValue<int, int> checkCount(int value) => _i1.ColumnValue(
-    table.checkCount,
+  _i1.ColumnValue<int, int> userCount(int value) => _i1.ColumnValue(
+    table.userCount,
     value,
   );
 }
@@ -301,8 +301,8 @@ class DailyDimensionSummaryTable extends _i1.Table<_i1.UuidValue?> {
       this,
       _i1.EnumSerialization.byName,
     );
-    checkCount = _i1.ColumnInt(
-      'checkCount',
+    userCount = _i1.ColumnInt(
+      'userCount',
       this,
       hasDefault: true,
     );
@@ -329,7 +329,7 @@ class DailyDimensionSummaryTable extends _i1.Table<_i1.UuidValue?> {
   late final _i1.ColumnEnum<_i3.PlatformType> platform;
 
   /// Количество проверок
-  late final _i1.ColumnInt checkCount;
+  late final _i1.ColumnInt userCount;
 
   _i2.ApplicationTable get application {
     if (_application != null) return _application!;
@@ -352,7 +352,7 @@ class DailyDimensionSummaryTable extends _i1.Table<_i1.UuidValue?> {
     dimensionType,
     dimensionValue,
     platform,
-    checkCount,
+    userCount,
   ];
 
   @override

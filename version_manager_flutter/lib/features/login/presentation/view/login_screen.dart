@@ -119,10 +119,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               // Заголовок
                               Text(
                                 'Вход в систему',
-                                style: textTheme.headlineMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: colorScheme.onSurface,
-                                ),
+                                style: textTheme.headlineMedium,
                                 textAlign: TextAlign.center,
                               ),
                               const SizedBox(height: 8),
@@ -164,40 +161,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                       });
                                     },
                                   ),
-                                  filled: true,
-                                  fillColor: colorScheme.surface,
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                    borderSide: BorderSide(
-                                      color: colorScheme.outline,
-                                    ),
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                    borderSide: BorderSide(
-                                      color: colorScheme.outline,
-                                    ),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                    borderSide: BorderSide(
-                                      color: colorScheme.primary,
-                                      width: 2,
-                                    ),
-                                  ),
-                                  errorBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                    borderSide: BorderSide(
-                                      color: colorScheme.error,
-                                    ),
-                                  ),
-                                  focusedErrorBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                    borderSide: BorderSide(
-                                      color: colorScheme.error,
-                                      width: 2,
-                                    ),
-                                  ),
                                 ),
                               ),
                               const SizedBox(height: 16),
@@ -209,13 +172,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   onPressed: () {
                                     // TODO: Восстановление пароля
                                   },
-                                  child: Text(
-                                    'Забыли пароль?',
-                                    style: TextStyle(
-                                      color: colorScheme.primary,
-                                      fontSize: 14,
-                                    ),
-                                  ),
+                                  child: const Text('Забыли пароль?'),
                                 ),
                               ),
 

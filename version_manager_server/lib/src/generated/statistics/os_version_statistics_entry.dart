@@ -19,14 +19,14 @@ abstract class OsVersionStatisticsEntry
   OsVersionStatisticsEntry._({
     required this.platform,
     required this.osVersion,
-    required this.checkCount,
+    required this.userCount,
     required this.percentage,
   });
 
   factory OsVersionStatisticsEntry({
     required _i2.PlatformType platform,
     required String osVersion,
-    required int checkCount,
+    required int userCount,
     required double percentage,
   }) = _OsVersionStatisticsEntryImpl;
 
@@ -38,7 +38,7 @@ abstract class OsVersionStatisticsEntry
         (jsonSerialization['platform'] as String),
       ),
       osVersion: jsonSerialization['osVersion'] as String,
-      checkCount: jsonSerialization['checkCount'] as int,
+      userCount: jsonSerialization['userCount'] as int,
       percentage: (jsonSerialization['percentage'] as num).toDouble(),
     );
   }
@@ -49,8 +49,8 @@ abstract class OsVersionStatisticsEntry
   /// Версия ОС
   String osVersion;
 
-  /// Количество проверок
-  int checkCount;
+  /// Количество уникальных пользователей
+  int userCount;
 
   /// Процент от общего числа
   double percentage;
@@ -61,7 +61,7 @@ abstract class OsVersionStatisticsEntry
   OsVersionStatisticsEntry copyWith({
     _i2.PlatformType? platform,
     String? osVersion,
-    int? checkCount,
+    int? userCount,
     double? percentage,
   });
   @override
@@ -70,7 +70,7 @@ abstract class OsVersionStatisticsEntry
       '__className__': 'OsVersionStatisticsEntry',
       'platform': platform.toJson(),
       'osVersion': osVersion,
-      'checkCount': checkCount,
+      'userCount': userCount,
       'percentage': percentage,
     };
   }
@@ -81,7 +81,7 @@ abstract class OsVersionStatisticsEntry
       '__className__': 'OsVersionStatisticsEntry',
       'platform': platform.toJson(),
       'osVersion': osVersion,
-      'checkCount': checkCount,
+      'userCount': userCount,
       'percentage': percentage,
     };
   }
@@ -96,12 +96,12 @@ class _OsVersionStatisticsEntryImpl extends OsVersionStatisticsEntry {
   _OsVersionStatisticsEntryImpl({
     required _i2.PlatformType platform,
     required String osVersion,
-    required int checkCount,
+    required int userCount,
     required double percentage,
   }) : super._(
          platform: platform,
          osVersion: osVersion,
-         checkCount: checkCount,
+         userCount: userCount,
          percentage: percentage,
        );
 
@@ -112,13 +112,13 @@ class _OsVersionStatisticsEntryImpl extends OsVersionStatisticsEntry {
   OsVersionStatisticsEntry copyWith({
     _i2.PlatformType? platform,
     String? osVersion,
-    int? checkCount,
+    int? userCount,
     double? percentage,
   }) {
     return OsVersionStatisticsEntry(
       platform: platform ?? this.platform,
       osVersion: osVersion ?? this.osVersion,
-      checkCount: checkCount ?? this.checkCount,
+      userCount: userCount ?? this.userCount,
       percentage: percentage ?? this.percentage,
     );
   }

@@ -38,12 +38,6 @@ class CreatePasswordButton extends StatelessWidget {
       builder: (context, state) => switch (state) {
         RegistrationLoading() => FilledButton(
           onPressed: null,
-          style: FilledButton.styleFrom(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-          ),
           child: SizedBox(
             height: 20,
             width: 20,
@@ -55,19 +49,7 @@ class CreatePasswordButton extends StatelessWidget {
         ),
         _ => FilledButton(
           onPressed: (isPasswordValid && passwordsMatch) ? submit : null,
-          style: FilledButton.styleFrom(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-          ),
-          child: const Text(
-            'Создать пароль',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+          child: const Text('Создать пароль'),
         ),
       },
     );

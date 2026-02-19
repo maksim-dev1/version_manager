@@ -18,7 +18,7 @@ abstract class VersionStatisticsEntry implements _i1.SerializableModel {
     required this.versionId,
     required this.versionNumber,
     required this.buildNumber,
-    required this.checkCount,
+    required this.userCount,
     required this.percentage,
     required this.isBlocked,
     required this.createdAt,
@@ -29,7 +29,7 @@ abstract class VersionStatisticsEntry implements _i1.SerializableModel {
     required _i1.UuidValue versionId,
     required String versionNumber,
     required int buildNumber,
-    required int checkCount,
+    required int userCount,
     required double percentage,
     required bool isBlocked,
     required DateTime createdAt,
@@ -45,7 +45,7 @@ abstract class VersionStatisticsEntry implements _i1.SerializableModel {
       ),
       versionNumber: jsonSerialization['versionNumber'] as String,
       buildNumber: jsonSerialization['buildNumber'] as int,
-      checkCount: jsonSerialization['checkCount'] as int,
+      userCount: jsonSerialization['userCount'] as int,
       percentage: (jsonSerialization['percentage'] as num).toDouble(),
       isBlocked: jsonSerialization['isBlocked'] as bool,
       createdAt: _i1.DateTimeJsonExtension.fromJson(
@@ -64,10 +64,10 @@ abstract class VersionStatisticsEntry implements _i1.SerializableModel {
   /// Номер сборки
   int buildNumber;
 
-  /// Количество проверок (за период)
-  int checkCount;
+  /// Количество уникальных пользователей (за период)
+  int userCount;
 
-  /// Процент от общего числа проверок
+  /// Процент от общего числа пользователей
   double percentage;
 
   /// Заблокирована ли версия
@@ -86,7 +86,7 @@ abstract class VersionStatisticsEntry implements _i1.SerializableModel {
     _i1.UuidValue? versionId,
     String? versionNumber,
     int? buildNumber,
-    int? checkCount,
+    int? userCount,
     double? percentage,
     bool? isBlocked,
     DateTime? createdAt,
@@ -99,7 +99,7 @@ abstract class VersionStatisticsEntry implements _i1.SerializableModel {
       'versionId': versionId.toJson(),
       'versionNumber': versionNumber,
       'buildNumber': buildNumber,
-      'checkCount': checkCount,
+      'userCount': userCount,
       'percentage': percentage,
       'isBlocked': isBlocked,
       'createdAt': createdAt.toJson(),
@@ -118,7 +118,7 @@ class _VersionStatisticsEntryImpl extends VersionStatisticsEntry {
     required _i1.UuidValue versionId,
     required String versionNumber,
     required int buildNumber,
-    required int checkCount,
+    required int userCount,
     required double percentage,
     required bool isBlocked,
     required DateTime createdAt,
@@ -127,7 +127,7 @@ class _VersionStatisticsEntryImpl extends VersionStatisticsEntry {
          versionId: versionId,
          versionNumber: versionNumber,
          buildNumber: buildNumber,
-         checkCount: checkCount,
+         userCount: userCount,
          percentage: percentage,
          isBlocked: isBlocked,
          createdAt: createdAt,
@@ -142,7 +142,7 @@ class _VersionStatisticsEntryImpl extends VersionStatisticsEntry {
     _i1.UuidValue? versionId,
     String? versionNumber,
     int? buildNumber,
-    int? checkCount,
+    int? userCount,
     double? percentage,
     bool? isBlocked,
     DateTime? createdAt,
@@ -152,7 +152,7 @@ class _VersionStatisticsEntryImpl extends VersionStatisticsEntry {
       versionId: versionId ?? this.versionId,
       versionNumber: versionNumber ?? this.versionNumber,
       buildNumber: buildNumber ?? this.buildNumber,
-      checkCount: checkCount ?? this.checkCount,
+      userCount: userCount ?? this.userCount,
       percentage: percentage ?? this.percentage,
       isBlocked: isBlocked ?? this.isBlocked,
       createdAt: createdAt ?? this.createdAt,

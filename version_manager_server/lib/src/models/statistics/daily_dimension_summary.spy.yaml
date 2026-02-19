@@ -32,7 +32,7 @@ fields:
   platform: PlatformType
 
   ### Количество проверок
-  checkCount: int, default=0
+  userCount: int, default=0
 
 indexes:
   dds_app_date_dim_val_plat_unique_idx:

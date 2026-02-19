@@ -21,7 +21,7 @@ abstract class VersionStatisticsResponse
   VersionStatisticsResponse._({
     required this.versions,
     required this.latestVersionAdoptionRate,
-    required this.checksOnBlockedVersions,
+    required this.usersOnBlockedVersions,
     required this.blockedVersionsPercentage,
     required this.adoptionTimeline,
   });
@@ -29,7 +29,7 @@ abstract class VersionStatisticsResponse
   factory VersionStatisticsResponse({
     required List<_i2.VersionStatisticsEntry> versions,
     required double latestVersionAdoptionRate,
-    required int checksOnBlockedVersions,
+    required int usersOnBlockedVersions,
     required double blockedVersionsPercentage,
     required List<_i3.VersionAdoptionTimelineEntry> adoptionTimeline,
   }) = _VersionStatisticsResponseImpl;
@@ -43,8 +43,8 @@ abstract class VersionStatisticsResponse
       ),
       latestVersionAdoptionRate:
           (jsonSerialization['latestVersionAdoptionRate'] as num).toDouble(),
-      checksOnBlockedVersions:
-          jsonSerialization['checksOnBlockedVersions'] as int,
+      usersOnBlockedVersions:
+          jsonSerialization['usersOnBlockedVersions'] as int,
       blockedVersionsPercentage:
           (jsonSerialization['blockedVersionsPercentage'] as num).toDouble(),
       adoptionTimeline: _i4.Protocol()
@@ -54,19 +54,19 @@ abstract class VersionStatisticsResponse
     );
   }
 
-  /// Распределение проверок по версиям
+  /// Распределение пользователей по версиям
   List<_i2.VersionStatisticsEntry> versions;
 
-  /// Adoption rate последней версии (% проверок на последней версии)
+  /// Adoption rate последней версии (% пользователей на последней версии)
   double latestVersionAdoptionRate;
 
-  /// Количество проверок на заблокированных версиях
-  int checksOnBlockedVersions;
+  /// Количество пользователей на заблокированных версиях
+  int usersOnBlockedVersions;
 
-  /// Процент проверок на заблокированных версиях
+  /// Процент пользователей на заблокированных версиях
   double blockedVersionsPercentage;
 
-  /// Динамика проверок по версиям (по дням)
+  /// Динамика пользователей по версиям (по дням)
   List<_i3.VersionAdoptionTimelineEntry> adoptionTimeline;
 
   /// Returns a shallow copy of this [VersionStatisticsResponse]
@@ -75,7 +75,7 @@ abstract class VersionStatisticsResponse
   VersionStatisticsResponse copyWith({
     List<_i2.VersionStatisticsEntry>? versions,
     double? latestVersionAdoptionRate,
-    int? checksOnBlockedVersions,
+    int? usersOnBlockedVersions,
     double? blockedVersionsPercentage,
     List<_i3.VersionAdoptionTimelineEntry>? adoptionTimeline,
   });
@@ -85,7 +85,7 @@ abstract class VersionStatisticsResponse
       '__className__': 'VersionStatisticsResponse',
       'versions': versions.toJson(valueToJson: (v) => v.toJson()),
       'latestVersionAdoptionRate': latestVersionAdoptionRate,
-      'checksOnBlockedVersions': checksOnBlockedVersions,
+      'usersOnBlockedVersions': usersOnBlockedVersions,
       'blockedVersionsPercentage': blockedVersionsPercentage,
       'adoptionTimeline': adoptionTimeline.toJson(
         valueToJson: (v) => v.toJson(),
@@ -99,7 +99,7 @@ abstract class VersionStatisticsResponse
       '__className__': 'VersionStatisticsResponse',
       'versions': versions.toJson(valueToJson: (v) => v.toJsonForProtocol()),
       'latestVersionAdoptionRate': latestVersionAdoptionRate,
-      'checksOnBlockedVersions': checksOnBlockedVersions,
+      'usersOnBlockedVersions': usersOnBlockedVersions,
       'blockedVersionsPercentage': blockedVersionsPercentage,
       'adoptionTimeline': adoptionTimeline.toJson(
         valueToJson: (v) => v.toJsonForProtocol(),
@@ -117,13 +117,13 @@ class _VersionStatisticsResponseImpl extends VersionStatisticsResponse {
   _VersionStatisticsResponseImpl({
     required List<_i2.VersionStatisticsEntry> versions,
     required double latestVersionAdoptionRate,
-    required int checksOnBlockedVersions,
+    required int usersOnBlockedVersions,
     required double blockedVersionsPercentage,
     required List<_i3.VersionAdoptionTimelineEntry> adoptionTimeline,
   }) : super._(
          versions: versions,
          latestVersionAdoptionRate: latestVersionAdoptionRate,
-         checksOnBlockedVersions: checksOnBlockedVersions,
+         usersOnBlockedVersions: usersOnBlockedVersions,
          blockedVersionsPercentage: blockedVersionsPercentage,
          adoptionTimeline: adoptionTimeline,
        );
@@ -135,7 +135,7 @@ class _VersionStatisticsResponseImpl extends VersionStatisticsResponse {
   VersionStatisticsResponse copyWith({
     List<_i2.VersionStatisticsEntry>? versions,
     double? latestVersionAdoptionRate,
-    int? checksOnBlockedVersions,
+    int? usersOnBlockedVersions,
     double? blockedVersionsPercentage,
     List<_i3.VersionAdoptionTimelineEntry>? adoptionTimeline,
   }) {
@@ -143,8 +143,8 @@ class _VersionStatisticsResponseImpl extends VersionStatisticsResponse {
       versions: versions ?? this.versions.map((e0) => e0.copyWith()).toList(),
       latestVersionAdoptionRate:
           latestVersionAdoptionRate ?? this.latestVersionAdoptionRate,
-      checksOnBlockedVersions:
-          checksOnBlockedVersions ?? this.checksOnBlockedVersions,
+      usersOnBlockedVersions:
+          usersOnBlockedVersions ?? this.usersOnBlockedVersions,
       blockedVersionsPercentage:
           blockedVersionsPercentage ?? this.blockedVersionsPercentage,
       adoptionTimeline:

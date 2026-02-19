@@ -5,7 +5,7 @@ fields:
   platform: PlatformType
   ### Версия ОС
   osVersion: String
-  ### Количество проверок
-  checkCount: int
+  ### Количество уникальных пользователей
+  userCount: int
   ### Процент от общего числа
   percentage: double

@@ -17,13 +17,13 @@ abstract class LocaleStatisticsEntry
     implements _i1.SerializableModel, _i1.ProtocolSerialization {
   LocaleStatisticsEntry._({
     required this.locale,
-    required this.checkCount,
+    required this.userCount,
     required this.percentage,
   });
 
   factory LocaleStatisticsEntry({
     required String locale,
-    required int checkCount,
+    required int userCount,
     required double percentage,
   }) = _LocaleStatisticsEntryImpl;
 
@@ -32,7 +32,7 @@ abstract class LocaleStatisticsEntry
   ) {
     return LocaleStatisticsEntry(
       locale: jsonSerialization['locale'] as String,
-      checkCount: jsonSerialization['checkCount'] as int,
+      userCount: jsonSerialization['userCount'] as int,
       percentage: (jsonSerialization['percentage'] as num).toDouble(),
     );
   }
@@ -40,8 +40,8 @@ abstract class LocaleStatisticsEntry
   /// Локаль (например: "ru_RU", "en_US")
   String locale;
 
-  /// Количество проверок
-  int checkCount;
+  /// Количество уникальных пользователей
+  int userCount;
 
   /// Процент от общего числа
   double percentage;
@@ -51,7 +51,7 @@ abstract class LocaleStatisticsEntry
   @_i1.useResult
   LocaleStatisticsEntry copyWith({
     String? locale,
-    int? checkCount,
+    int? userCount,
     double? percentage,
   });
   @override
@@ -59,7 +59,7 @@ abstract class LocaleStatisticsEntry
     return {
       '__className__': 'LocaleStatisticsEntry',
       'locale': locale,
-      'checkCount': checkCount,
+      'userCount': userCount,
       'percentage': percentage,
     };
   }
@@ -69,7 +69,7 @@ abstract class LocaleStatisticsEntry
     return {
       '__className__': 'LocaleStatisticsEntry',
       'locale': locale,
-      'checkCount': checkCount,
+      'userCount': userCount,
       'percentage': percentage,
     };
   }
@@ -83,11 +83,11 @@ abstract class LocaleStatisticsEntry
 class _LocaleStatisticsEntryImpl extends LocaleStatisticsEntry {
   _LocaleStatisticsEntryImpl({
     required String locale,
-    required int checkCount,
+    required int userCount,
     required double percentage,
   }) : super._(
          locale: locale,
-         checkCount: checkCount,
+         userCount: userCount,
          percentage: percentage,
        );
 
@@ -97,12 +97,12 @@ class _LocaleStatisticsEntryImpl extends LocaleStatisticsEntry {
   @override
   LocaleStatisticsEntry copyWith({
     String? locale,
-    int? checkCount,
+    int? userCount,
     double? percentage,
   }) {
     return LocaleStatisticsEntry(
       locale: locale ?? this.locale,
-      checkCount: checkCount ?? this.checkCount,
+      userCount: userCount ?? this.userCount,
       percentage: percentage ?? this.percentage,
     );
   }

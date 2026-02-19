@@ -35,56 +35,34 @@ class StatisticsService {
     final day7 = now.subtract(const Duration(days: 7));
     final day30 = now.subtract(const Duration(days: 30));
 
-    // ---- Количество проверок (из daily_check_summaries) ----
-    final allSummaries = await DailyCheckSummary.db.find(
-      session,
-      where: (t) => t.applicationId.equals(appId),
-    );
-    final totalChecks = allSummaries.fold<int>(0, (s, r) => s + r.totalChecks);
-
-    final dailyChecks = allSummaries
-        .where((s) => s.date.isAfter(day1))
-        .fold<int>(0, (s, r) => s + r.totalChecks);
-
-    final weeklyChecks = allSummaries
-        .where((s) => s.date.isAfter(day7))
-        .fold<int>(0, (s, r) => s + r.totalChecks);
-
-    final monthlyChecks = allSummaries
-        .where((s) => s.date.isAfter(day30))
-        .fold<int>(0, (s, r) => s + r.totalChecks);
-
-    final periodSummaries = await _getFilteredSummaries(session, filter);
-    final totalChecksInPeriod = periodSummaries.fold<int>(
-      0,
-      (s, r) => s + r.totalChecks,
-    );
-
-    // ---- Уникальные пользователи (по AppInstance) ----
-    final totalUniqueUsers = await AppInstance.db.count(
+    // ---- Уникальные пользователи (из AppInstance) ----
+    final totalUsers = await AppInstance.db.count(
       session,
       where: (t) => t.applicationId.equals(appId),
     );
 
-    // DAU: instances с lastSeenAt за последние 24ч
-    final dailyActiveUsers = await AppInstance.db.count(
+    final dailyUsers = await AppInstance.db.count(
       session,
       where: (t) => t.applicationId.equals(appId) & (t.lastSeenAt > day1),
     );
 
-    // WAU: instances с lastSeenAt за последние 7 дней
-    final weeklyActiveUsers = await AppInstance.db.count(
+    final weeklyUsers = await AppInstance.db.count(
       session,
       where: (t) => t.applicationId.equals(appId) & (t.lastSeenAt > day7),
     );
 
-    // MAU: instances с lastSeenAt за последние 30 дней
-    final monthlyActiveUsers = await AppInstance.db.count(
+    final monthlyUsers = await AppInstance.db.count(
       session,
       where: (t) => t.applicationId.equals(appId) & (t.lastSeenAt > day30),
     );
 
-    // Новые пользователи за выбранный период
+    // Уникальных пользователей за выбранный период
+    final periodSummaries = await _getFilteredSummaries(session, filter);
+    final totalUsersInPeriod = periodSummaries.fold<int>(
+      0,
+      (s, r) => s + r.uniqueDevices,
+    );
+
     final dateFrom = filter.dateFrom ?? now.subtract(const Duration(days: 30));
     final dateTo = filter.dateTo ?? now;
     final newUsersInPeriod = await AppInstance.db.count(
@@ -125,15 +103,11 @@ class StatisticsService {
     }
 
     return StatisticsOverviewResponse(
-      totalChecks: totalChecks,
-      dailyChecks: dailyChecks,
-      weeklyChecks: weeklyChecks,
-      monthlyChecks: monthlyChecks,
-      totalChecksInPeriod: totalChecksInPeriod,
-      totalUniqueUsers: totalUniqueUsers,
-      dailyActiveUsers: dailyActiveUsers,
-      weeklyActiveUsers: weeklyActiveUsers,
-      monthlyActiveUsers: monthlyActiveUsers,
+      totalUsers: totalUsers,
+      dailyUsers: dailyUsers,
+      weeklyUsers: weeklyUsers,
+      monthlyUsers: monthlyUsers,
+      totalUsersInPeriod: totalUsersInPeriod,
       newUsersInPeriod: newUsersInPeriod,
       blockedVersionsCount: blockedVersionsCount,
       activeVersionsCount: activeVersionsCount,
@@ -163,14 +137,14 @@ class StatisticsService {
     // Получаем summaries за период
     final summaries = await _getFilteredSummaries(session, filter);
 
-    // Группируем по дню: суммируем totalChecks, uniqueDevices, newDevices
-    final Map<String, int> dailyChecks = {};
+    // Группируем по дню: суммируем uniqueDevices, newDevices
+    final Map<String, int> dailyUsers = {};
     final Map<String, int> dailyUnique = {};
     final Map<String, int> dailyNew = {};
 
     for (final s in summaries) {
       final key = _dayKey(s.date);
-      dailyChecks[key] = (dailyChecks[key] ?? 0) + s.totalChecks;
+      dailyUsers[key] = (dailyUsers[key] ?? 0) + s.uniqueDevices;
       dailyUnique[key] = (dailyUnique[key] ?? 0) + s.uniqueDevices;
       dailyNew[key] = (dailyNew[key] ?? 0) + s.newDevices;
     }
@@ -185,7 +159,7 @@ class StatisticsService {
       entries.add(
         DailyActiveUsersEntry(
           date: current,
-          totalChecks: dailyChecks[key] ?? 0,
+          totalUsers: dailyUsers[key] ?? 0,
           activeUsers: dailyUnique[key] ?? 0,
           newUsers: dailyNew[key] ?? 0,
         ),
@@ -207,14 +181,14 @@ class StatisticsService {
       newUsersByDay[key] = (newUsersByDay[key] ?? 0) + 1;
     }
 
-    // Считаем пользователей и проверки ДО dateFrom для начальных значений кумулятива
+    // Считаем пользователей ДО dateFrom для начальных значений кумулятива
     final allSummaries = await DailyCheckSummary.db.find(
       session,
       where: (t) => t.applicationId.equals(appId) & (t.date < dateFrom),
     );
-    int cumulativeChecks = allSummaries.fold<int>(
+    int cumulativeUsersTotal = allSummaries.fold<int>(
       0,
-      (s, r) => s + r.totalChecks,
+      (s, r) => s + r.uniqueDevices,
     );
     int cumulativeUsers = instances
         .where((inst) => inst.firstSeenAt.isBefore(dateFrom))
@@ -225,12 +199,12 @@ class StatisticsService {
 
     while (!current.isAfter(end)) {
       final key = _dayKey(current);
-      cumulativeChecks += dailyChecks[key] ?? 0;
+      cumulativeUsersTotal += dailyUsers[key] ?? 0;
       cumulativeUsers += newUsersByDay[key] ?? 0;
       cumulativeGrowth.add(
         CumulativeUsersEntry(
           date: current,
-          totalChecks: cumulativeChecks,
+          totalUsers: cumulativeUsersTotal,
           totalUniqueUsers: cumulativeUsers,
         ),
       );
@@ -250,10 +224,13 @@ class StatisticsService {
   /// Статистика по версиям приложения.
   ///
   /// Включает:
-  /// — Распределение проверок по версиям (из DailyCheckSummary)
+  /// — Распределение пользователей по ТЕКУЩИМ версиям (из AppInstance.lastBuildNumber)
   /// — Adoption rate последней версии
-  /// — Проверки на заблокированных версиях
-  /// — Динамика проверок по дням для каждой версии
+  /// — Пользователи на заблокированных версиях
+  /// — Динамика проверок по дням для каждой версии (из DailyCheckSummary)
+  ///
+  /// Если пользователь обновился на новую версию, он считается
+  /// только в статистике новой версии.
   Future<VersionStatisticsResponse> getVersionStatistics(
     Session session, {
     required StatisticsFilter filter,
@@ -271,25 +248,34 @@ class StatisticsService {
       orderDescending: true,
     );
 
-    // Summaries за период
-    final summaries = await _getFilteredSummaries(session, filter);
+    // ---- Пользователи по ТЕКУЩЕЙ версии (из AppInstance) ----
+    // Берём только пользователей, которые были активны в выбранном периоде
+    // и считаем их по lastBuildNumber (текущая версия)
+    final activeInstances = await AppInstance.db.find(
+      session,
+      where: (t) =>
+          t.applicationId.equals(appId) &
+          (t.lastSeenAt >= dateFrom) &
+          (t.lastSeenAt <= dateTo) &
+          t.lastBuildNumber.notEquals(null),
+    );
 
-    // Группируем проверки по buildNumber
-    final Map<int, int> checksByBuild = {};
-    for (final s in summaries) {
-      checksByBuild[s.buildNumber] =
-          (checksByBuild[s.buildNumber] ?? 0) + s.totalChecks;
+    // Группируем пользователей по текущему buildNumber
+    final Map<int, int> usersByBuild = {};
+    for (final inst in activeInstances) {
+      final build = inst.lastBuildNumber!;
+      usersByBuild[build] = (usersByBuild[build] ?? 0) + 1;
     }
 
-    final totalChecks = summaries.fold<int>(0, (sum, s) => sum + s.totalChecks);
+    final totalUsers = activeInstances.length;
 
     // Формируем статистику по версиям
     final versionEntries = <VersionStatisticsEntry>[];
-    int checksOnBlockedVersions = 0;
+    int usersOnBlockedVersions = 0;
 
     for (final version in versions) {
-      final checks = checksByBuild[version.buildNumber] ?? 0;
-      final percentage = totalChecks > 0 ? (checks / totalChecks * 100) : 0.0;
+      final users = usersByBuild[version.buildNumber] ?? 0;
+      final percentage = totalUsers > 0 ? (users / totalUsers * 100) : 0.0;
       final ageDays = now.difference(version.createdAt).inDays;
 
       versionEntries.add(
@@ -297,7 +283,7 @@ class StatisticsService {
           versionId: version.id!,
           versionNumber: version.versionNumber,
           buildNumber: version.buildNumber,
-          checkCount: checks,
+          userCount: users,
           percentage: _round2(percentage),
           isBlocked: version.isBlocked,
           createdAt: version.createdAt,
@@ -306,38 +292,40 @@ class StatisticsService {
       );
 
       if (version.isBlocked) {
-        checksOnBlockedVersions += checks;
+        usersOnBlockedVersions += users;
       }
     }
 
     // Adoption rate последней версии
     final latestVersion = versions.isNotEmpty ? versions.first : null;
     double latestVersionAdoptionRate = 0.0;
-    if (latestVersion != null && totalChecks > 0) {
-      final latestChecks = checksByBuild[latestVersion.buildNumber] ?? 0;
-      latestVersionAdoptionRate = _round2(latestChecks / totalChecks * 100);
+    if (latestVersion != null && totalUsers > 0) {
+      final latestUsers = usersByBuild[latestVersion.buildNumber] ?? 0;
+      latestVersionAdoptionRate = _round2(latestUsers / totalUsers * 100);
     }
 
-    final blockedPercentage = totalChecks > 0
-        ? _round2(checksOnBlockedVersions / totalChecks * 100)
+    final blockedPercentage = totalUsers > 0
+        ? _round2(usersOnBlockedVersions / totalUsers * 100)
         : 0.0;
 
     // Adoption timeline — данные по дням для каждой версии
+    // Используем DailyCheckSummary для исторических данных по дням
+    final summaries = await _getFilteredSummaries(session, filter);
     final adoptionTimeline = <VersionAdoptionTimelineEntry>[];
 
     // Группируем summaries по дню+buildNumber
-    final Map<String, Map<int, int>> dailyVersionChecks = {};
-    final Map<String, int> dailyAllChecks = {};
+    final Map<String, Map<int, int>> dailyVersionUsers = {};
+    final Map<String, int> dailyAllUsers = {};
 
     for (final s in summaries) {
       final dayKey = _dayKey(s.date);
-      dailyAllChecks[dayKey] = (dailyAllChecks[dayKey] ?? 0) + s.totalChecks;
-      dailyVersionChecks
+      dailyAllUsers[dayKey] = (dailyAllUsers[dayKey] ?? 0) + s.uniqueDevices;
+      dailyVersionUsers
           .putIfAbsent(dayKey, () => {})
           .update(
             s.buildNumber,
-            (v) => v + s.totalChecks,
-            ifAbsent: () => s.totalChecks,
+            (v) => v + s.uniqueDevices,
+            ifAbsent: () => s.uniqueDevices,
           );
     }
 
@@ -347,12 +335,12 @@ class StatisticsService {
 
     while (!current.isAfter(end)) {
       final dayKey = _dayKey(current);
-      final totalForDay = dailyAllChecks[dayKey] ?? 0;
-      final versionMap = dailyVersionChecks[dayKey] ?? {};
+      final totalForDay = dailyAllUsers[dayKey] ?? 0;
+      final versionMap = dailyVersionUsers[dayKey] ?? {};
 
       for (final entry in versionMap.entries) {
         final buildNumber = entry.key;
-        final checks = entry.value;
+        final users = entry.value;
         final version = versions
             .where(
               (v) => v.buildNumber == buildNumber,
@@ -364,9 +352,9 @@ class StatisticsService {
             date: current,
             versionNumber: version?.versionNumber ?? 'unknown',
             buildNumber: buildNumber,
-            checkCount: checks,
+            userCount: users,
             percentage: totalForDay > 0
-                ? _round2(checks / totalForDay * 100)
+                ? _round2(users / totalForDay * 100)
                 : 0.0,
           ),
         );
@@ -378,7 +366,7 @@ class StatisticsService {
     return VersionStatisticsResponse(
       versions: versionEntries,
       latestVersionAdoptionRate: latestVersionAdoptionRate,
-      checksOnBlockedVersions: checksOnBlockedVersions,
+      usersOnBlockedVersions: usersOnBlockedVersions,
       blockedVersionsPercentage: blockedPercentage,
       adoptionTimeline: adoptionTimeline,
     );
@@ -398,24 +386,25 @@ class StatisticsService {
     required StatisticsFilter filter,
   }) async {
     final summaries = await _getFilteredSummaries(session, filter);
-    final totalChecks = summaries.fold<int>(0, (sum, s) => sum + s.totalChecks);
+    final totalUsers = summaries.fold<int>(
+      0,
+      (sum, s) => sum + s.uniqueDevices,
+    );
 
     // Распределение по платформам (из DailyCheckSummary)
-    final Map<PlatformType, int> platformChecks = {};
+    final Map<PlatformType, int> platformUsers = {};
     for (final s in summaries) {
-      platformChecks[s.platform] =
-          (platformChecks[s.platform] ?? 0) + s.totalChecks;
+      platformUsers[s.platform] =
+          (platformUsers[s.platform] ?? 0) + s.uniqueDevices;
     }
 
-    final platformEntries = platformChecks.entries.map((e) {
+    final platformEntries = platformUsers.entries.map((e) {
       return PlatformStatisticsEntry(
         platform: e.key,
-        checkCount: e.value,
-        percentage: totalChecks > 0
-            ? _round2(e.value / totalChecks * 100)
-            : 0.0,
+        userCount: e.value,
+        percentage: totalUsers > 0 ? _round2(e.value / totalUsers * 100) : 0.0,
       );
-    }).toList()..sort((a, b) => b.checkCount.compareTo(a.checkCount));
+    }).toList()..sort((a, b) => b.userCount.compareTo(a.userCount));
 
     // Распределение по версиям ОС (из DailyDimensionSummary)
     final osDimensions = await _getFilteredDimensions(
@@ -424,25 +413,23 @@ class StatisticsService {
       dimensionType: 'os_version',
     );
 
-    final Map<String, int> osVersionChecks = {};
+    final Map<String, int> osVersionUsers = {};
     final Map<String, PlatformType> osVersionPlatform = {};
 
     for (final d in osDimensions) {
       final key = '${d.platform.name}:${d.dimensionValue}';
-      osVersionChecks[key] = (osVersionChecks[key] ?? 0) + d.checkCount;
+      osVersionUsers[key] = (osVersionUsers[key] ?? 0) + d.userCount;
       osVersionPlatform[key] = d.platform;
     }
 
-    final osVersionEntries = osVersionChecks.entries.map((e) {
+    final osVersionEntries = osVersionUsers.entries.map((e) {
       return OsVersionStatisticsEntry(
         platform: osVersionPlatform[e.key]!,
         osVersion: e.key.split(':').last,
-        checkCount: e.value,
-        percentage: totalChecks > 0
-            ? _round2(e.value / totalChecks * 100)
-            : 0.0,
+        userCount: e.value,
+        percentage: totalUsers > 0 ? _round2(e.value / totalUsers * 100) : 0.0,
       );
-    }).toList()..sort((a, b) => b.checkCount.compareTo(a.checkCount));
+    }).toList()..sort((a, b) => b.userCount.compareTo(a.userCount));
 
     // Топ-10 моделей устройств (из DailyDimensionSummary)
     final modelDimensions = await _getFilteredDimensions(
@@ -451,26 +438,26 @@ class StatisticsService {
       dimensionType: 'device_model',
     );
 
-    final Map<String, int> modelChecks = {};
+    final Map<String, int> modelUsers = {};
     final Map<String, PlatformType> modelPlatform = {};
 
     for (final d in modelDimensions) {
       final key = '${d.platform.name}:${d.dimensionValue}';
-      modelChecks[key] = (modelChecks[key] ?? 0) + d.checkCount;
+      modelUsers[key] = (modelUsers[key] ?? 0) + d.userCount;
       modelPlatform[key] = d.platform;
     }
 
     final topDeviceModels =
-        (modelChecks.entries.toList()
+        (modelUsers.entries.toList()
               ..sort((a, b) => b.value.compareTo(a.value)))
             .take(10)
             .map((e) {
               return DeviceModelStatisticsEntry(
                 deviceModel: e.key.split(':').last,
                 platform: modelPlatform[e.key]!,
-                checkCount: e.value,
-                percentage: totalChecks > 0
-                    ? _round2(e.value / totalChecks * 100)
+                userCount: e.value,
+                percentage: totalUsers > 0
+                    ? _round2(e.value / totalUsers * 100)
                     : 0.0,
               );
             })
@@ -501,23 +488,23 @@ class StatisticsService {
     );
 
     // Суммируем по locale (агрегация по дням + платформам)
-    final Map<String, int> localeChecks = {};
+    final Map<String, int> localeUsers = {};
     for (final d in localeDimensions) {
-      localeChecks[d.dimensionValue] =
-          (localeChecks[d.dimensionValue] ?? 0) + d.checkCount;
+      localeUsers[d.dimensionValue] =
+          (localeUsers[d.dimensionValue] ?? 0) + d.userCount;
     }
 
-    final totalChecks = localeChecks.values.fold<int>(0, (s, v) => s + v);
+    final totalUsers = localeUsers.values.fold<int>(0, (s, v) => s + v);
 
     final localeEntries =
-        (localeChecks.entries.toList()
+        (localeUsers.entries.toList()
               ..sort((a, b) => b.value.compareTo(a.value)))
             .map((e) {
               return LocaleStatisticsEntry(
                 locale: e.key,
-                checkCount: e.value,
-                percentage: totalChecks > 0
-                    ? _round2(e.value / totalChecks * 100)
+                userCount: e.value,
+                percentage: totalUsers > 0
+                    ? _round2(e.value / totalUsers * 100)
                     : 0.0,
               );
             })
@@ -554,7 +541,7 @@ class StatisticsService {
       final dayOfWeek = d.date.toUtc().weekday; // 1=Mon..7=Sun
       final hour = int.tryParse(d.dimensionValue) ?? 0;
       final key = '$dayOfWeek:$hour';
-      heatmapCounts[key] = (heatmapCounts[key] ?? 0) + d.checkCount;
+      heatmapCounts[key] = (heatmapCounts[key] ?? 0) + d.userCount;
     }
 
     final heatmap = <HeatmapEntry>[];

@@ -58,14 +58,6 @@ class EmailNextButton extends StatelessWidget {
       builder: (context, state) => switch (state) {
         EmailCheckLoading() => FilledButton(
           onPressed: null,
-          style: FilledButton.styleFrom(
-            padding: const EdgeInsets.symmetric(
-              vertical: 16,
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-          ),
           child: SizedBox(
             height: 20,
             width: 20,
@@ -77,21 +69,7 @@ class EmailNextButton extends StatelessWidget {
         ),
         _ => FilledButton(
           onPressed: handleSubmit,
-          style: FilledButton.styleFrom(
-            padding: const EdgeInsets.symmetric(
-              vertical: 16,
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-          ),
-          child: const Text(
-            'Продолжить',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+          child: const Text('Продолжить'),
         ),
       },
     );

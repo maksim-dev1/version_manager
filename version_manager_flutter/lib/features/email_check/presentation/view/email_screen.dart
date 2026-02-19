@@ -99,19 +99,20 @@ class _EmailScreenState extends State<EmailScreen> {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           // Иконка
-                          SizedBox(
-                            width: 80,
-                            height: 80,
-
-                            child: DecoratedBox(
-                              decoration: BoxDecoration(
-                                color: colorScheme.primaryContainer,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                Icons.email_outlined,
-                                size: 40,
-                                color: colorScheme.primary,
+                          Center(
+                            child: SizedBox(
+                              width: 80,
+                              height: 80,
+                              child: DecoratedBox(
+                                decoration: BoxDecoration(
+                                  color: colorScheme.primaryContainer,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  Icons.email_outlined,
+                                  size: 40,
+                                  color: colorScheme.primary,
+                                ),
                               ),
                             ),
                           ),
@@ -120,10 +121,7 @@ class _EmailScreenState extends State<EmailScreen> {
                           // Заголовок
                           Text(
                             'Добро пожаловать!',
-                            style: textTheme.headlineMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: colorScheme.onSurface,
-                            ),
+                            style: textTheme.headlineMedium,
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 8),
@@ -151,40 +149,6 @@ class _EmailScreenState extends State<EmailScreen> {
                               prefixIcon: Icon(
                                 Icons.email_outlined,
                                 color: colorScheme.primary,
-                              ),
-                              filled: true,
-                              fillColor: colorScheme.surface,
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(16),
-                                borderSide: BorderSide(
-                                  color: colorScheme.outline,
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(16),
-                                borderSide: BorderSide(
-                                  color: colorScheme.outline,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(16),
-                                borderSide: BorderSide(
-                                  color: colorScheme.primary,
-                                  width: 2,
-                                ),
-                              ),
-                              errorBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(16),
-                                borderSide: BorderSide(
-                                  color: colorScheme.error,
-                                ),
-                              ),
-                              focusedErrorBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(16),
-                                borderSide: BorderSide(
-                                  color: colorScheme.error,
-                                  width: 2,
-                                ),
                               ),
                             ),
                           ),

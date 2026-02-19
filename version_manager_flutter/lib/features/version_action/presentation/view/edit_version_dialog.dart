@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:version_manager_client/version_manager_client.dart';
 import 'package:version_manager_flutter/features/version_action/presentation/bloc/version_action_bloc.dart';
+import 'package:version_manager_flutter/shared/widgets/user_visible_field_banner.dart';
 
 /// Диалог редактирования версии.
 class EditVersionDialog extends StatefulWidget {
@@ -53,7 +54,6 @@ class _EditVersionDialogState extends State<EditVersionDialog> {
       title: Text('Редактирование v${widget.version.versionNumber}'),
       content: ConstrainedBox(
         constraints: const BoxConstraints(
-          minWidth: 480,
           maxWidth: 480,
         ),
         child: Form(
@@ -111,6 +111,11 @@ class _EditVersionDialogState extends State<EditVersionDialog> {
               const SizedBox(height: 12),
 
               // ── Changelog ──
+              const UserVisibleFieldBanner(
+                message:
+                    'Текст changelog увидят пользователи при получении уведомления об обновлении',
+              ),
+              const SizedBox(height: 10),
               TextFormField(
                 controller: _changelogController,
                 decoration: const InputDecoration(

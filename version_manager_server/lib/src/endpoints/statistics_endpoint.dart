@@ -1,7 +1,7 @@
 import 'package:serverpod/serverpod.dart';
 import 'package:version_manager_server/src/endpoints/base/logged_in_endpoint.dart';
 import 'package:version_manager_server/src/generated/protocol.dart';
-import 'package:version_manager_server/src/services/statistics_service.dart';
+import 'package:version_manager_server/src/services/service_locator.dart';
 
 /// Эндпоинт для получения статистики и аналитики приложений.
 ///
@@ -20,7 +20,7 @@ import 'package:version_manager_server/src/services/statistics_service.dart';
 /// Наследуется от [LoggedInEndpoint] — требует авторизации.
 /// Доступ контролируется по принадлежности приложения пользователю или команде.
 class StatisticsEndpoint extends LoggedInEndpoint {
-  final _statisticsService = StatisticsService();
+  final _statisticsService = Services().statisticsService;
 
   // ============================================================
   // ОСНОВНЫЕ МЕТРИКИ

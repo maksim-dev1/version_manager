@@ -17,13 +17,13 @@ import '../enums/platform_type.dart' as _i2;
 abstract class PlatformStatisticsEntry implements _i1.SerializableModel {
   PlatformStatisticsEntry._({
     required this.platform,
-    required this.checkCount,
+    required this.userCount,
     required this.percentage,
   });
 
   factory PlatformStatisticsEntry({
     required _i2.PlatformType platform,
-    required int checkCount,
+    required int userCount,
     required double percentage,
   }) = _PlatformStatisticsEntryImpl;
 
@@ -34,7 +34,7 @@ abstract class PlatformStatisticsEntry implements _i1.SerializableModel {
       platform: _i2.PlatformType.fromJson(
         (jsonSerialization['platform'] as String),
       ),
-      checkCount: jsonSerialization['checkCount'] as int,
+      userCount: jsonSerialization['userCount'] as int,
       percentage: (jsonSerialization['percentage'] as num).toDouble(),
     );
   }
@@ -42,8 +42,8 @@ abstract class PlatformStatisticsEntry implements _i1.SerializableModel {
   /// Платформа
   _i2.PlatformType platform;
 
-  /// Количество проверок
-  int checkCount;
+  /// Количество уникальных пользователей
+  int userCount;
 
   /// Процент от общего числа
   double percentage;
@@ -53,7 +53,7 @@ abstract class PlatformStatisticsEntry implements _i1.SerializableModel {
   @_i1.useResult
   PlatformStatisticsEntry copyWith({
     _i2.PlatformType? platform,
-    int? checkCount,
+    int? userCount,
     double? percentage,
   });
   @override
@@ -61,7 +61,7 @@ abstract class PlatformStatisticsEntry implements _i1.SerializableModel {
     return {
       '__className__': 'PlatformStatisticsEntry',
       'platform': platform.toJson(),
-      'checkCount': checkCount,
+      'userCount': userCount,
       'percentage': percentage,
     };
   }
@@ -75,11 +75,11 @@ abstract class PlatformStatisticsEntry implements _i1.SerializableModel {
 class _PlatformStatisticsEntryImpl extends PlatformStatisticsEntry {
   _PlatformStatisticsEntryImpl({
     required _i2.PlatformType platform,
-    required int checkCount,
+    required int userCount,
     required double percentage,
   }) : super._(
          platform: platform,
-         checkCount: checkCount,
+         userCount: userCount,
          percentage: percentage,
        );
 
@@ -89,12 +89,12 @@ class _PlatformStatisticsEntryImpl extends PlatformStatisticsEntry {
   @override
   PlatformStatisticsEntry copyWith({
     _i2.PlatformType? platform,
-    int? checkCount,
+    int? userCount,
     double? percentage,
   }) {
     return PlatformStatisticsEntry(
       platform: platform ?? this.platform,
-      checkCount: checkCount ?? this.checkCount,
+      userCount: userCount ?? this.userCount,
       percentage: percentage ?? this.percentage,
     );
   }

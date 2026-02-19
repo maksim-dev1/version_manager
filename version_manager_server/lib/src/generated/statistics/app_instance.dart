@@ -43,6 +43,7 @@ abstract class AppInstance
     DateTime? firstSeenAt,
     DateTime? lastSeenAt,
     DateTime? lastActiveDate,
+    this.lastBuildNumber,
   }) : firstSeenAt = firstSeenAt ?? DateTime.now(),
        lastSeenAt = lastSeenAt ?? DateTime.now(),
        lastActiveDate = lastActiveDate ?? DateTime.now();
@@ -56,6 +57,7 @@ abstract class AppInstance
     DateTime? firstSeenAt,
     DateTime? lastSeenAt,
     DateTime? lastActiveDate,
+    int? lastBuildNumber,
   }) = _AppInstanceImpl;
 
   factory AppInstance.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -88,6 +90,7 @@ abstract class AppInstance
           : _i1.DateTimeJsonExtension.fromJson(
               jsonSerialization['lastActiveDate'],
             ),
+      lastBuildNumber: jsonSerialization['lastBuildNumber'] as int?,
     );
   }
 
@@ -119,6 +122,10 @@ abstract class AppInstance
   /// Используется для точного подсчёта уникальных устройств за день.
   DateTime lastActiveDate;
 
+  /// Последний номер сборки, на которой был пользователь.
+  /// Используется для подсчёта пользователей по текущей версии.
+  int? lastBuildNumber;
+
   @override
   _i1.Table<_i1.UuidValue?> get table => t;
 
@@ -134,6 +141,7 @@ abstract class AppInstance
     DateTime? firstSeenAt,
     DateTime? lastSeenAt,
     DateTime? lastActiveDate,
+    int? lastBuildNumber,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -147,6 +155,7 @@ abstract class AppInstance
       'firstSeenAt': firstSeenAt.toJson(),
       'lastSeenAt': lastSeenAt.toJson(),
       'lastActiveDate': lastActiveDate.toJson(),
+      if (lastBuildNumber != null) 'lastBuildNumber': lastBuildNumber,
     };
   }
 
@@ -162,6 +171,7 @@ abstract class AppInstance
       'firstSeenAt': firstSeenAt.toJson(),
       'lastSeenAt': lastSeenAt.toJson(),
       'lastActiveDate': lastActiveDate.toJson(),
+      if (lastBuildNumber != null) 'lastBuildNumber': lastBuildNumber,
     };
   }
 
@@ -207,6 +217,7 @@ class _AppInstanceImpl extends AppInstance {
     DateTime? firstSeenAt,
     DateTime? lastSeenAt,
     DateTime? lastActiveDate,
+    int? lastBuildNumber,
   }) : super._(
          id: id,
          applicationId: applicationId,
@@ -216,6 +227,7 @@ class _AppInstanceImpl extends AppInstance {
          firstSeenAt: firstSeenAt,
          lastSeenAt: lastSeenAt,
          lastActiveDate: lastActiveDate,
+         lastBuildNumber: lastBuildNumber,
        );
 
   /// Returns a shallow copy of this [AppInstance]
@@ -231,6 +243,7 @@ class _AppInstanceImpl extends AppInstance {
     DateTime? firstSeenAt,
     DateTime? lastSeenAt,
     DateTime? lastActiveDate,
+    Object? lastBuildNumber = _Undefined,
   }) {
     return AppInstance(
       id: id is _i1.UuidValue? ? id : this.id,
@@ -243,6 +256,9 @@ class _AppInstanceImpl extends AppInstance {
       firstSeenAt: firstSeenAt ?? this.firstSeenAt,
       lastSeenAt: lastSeenAt ?? this.lastSeenAt,
       lastActiveDate: lastActiveDate ?? this.lastActiveDate,
+      lastBuildNumber: lastBuildNumber is int?
+          ? lastBuildNumber
+          : this.lastBuildNumber,
     );
   }
 }
@@ -286,6 +302,11 @@ class AppInstanceUpdateTable extends _i1.UpdateTable<AppInstanceTable> {
         table.lastActiveDate,
         value,
       );
+
+  _i1.ColumnValue<int, int> lastBuildNumber(int? value) => _i1.ColumnValue(
+    table.lastBuildNumber,
+    value,
+  );
 }
 
 class AppInstanceTable extends _i1.Table<_i1.UuidValue?> {
@@ -319,6 +340,10 @@ class AppInstanceTable extends _i1.Table<_i1.UuidValue?> {
       this,
       hasDefault: true,
     );
+    lastBuildNumber = _i1.ColumnInt(
+      'lastBuildNumber',
+      this,
+    );
   }
 
   late final AppInstanceUpdateTable updateTable;
@@ -344,6 +369,10 @@ class AppInstanceTable extends _i1.Table<_i1.UuidValue?> {
   /// Используется для точного подсчёта уникальных устройств за день.
   late final _i1.ColumnDateTime lastActiveDate;
 
+  /// Последний номер сборки, на которой был пользователь.
+  /// Используется для подсчёта пользователей по текущей версии.
+  late final _i1.ColumnInt lastBuildNumber;
+
   _i2.ApplicationTable get application {
     if (_application != null) return _application!;
     _application = _i1.createRelationTable(
@@ -366,6 +395,7 @@ class AppInstanceTable extends _i1.Table<_i1.UuidValue?> {
     firstSeenAt,
     lastSeenAt,
     lastActiveDate,
+    lastBuildNumber,
   ];
 
   @override

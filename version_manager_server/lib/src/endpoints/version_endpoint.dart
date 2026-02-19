@@ -258,23 +258,6 @@ class VersionEndpoint extends LoggedInEndpoint {
     // Валидация changelog
     _validateChangelog(request.changelog);
 
-    // Проверка уникальности номера версии для данного приложения
-    final existingByVersion = await Version.db.findFirstRow(
-      session,
-      where: (t) =>
-          (t.applicationId.equals(request.applicationId)) &
-          (t.versionNumber.equals(request.versionNumber.trim())),
-    );
-
-    if (existingByVersion != null) {
-      throw InvalidDataException(
-        field: 'versionNumber',
-        message:
-            'Версия с номером ${request.versionNumber} уже существует '
-            'для этого приложения',
-      );
-    }
-
     // Проверка уникальности номера сборки для данного приложения
     final existingByBuild = await Version.db.findFirstRow(
       session,
@@ -396,25 +379,6 @@ class VersionEndpoint extends LoggedInEndpoint {
     // Обновление номера версии
     if (request.versionNumber != null) {
       _validateVersionNumber(request.versionNumber!);
-
-      // Проверка уникальности (исключая текущую версию)
-      final existingByVersion = await Version.db.findFirstRow(
-        session,
-        where: (t) =>
-            (t.applicationId.equals(version.applicationId)) &
-            (t.versionNumber.equals(request.versionNumber!.trim())) &
-            (t.id.notEquals(version.id!)),
-      );
-
-      if (existingByVersion != null) {
-        throw InvalidDataException(
-          field: 'versionNumber',
-          message:
-              'Версия с номером ${request.versionNumber} уже существует '
-              'для этого приложения',
-        );
-      }
-
       version.versionNumber = request.versionNumber!.trim();
     }
 

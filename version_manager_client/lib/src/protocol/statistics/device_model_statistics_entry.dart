@@ -18,14 +18,14 @@ abstract class DeviceModelStatisticsEntry implements _i1.SerializableModel {
   DeviceModelStatisticsEntry._({
     required this.deviceModel,
     required this.platform,
-    required this.checkCount,
+    required this.userCount,
     required this.percentage,
   });
 
   factory DeviceModelStatisticsEntry({
     required String deviceModel,
     required _i2.PlatformType platform,
-    required int checkCount,
+    required int userCount,
     required double percentage,
   }) = _DeviceModelStatisticsEntryImpl;
 
@@ -37,7 +37,7 @@ abstract class DeviceModelStatisticsEntry implements _i1.SerializableModel {
       platform: _i2.PlatformType.fromJson(
         (jsonSerialization['platform'] as String),
       ),
-      checkCount: jsonSerialization['checkCount'] as int,
+      userCount: jsonSerialization['userCount'] as int,
       percentage: (jsonSerialization['percentage'] as num).toDouble(),
     );
   }
@@ -48,8 +48,8 @@ abstract class DeviceModelStatisticsEntry implements _i1.SerializableModel {
   /// Платформа
   _i2.PlatformType platform;
 
-  /// Количество проверок
-  int checkCount;
+  /// Количество уникальных пользователей
+  int userCount;
 
   /// Процент от общего числа
   double percentage;
@@ -60,7 +60,7 @@ abstract class DeviceModelStatisticsEntry implements _i1.SerializableModel {
   DeviceModelStatisticsEntry copyWith({
     String? deviceModel,
     _i2.PlatformType? platform,
-    int? checkCount,
+    int? userCount,
     double? percentage,
   });
   @override
@@ -69,7 +69,7 @@ abstract class DeviceModelStatisticsEntry implements _i1.SerializableModel {
       '__className__': 'DeviceModelStatisticsEntry',
       'deviceModel': deviceModel,
       'platform': platform.toJson(),
-      'checkCount': checkCount,
+      'userCount': userCount,
       'percentage': percentage,
     };
   }
@@ -84,12 +84,12 @@ class _DeviceModelStatisticsEntryImpl extends DeviceModelStatisticsEntry {
   _DeviceModelStatisticsEntryImpl({
     required String deviceModel,
     required _i2.PlatformType platform,
-    required int checkCount,
+    required int userCount,
     required double percentage,
   }) : super._(
          deviceModel: deviceModel,
          platform: platform,
-         checkCount: checkCount,
+         userCount: userCount,
          percentage: percentage,
        );
 
@@ -100,13 +100,13 @@ class _DeviceModelStatisticsEntryImpl extends DeviceModelStatisticsEntry {
   DeviceModelStatisticsEntry copyWith({
     String? deviceModel,
     _i2.PlatformType? platform,
-    int? checkCount,
+    int? userCount,
     double? percentage,
   }) {
     return DeviceModelStatisticsEntry(
       deviceModel: deviceModel ?? this.deviceModel,
       platform: platform ?? this.platform,
-      checkCount: checkCount ?? this.checkCount,
+      userCount: userCount ?? this.userCount,
       percentage: percentage ?? this.percentage,
     );
   }

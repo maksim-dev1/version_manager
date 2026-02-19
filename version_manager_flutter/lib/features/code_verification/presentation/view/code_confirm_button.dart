@@ -35,12 +35,6 @@ class CodeConfirmButton extends StatelessWidget {
       builder: (context, state) => switch (state) {
         CodeVerificationLoading() => FilledButton(
           onPressed: null,
-          style: FilledButton.styleFrom(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-          ),
           child: SizedBox(
             height: 20,
             width: 20,
@@ -55,36 +49,16 @@ class CodeConfirmButton extends StatelessWidget {
           FilledButton(
             onPressed: null,
             style: FilledButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
               backgroundColor: colorScheme.surfaceContainerHighest,
             ),
             child: Text(
               'Попытки исчерпаны',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: colorScheme.onSurfaceVariant,
-              ),
+              style: TextStyle(color: colorScheme.onSurfaceVariant),
             ),
           ),
         _ => FilledButton(
           onPressed: submit,
-          style: FilledButton.styleFrom(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-          ),
-          child: const Text(
-            'Подтвердить',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+          child: const Text('Подтвердить'),
         ),
       },
     );

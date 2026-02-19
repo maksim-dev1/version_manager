@@ -1,28 +1,19 @@
 ### Общая статистика приложения — основные метрики.
 ###
-### Включает как количество запросов (checks), так и уникальных
-### пользователей (по анонимному device fingerprint).
+### Все метрики отражают количество уникальных пользователей
+### (по анонимному device fingerprint).
 class: StatisticsOverviewResponse
 fields:
-  ### Общее количество проверок за всё время
-  totalChecks: int
-  ### Проверки за последние 24 часа
-  dailyChecks: int
-  ### Проверки за последние 7 дней
-  weeklyChecks: int
-  ### Проверки за последние 30 дней
-  monthlyChecks: int
-  ### Общее количество проверок за выбранный период
-  totalChecksInPeriod: int
-
-  ### Уникальных пользователей за всё время (по fingerprint)
-  totalUniqueUsers: int
+  ### Уникальных пользователей за всё время
+  totalUsers: int
   ### Уникальных пользователей за последние 24 часа (DAU)
-  dailyActiveUsers: int
+  dailyUsers: int
   ### Уникальных пользователей за последние 7 дней (WAU)
-  weeklyActiveUsers: int
+  weeklyUsers: int
   ### Уникальных пользователей за последние 30 дней (MAU)
-  monthlyActiveUsers: int
+  monthlyUsers: int
+  ### Уникальных пользователей за выбранный период
+  totalUsersInPeriod: int
   ### Новых пользователей за выбранный период
   newUsersInPeriod: int
   ### Количество заблокированных версий

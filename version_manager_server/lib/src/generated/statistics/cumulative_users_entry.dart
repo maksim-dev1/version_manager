@@ -17,13 +17,13 @@ abstract class CumulativeUsersEntry
     implements _i1.SerializableModel, _i1.ProtocolSerialization {
   CumulativeUsersEntry._({
     required this.date,
-    required this.totalChecks,
+    required this.totalUsers,
     required this.totalUniqueUsers,
   });
 
   factory CumulativeUsersEntry({
     required DateTime date,
-    required int totalChecks,
+    required int totalUsers,
     required int totalUniqueUsers,
   }) = _CumulativeUsersEntryImpl;
 
@@ -32,7 +32,7 @@ abstract class CumulativeUsersEntry
   ) {
     return CumulativeUsersEntry(
       date: _i1.DateTimeJsonExtension.fromJson(jsonSerialization['date']),
-      totalChecks: jsonSerialization['totalChecks'] as int,
+      totalUsers: jsonSerialization['totalUsers'] as int,
       totalUniqueUsers: jsonSerialization['totalUniqueUsers'] as int,
     );
   }
@@ -40,8 +40,8 @@ abstract class CumulativeUsersEntry
   /// Дата
   DateTime date;
 
-  /// Накопленное общее количество проверок к этой дате
-  int totalChecks;
+  /// Накопленное количество пользователей к этой дате
+  int totalUsers;
 
   /// Накопленное количество уникальных пользователей к этой дате
   int totalUniqueUsers;
@@ -51,7 +51,7 @@ abstract class CumulativeUsersEntry
   @_i1.useResult
   CumulativeUsersEntry copyWith({
     DateTime? date,
-    int? totalChecks,
+    int? totalUsers,
     int? totalUniqueUsers,
   });
   @override
@@ -59,7 +59,7 @@ abstract class CumulativeUsersEntry
     return {
       '__className__': 'CumulativeUsersEntry',
       'date': date.toJson(),
-      'totalChecks': totalChecks,
+      'totalUsers': totalUsers,
       'totalUniqueUsers': totalUniqueUsers,
     };
   }
@@ -69,7 +69,7 @@ abstract class CumulativeUsersEntry
     return {
       '__className__': 'CumulativeUsersEntry',
       'date': date.toJson(),
-      'totalChecks': totalChecks,
+      'totalUsers': totalUsers,
       'totalUniqueUsers': totalUniqueUsers,
     };
   }
@@ -83,11 +83,11 @@ abstract class CumulativeUsersEntry
 class _CumulativeUsersEntryImpl extends CumulativeUsersEntry {
   _CumulativeUsersEntryImpl({
     required DateTime date,
-    required int totalChecks,
+    required int totalUsers,
     required int totalUniqueUsers,
   }) : super._(
          date: date,
-         totalChecks: totalChecks,
+         totalUsers: totalUsers,
          totalUniqueUsers: totalUniqueUsers,
        );
 
@@ -97,12 +97,12 @@ class _CumulativeUsersEntryImpl extends CumulativeUsersEntry {
   @override
   CumulativeUsersEntry copyWith({
     DateTime? date,
-    int? totalChecks,
+    int? totalUsers,
     int? totalUniqueUsers,
   }) {
     return CumulativeUsersEntry(
       date: date ?? this.date,
-      totalChecks: totalChecks ?? this.totalChecks,
+      totalUsers: totalUsers ?? this.totalUsers,
       totalUniqueUsers: totalUniqueUsers ?? this.totalUniqueUsers,
     );
   }

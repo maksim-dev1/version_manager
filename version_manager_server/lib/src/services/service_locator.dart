@@ -1,6 +1,7 @@
 import 'package:version_manager_server/src/services/auth_validation_service.dart';
 import 'package:version_manager_server/src/services/email_service.dart';
 import 'package:version_manager_server/src/services/password_service.dart';
+import 'package:version_manager_server/src/services/statistics_service.dart';
 import 'package:version_manager_server/src/services/token_service.dart';
 
 /// Простой Service Locator для управления зависимостями без внешних библиотек.
@@ -72,6 +73,9 @@ class Services {
   /// Сервис валидации токенов (lazy loading).
   AuthValidationService? _authValidationService;
 
+  /// Сервис аналитики и статистики (lazy loading).
+  StatisticsService? _statisticsService;
+
   /// Инициализирует все сервисы приложения.
   ///
   /// **Должен быть вызван один раз при запуске сервера** до первого обращения
@@ -125,6 +129,7 @@ class Services {
       provider: emailProvider,
     );
     _authValidationService = AuthValidationService();
+    _statisticsService = StatisticsService();
   }
 
   /// Возвращает экземпляр сервиса хеширования паролей.
@@ -203,6 +208,25 @@ class Services {
     return _authValidationService!;
   }
 
+  /// Возвращает экземпляр сервиса аналитики и статистики.
+  ///
+  /// ### Исключения
+  /// - [StateError] — если сервисы не инициализированы через [initialize()]
+  ///
+  /// ### Пример использования
+  /// ```dart
+  /// final statisticsService = Services().statisticsService;
+  /// final overview = await statisticsService.getOverview(session, filter: filter);
+  /// ```
+  StatisticsService get statisticsService {
+    if (_statisticsService == null) {
+      throw StateError(
+        'Services not initialized. Call Services().initialize() first',
+      );
+    }
+    return _statisticsService!;
+  }
+
   /// Заменяет сервисы на mock-объекты для тестирования.
   ///
   /// Позволяет подменить любой из сервисов на тестовый аналог без необходимости
@@ -245,9 +269,11 @@ class Services {
     PasswordService? passwordService,
     TokenService? tokenService,
     EmailService? emailService,
+    StatisticsService? statisticsService,
   }) {
     if (passwordService != null) _passwordService = passwordService;
     if (tokenService != null) _tokenService = tokenService;
     if (emailService != null) _emailService = emailService;
+    if (statisticsService != null) _statisticsService = statisticsService;
   }
 }

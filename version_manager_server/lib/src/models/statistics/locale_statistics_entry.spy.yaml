@@ -3,7 +3,7 @@ class: LocaleStatisticsEntry
 fields:
   ### Локаль (например: "ru_RU", "en_US")
   locale: String
-  ### Количество проверок
-  checkCount: int
+  ### Количество уникальных пользователей
+  userCount: int
   ### Процент от общего числа
   percentage: double

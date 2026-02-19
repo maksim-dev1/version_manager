@@ -14,19 +14,15 @@ import 'package:serverpod_client/serverpod_client.dart' as _i1;
 
 /// Общая статистика приложения — основные метрики.
 ///
-/// Включает как количество запросов (checks), так и уникальных
-/// пользователей (по анонимному device fingerprint).
+/// Все метрики отражают количество уникальных пользователей
+/// (по анонимному device fingerprint).
 abstract class StatisticsOverviewResponse implements _i1.SerializableModel {
   StatisticsOverviewResponse._({
-    required this.totalChecks,
-    required this.dailyChecks,
-    required this.weeklyChecks,
-    required this.monthlyChecks,
-    required this.totalChecksInPeriod,
-    required this.totalUniqueUsers,
-    required this.dailyActiveUsers,
-    required this.weeklyActiveUsers,
-    required this.monthlyActiveUsers,
+    required this.totalUsers,
+    required this.dailyUsers,
+    required this.weeklyUsers,
+    required this.monthlyUsers,
+    required this.totalUsersInPeriod,
     required this.newUsersInPeriod,
     required this.blockedVersionsCount,
     required this.activeVersionsCount,
@@ -34,15 +30,11 @@ abstract class StatisticsOverviewResponse implements _i1.SerializableModel {
   });
 
   factory StatisticsOverviewResponse({
-    required int totalChecks,
-    required int dailyChecks,
-    required int weeklyChecks,
-    required int monthlyChecks,
-    required int totalChecksInPeriod,
-    required int totalUniqueUsers,
-    required int dailyActiveUsers,
-    required int weeklyActiveUsers,
-    required int monthlyActiveUsers,
+    required int totalUsers,
+    required int dailyUsers,
+    required int weeklyUsers,
+    required int monthlyUsers,
+    required int totalUsersInPeriod,
     required int newUsersInPeriod,
     required int blockedVersionsCount,
     required int activeVersionsCount,
@@ -53,15 +45,11 @@ abstract class StatisticsOverviewResponse implements _i1.SerializableModel {
     Map<String, dynamic> jsonSerialization,
   ) {
     return StatisticsOverviewResponse(
-      totalChecks: jsonSerialization['totalChecks'] as int,
-      dailyChecks: jsonSerialization['dailyChecks'] as int,
-      weeklyChecks: jsonSerialization['weeklyChecks'] as int,
-      monthlyChecks: jsonSerialization['monthlyChecks'] as int,
-      totalChecksInPeriod: jsonSerialization['totalChecksInPeriod'] as int,
-      totalUniqueUsers: jsonSerialization['totalUniqueUsers'] as int,
-      dailyActiveUsers: jsonSerialization['dailyActiveUsers'] as int,
-      weeklyActiveUsers: jsonSerialization['weeklyActiveUsers'] as int,
-      monthlyActiveUsers: jsonSerialization['monthlyActiveUsers'] as int,
+      totalUsers: jsonSerialization['totalUsers'] as int,
+      dailyUsers: jsonSerialization['dailyUsers'] as int,
+      weeklyUsers: jsonSerialization['weeklyUsers'] as int,
+      monthlyUsers: jsonSerialization['monthlyUsers'] as int,
+      totalUsersInPeriod: jsonSerialization['totalUsersInPeriod'] as int,
       newUsersInPeriod: jsonSerialization['newUsersInPeriod'] as int,
       blockedVersionsCount: jsonSerialization['blockedVersionsCount'] as int,
       activeVersionsCount: jsonSerialization['activeVersionsCount'] as int,
@@ -69,32 +57,20 @@ abstract class StatisticsOverviewResponse implements _i1.SerializableModel {
     );
   }
 
-  /// Общее количество проверок за всё время
-  int totalChecks;
-
-  /// Проверки за последние 24 часа
-  int dailyChecks;
-
-  /// Проверки за последние 7 дней
-  int weeklyChecks;
-
-  /// Проверки за последние 30 дней
-  int monthlyChecks;
-
-  /// Общее количество проверок за выбранный период
-  int totalChecksInPeriod;
-
-  /// Уникальных пользователей за всё время (по fingerprint)
-  int totalUniqueUsers;
+  /// Уникальных пользователей за всё время
+  int totalUsers;
 
   /// Уникальных пользователей за последние 24 часа (DAU)
-  int dailyActiveUsers;
+  int dailyUsers;
 
   /// Уникальных пользователей за последние 7 дней (WAU)
-  int weeklyActiveUsers;
+  int weeklyUsers;
 
   /// Уникальных пользователей за последние 30 дней (MAU)
-  int monthlyActiveUsers;
+  int monthlyUsers;
+
+  /// Уникальных пользователей за выбранный период
+  int totalUsersInPeriod;
 
   /// Новых пользователей за выбранный период
   int newUsersInPeriod;
@@ -112,15 +88,11 @@ abstract class StatisticsOverviewResponse implements _i1.SerializableModel {
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
   StatisticsOverviewResponse copyWith({
-    int? totalChecks,
-    int? dailyChecks,
-    int? weeklyChecks,
-    int? monthlyChecks,
-    int? totalChecksInPeriod,
-    int? totalUniqueUsers,
-    int? dailyActiveUsers,
-    int? weeklyActiveUsers,
-    int? monthlyActiveUsers,
+    int? totalUsers,
+    int? dailyUsers,
+    int? weeklyUsers,
+    int? monthlyUsers,
+    int? totalUsersInPeriod,
     int? newUsersInPeriod,
     int? blockedVersionsCount,
     int? activeVersionsCount,
@@ -130,15 +102,11 @@ abstract class StatisticsOverviewResponse implements _i1.SerializableModel {
   Map<String, dynamic> toJson() {
     return {
       '__className__': 'StatisticsOverviewResponse',
-      'totalChecks': totalChecks,
-      'dailyChecks': dailyChecks,
-      'weeklyChecks': weeklyChecks,
-      'monthlyChecks': monthlyChecks,
-      'totalChecksInPeriod': totalChecksInPeriod,
-      'totalUniqueUsers': totalUniqueUsers,
-      'dailyActiveUsers': dailyActiveUsers,
-      'weeklyActiveUsers': weeklyActiveUsers,
-      'monthlyActiveUsers': monthlyActiveUsers,
+      'totalUsers': totalUsers,
+      'dailyUsers': dailyUsers,
+      'weeklyUsers': weeklyUsers,
+      'monthlyUsers': monthlyUsers,
+      'totalUsersInPeriod': totalUsersInPeriod,
       'newUsersInPeriod': newUsersInPeriod,
       'blockedVersionsCount': blockedVersionsCount,
       'activeVersionsCount': activeVersionsCount,
@@ -157,29 +125,21 @@ class _Undefined {}
 
 class _StatisticsOverviewResponseImpl extends StatisticsOverviewResponse {
   _StatisticsOverviewResponseImpl({
-    required int totalChecks,
-    required int dailyChecks,
-    required int weeklyChecks,
-    required int monthlyChecks,
-    required int totalChecksInPeriod,
-    required int totalUniqueUsers,
-    required int dailyActiveUsers,
-    required int weeklyActiveUsers,
-    required int monthlyActiveUsers,
+    required int totalUsers,
+    required int dailyUsers,
+    required int weeklyUsers,
+    required int monthlyUsers,
+    required int totalUsersInPeriod,
     required int newUsersInPeriod,
     required int blockedVersionsCount,
     required int activeVersionsCount,
     int? avgProcessingTimeMs,
   }) : super._(
-         totalChecks: totalChecks,
-         dailyChecks: dailyChecks,
-         weeklyChecks: weeklyChecks,
-         monthlyChecks: monthlyChecks,
-         totalChecksInPeriod: totalChecksInPeriod,
-         totalUniqueUsers: totalUniqueUsers,
-         dailyActiveUsers: dailyActiveUsers,
-         weeklyActiveUsers: weeklyActiveUsers,
-         monthlyActiveUsers: monthlyActiveUsers,
+         totalUsers: totalUsers,
+         dailyUsers: dailyUsers,
+         weeklyUsers: weeklyUsers,
+         monthlyUsers: monthlyUsers,
+         totalUsersInPeriod: totalUsersInPeriod,
          newUsersInPeriod: newUsersInPeriod,
          blockedVersionsCount: blockedVersionsCount,
          activeVersionsCount: activeVersionsCount,
@@ -191,30 +151,22 @@ class _StatisticsOverviewResponseImpl extends StatisticsOverviewResponse {
   @_i1.useResult
   @override
   StatisticsOverviewResponse copyWith({
-    int? totalChecks,
-    int? dailyChecks,
-    int? weeklyChecks,
-    int? monthlyChecks,
-    int? totalChecksInPeriod,
-    int? totalUniqueUsers,
-    int? dailyActiveUsers,
-    int? weeklyActiveUsers,
-    int? monthlyActiveUsers,
+    int? totalUsers,
+    int? dailyUsers,
+    int? weeklyUsers,
+    int? monthlyUsers,
+    int? totalUsersInPeriod,
     int? newUsersInPeriod,
     int? blockedVersionsCount,
     int? activeVersionsCount,
     Object? avgProcessingTimeMs = _Undefined,
   }) {
     return StatisticsOverviewResponse(
-      totalChecks: totalChecks ?? this.totalChecks,
-      dailyChecks: dailyChecks ?? this.dailyChecks,
-      weeklyChecks: weeklyChecks ?? this.weeklyChecks,
-      monthlyChecks: monthlyChecks ?? this.monthlyChecks,
-      totalChecksInPeriod: totalChecksInPeriod ?? this.totalChecksInPeriod,
-      totalUniqueUsers: totalUniqueUsers ?? this.totalUniqueUsers,
-      dailyActiveUsers: dailyActiveUsers ?? this.dailyActiveUsers,
-      weeklyActiveUsers: weeklyActiveUsers ?? this.weeklyActiveUsers,
-      monthlyActiveUsers: monthlyActiveUsers ?? this.monthlyActiveUsers,
+      totalUsers: totalUsers ?? this.totalUsers,
+      dailyUsers: dailyUsers ?? this.dailyUsers,
+      weeklyUsers: weeklyUsers ?? this.weeklyUsers,
+      monthlyUsers: monthlyUsers ?? this.monthlyUsers,
+      totalUsersInPeriod: totalUsersInPeriod ?? this.totalUsersInPeriod,
       newUsersInPeriod: newUsersInPeriod ?? this.newUsersInPeriod,
       blockedVersionsCount: blockedVersionsCount ?? this.blockedVersionsCount,
       activeVersionsCount: activeVersionsCount ?? this.activeVersionsCount,

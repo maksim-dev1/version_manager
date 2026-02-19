@@ -9,6 +9,8 @@ import 'package:version_manager_flutter/features/application/presentation/view/u
 import 'package:version_manager_flutter/features/application/presentation/view/ui/edit_application_dialog.dart';
 import 'package:version_manager_flutter/features/api_key/presentation/view/regenerate_api_key_dialog.dart';
 import 'package:version_manager_flutter/features/application/presentation/view/ui/transfer_application_dialog.dart';
+import 'package:version_manager_flutter/features/statistics/presentation/statistics_provider.dart';
+import 'package:version_manager_flutter/features/statistics/presentation/view/statistics_screen.dart';
 import 'package:version_manager_flutter/features/version/presentation/view/versions_screen.dart';
 import 'package:version_manager_flutter/shared/widgets/animated_copy_icon_button.dart';
 
@@ -897,54 +899,9 @@ class _StatisticsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final padding = MediaQuery.sizeOf(context).width < 600 ? 16.0 : 24.0;
-
-    return ListView(
-      padding: EdgeInsets.all(padding),
-      children: [
-        _StatisticsEmptyState(),
-      ],
-    );
-  }
-}
-
-/// Заглушка — статистика ещё не собрана.
-class _StatisticsEmptyState extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.bar_chart_outlined,
-              size: 56,
-              color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Статистика пока недоступна',
-              style: textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Здесь будет отображаться статистика проверок версий: '
-              'количество запросов, платформы, география и устройства.',
-              textAlign: TextAlign.center,
-              style: textTheme.bodyMedium?.copyWith(
-                color: colorScheme.onSurfaceVariant,
-              ),
-            ),
-          ],
-        ),
-      ),
+    return StatisticsProvider(
+      applicationId: application.id!,
+      child: StatisticsScreen(application: application),
     );
   }
 }

@@ -19,7 +19,7 @@ abstract class VersionAdoptionTimelineEntry
     required this.date,
     required this.versionNumber,
     required this.buildNumber,
-    required this.checkCount,
+    required this.userCount,
     required this.percentage,
   });
 
@@ -27,7 +27,7 @@ abstract class VersionAdoptionTimelineEntry
     required DateTime date,
     required String versionNumber,
     required int buildNumber,
-    required int checkCount,
+    required int userCount,
     required double percentage,
   }) = _VersionAdoptionTimelineEntryImpl;
 
@@ -38,7 +38,7 @@ abstract class VersionAdoptionTimelineEntry
       date: _i1.DateTimeJsonExtension.fromJson(jsonSerialization['date']),
       versionNumber: jsonSerialization['versionNumber'] as String,
       buildNumber: jsonSerialization['buildNumber'] as int,
-      checkCount: jsonSerialization['checkCount'] as int,
+      userCount: jsonSerialization['userCount'] as int,
       percentage: (jsonSerialization['percentage'] as num).toDouble(),
     );
   }
@@ -52,10 +52,10 @@ abstract class VersionAdoptionTimelineEntry
   /// Номер сборки
   int buildNumber;
 
-  /// Количество проверок этой версии в этот день
-  int checkCount;
+  /// Количество уникальных пользователей этой версии в этот день
+  int userCount;
 
-  /// Процент от общего числа проверок в этот день
+  /// Процент от общего числа пользователей в этот день
   double percentage;
 
   /// Returns a shallow copy of this [VersionAdoptionTimelineEntry]
@@ -65,7 +65,7 @@ abstract class VersionAdoptionTimelineEntry
     DateTime? date,
     String? versionNumber,
     int? buildNumber,
-    int? checkCount,
+    int? userCount,
     double? percentage,
   });
   @override
@@ -75,7 +75,7 @@ abstract class VersionAdoptionTimelineEntry
       'date': date.toJson(),
       'versionNumber': versionNumber,
       'buildNumber': buildNumber,
-      'checkCount': checkCount,
+      'userCount': userCount,
       'percentage': percentage,
     };
   }
@@ -87,7 +87,7 @@ abstract class VersionAdoptionTimelineEntry
       'date': date.toJson(),
       'versionNumber': versionNumber,
       'buildNumber': buildNumber,
-      'checkCount': checkCount,
+      'userCount': userCount,
       'percentage': percentage,
     };
   }
@@ -103,13 +103,13 @@ class _VersionAdoptionTimelineEntryImpl extends VersionAdoptionTimelineEntry {
     required DateTime date,
     required String versionNumber,
     required int buildNumber,
-    required int checkCount,
+    required int userCount,
     required double percentage,
   }) : super._(
          date: date,
          versionNumber: versionNumber,
          buildNumber: buildNumber,
-         checkCount: checkCount,
+         userCount: userCount,
          percentage: percentage,
        );
 
@@ -121,14 +121,14 @@ class _VersionAdoptionTimelineEntryImpl extends VersionAdoptionTimelineEntry {
     DateTime? date,
     String? versionNumber,
     int? buildNumber,
-    int? checkCount,
+    int? userCount,
     double? percentage,
   }) {
     return VersionAdoptionTimelineEntry(
       date: date ?? this.date,
       versionNumber: versionNumber ?? this.versionNumber,
       buildNumber: buildNumber ?? this.buildNumber,
-      checkCount: checkCount ?? this.checkCount,
+      userCount: userCount ?? this.userCount,
       percentage: percentage ?? this.percentage,
     );
   }

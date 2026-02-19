@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:version_manager_client/version_manager_client.dart';
 import 'package:version_manager_flutter/features/version/presentation/bloc/version_bloc.dart';
 import 'package:version_manager_flutter/shared/services/app_notification.dart';
+import 'package:version_manager_flutter/shared/widgets/user_visible_field_banner.dart';
 
 /// Карточка версии в списке.
 class VersionCard extends StatelessWidget {
@@ -183,14 +184,15 @@ class VersionCard extends StatelessWidget {
             // ── Мобильные действия ──
             if (isCompact) ...[
               const SizedBox(height: 12),
-              Row(
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
                 children: [
                   if (!version.isLatest) ...[
                     _BlockToggleButton(
                       version: version,
                       applicationId: applicationId,
                     ),
-                    const SizedBox(width: 8),
                     OutlinedButton.icon(
                       onPressed: onRecommendation,
                       icon: const Icon(
@@ -203,7 +205,6 @@ class VersionCard extends StatelessWidget {
                         visualDensity: VisualDensity.compact,
                       ),
                     ),
-                    const SizedBox(width: 8),
                   ],
                   OutlinedButton.icon(
                     onPressed: onEdit,
@@ -217,13 +218,13 @@ class VersionCard extends StatelessWidget {
                       visualDensity: VisualDensity.compact,
                     ),
                   ),
-                  if (!version.isLatest) ...[
-                    const SizedBox(width: 8),
+                  if (!version.isLatest)
                     OutlinedButton.icon(
                       onPressed: onDelete,
                       icon: const Icon(
                         Icons.delete_forever,
                         size: 16,
+                        color: Colors.red,
                         semanticLabel: 'Удалить',
                       ),
                       label: const Text(
@@ -235,7 +236,6 @@ class VersionCard extends StatelessWidget {
                         visualDensity: VisualDensity.compact,
                       ),
                     ),
-                  ],
                 ],
               ),
             ],
@@ -386,7 +386,7 @@ class _BlockToggleButton extends StatelessWidget {
           ],
         ),
         content: ConstrainedBox(
-          constraints: const BoxConstraints(minWidth: 480, maxWidth: 480),
+          constraints: const BoxConstraints(maxWidth: 480),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -396,6 +396,11 @@ class _BlockToggleButton extends StatelessWidget {
                 'Укажите причину блокировки.',
               ),
               const SizedBox(height: 16),
+              const UserVisibleFieldBanner(
+                message:
+                    'Причина блокировки будет показана пользователям при попытке запустить эту версию',
+              ),
+              const SizedBox(height: 10),
               TextField(
                 controller: controller,
                 decoration: const InputDecoration(

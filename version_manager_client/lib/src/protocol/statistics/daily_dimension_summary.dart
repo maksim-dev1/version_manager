@@ -36,8 +36,8 @@ abstract class DailyDimensionSummary implements _i1.SerializableModel {
     required this.dimensionType,
     required this.dimensionValue,
     required this.platform,
-    int? checkCount,
-  }) : checkCount = checkCount ?? 0;
+    int? userCount,
+  }) : userCount = userCount ?? 0;
 
   factory DailyDimensionSummary({
     _i1.UuidValue? id,
@@ -47,7 +47,7 @@ abstract class DailyDimensionSummary implements _i1.SerializableModel {
     required String dimensionType,
     required String dimensionValue,
     required _i3.PlatformType platform,
-    int? checkCount,
+    int? userCount,
   }) = _DailyDimensionSummaryImpl;
 
   factory DailyDimensionSummary.fromJson(
@@ -71,7 +71,7 @@ abstract class DailyDimensionSummary implements _i1.SerializableModel {
       platform: _i3.PlatformType.fromJson(
         (jsonSerialization['platform'] as String),
       ),
-      checkCount: jsonSerialization['checkCount'] as int?,
+      userCount: jsonSerialization['userCount'] as int?,
     );
   }
 
@@ -99,7 +99,7 @@ abstract class DailyDimensionSummary implements _i1.SerializableModel {
   _i3.PlatformType platform;
 
   /// Количество проверок
-  int checkCount;
+  int userCount;
 
   /// Returns a shallow copy of this [DailyDimensionSummary]
   /// with some or all fields replaced by the given arguments.
@@ -112,7 +112,7 @@ abstract class DailyDimensionSummary implements _i1.SerializableModel {
     String? dimensionType,
     String? dimensionValue,
     _i3.PlatformType? platform,
-    int? checkCount,
+    int? userCount,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -125,7 +125,7 @@ abstract class DailyDimensionSummary implements _i1.SerializableModel {
       'dimensionType': dimensionType,
       'dimensionValue': dimensionValue,
       'platform': platform.toJson(),
-      'checkCount': checkCount,
+      'userCount': userCount,
     };
   }
 
@@ -146,7 +146,7 @@ class _DailyDimensionSummaryImpl extends DailyDimensionSummary {
     required String dimensionType,
     required String dimensionValue,
     required _i3.PlatformType platform,
-    int? checkCount,
+    int? userCount,
   }) : super._(
          id: id,
          applicationId: applicationId,
@@ -155,7 +155,7 @@ class _DailyDimensionSummaryImpl extends DailyDimensionSummary {
          dimensionType: dimensionType,
          dimensionValue: dimensionValue,
          platform: platform,
-         checkCount: checkCount,
+         userCount: userCount,
        );
 
   /// Returns a shallow copy of this [DailyDimensionSummary]
@@ -170,7 +170,7 @@ class _DailyDimensionSummaryImpl extends DailyDimensionSummary {
     String? dimensionType,
     String? dimensionValue,
     _i3.PlatformType? platform,
-    int? checkCount,
+    int? userCount,
   }) {
     return DailyDimensionSummary(
       id: id is _i1.UuidValue? ? id : this.id,
@@ -182,7 +182,7 @@ class _DailyDimensionSummaryImpl extends DailyDimensionSummary {
       dimensionType: dimensionType ?? this.dimensionType,
       dimensionValue: dimensionValue ?? this.dimensionValue,
       platform: platform ?? this.platform,
-      checkCount: checkCount ?? this.checkCount,
+      userCount: userCount ?? this.userCount,
     );
   }
 }

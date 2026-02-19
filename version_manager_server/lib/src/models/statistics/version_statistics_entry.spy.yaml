@@ -7,9 +7,9 @@ fields:
   versionNumber: String
   ### Номер сборки
   buildNumber: int
-  ### Количество проверок (за период)
-  checkCount: int
-  ### Процент от общего числа проверок
+  ### Количество уникальных пользователей (за период)
+  userCount: int
+  ### Процент от общего числа пользователей
   percentage: double
   ### Заблокирована ли версия
   isBlocked: bool

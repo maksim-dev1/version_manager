@@ -18,7 +18,7 @@ class TerminateAllDialog extends StatelessWidget {
         ],
       ),
       content: ConstrainedBox(
-        constraints: const BoxConstraints(minWidth: 480, maxWidth: 480),
+        constraints: const BoxConstraints(maxWidth: 480),
         child: const Text(
           'Все сессии кроме текущей будут завершены. '
           'Вам потребуется заново войти на других устройствах.',

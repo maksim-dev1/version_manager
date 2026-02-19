@@ -517,11 +517,21 @@ class AppEndpoint extends LoggedInEndpoint {
       );
     }
 
-    // Отправляем email с кодом
-    await _emailService.sendVerificationEmail(
-      ownerEmail,
-      result.code!.codeHash,
+    // Отправляем email с кодом подтверждения регенерации API ключа
+    final plainCode = result.code!.codeHash;
+    await _emailService.sendNotification(
+      email: ownerEmail,
+      icon: '🔑',
       appName: app.name,
+      title: 'Подтверждение регенерации API ключа',
+      message:
+          'Поступил запрос на регенерацию API ключа для приложения «${app.name}».\n\n'
+          'Ваш код подтверждения: $plainCode\n\n'
+          'Код действует 10 минут. Если вы не запрашивали регенерацию ключа — '
+          'проигнорируйте это письмо.',
+      infoMessage:
+          'После регенерации старый API ключ станет недействительным. '
+          'Все приложения, использующие старый ключ, потеряют доступ к сервису.',
     );
 
     session.log(
