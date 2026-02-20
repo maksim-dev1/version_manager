@@ -48,13 +48,15 @@ class StatisticsOverviewCards extends StatelessWidget {
             childAspectRatio: 1.3,
             children: tiles.map((t) => _TileCard(tile: t)).toList(),
           )
-        : Row(
-            children: [
-              for (int i = 0; i < tiles.length; i++) ...[
-                if (i > 0) const SizedBox(width: 8),
-                Expanded(child: _TileCard(tile: tiles[i])),
+        : IntrinsicHeight(
+            child: Row(
+              children: [
+                for (int i = 0; i < tiles.length; i++) ...[
+                  if (i > 0) const SizedBox(width: 8),
+                  Expanded(child: _TileCard(tile: tiles[i])),
+                ],
               ],
-            ],
+            ),
           );
 
     return grid;
@@ -90,6 +92,7 @@ class _TileCard extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               width: 30,
@@ -100,7 +103,7 @@ class _TileCard extends StatelessWidget {
               ),
               child: Icon(tile.icon, size: 16, color: tile.color),
             ),
-            const Spacer(),
+            const Flexible(child: SizedBox(height: 12)),
             Text(
               tile.value,
               style: textTheme.headlineSmall?.copyWith(
