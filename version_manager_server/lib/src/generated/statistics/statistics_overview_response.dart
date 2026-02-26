@@ -14,8 +14,8 @@ import 'package:serverpod/serverpod.dart' as _i1;
 
 /// Общая статистика приложения — основные метрики.
 ///
-/// Все метрики отражают количество уникальных пользователей
-/// (по анонимному device fingerprint).
+/// Содержит как уникальных пользователей (по IDFV / App Instance ID),
+/// так и общее количество запросов (входов).
 abstract class StatisticsOverviewResponse
     implements _i1.SerializableModel, _i1.ProtocolSerialization {
   StatisticsOverviewResponse._({
@@ -25,6 +25,11 @@ abstract class StatisticsOverviewResponse
     required this.monthlyUsers,
     required this.totalUsersInPeriod,
     required this.newUsersInPeriod,
+    required this.totalChecks,
+    required this.dailyChecks,
+    required this.weeklyChecks,
+    required this.monthlyChecks,
+    required this.totalChecksInPeriod,
     required this.blockedVersionsCount,
     required this.activeVersionsCount,
     this.avgProcessingTimeMs,
@@ -37,6 +42,11 @@ abstract class StatisticsOverviewResponse
     required int monthlyUsers,
     required int totalUsersInPeriod,
     required int newUsersInPeriod,
+    required int totalChecks,
+    required int dailyChecks,
+    required int weeklyChecks,
+    required int monthlyChecks,
+    required int totalChecksInPeriod,
     required int blockedVersionsCount,
     required int activeVersionsCount,
     int? avgProcessingTimeMs,
@@ -52,12 +62,18 @@ abstract class StatisticsOverviewResponse
       monthlyUsers: jsonSerialization['monthlyUsers'] as int,
       totalUsersInPeriod: jsonSerialization['totalUsersInPeriod'] as int,
       newUsersInPeriod: jsonSerialization['newUsersInPeriod'] as int,
+      totalChecks: jsonSerialization['totalChecks'] as int,
+      dailyChecks: jsonSerialization['dailyChecks'] as int,
+      weeklyChecks: jsonSerialization['weeklyChecks'] as int,
+      monthlyChecks: jsonSerialization['monthlyChecks'] as int,
+      totalChecksInPeriod: jsonSerialization['totalChecksInPeriod'] as int,
       blockedVersionsCount: jsonSerialization['blockedVersionsCount'] as int,
       activeVersionsCount: jsonSerialization['activeVersionsCount'] as int,
       avgProcessingTimeMs: jsonSerialization['avgProcessingTimeMs'] as int?,
     );
   }
 
+  /// ─── Уникальные пользователи ───
   /// Уникальных пользователей за всё время
   int totalUsers;
 
@@ -76,6 +92,23 @@ abstract class StatisticsOverviewResponse
   /// Новых пользователей за выбранный период
   int newUsersInPeriod;
 
+  /// ─── Общее количество запросов (входов) ───
+  /// Всего запросов за всё время
+  int totalChecks;
+
+  /// Запросов за последние 24 часа
+  int dailyChecks;
+
+  /// Запросов за последние 7 дней
+  int weeklyChecks;
+
+  /// Запросов за последние 30 дней
+  int monthlyChecks;
+
+  /// Запросов за выбранный период
+  int totalChecksInPeriod;
+
+  /// ─── Прочее ───
   /// Количество заблокированных версий
   int blockedVersionsCount;
 
@@ -95,6 +128,11 @@ abstract class StatisticsOverviewResponse
     int? monthlyUsers,
     int? totalUsersInPeriod,
     int? newUsersInPeriod,
+    int? totalChecks,
+    int? dailyChecks,
+    int? weeklyChecks,
+    int? monthlyChecks,
+    int? totalChecksInPeriod,
     int? blockedVersionsCount,
     int? activeVersionsCount,
     int? avgProcessingTimeMs,
@@ -109,6 +147,11 @@ abstract class StatisticsOverviewResponse
       'monthlyUsers': monthlyUsers,
       'totalUsersInPeriod': totalUsersInPeriod,
       'newUsersInPeriod': newUsersInPeriod,
+      'totalChecks': totalChecks,
+      'dailyChecks': dailyChecks,
+      'weeklyChecks': weeklyChecks,
+      'monthlyChecks': monthlyChecks,
+      'totalChecksInPeriod': totalChecksInPeriod,
       'blockedVersionsCount': blockedVersionsCount,
       'activeVersionsCount': activeVersionsCount,
       if (avgProcessingTimeMs != null)
@@ -126,6 +169,11 @@ abstract class StatisticsOverviewResponse
       'monthlyUsers': monthlyUsers,
       'totalUsersInPeriod': totalUsersInPeriod,
       'newUsersInPeriod': newUsersInPeriod,
+      'totalChecks': totalChecks,
+      'dailyChecks': dailyChecks,
+      'weeklyChecks': weeklyChecks,
+      'monthlyChecks': monthlyChecks,
+      'totalChecksInPeriod': totalChecksInPeriod,
       'blockedVersionsCount': blockedVersionsCount,
       'activeVersionsCount': activeVersionsCount,
       if (avgProcessingTimeMs != null)
@@ -149,6 +197,11 @@ class _StatisticsOverviewResponseImpl extends StatisticsOverviewResponse {
     required int monthlyUsers,
     required int totalUsersInPeriod,
     required int newUsersInPeriod,
+    required int totalChecks,
+    required int dailyChecks,
+    required int weeklyChecks,
+    required int monthlyChecks,
+    required int totalChecksInPeriod,
     required int blockedVersionsCount,
     required int activeVersionsCount,
     int? avgProcessingTimeMs,
@@ -159,6 +212,11 @@ class _StatisticsOverviewResponseImpl extends StatisticsOverviewResponse {
          monthlyUsers: monthlyUsers,
          totalUsersInPeriod: totalUsersInPeriod,
          newUsersInPeriod: newUsersInPeriod,
+         totalChecks: totalChecks,
+         dailyChecks: dailyChecks,
+         weeklyChecks: weeklyChecks,
+         monthlyChecks: monthlyChecks,
+         totalChecksInPeriod: totalChecksInPeriod,
          blockedVersionsCount: blockedVersionsCount,
          activeVersionsCount: activeVersionsCount,
          avgProcessingTimeMs: avgProcessingTimeMs,
@@ -175,6 +233,11 @@ class _StatisticsOverviewResponseImpl extends StatisticsOverviewResponse {
     int? monthlyUsers,
     int? totalUsersInPeriod,
     int? newUsersInPeriod,
+    int? totalChecks,
+    int? dailyChecks,
+    int? weeklyChecks,
+    int? monthlyChecks,
+    int? totalChecksInPeriod,
     int? blockedVersionsCount,
     int? activeVersionsCount,
     Object? avgProcessingTimeMs = _Undefined,
@@ -186,6 +249,11 @@ class _StatisticsOverviewResponseImpl extends StatisticsOverviewResponse {
       monthlyUsers: monthlyUsers ?? this.monthlyUsers,
       totalUsersInPeriod: totalUsersInPeriod ?? this.totalUsersInPeriod,
       newUsersInPeriod: newUsersInPeriod ?? this.newUsersInPeriod,
+      totalChecks: totalChecks ?? this.totalChecks,
+      dailyChecks: dailyChecks ?? this.dailyChecks,
+      weeklyChecks: weeklyChecks ?? this.weeklyChecks,
+      monthlyChecks: monthlyChecks ?? this.monthlyChecks,
+      totalChecksInPeriod: totalChecksInPeriod ?? this.totalChecksInPeriod,
       blockedVersionsCount: blockedVersionsCount ?? this.blockedVersionsCount,
       activeVersionsCount: activeVersionsCount ?? this.activeVersionsCount,
       avgProcessingTimeMs: avgProcessingTimeMs is int?

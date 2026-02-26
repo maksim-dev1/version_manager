@@ -36,6 +36,7 @@ class VersionStatisticsChart extends StatelessWidget {
 
     final maxCount = display.first.userCount;
     final hasBlocked = display.any((v) => v.isBlocked);
+    final hasUnregistered = display.any((v) => !v.isRegistered);
 
     return Card(
       child: Padding(
@@ -129,6 +130,31 @@ class VersionStatisticsChart extends StatelessWidget {
                 ],
               ),
             ],
+            if (hasUnregistered) ...[
+              const SizedBox(height: 6),
+              Row(
+                children: [
+                  Container(
+                    width: 12,
+                    height: 12,
+                    decoration: BoxDecoration(
+                      color: colorScheme.tertiaryContainer.withValues(
+                        alpha: 0.6,
+                      ),
+                      borderRadius: BorderRadius.circular(3),
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    'Версия не добавлена в список — проверки приходят, но версия не зарегистрирована',
+                    style: textTheme.bodySmall?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
+                      fontSize: 11,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ],
         ),
       ),
@@ -159,6 +185,8 @@ class _VersionRow extends StatelessWidget {
     final isTop = rank == 0;
     final barColor = entry.isBlocked
         ? colorScheme.error
+        : !entry.isRegistered
+        ? colorScheme.tertiary.withValues(alpha: 0.7)
         : isTop
         ? colorScheme.primary
         : colorScheme.primary.withValues(alpha: 0.55 + 0.15 * (1 - rank / 15));
@@ -185,6 +213,38 @@ class _VersionRow extends StatelessWidget {
                         : colorScheme.onSurface,
                   ),
                 ),
+                if (!entry.isRegistered) ...[
+                  const SizedBox(width: 6),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: colorScheme.tertiaryContainer.withValues(
+                        alpha: 0.6,
+                      ),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      'не добавлена',
+                      style: textTheme.labelSmall?.copyWith(
+                        color: colorScheme.onTertiaryContainer,
+                        fontSize: 9,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    'build ${entry.buildNumber}',
+                    style: textTheme.labelSmall?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
+                      fontSize: 9,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
               ],
             ),
             const Spacer(),

@@ -12,31 +12,31 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
 
-/// Данные тепловой карты — активность по часам и дням недели.
+/// Данные тепловой карты — активность по часам и датам.
 abstract class HeatmapEntry
     implements _i1.SerializableModel, _i1.ProtocolSerialization {
   HeatmapEntry._({
-    required this.dayOfWeek,
+    required this.date,
     required this.hour,
     required this.count,
   });
 
   factory HeatmapEntry({
-    required int dayOfWeek,
+    required DateTime date,
     required int hour,
     required int count,
   }) = _HeatmapEntryImpl;
 
   factory HeatmapEntry.fromJson(Map<String, dynamic> jsonSerialization) {
     return HeatmapEntry(
-      dayOfWeek: jsonSerialization['dayOfWeek'] as int,
+      date: _i1.DateTimeJsonExtension.fromJson(jsonSerialization['date']),
       hour: jsonSerialization['hour'] as int,
       count: jsonSerialization['count'] as int,
     );
   }
 
-  /// День недели (1=Пн, 7=Вс)
-  int dayOfWeek;
+  /// Дата (YYYY-MM-DD, UTC)
+  DateTime date;
 
   /// Час дня (0-23)
   int hour;
@@ -48,7 +48,7 @@ abstract class HeatmapEntry
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
   HeatmapEntry copyWith({
-    int? dayOfWeek,
+    DateTime? date,
     int? hour,
     int? count,
   });
@@ -56,7 +56,7 @@ abstract class HeatmapEntry
   Map<String, dynamic> toJson() {
     return {
       '__className__': 'HeatmapEntry',
-      'dayOfWeek': dayOfWeek,
+      'date': date.toJson(),
       'hour': hour,
       'count': count,
     };
@@ -66,7 +66,7 @@ abstract class HeatmapEntry
   Map<String, dynamic> toJsonForProtocol() {
     return {
       '__className__': 'HeatmapEntry',
-      'dayOfWeek': dayOfWeek,
+      'date': date.toJson(),
       'hour': hour,
       'count': count,
     };
@@ -80,11 +80,11 @@ abstract class HeatmapEntry
 
 class _HeatmapEntryImpl extends HeatmapEntry {
   _HeatmapEntryImpl({
-    required int dayOfWeek,
+    required DateTime date,
     required int hour,
     required int count,
   }) : super._(
-         dayOfWeek: dayOfWeek,
+         date: date,
          hour: hour,
          count: count,
        );
@@ -94,12 +94,12 @@ class _HeatmapEntryImpl extends HeatmapEntry {
   @_i1.useResult
   @override
   HeatmapEntry copyWith({
-    int? dayOfWeek,
+    DateTime? date,
     int? hour,
     int? count,
   }) {
     return HeatmapEntry(
-      dayOfWeek: dayOfWeek ?? this.dayOfWeek,
+      date: date ?? this.date,
       hour: hour ?? this.hour,
       count: count ?? this.count,
     );

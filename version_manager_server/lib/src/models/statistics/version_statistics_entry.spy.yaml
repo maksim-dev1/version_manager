@@ -1,8 +1,8 @@
 ### Статистика по одной версии приложения.
 class: VersionStatisticsEntry
 fields:
-  ### ID версии
-  versionId: UuidValue
+  ### ID версии (null, если версия не добавлена в список)
+  versionId: UuidValue?
   ### Номер версии
   versionNumber: String
   ### Номер сборки
@@ -13,6 +13,8 @@ fields:
   percentage: double
   ### Заблокирована ли версия
   isBlocked: bool
+  ### Версия добавлена в список версий
+  isRegistered: bool
   ### Дата создания версии
   createdAt: DateTime
   ### Возраст версии в днях (дней с момента создания)

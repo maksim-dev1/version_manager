@@ -38,15 +38,15 @@ class CumulativeGrowthChart extends StatelessWidget {
 
     for (int i = 0; i < entries.length; i++) {
       final e = entries[i];
-      checksSpots.add(FlSpot(i.toDouble(), e.totalUsers.toDouble()));
+      checksSpots.add(FlSpot(i.toDouble(), e.totalChecks.toDouble()));
       usersSpots.add(FlSpot(i.toDouble(), e.totalUniqueUsers.toDouble()));
       dates[i] =
           '${e.date.day.toString().padLeft(2, '0')}.${e.date.month.toString().padLeft(2, '0')}';
     }
 
     final maxY = entries.fold<int>(0, (m, e) {
-      final localMax = e.totalUsers > e.totalUniqueUsers
-          ? e.totalUsers
+      final localMax = e.totalChecks > e.totalUniqueUsers
+          ? e.totalChecks
           : e.totalUniqueUsers;
       return localMax > m ? localMax : m;
     });
@@ -77,8 +77,14 @@ class CumulativeGrowthChart extends StatelessWidget {
             Wrap(
               spacing: 16,
               children: [
-                _LegendItem(color: colorScheme.primary, label: 'Пользователи'),
-                _LegendItem(color: colorScheme.tertiary, label: 'Уникальные'),
+                _LegendItem(
+                  color: colorScheme.primary,
+                  label: 'Всего запросов',
+                ),
+                _LegendItem(
+                  color: colorScheme.tertiary,
+                  label: 'Уникальных пользователей',
+                ),
               ],
             ),
             const SizedBox(height: 16),
@@ -182,8 +188,8 @@ class CumulativeGrowthChart extends StatelessWidget {
                       getTooltipColor: (_) => colorScheme.inverseSurface,
                       getTooltipItems: (spots) => spots.map((spot) {
                         final label = spot.barIndex == 0
-                            ? 'Пользователи'
-                            : 'Уникальные';
+                            ? 'Запросов'
+                            : 'Уникальных';
                         return LineTooltipItem(
                           '$label: ${spot.y.toInt()}',
                           TextStyle(

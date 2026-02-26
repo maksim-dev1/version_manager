@@ -28,6 +28,8 @@ dependencies:
   cupertino_icons: ^1.0.5
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   version_manager_client:
     path: ../version_manager_client
   serverpod_flutter: 3.2.3

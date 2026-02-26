@@ -70,14 +70,6 @@ class DeleteVersionDialog extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Будут удалены все связанные '
-                    'логи и данные статистики.',
-                    style: textTheme.bodyMedium?.copyWith(
-                      color: colorScheme.onErrorContainer,
-                    ),
-                  ),
                   if (version.recommendedVersionNumber != null) ...[
                     const SizedBox(height: 4),
                     Text(
@@ -92,6 +84,43 @@ class DeleteVersionDialog extends StatelessWidget {
                 ],
               ),
             ),
+            if (version.isLatest) ...[
+              const SizedBox(height: 12),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: colorScheme.errorContainer.withValues(alpha: 0.5),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: colorScheme.error.withValues(alpha: 0.4),
+                  ),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Icons.new_releases_rounded,
+                      size: 18,
+                      color: colorScheme.error,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Это актуальная версия приложения. '
+                        'После удаления пользователи не смогут '
+                        'получать информацию о последней версии '
+                        'до тех пор, пока не будет добавлена новая.',
+                        style: textTheme.bodySmall?.copyWith(
+                          color: colorScheme.onErrorContainer,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
             if (version.activeUsersCount > 0) ...[
               const SizedBox(height: 12),
               Container(
@@ -111,8 +140,8 @@ class DeleteVersionDialog extends StatelessWidget {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        'У этой версии ${version.activeUsersCount} '
-                        '${_pluralUsers(version.activeUsersCount)}.',
+                        'На этой версии ${version.activeUsersCount} '
+                        '${_pluralUsers(version.activeUsersCount)} (уникальных).',
                         style: textTheme.bodySmall?.copyWith(
                           color: colorScheme.tertiary,
                         ),

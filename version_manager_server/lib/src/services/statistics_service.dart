@@ -23,8 +23,10 @@ class StatisticsService {
 
   /// Возвращает основные метрики приложения.
   ///
-  /// Включает количество запросов (checks), уникальных пользователей
-  /// (по IDFV / App Instance ID), версии и производительность.
+  /// Включает:
+  /// — Уникальных пользователей (DAU/WAU/MAU по IDFV / App Instance ID)
+  /// — Общее количество запросов (входов) за разные периоды
+  /// — Версии и производительность
   Future<StatisticsOverviewResponse> getOverview(
     Session session, {
     required StatisticsFilter filter,
@@ -56,21 +58,52 @@ class StatisticsService {
       where: (t) => t.applicationId.equals(appId) & (t.lastSeenAt > day30),
     );
 
-    // Уникальных пользователей за выбранный период
-    final periodSummaries = await _getFilteredSummaries(session, filter);
-    final totalUsersInPeriod = periodSummaries.fold<int>(
-      0,
-      (s, r) => s + r.uniqueDevices,
-    );
-
+    // Уникальных пользователей за выбранный период (из AppInstance)
     final dateFrom = filter.dateFrom ?? now.subtract(const Duration(days: 30));
     final dateTo = filter.dateTo ?? now;
+    final totalUsersInPeriod = await AppInstance.db.count(
+      session,
+      where: (t) =>
+          t.applicationId.equals(appId) &
+          (t.lastSeenAt >= dateFrom) &
+          (t.lastSeenAt <= dateTo),
+    );
+
     final newUsersInPeriod = await AppInstance.db.count(
       session,
       where: (t) =>
           t.applicationId.equals(appId) &
           (t.firstSeenAt >= dateFrom) &
           (t.firstSeenAt <= dateTo),
+    );
+
+    // ---- Общее количество запросов (из DailyCheckSummary) ----
+    final allSummaries = await DailyCheckSummary.db.find(
+      session,
+      where: (t) => t.applicationId.equals(appId),
+    );
+
+    final totalChecks = allSummaries.fold<int>(
+      0,
+      (s, r) => s + r.totalChecks,
+    );
+
+    final dailyChecks = allSummaries
+        .where((s) => s.date.isAfter(day1))
+        .fold<int>(0, (s, r) => s + r.totalChecks);
+
+    final weeklyChecks = allSummaries
+        .where((s) => s.date.isAfter(day7))
+        .fold<int>(0, (s, r) => s + r.totalChecks);
+
+    final monthlyChecks = allSummaries
+        .where((s) => s.date.isAfter(day30))
+        .fold<int>(0, (s, r) => s + r.totalChecks);
+
+    final periodSummaries = await _getFilteredSummaries(session, filter);
+    final totalChecksInPeriod = periodSummaries.fold<int>(
+      0,
+      (s, r) => s + r.totalChecks,
     );
 
     // ---- Версии ----
@@ -109,6 +142,11 @@ class StatisticsService {
       monthlyUsers: monthlyUsers,
       totalUsersInPeriod: totalUsersInPeriod,
       newUsersInPeriod: newUsersInPeriod,
+      totalChecks: totalChecks,
+      dailyChecks: dailyChecks,
+      weeklyChecks: weeklyChecks,
+      monthlyChecks: monthlyChecks,
+      totalChecksInPeriod: totalChecksInPeriod,
       blockedVersionsCount: blockedVersionsCount,
       activeVersionsCount: activeVersionsCount,
       avgProcessingTimeMs: avgProcessingTimeMs,
@@ -122,9 +160,10 @@ class StatisticsService {
   /// Возвращает данные активности по дням за период.
   ///
   /// Включает:
-  /// — Количество проверок по дням (из DailyCheckSummary)
-  /// — Уникальных/новых пользователей по дням (из DailyCheckSummary.uniqueDevices/newDevices)
-  /// — Кумулятивный рост пользовательской базы (из AppInstance.firstSeenAt)
+  /// — Количество запросов (входов) по дням (из DailyCheckSummary.totalChecks)
+  /// — Уникальных пользователей по дням (из DailyCheckSummary.uniqueDevices)
+  /// — Новых пользователей по дням (из DailyCheckSummary.newDevices)
+  /// — Кумулятивный рост: накопленные запросы и уникальные пользователи
   Future<DailyActiveUsersResponse> getDailyActiveUsers(
     Session session, {
     required StatisticsFilter filter,
@@ -137,14 +176,14 @@ class StatisticsService {
     // Получаем summaries за период
     final summaries = await _getFilteredSummaries(session, filter);
 
-    // Группируем по дню: суммируем uniqueDevices, newDevices
-    final Map<String, int> dailyUsers = {};
+    // Группируем по дню: totalChecks, uniqueDevices, newDevices
+    final Map<String, int> dailyChecks = {};
     final Map<String, int> dailyUnique = {};
     final Map<String, int> dailyNew = {};
 
     for (final s in summaries) {
       final key = _dayKey(s.date);
-      dailyUsers[key] = (dailyUsers[key] ?? 0) + s.uniqueDevices;
+      dailyChecks[key] = (dailyChecks[key] ?? 0) + s.totalChecks;
       dailyUnique[key] = (dailyUnique[key] ?? 0) + s.uniqueDevices;
       dailyNew[key] = (dailyNew[key] ?? 0) + s.newDevices;
     }
@@ -159,8 +198,8 @@ class StatisticsService {
       entries.add(
         DailyActiveUsersEntry(
           date: current,
-          totalUsers: dailyUsers[key] ?? 0,
-          activeUsers: dailyUnique[key] ?? 0,
+          totalChecks: dailyChecks[key] ?? 0,
+          uniqueUsers: dailyUnique[key] ?? 0,
           newUsers: dailyNew[key] ?? 0,
         ),
       );
@@ -181,14 +220,14 @@ class StatisticsService {
       newUsersByDay[key] = (newUsersByDay[key] ?? 0) + 1;
     }
 
-    // Считаем пользователей ДО dateFrom для начальных значений кумулятива
+    // Считаем кумулятивы ДО dateFrom для начальных значений
     final allSummaries = await DailyCheckSummary.db.find(
       session,
       where: (t) => t.applicationId.equals(appId) & (t.date < dateFrom),
     );
-    int cumulativeUsersTotal = allSummaries.fold<int>(
+    int cumulativeChecksTotal = allSummaries.fold<int>(
       0,
-      (s, r) => s + r.uniqueDevices,
+      (s, r) => s + r.totalChecks,
     );
     int cumulativeUsers = instances
         .where((inst) => inst.firstSeenAt.isBefore(dateFrom))
@@ -199,12 +238,12 @@ class StatisticsService {
 
     while (!current.isAfter(end)) {
       final key = _dayKey(current);
-      cumulativeUsersTotal += dailyUsers[key] ?? 0;
+      cumulativeChecksTotal += dailyChecks[key] ?? 0;
       cumulativeUsers += newUsersByDay[key] ?? 0;
       cumulativeGrowth.add(
         CumulativeUsersEntry(
           date: current,
-          totalUsers: cumulativeUsersTotal,
+          totalChecks: cumulativeChecksTotal,
           totalUniqueUsers: cumulativeUsers,
         ),
       );
@@ -247,6 +286,9 @@ class StatisticsService {
       orderBy: (t) => t.buildNumber,
       orderDescending: true,
     );
+    final versionsByBuild = {
+      for (final v in versions) v.buildNumber: v,
+    };
 
     // ---- Пользователи по ТЕКУЩЕЙ версии (из AppInstance) ----
     // Берём только пользователей, которые были активны в выбранном периоде
@@ -269,6 +311,29 @@ class StatisticsService {
 
     final totalUsers = activeInstances.length;
 
+    // Подтягиваем метаданные для билдов, которых нет в списке версий
+    final unknownBuilds = usersByBuild.keys
+        .where((b) => !versionsByBuild.containsKey(b))
+        .toList();
+    final Map<int, String> unknownVersionNumbers = {};
+    final Map<int, DateTime> unknownCreatedAt = {};
+    if (unknownBuilds.isNotEmpty) {
+      final unknownSummaries = await DailyCheckSummary.db.find(
+        session,
+        where: (t) =>
+            t.applicationId.equals(appId) &
+            t.buildNumber.inSet(unknownBuilds.toSet()),
+        orderBy: (t) => t.date,
+      );
+      for (final s in unknownSummaries) {
+        unknownVersionNumbers.putIfAbsent(
+          s.buildNumber,
+          () => s.versionNumber,
+        );
+        unknownCreatedAt.putIfAbsent(s.buildNumber, () => s.date);
+      }
+    }
+
     // Формируем статистику по версиям
     final versionEntries = <VersionStatisticsEntry>[];
     int usersOnBlockedVersions = 0;
@@ -286,6 +351,7 @@ class StatisticsService {
           userCount: users,
           percentage: _round2(percentage),
           isBlocked: version.isBlocked,
+          isRegistered: true,
           createdAt: version.createdAt,
           ageDays: ageDays,
         ),
@@ -294,6 +360,29 @@ class StatisticsService {
       if (version.isBlocked) {
         usersOnBlockedVersions += users;
       }
+    }
+
+    // Добавляем версии, которых нет в списке версий
+    for (final build in unknownBuilds) {
+      final users = usersByBuild[build] ?? 0;
+      final percentage = totalUsers > 0 ? (users / totalUsers * 100) : 0.0;
+      final createdAt = unknownCreatedAt[build] ?? now;
+      final ageDays = now.difference(createdAt).inDays;
+      final versionNumber = unknownVersionNumbers[build] ?? 'unknown';
+
+      versionEntries.add(
+        VersionStatisticsEntry(
+          versionId: null,
+          versionNumber: versionNumber,
+          buildNumber: build,
+          userCount: users,
+          percentage: _round2(percentage),
+          isBlocked: false,
+          isRegistered: false,
+          createdAt: createdAt,
+          ageDays: ageDays,
+        ),
+      );
     }
 
     // Adoption rate последней версии
@@ -314,19 +403,26 @@ class StatisticsService {
     final adoptionTimeline = <VersionAdoptionTimelineEntry>[];
 
     // Группируем summaries по дню+buildNumber
-    final Map<String, Map<int, int>> dailyVersionUsers = {};
+    final Map<String, Map<int, ({int count, String version})>>
+    dailyVersionUsers = {};
     final Map<String, int> dailyAllUsers = {};
 
     for (final s in summaries) {
       final dayKey = _dayKey(s.date);
       dailyAllUsers[dayKey] = (dailyAllUsers[dayKey] ?? 0) + s.uniqueDevices;
-      dailyVersionUsers
-          .putIfAbsent(dayKey, () => {})
-          .update(
-            s.buildNumber,
-            (v) => v + s.uniqueDevices,
-            ifAbsent: () => s.uniqueDevices,
-          );
+      final versionMap = dailyVersionUsers.putIfAbsent(dayKey, () => {});
+      final existing = versionMap[s.buildNumber];
+      if (existing == null) {
+        versionMap[s.buildNumber] = (
+          count: s.uniqueDevices,
+          version: s.versionNumber,
+        );
+      } else {
+        versionMap[s.buildNumber] = (
+          count: existing.count + s.uniqueDevices,
+          version: existing.version,
+        );
+      }
     }
 
     // Формируем timeline для каждого дня
@@ -340,17 +436,13 @@ class StatisticsService {
 
       for (final entry in versionMap.entries) {
         final buildNumber = entry.key;
-        final users = entry.value;
-        final version = versions
-            .where(
-              (v) => v.buildNumber == buildNumber,
-            )
-            .firstOrNull;
+        final users = entry.value.count;
+        final versionNumber = entry.value.version;
 
         adoptionTimeline.add(
           VersionAdoptionTimelineEntry(
             date: current,
-            versionNumber: version?.versionNumber ?? 'unknown',
+            versionNumber: versionNumber,
             buildNumber: buildNumber,
             userCount: users,
             percentage: totalForDay > 0
@@ -442,7 +534,11 @@ class StatisticsService {
     final Map<String, PlatformType> modelPlatform = {};
 
     for (final d in modelDimensions) {
-      final key = '${d.platform.name}:${d.dimensionValue}';
+      final normalizedModel = _normalizeDeviceModel(
+        d.dimensionValue,
+        d.platform,
+      );
+      final key = '${d.platform.name}:$normalizedModel';
       modelUsers[key] = (modelUsers[key] ?? 0) + d.userCount;
       modelPlatform[key] = d.platform;
     }
@@ -521,41 +617,47 @@ class StatisticsService {
 
   /// Временная аналитика.
   ///
-  /// Тепловая карта активности (день недели × час).
+  /// Тепловая карта активности (дата × час).
   /// Данные из [DailyDimensionSummary] с dimensionType = 'hour'.
   Future<TimeAnalyticsResponse> getTimeAnalytics(
     Session session, {
     required StatisticsFilter filter,
   }) async {
+    final now = DateTime.now().toUtc();
+    final dateFrom = filter.dateFrom ?? now.subtract(const Duration(days: 30));
+    final dateTo = filter.dateTo ?? now;
+
     final hourDimensions = await _getFilteredDimensions(
       session,
       filter,
       dimensionType: 'hour',
     );
 
-    // Группируем по (dayOfWeek, hour)
-    // dayOfWeek вычисляем из даты в DailyDimensionSummary
+    // Группируем по (date, hour)
     final Map<String, int> heatmapCounts = {};
-
     for (final d in hourDimensions) {
-      final dayOfWeek = d.date.toUtc().weekday; // 1=Mon..7=Sun
+      final dateKey = _dayKey(d.date);
       final hour = int.tryParse(d.dimensionValue) ?? 0;
-      final key = '$dayOfWeek:$hour';
+      final key = '$dateKey:$hour';
       heatmapCounts[key] = (heatmapCounts[key] ?? 0) + d.userCount;
     }
 
     final heatmap = <HeatmapEntry>[];
-    for (int day = 1; day <= 7; day++) {
+    var current = DateTime.utc(dateFrom.year, dateFrom.month, dateFrom.day);
+    final end = DateTime.utc(dateTo.year, dateTo.month, dateTo.day);
+    while (!current.isAfter(end)) {
+      final dateKey = _dayKey(current);
       for (int hour = 0; hour < 24; hour++) {
-        final key = '$day:$hour';
+        final key = '$dateKey:$hour';
         heatmap.add(
           HeatmapEntry(
-            dayOfWeek: day,
+            date: current,
             hour: hour,
             count: heatmapCounts[key] ?? 0,
           ),
         );
       }
+      current = current.add(const Duration(days: 1));
     }
 
     return TimeAnalyticsResponse(
@@ -673,4 +775,60 @@ class StatisticsService {
   double _round2(double value) {
     return (value * 100).roundToDouble() / 100;
   }
+
+  /// Нормализует название модели устройства (например, iPhone17,5 → iPhone 16e).
+  String _normalizeDeviceModel(String raw, PlatformType platform) {
+    final trimmed = raw.trim();
+    if (trimmed.isEmpty) return raw;
+    if (platform == PlatformType.ios) {
+      return _iosDeviceName(trimmed);
+    }
+    return trimmed;
+  }
+
+  String _iosDeviceName(String identifier) {
+    final key = identifier.replaceAll(' ', '');
+    final mapped = _iosDeviceMap[key];
+    if (mapped != null) return mapped;
+    if (key.startsWith('iPhone')) return 'iPhone ($key)';
+    if (key.startsWith('iPad')) return 'iPad ($key)';
+    if (key.startsWith('iPod')) return 'iPod ($key)';
+    return identifier;
+  }
+
+  static const Map<String, String> _iosDeviceMap = {
+    // iPhone 16 line
+    'iPhone17,1': 'iPhone 16 Pro',
+    'iPhone17,2': 'iPhone 16 Pro Max',
+    'iPhone17,3': 'iPhone 16',
+    'iPhone17,4': 'iPhone 16 Plus',
+    'iPhone17,5': 'iPhone 16e',
+    // iPhone 15 line
+    'iPhone16,1': 'iPhone 15 Pro',
+    'iPhone16,2': 'iPhone 15 Pro Max',
+    'iPhone15,4': 'iPhone 15',
+    'iPhone15,5': 'iPhone 15 Plus',
+    // iPhone 14 line
+    'iPhone15,2': 'iPhone 14 Pro',
+    'iPhone15,3': 'iPhone 14 Pro Max',
+    'iPhone14,7': 'iPhone 14',
+    'iPhone14,8': 'iPhone 14 Plus',
+    // iPhone 13 line
+    'iPhone14,2': 'iPhone 13 Pro',
+    'iPhone14,3': 'iPhone 13 Pro Max',
+    'iPhone14,5': 'iPhone 13',
+    'iPhone14,4': 'iPhone 13 mini',
+    // iPhone 12 line
+    'iPhone13,1': 'iPhone 12 mini',
+    'iPhone13,2': 'iPhone 12',
+    'iPhone13,3': 'iPhone 12 Pro',
+    'iPhone13,4': 'iPhone 12 Pro Max',
+    // iPhone 11 line
+    'iPhone12,1': 'iPhone 11',
+    'iPhone12,3': 'iPhone 11 Pro',
+    'iPhone12,5': 'iPhone 11 Pro Max',
+    // iPhone SE
+    'iPhone14,6': 'iPhone SE (3rd gen)',
+    'iPhone12,8': 'iPhone SE (2nd gen)',
+  };
 }

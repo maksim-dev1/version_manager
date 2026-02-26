@@ -123,17 +123,21 @@ class VersionCard extends StatelessWidget {
                       version: version,
                       applicationId: applicationId,
                     ),
-                    IconButton(
-                      onPressed: onDelete,
-                      icon: const Icon(
-                        Icons.delete_forever,
-                        semanticLabel: 'Удалить версию',
-                      ),
-                      color: colorScheme.error,
-                      tooltip: 'Удалить',
-                      visualDensity: VisualDensity.compact,
-                    ),
                   ],
+                  IconButton(
+                    onPressed: onDelete,
+                    icon: const Icon(
+                      Icons.delete_forever,
+                      semanticLabel: 'Удалить версию',
+                    ),
+                    color: version.isLatest
+                        ? colorScheme.error.withValues(alpha: 0.55)
+                        : colorScheme.error,
+                    tooltip: version.isLatest
+                        ? 'Удалить (актуальная версия)'
+                        : 'Удалить',
+                    visualDensity: VisualDensity.compact,
+                  ),
                 ],
               ],
             ),
@@ -169,7 +173,7 @@ class VersionCard extends StatelessWidget {
                 const Icon(
                   Icons.people,
                   size: 14,
-                  semanticLabel: 'Активные пользователи',
+                  semanticLabel: 'Уникальные пользователи',
                 ),
                 const SizedBox(width: 4),
                 Text(
@@ -218,24 +222,33 @@ class VersionCard extends StatelessWidget {
                       visualDensity: VisualDensity.compact,
                     ),
                   ),
-                  if (!version.isLatest)
-                    OutlinedButton.icon(
-                      onPressed: onDelete,
-                      icon: const Icon(
-                        Icons.delete_forever,
-                        size: 16,
-                        color: Colors.red,
-                        semanticLabel: 'Удалить',
+                  OutlinedButton.icon(
+                    onPressed: onDelete,
+                    icon: Icon(
+                      Icons.delete_forever,
+                      size: 16,
+                      color: colorScheme.error.withValues(
+                        alpha: version.isLatest ? 0.55 : 1.0,
                       ),
-                      label: const Text(
-                        'Удалить',
-                        style: TextStyle(color: Colors.red),
-                      ),
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Colors.red),
-                        visualDensity: VisualDensity.compact,
+                      semanticLabel: 'Удалить',
+                    ),
+                    label: Text(
+                      'Удалить',
+                      style: TextStyle(
+                        color: colorScheme.error.withValues(
+                          alpha: version.isLatest ? 0.55 : 1.0,
+                        ),
                       ),
                     ),
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(
+                        color: colorScheme.error.withValues(
+                          alpha: version.isLatest ? 0.4 : 1.0,
+                        ),
+                      ),
+                      visualDensity: VisualDensity.compact,
+                    ),
+                  ),
                 ],
               ),
             ],

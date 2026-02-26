@@ -16,15 +16,15 @@ import 'package:serverpod_client/serverpod_client.dart' as _i1;
 abstract class DailyActiveUsersEntry implements _i1.SerializableModel {
   DailyActiveUsersEntry._({
     required this.date,
-    required this.totalUsers,
-    required this.activeUsers,
+    required this.totalChecks,
+    required this.uniqueUsers,
     required this.newUsers,
   });
 
   factory DailyActiveUsersEntry({
     required DateTime date,
-    required int totalUsers,
-    required int activeUsers,
+    required int totalChecks,
+    required int uniqueUsers,
     required int newUsers,
   }) = _DailyActiveUsersEntryImpl;
 
@@ -33,8 +33,8 @@ abstract class DailyActiveUsersEntry implements _i1.SerializableModel {
   ) {
     return DailyActiveUsersEntry(
       date: _i1.DateTimeJsonExtension.fromJson(jsonSerialization['date']),
-      totalUsers: jsonSerialization['totalUsers'] as int,
-      activeUsers: jsonSerialization['activeUsers'] as int,
+      totalChecks: jsonSerialization['totalChecks'] as int,
+      uniqueUsers: jsonSerialization['uniqueUsers'] as int,
       newUsers: jsonSerialization['newUsers'] as int,
     );
   }
@@ -42,11 +42,11 @@ abstract class DailyActiveUsersEntry implements _i1.SerializableModel {
   /// Дата (YYYY-MM-DD)
   DateTime date;
 
-  /// Общее количество уникальных пользователей за день
-  int totalUsers;
+  /// Общее количество запросов (входов) за день
+  int totalChecks;
 
-  /// Уникальных пользователей за день (по fingerprint)
-  int activeUsers;
+  /// Уникальных пользователей за день (по IDFV / App Instance ID)
+  int uniqueUsers;
 
   /// Новых пользователей за день
   int newUsers;
@@ -56,8 +56,8 @@ abstract class DailyActiveUsersEntry implements _i1.SerializableModel {
   @_i1.useResult
   DailyActiveUsersEntry copyWith({
     DateTime? date,
-    int? totalUsers,
-    int? activeUsers,
+    int? totalChecks,
+    int? uniqueUsers,
     int? newUsers,
   });
   @override
@@ -65,8 +65,8 @@ abstract class DailyActiveUsersEntry implements _i1.SerializableModel {
     return {
       '__className__': 'DailyActiveUsersEntry',
       'date': date.toJson(),
-      'totalUsers': totalUsers,
-      'activeUsers': activeUsers,
+      'totalChecks': totalChecks,
+      'uniqueUsers': uniqueUsers,
       'newUsers': newUsers,
     };
   }
@@ -80,13 +80,13 @@ abstract class DailyActiveUsersEntry implements _i1.SerializableModel {
 class _DailyActiveUsersEntryImpl extends DailyActiveUsersEntry {
   _DailyActiveUsersEntryImpl({
     required DateTime date,
-    required int totalUsers,
-    required int activeUsers,
+    required int totalChecks,
+    required int uniqueUsers,
     required int newUsers,
   }) : super._(
          date: date,
-         totalUsers: totalUsers,
-         activeUsers: activeUsers,
+         totalChecks: totalChecks,
+         uniqueUsers: uniqueUsers,
          newUsers: newUsers,
        );
 
@@ -96,14 +96,14 @@ class _DailyActiveUsersEntryImpl extends DailyActiveUsersEntry {
   @override
   DailyActiveUsersEntry copyWith({
     DateTime? date,
-    int? totalUsers,
-    int? activeUsers,
+    int? totalChecks,
+    int? uniqueUsers,
     int? newUsers,
   }) {
     return DailyActiveUsersEntry(
       date: date ?? this.date,
-      totalUsers: totalUsers ?? this.totalUsers,
-      activeUsers: activeUsers ?? this.activeUsers,
+      totalChecks: totalChecks ?? this.totalChecks,
+      uniqueUsers: uniqueUsers ?? this.uniqueUsers,
       newUsers: newUsers ?? this.newUsers,
     );
   }

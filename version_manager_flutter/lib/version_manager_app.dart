@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:version_manager_flutter/common/constants/storage_keys.dart';
@@ -47,6 +48,16 @@ class _VersionManagerAppState extends State<VersionManagerApp> {
       title: 'Version Manager',
       debugShowCheckedModeBanner: false,
       navigatorObservers: [SentryNavigatorObserver()],
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('ru'),
+        Locale('en'),
+      ],
+      locale: const Locale('ru'),
       theme: SnowTheme.light(),
       darkTheme: SnowTheme.dark(),
       themeMode: _themeMode,

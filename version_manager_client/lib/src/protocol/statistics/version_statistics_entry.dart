@@ -15,23 +15,25 @@ import 'package:serverpod_client/serverpod_client.dart' as _i1;
 /// Статистика по одной версии приложения.
 abstract class VersionStatisticsEntry implements _i1.SerializableModel {
   VersionStatisticsEntry._({
-    required this.versionId,
+    this.versionId,
     required this.versionNumber,
     required this.buildNumber,
     required this.userCount,
     required this.percentage,
     required this.isBlocked,
+    required this.isRegistered,
     required this.createdAt,
     required this.ageDays,
   });
 
   factory VersionStatisticsEntry({
-    required _i1.UuidValue versionId,
+    _i1.UuidValue? versionId,
     required String versionNumber,
     required int buildNumber,
     required int userCount,
     required double percentage,
     required bool isBlocked,
+    required bool isRegistered,
     required DateTime createdAt,
     required int ageDays,
   }) = _VersionStatisticsEntryImpl;
@@ -40,14 +42,15 @@ abstract class VersionStatisticsEntry implements _i1.SerializableModel {
     Map<String, dynamic> jsonSerialization,
   ) {
     return VersionStatisticsEntry(
-      versionId: _i1.UuidValueJsonExtension.fromJson(
-        jsonSerialization['versionId'],
-      ),
+      versionId: jsonSerialization['versionId'] == null
+          ? null
+          : _i1.UuidValueJsonExtension.fromJson(jsonSerialization['versionId']),
       versionNumber: jsonSerialization['versionNumber'] as String,
       buildNumber: jsonSerialization['buildNumber'] as int,
       userCount: jsonSerialization['userCount'] as int,
       percentage: (jsonSerialization['percentage'] as num).toDouble(),
       isBlocked: jsonSerialization['isBlocked'] as bool,
+      isRegistered: jsonSerialization['isRegistered'] as bool,
       createdAt: _i1.DateTimeJsonExtension.fromJson(
         jsonSerialization['createdAt'],
       ),
@@ -55,8 +58,8 @@ abstract class VersionStatisticsEntry implements _i1.SerializableModel {
     );
   }
 
-  /// ID версии
-  _i1.UuidValue versionId;
+  /// ID версии (null, если версия не добавлена в список)
+  _i1.UuidValue? versionId;
 
   /// Номер версии
   String versionNumber;
@@ -72,6 +75,9 @@ abstract class VersionStatisticsEntry implements _i1.SerializableModel {
 
   /// Заблокирована ли версия
   bool isBlocked;
+
+  /// Версия добавлена в список версий
+  bool isRegistered;
 
   /// Дата создания версии
   DateTime createdAt;
@@ -89,6 +95,7 @@ abstract class VersionStatisticsEntry implements _i1.SerializableModel {
     int? userCount,
     double? percentage,
     bool? isBlocked,
+    bool? isRegistered,
     DateTime? createdAt,
     int? ageDays,
   });
@@ -96,12 +103,13 @@ abstract class VersionStatisticsEntry implements _i1.SerializableModel {
   Map<String, dynamic> toJson() {
     return {
       '__className__': 'VersionStatisticsEntry',
-      'versionId': versionId.toJson(),
+      if (versionId != null) 'versionId': versionId?.toJson(),
       'versionNumber': versionNumber,
       'buildNumber': buildNumber,
       'userCount': userCount,
       'percentage': percentage,
       'isBlocked': isBlocked,
+      'isRegistered': isRegistered,
       'createdAt': createdAt.toJson(),
       'ageDays': ageDays,
     };
@@ -113,14 +121,17 @@ abstract class VersionStatisticsEntry implements _i1.SerializableModel {
   }
 }
 
+class _Undefined {}
+
 class _VersionStatisticsEntryImpl extends VersionStatisticsEntry {
   _VersionStatisticsEntryImpl({
-    required _i1.UuidValue versionId,
+    _i1.UuidValue? versionId,
     required String versionNumber,
     required int buildNumber,
     required int userCount,
     required double percentage,
     required bool isBlocked,
+    required bool isRegistered,
     required DateTime createdAt,
     required int ageDays,
   }) : super._(
@@ -130,6 +141,7 @@ class _VersionStatisticsEntryImpl extends VersionStatisticsEntry {
          userCount: userCount,
          percentage: percentage,
          isBlocked: isBlocked,
+         isRegistered: isRegistered,
          createdAt: createdAt,
          ageDays: ageDays,
        );
@@ -139,22 +151,24 @@ class _VersionStatisticsEntryImpl extends VersionStatisticsEntry {
   @_i1.useResult
   @override
   VersionStatisticsEntry copyWith({
-    _i1.UuidValue? versionId,
+    Object? versionId = _Undefined,
     String? versionNumber,
     int? buildNumber,
     int? userCount,
     double? percentage,
     bool? isBlocked,
+    bool? isRegistered,
     DateTime? createdAt,
     int? ageDays,
   }) {
     return VersionStatisticsEntry(
-      versionId: versionId ?? this.versionId,
+      versionId: versionId is _i1.UuidValue? ? versionId : this.versionId,
       versionNumber: versionNumber ?? this.versionNumber,
       buildNumber: buildNumber ?? this.buildNumber,
       userCount: userCount ?? this.userCount,
       percentage: percentage ?? this.percentage,
       isBlocked: isBlocked ?? this.isBlocked,
+      isRegistered: isRegistered ?? this.isRegistered,
       createdAt: createdAt ?? this.createdAt,
       ageDays: ageDays ?? this.ageDays,
     );

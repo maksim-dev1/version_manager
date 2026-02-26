@@ -28,28 +28,31 @@ class DailyActivityChart extends StatelessWidget {
     final entries = List<DailyActiveUsersEntry>.from(data.entries)
       ..sort((a, b) => a.date.compareTo(b.date));
 
-    // ── Почасовой режим при выборе «Сегодня» ──────────────────────
-    if (entries.length == 1 && timeData != null) {
+    // ── Почасовой режим при выборе 1–3 дней ──────────────────────
+    if (entries.length <= 3 && timeData != null) {
       return _buildHourlyView(
         colorScheme,
         textTheme,
-        entries.first,
+        entries,
         timeData!,
       );
     }
 
     // ── Многодневный режим ─────────────────────────────────────────
-    final avgUsers =
-        (entries.fold(0, (s, e) => s + e.totalUsers) / entries.length).round();
-    final maxY = entries.fold(0, (m, e) => e.totalUsers > m ? e.totalUsers : m);
+    final avgChecks =
+        (entries.fold(0, (s, e) => s + e.totalChecks) / entries.length).round();
+    final maxY = entries.fold(
+      0,
+      (m, e) => e.totalChecks > m ? e.totalChecks : m,
+    );
 
     final checksSpots = <FlSpot>[
       for (int i = 0; i < entries.length; i++)
-        FlSpot(i.toDouble(), entries[i].totalUsers.toDouble()),
+        FlSpot(i.toDouble(), entries[i].totalChecks.toDouble()),
     ];
-    final activeSpots = <FlSpot>[
+    final uniqueSpots = <FlSpot>[
       for (int i = 0; i < entries.length; i++)
-        FlSpot(i.toDouble(), entries[i].activeUsers.toDouble()),
+        FlSpot(i.toDouble(), entries[i].uniqueUsers.toDouble()),
     ];
 
     String fmtDate(int idx) {
@@ -67,14 +70,14 @@ class DailyActivityChart extends StatelessWidget {
         ? 5
         : (n / 6).ceil();
 
-    final peakIdx = entries.indexWhere((e) => e.totalUsers == maxY);
+    final peakIdx = entries.indexWhere((e) => e.totalChecks == maxY);
     final half = (n / 2).ceil().clamp(1, n);
     final firstHalfTotal = entries
         .take(half)
-        .fold(0, (s, e) => s + e.totalUsers);
+        .fold(0, (s, e) => s + e.totalChecks);
     final lastHalfTotal = entries
         .skip(n - half)
-        .fold(0, (s, e) => s + e.totalUsers);
+        .fold(0, (s, e) => s + e.totalChecks);
     final trendPct = firstHalfTotal > 0
         ? ((lastHalfTotal - firstHalfTotal) / firstHalfTotal * 100).round()
         : 0;
@@ -111,18 +114,10 @@ class DailyActivityChart extends StatelessWidget {
                     show: true,
                     drawVerticalLine: false,
                     horizontalInterval: maxY > 0 ? (maxY / 4) : 1,
-                    getDrawingHorizontalLine: (value) {
-                      final isAvg = (value - avgUsers).abs() < (maxY / 8);
-                      return FlLine(
-                        color: isAvg
-                            ? colorScheme.primary.withValues(alpha: 0.25)
-                            : colorScheme.outlineVariant.withValues(
-                                alpha: 0.25,
-                              ),
-                        strokeWidth: isAvg ? 1.2 : 0.6,
-                        dashArray: isAvg ? [6, 4] : null,
-                      );
-                    },
+                    getDrawingHorizontalLine: (_) => FlLine(
+                      color: colorScheme.outlineVariant.withValues(alpha: 0.25),
+                      strokeWidth: 0.6,
+                    ),
                   ),
                   borderData: FlBorderData(show: false),
                   minX: 0,
@@ -180,7 +175,7 @@ class DailyActivityChart extends StatelessWidget {
                           if (entry == null) return null;
                           final prev = idx > 0 ? entries[idx - 1] : null;
                           final delta = prev != null
-                              ? entry.totalUsers - prev.totalUsers
+                              ? entry.totalChecks - prev.totalChecks
                               : 0;
                           final deltaStr = delta == 0
                               ? ''
@@ -189,8 +184,8 @@ class DailyActivityChart extends StatelessWidget {
                               : '  ↓${_fmt(delta.abs())}';
                           return LineTooltipItem(
                             '${fmtDate(idx)}\n'
-                            '${_fmt(entry.totalUsers)} пользователей$deltaStr\n'
-                            '${_fmt(entry.activeUsers)} акт.  •  ${_fmt(entry.newUsers)} новых',
+                            '${_fmt(entry.totalChecks)} запросов$deltaStr\n'
+                            '${_fmt(entry.uniqueUsers)} уник.  •  ${_fmt(entry.newUsers)} новых',
                             TextStyle(
                               color: colorScheme.onInverseSurface,
                               fontSize: 12,
@@ -203,7 +198,7 @@ class DailyActivityChart extends StatelessWidget {
                   ),
                   lineBarsData: [
                     LineChartBarData(
-                      spots: activeSpots,
+                      spots: uniqueSpots,
                       isCurved: true,
                       preventCurveOverShooting: true,
                       curveSmoothness: 0.35,
@@ -262,7 +257,7 @@ class DailyActivityChart extends StatelessWidget {
                   extraLinesData: ExtraLinesData(
                     horizontalLines: [
                       HorizontalLine(
-                        y: avgUsers.toDouble(),
+                        y: avgChecks.toDouble(),
                         color: colorScheme.primary.withValues(alpha: 0.35),
                         strokeWidth: 1,
                         dashArray: [6, 4],
@@ -275,7 +270,7 @@ class DailyActivityChart extends StatelessWidget {
                             fontSize: 9,
                             fontWeight: FontWeight.w600,
                           ),
-                          labelResolver: (_) => 'ср. ${_fmt(avgUsers)}',
+                          labelResolver: (_) => 'ср. ${_fmt(avgChecks)}',
                         ),
                       ),
                     ],
@@ -299,11 +294,16 @@ class DailyActivityChart extends StatelessWidget {
               children: [
                 _LegendItem(
                   color: colorScheme.primary,
-                  label: 'Пользователей в день',
+                  label: 'Запросов в день',
                 ),
                 _LegendItem(
                   color: colorScheme.tertiary,
-                  label: 'Активных устройств',
+                  label: 'Уникальных пользователей',
+                  dashed: true,
+                ),
+                _LegendItem(
+                  color: colorScheme.primary.withValues(alpha: 0.5),
+                  label: 'Среднее',
                   dashed: true,
                 ),
               ],
@@ -319,16 +319,45 @@ class DailyActivityChart extends StatelessWidget {
   Widget _buildHourlyView(
     ColorScheme colorScheme,
     TextTheme textTheme,
+    List<DailyActiveUsersEntry> entries,
+    TimeAnalyticsResponse timeData,
+  ) {
+    if (entries.length == 1) {
+      return _buildSingleDayHourly(
+        colorScheme,
+        textTheme,
+        entries.first,
+        timeData,
+      );
+    }
+    return _buildMultiDayHourly(colorScheme, textTheme, entries, timeData);
+  }
+
+  Widget _buildSingleDayHourly(
+    ColorScheme colorScheme,
+    TextTheme textTheme,
     DailyActiveUsersEntry today,
     TimeAnalyticsResponse timeData,
   ) {
-    final todayDow = DateTime.now().weekday; // 1=Пн … 7=Вс
+    final nowLocal = DateTime.now();
+    final todayLocal = DateTime(nowLocal.year, nowLocal.month, nowLocal.day);
 
-    // Собираем 24 ячейки из тепловой карты для текущего дня недели
+    // Собираем 24 ячейки из тепловой карты для сегодняшней даты (локальное время)
     final hourCounts = List.filled(24, 0);
     for (final e in timeData.heatmap) {
-      if (e.dayOfWeek == todayDow && e.hour >= 0 && e.hour < 24) {
-        hourCounts[e.hour] = e.count;
+      final utc = DateTime.utc(
+        e.date.year,
+        e.date.month,
+        e.date.day,
+        e.hour,
+      );
+      final local = utc.toLocal();
+      final localDay = DateTime(local.year, local.month, local.day);
+      if (localDay == todayLocal) {
+        final h = local.hour;
+        if (h >= 0 && h < 24) {
+          hourCounts[h] += e.count;
+        }
       }
     }
 
@@ -350,13 +379,13 @@ class DailyActivityChart extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               Text(
-                _fmt(today.totalUsers),
+                _fmt(today.totalChecks),
                 style: textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.w800,
                 ),
               ),
               Text(
-                'пользователей',
+                'запросов',
                 style: textTheme.bodySmall?.copyWith(
                   color: colorScheme.onSurfaceVariant,
                 ),
@@ -421,7 +450,7 @@ class DailyActivityChart extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    'Сегодня · ${_weekdayName(todayDow)}',
+                    'Сегодня · ${_weekdayName(nowLocal.weekday)}',
                     style: textTheme.labelSmall?.copyWith(
                       color: colorScheme.primary,
                       fontWeight: FontWeight.w600,
@@ -433,7 +462,7 @@ class DailyActivityChart extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      '${_fmt(today.totalUsers)} польз.',
+                      '${_fmt(today.totalChecks)} запр. / ${_fmt(today.uniqueUsers)} уник.',
                       style: textTheme.bodySmall?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
@@ -550,6 +579,323 @@ class DailyActivityChart extends StatelessWidget {
                   style: textTheme.bodySmall?.copyWith(
                     color: colorScheme.onSurfaceVariant,
                   ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMultiDayHourly(
+    ColorScheme colorScheme,
+    TextTheme textTheme,
+    List<DailyActiveUsersEntry> entries,
+    TimeAnalyticsResponse timeData,
+  ) {
+    // ── Тренд (по дневным итогам) ──────────────────────────────────
+    final n = entries.length;
+    final half = (n / 2).ceil().clamp(1, n);
+    final firstHalfTotal =
+        entries.take(half).fold(0, (s, e) => s + e.totalChecks);
+    final lastHalfTotal =
+        entries.skip(n - half).fold(0, (s, e) => s + e.totalChecks);
+    final trendPct = firstHalfTotal > 0
+        ? ((lastHalfTotal - firstHalfTotal) / firstHalfTotal * 100).round()
+        : 0;
+
+    // ── Почасовые данные из тепловой карты ─────────────────────────
+    final dayHours = <DateTime, List<int>>{};
+    for (final e in entries) {
+      final local = e.date.toLocal();
+      final day = DateTime(local.year, local.month, local.day);
+      dayHours[day] = List.filled(24, 0);
+    }
+    for (final h in timeData.heatmap) {
+      final utc = DateTime.utc(h.date.year, h.date.month, h.date.day, h.hour);
+      final local = utc.toLocal();
+      final day = DateTime(local.year, local.month, local.day);
+      if (dayHours.containsKey(day)) {
+        dayHours[day]![local.hour] += h.count;
+      }
+    }
+    final sortedDays = dayHours.keys.toList()..sort();
+
+    // Одна непрерывная линия запросов (x = глобальный индекс часа)
+    final spots = <FlSpot>[];
+    for (int d = 0; d < sortedDays.length; d++) {
+      final hours = dayHours[sortedDays[d]]!;
+      for (int h = 0; h < 24; h++) {
+        spots.add(FlSpot((d * 24 + h).toDouble(), hours[h].toDouble()));
+      }
+    }
+
+    // Линия уникальных пользователей — дневное значение растянуто на 24 часа
+    final uniqueSpots = <FlSpot>[];
+    for (int d = 0; d < sortedDays.length; d++) {
+      // entries отсортированы так же, как sortedDays
+      final uniqueVal = d < entries.length
+          ? entries[d].uniqueUsers.toDouble()
+          : 0.0;
+      for (int h = 0; h < 24; h++) {
+        uniqueSpots.add(FlSpot((d * 24 + h).toDouble(), uniqueVal));
+      }
+    }
+
+    final totalPoints = spots.length;
+    final maxChecks = spots.fold(0.0, (m, s) => s.y > m ? s.y : m);
+    final maxUnique = uniqueSpots.fold(0.0, (m, s) => s.y > m ? s.y : m);
+    final maxY = maxChecks > maxUnique ? maxChecks : maxUnique;
+    final avgY =
+        spots.isEmpty
+            ? 0
+            : (spots.fold(0.0, (s, p) => s + p.y) / spots.length).round();
+    final peakIdx =
+        maxChecks > 0 ? spots.indexWhere((s) => s.y == maxChecks) : -1;
+
+    String fmtDay(DateTime d) =>
+        '${d.day.toString().padLeft(2, '0')}.${d.month.toString().padLeft(2, '0')}';
+
+    String xLabel(int idx) {
+      final d = idx ~/ 24;
+      final h = idx % 24;
+      if (h == 0 && d < sortedDays.length) return fmtDay(sortedDays[d]);
+      if (h == 12) return '12:00';
+      return '';
+    }
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                if (trendPct != 0)
+                  _TrendBadge(
+                    trendPct: trendPct,
+                    colorScheme: colorScheme,
+                    textTheme: textTheme,
+                  ),
+                const Spacer(),
+                Text(
+                  '${fmtDay(sortedDays.first)} – ${fmtDay(sortedDays.last)}',
+                  style: textTheme.bodySmall?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              height: 180,
+              child: LineChart(
+                LineChartData(
+                  minX: 0,
+                  maxX: (totalPoints - 1).toDouble(),
+                  minY: 0,
+                  maxY: maxY > 0 ? maxY * 1.22 : 10,
+                  gridData: FlGridData(
+                    show: true,
+                    drawVerticalLine: false,
+                    horizontalInterval: maxY > 0 ? (maxY / 4) : 1,
+                    getDrawingHorizontalLine: (_) => FlLine(
+                      color: colorScheme.outlineVariant.withValues(alpha: 0.25),
+                      strokeWidth: 0.6,
+                    ),
+                  ),
+                  borderData: FlBorderData(show: false),
+                  titlesData: FlTitlesData(
+                    topTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
+                    rightTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
+                    leftTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
+                    bottomTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        reservedSize: 22,
+                        interval: 1,
+                        getTitlesWidget: (value, meta) {
+                          final idx = value.toInt();
+                          final label = xLabel(idx);
+                          if (label.isEmpty) return const SizedBox.shrink();
+                          final isDay = idx % 24 == 0;
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 4),
+                            child: Text(
+                              label,
+                              style: textTheme.bodySmall?.copyWith(
+                                color: isDay
+                                    ? colorScheme.onSurface
+                                    : colorScheme.onSurfaceVariant,
+                                fontSize: isDay ? 10 : 9,
+                                fontWeight: isDay
+                                    ? FontWeight.w600
+                                    : FontWeight.normal,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                  extraLinesData: ExtraLinesData(
+                    verticalLines: [
+                      for (int d = 1; d < sortedDays.length; d++)
+                        VerticalLine(
+                          x: (d * 24).toDouble(),
+                          color: colorScheme.outlineVariant.withValues(
+                            alpha: 0.4,
+                          ),
+                          strokeWidth: 1,
+                          dashArray: [4, 3],
+                        ),
+                      if (peakIdx >= 0)
+                        VerticalLine(
+                          x: peakIdx.toDouble(),
+                          color: colorScheme.primary.withValues(alpha: 0.18),
+                          strokeWidth: 1.5,
+                          dashArray: [4, 3],
+                        ),
+                    ],
+                    horizontalLines: [
+                      HorizontalLine(
+                        y: avgY.toDouble(),
+                        color: colorScheme.primary.withValues(alpha: 0.35),
+                        strokeWidth: 1,
+                        dashArray: [6, 4],
+                        label: HorizontalLineLabel(
+                          show: true,
+                          alignment: Alignment.topRight,
+                          padding: const EdgeInsets.only(right: 4, bottom: 2),
+                          style: TextStyle(
+                            color: colorScheme.primary,
+                            fontSize: 9,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          labelResolver: (_) => 'ср. ${_fmt(avgY)}',
+                        ),
+                      ),
+                    ],
+                  ),
+                  lineTouchData: LineTouchData(
+                    touchTooltipData: LineTouchTooltipData(
+                      getTooltipColor: (_) => colorScheme.inverseSurface,
+                      tooltipPadding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
+                      getTooltipItems: (touchedSpots) {
+                        return touchedSpots.asMap().entries.map((e) {
+                          if (e.key != 0) return null;
+                          final spot = e.value;
+                          final idx = spot.x.toInt();
+                          final d = idx ~/ 24;
+                          final h = idx % 24;
+                          final day = d < sortedDays.length
+                              ? sortedDays[d]
+                              : null;
+                          if (day == null) return null;
+                          final uniq = d < entries.length
+                              ? entries[d].uniqueUsers
+                              : 0;
+                          return LineTooltipItem(
+                            '${fmtDay(day)} '
+                            '${h.toString().padLeft(2, '0')}:00\n'
+                            '${_fmt(spot.y.toInt())} запр.  •  '
+                            '${_fmt(uniq)} уник./день',
+                            TextStyle(
+                              color: colorScheme.onInverseSurface,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          );
+                        }).toList();
+                      },
+                    ),
+                  ),
+                  lineBarsData: [
+                    // Уникальные пользователи — дневные значения (пунктир)
+                    LineChartBarData(
+                      spots: uniqueSpots,
+                      isCurved: false,
+                      color: colorScheme.tertiary.withValues(alpha: 0.6),
+                      barWidth: 1.5,
+                      dashArray: [5, 4],
+                      dotData: const FlDotData(show: false),
+                      belowBarData: BarAreaData(show: false),
+                    ),
+                    // Запросы в час — основная линия
+                    LineChartBarData(
+                      spots: spots,
+                      isCurved: true,
+                      preventCurveOverShooting: true,
+                      curveSmoothness: 0.35,
+                      color: colorScheme.primary,
+                      barWidth: 2.5,
+                      dotData: FlDotData(
+                        show: peakIdx >= 0,
+                        getDotPainter: (spot, pct, bar, idx) {
+                          if (idx != peakIdx) {
+                            return FlDotCirclePainter(
+                              radius: 0,
+                              color: Colors.transparent,
+                              strokeWidth: 0,
+                              strokeColor: Colors.transparent,
+                            );
+                          }
+                          return FlDotCirclePainter(
+                            radius: 5,
+                            color: colorScheme.primary,
+                            strokeWidth: 2,
+                            strokeColor: colorScheme.surface,
+                          );
+                        },
+                      ),
+                      belowBarData: BarAreaData(
+                        show: true,
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          stops: const [0.0, 0.6, 1.0],
+                          colors: [
+                            colorScheme.primary.withValues(alpha: 0.30),
+                            colorScheme.primary.withValues(alpha: 0.08),
+                            colorScheme.primary.withValues(alpha: 0.0),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            Wrap(
+              alignment: WrapAlignment.center,
+              spacing: 20,
+              runSpacing: 4,
+              children: [
+                _LegendItem(
+                  color: colorScheme.primary,
+                  label: 'Запросов в час',
+                ),
+                _LegendItem(
+                  color: colorScheme.tertiary,
+                  label: 'Уникальных пользователей',
+                  dashed: true,
+                ),
+                _LegendItem(
+                  color: colorScheme.primary.withValues(alpha: 0.5),
+                  label: 'Среднее',
+                  dashed: true,
                 ),
               ],
             ),

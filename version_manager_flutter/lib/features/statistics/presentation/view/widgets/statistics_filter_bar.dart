@@ -105,298 +105,51 @@ class StatisticsFilterBar extends StatelessWidget {
       '${d.day.toString().padLeft(2, '0')}.${d.month.toString().padLeft(2, '0')}.${d.year}';
 
   Future<void> _openCustomPeriodSheet(BuildContext context) async {
-    await showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (ctx) => _CustomPeriodSheet(
-        initialFrom: filter.dateFrom,
-        initialTo: filter.dateTo,
-        onApply: (from, to) {
-          onFilterChanged(
-            StatisticsFilter(
-              applicationId: filter.applicationId,
-              dateFrom: from,
-              dateTo: to,
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
-
-// ── Custom period bottom sheet ─────────────────────────────────────
-
-class _CustomPeriodSheet extends StatefulWidget {
-  final DateTime? initialFrom;
-  final DateTime? initialTo;
-  final void Function(DateTime from, DateTime to) onApply;
-
-  const _CustomPeriodSheet({
-    required this.initialFrom,
-    required this.initialTo,
-    required this.onApply,
-  });
-
-  @override
-  State<_CustomPeriodSheet> createState() => _CustomPeriodSheetState();
-}
-
-class _CustomPeriodSheetState extends State<_CustomPeriodSheet> {
-  late DateTime? _from;
-  late DateTime? _to;
-
-  @override
-  void initState() {
-    super.initState();
     final now = DateTime.now();
-    _from = widget.initialFrom ?? now.subtract(const Duration(days: 30));
-    _to = widget.initialTo ?? now;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-    final canApply = _from != null && _to != null && !_to!.isBefore(_from!);
-    final days = (_from != null && _to != null)
-        ? _to!.difference(_from!).inDays + 1
-        : 0;
-
-    return Padding(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.viewInsetsOf(context).bottom,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Handle
-          const SizedBox(height: 12),
-          Container(
-            width: 40,
-            height: 4,
-            decoration: BoxDecoration(
-              color: colorScheme.outlineVariant,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-          const SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Title
-                Row(
-                  children: [
-                    Icon(
-                      Icons.date_range_rounded,
-                      size: 20,
-                      color: colorScheme.primary,
-                    ),
-                    const SizedBox(width: 10),
-                    Text(
-                      'Выбор периода',
-                      style: textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-
-                // From date
-                _DateField(
-                  label: 'Начало периода',
-                  icon: Icons.calendar_today_rounded,
-                  date: _from,
-                  onTap: () async {
-                    final now = DateTime.now();
-                    final picked = await showDatePicker(
-                      context: context,
-                      initialDate:
-                          _from ?? now.subtract(const Duration(days: 30)),
-                      firstDate: DateTime(2024),
-                      lastDate: _to ?? now,
-                    );
-                    if (picked != null) setState(() => _from = picked);
-                  },
-                ),
-                const SizedBox(height: 12),
-
-                // To date
-                _DateField(
-                  label: 'Конец периода',
-                  icon: Icons.event_rounded,
-                  date: _to,
-                  onTap: () async {
-                    final now = DateTime.now();
-                    final picked = await showDatePicker(
-                      context: context,
-                      initialDate: _to ?? now,
-                      firstDate: _from ?? DateTime(2024),
-                      lastDate: now,
-                    );
-                    if (picked != null) setState(() => _to = picked);
-                  },
-                ),
-
-                // Duration badge
-                if (canApply && days > 0) ...[
-                  const SizedBox(height: 14),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      color: colorScheme.primaryContainer.withValues(
-                        alpha: 0.45,
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.timelapse_rounded,
-                          size: 14,
-                          color: colorScheme.primary,
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          '$days ${_daysLabel(days)}',
-                          style: textTheme.bodySmall?.copyWith(
-                            color: colorScheme.primary,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-
-                const SizedBox(height: 24),
-
-                // Action buttons
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text('Отмена'),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: FilledButton(
-                        onPressed: canApply
-                            ? () {
-                                widget.onApply(_from!, _to!);
-                                Navigator.pop(context);
-                              }
-                            : null,
-                        child: const Text('Применить'),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  String _daysLabel(int n) {
-    if (n % 10 == 1 && n % 100 != 11) return 'день';
-    if (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20)) {
-      return 'дня';
-    }
-    return 'дней';
-  }
-}
-
-// ── Date field ────────────────────────────────────────────────────
-
-class _DateField extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  final DateTime? date;
-  final VoidCallback onTap;
-
-  const _DateField({
-    required this.label,
-    required this.icon,
-    required this.date,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-    final dateStr = date != null
-        ? '${date!.day.toString().padLeft(2, '0')}.${date!.month.toString().padLeft(2, '0')}.${date!.year}'
-        : 'Не выбрано';
-
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: colorScheme.outline.withValues(alpha: 0.5),
-            ),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Row(
-            children: [
-              Icon(icon, size: 18, color: colorScheme.primary),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      label,
-                      style: textTheme.bodySmall?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
-                        fontSize: 11,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      dateStr,
-                      style: textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: date != null
-                            ? colorScheme.onSurface
-                            : colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Icon(
-                Icons.edit_calendar_rounded,
-                size: 16,
-                color: colorScheme.onSurfaceVariant,
-              ),
-            ],
+    final result = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime(2024),
+      lastDate: now,
+      initialDateRange:
+          (filter.dateFrom != null && filter.dateTo != null)
+              ? DateTimeRange(start: filter.dateFrom!, end: filter.dateTo!)
+              : null,
+      locale: const Locale('ru'),
+      helpText: 'Выберите период',
+      cancelText: 'Отмена',
+      confirmText: 'Применить',
+      saveText: 'Применить',
+      // Показываем как компактный диалог, а не на весь экран
+      builder: (context, child) => Dialog(
+        insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 420, maxHeight: 580),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: child!,
           ),
         ),
       ),
     );
+    if (result != null) {
+      // result.end — полночь выбранного дня, устанавливаем 23:59:59
+      // чтобы весь выбранный день попал в диапазон фильтра на сервере
+      final endOfDay = DateTime(
+        result.end.year,
+        result.end.month,
+        result.end.day,
+        23,
+        59,
+        59,
+      );
+      onFilterChanged(
+        StatisticsFilter(
+          applicationId: filter.applicationId,
+          dateFrom: result.start,
+          dateTo: endOfDay,
+        ),
+      );
+    }
   }
 }

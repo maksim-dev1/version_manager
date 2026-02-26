@@ -3,9 +3,9 @@ class: DailyActiveUsersEntry
 fields:
   ### Дата (YYYY-MM-DD)
   date: DateTime
-  ### Общее количество уникальных пользователей за день
-  totalUsers: int
-  ### Уникальных пользователей за день (по fingerprint)
-  activeUsers: int
+  ### Общее количество запросов (входов) за день
+  totalChecks: int
+  ### Уникальных пользователей за день (по IDFV / App Instance ID)
+  uniqueUsers: int
   ### Новых пользователей за день
   newUsers: int
