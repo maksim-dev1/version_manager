@@ -597,10 +597,12 @@ class DailyActivityChart extends StatelessWidget {
     // ── Тренд (по дневным итогам) ──────────────────────────────────
     final n = entries.length;
     final half = (n / 2).ceil().clamp(1, n);
-    final firstHalfTotal =
-        entries.take(half).fold(0, (s, e) => s + e.totalChecks);
-    final lastHalfTotal =
-        entries.skip(n - half).fold(0, (s, e) => s + e.totalChecks);
+    final firstHalfTotal = entries
+        .take(half)
+        .fold(0, (s, e) => s + e.totalChecks);
+    final lastHalfTotal = entries
+        .skip(n - half)
+        .fold(0, (s, e) => s + e.totalChecks);
     final trendPct = firstHalfTotal > 0
         ? ((lastHalfTotal - firstHalfTotal) / firstHalfTotal * 100).round()
         : 0;
@@ -647,12 +649,12 @@ class DailyActivityChart extends StatelessWidget {
     final maxChecks = spots.fold(0.0, (m, s) => s.y > m ? s.y : m);
     final maxUnique = uniqueSpots.fold(0.0, (m, s) => s.y > m ? s.y : m);
     final maxY = maxChecks > maxUnique ? maxChecks : maxUnique;
-    final avgY =
-        spots.isEmpty
-            ? 0
-            : (spots.fold(0.0, (s, p) => s + p.y) / spots.length).round();
-    final peakIdx =
-        maxChecks > 0 ? spots.indexWhere((s) => s.y == maxChecks) : -1;
+    final avgY = spots.isEmpty
+        ? 0
+        : (spots.fold(0.0, (s, p) => s + p.y) / spots.length).round();
+    final peakIdx = maxChecks > 0
+        ? spots.indexWhere((s) => s.y == maxChecks)
+        : -1;
 
     String fmtDay(DateTime d) =>
         '${d.day.toString().padLeft(2, '0')}.${d.month.toString().padLeft(2, '0')}';

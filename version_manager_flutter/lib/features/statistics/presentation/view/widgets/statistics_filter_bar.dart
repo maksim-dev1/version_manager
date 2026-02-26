@@ -110,10 +110,9 @@ class StatisticsFilterBar extends StatelessWidget {
       context: context,
       firstDate: DateTime(2024),
       lastDate: now,
-      initialDateRange:
-          (filter.dateFrom != null && filter.dateTo != null)
-              ? DateTimeRange(start: filter.dateFrom!, end: filter.dateTo!)
-              : null,
+      initialDateRange: (filter.dateFrom != null && filter.dateTo != null)
+          ? DateTimeRange(start: filter.dateFrom!, end: filter.dateTo!)
+          : null,
       locale: const Locale('ru'),
       helpText: 'Выберите период',
       cancelText: 'Отмена',
