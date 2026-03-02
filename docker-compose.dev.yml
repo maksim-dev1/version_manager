@@ -58,6 +58,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./version_manager_server/config:/app/config:ro
+      - /etc/dokploy/vm-secrets/passwords.yaml:/app/config/passwords.yaml:ro
       - ./version_manager_server/migrations:/app/migrations:ro
 
   flutter_web:
