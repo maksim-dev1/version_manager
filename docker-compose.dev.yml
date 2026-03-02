@@ -7,7 +7,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_DB: version_manager
-      POSTGRES_PASSWORD: "dev_pg_password_change_me"
+      POSTGRES_PASSWORD: "vsFL1IG0OmT08beTHZ81TMfgYrFCdmW5"
     volumes:
       - vm_dev_postgres_data:/var/lib/postgresql/data
     networks:
@@ -22,14 +22,14 @@ services:
   redis:
     image: redis:6.2.6
     container_name: vm_dev_redis
-    command: redis-server --requirepass "dev_redis_password_change_me" --appendonly yes
+    command: redis-server --requirepass "a0N3BMjTbdUFutl5bba6vWm4ykLnADVP" --appendonly yes
     volumes:
       - vm_dev_redis_data:/data
     networks:
       - vm_dev_network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "redis-cli", "--pass", "dev_redis_password_change_me", "ping"]
+      test: ["CMD", "redis-cli", "--pass", "", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
