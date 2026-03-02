@@ -29,7 +29,7 @@ services:
       - vm_dev_network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "redis-cli", "--pass", "", "ping"]
+      test: ["CMD", "redis-cli", "-a", "a0N3BMjTbdUFutl5bba6vWm4ykLnADVP", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
