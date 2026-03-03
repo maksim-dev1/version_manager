@@ -1,4 +1,4 @@
-package com.example.version_manager_flutter
+package com.pixelio.version_manager_flutter
 
 import io.flutter.embedding.android.FlutterActivity
 
