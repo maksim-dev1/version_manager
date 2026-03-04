@@ -33,7 +33,7 @@ void main() async {
 
       await VersionChecker.initialize(
         serverUrl: 'https://dev-checker.progger.pro',
-        apiKey: String.fromEnvironment('VM_API_KEY'),
+        apiKey: '47HhA13BtpX0F1DsbcgTLSRNb8k65-oBHd2g17SjNjNkI0eV9FmEIcW1vu8QTmOgNQRLg8M-N5QaO9waI-5GOw',
         namespace: 'com.pixelio.version_manager_flutter',
       );
 
