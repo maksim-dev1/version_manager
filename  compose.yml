@@ -1,18 +1,18 @@
-version: '3.8'
-
 services:
-  postgres:
+  vm_postgres:
     image: pgvector/pgvector:pg16
-    container_name: version_manager_postgres
+    container_name: VM_postgres
+    env_file:
+      - .env
     environment:
       POSTGRES_USER: postgres
       POSTGRES_DB: version_manager
-      POSTGRES_PASSWORD: "6_yI4TXMa-Zd-tIe4QedLusUvWFe0PKh"
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - version_manager_prod_data:/var/lib/postgresql/data
     networks:
       - version_manager_network
-    restart: unless-stopped
+    restart: always
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
@@ -21,15 +21,17 @@ services:
 
   redis:
     image: redis:6.2.6
-    container_name: version_manager_redis
-    command: redis-server --requirepass "a0N3BMjTbdUFutl5bba6vWm4ykLnADVP" --appendonly yes
+    container_name: VM_redis
+    env_file:
+      - .env
+    command: redis-server --requirepass "${REDIS_PASSWORD}" --appendonly yes
     volumes:
       - version_manager_redis_data:/data
     networks:
       - version_manager_network
-    restart: unless-stopped
+    restart: always
     healthcheck:
-      test: ["CMD", "redis-cli", "--pass", "a0N3BMjTbdUFutl5bba6vWm4ykLnADVP", "ping"]
+      test: ["CMD", "redis-cli", "--pass", "${REDIS_PASSWORD}", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -40,24 +42,28 @@ services:
     build:
       context: ./version_manager_server
       dockerfile: Dockerfile
-    container_name: version_manager_app
+    container_name: VM_server
     environment:
-      - runmode=production
+      - runmode=development
       - serverid=default
       - logging=normal
       - role=monolith
+      - SERVERPOD_PASSWORDS_DATABASE=${POSTGRES_PASSWORD}
+    command: dart bin/main.dart --mode development --apply-migrations
+    env_file:
+      - .env
     ports:
       - "127.0.0.1:9080:8080"
       - "127.0.0.1:9081:8081"
       - "127.0.0.1:9082:8082"
     depends_on:
-      postgres:
+      vm_postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
     networks:
       - version_manager_network
-    restart: unless-stopped
+    restart: always
     volumes:
       - ./version_manager_server/config:/app/config:ro
       - ./version_manager_server/migrations:/app/migrations:ro
@@ -66,7 +72,7 @@ services:
     build:
       context: .
       dockerfile: ./version_manager_flutter/Dockerfile
-    container_name: version_manager_web
+    container_name: VM_web
     ports:
       - "127.0.0.1:9083:80"
     networks:

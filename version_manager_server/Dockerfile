@@ -29,4 +29,4 @@ EXPOSE 8081
 EXPOSE 8082
 
 # Define the entrypoint command using shell form to support env variables
-ENTRYPOINT /app/server --mode=$runmode --server-id=$serverid --logging=$logging --role=$role
+ENTRYPOINT /app/server --mode=$runmode --server-id=$serverid --logging=$logging --role=$role --apply-migrations
