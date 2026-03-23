@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: vm_dev_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: version_manager
+      POSTGRES_PASSWORD: "vsFL1IG0OmT08beTHZ81TMfgYrFCdmW5"
+    volumes:
+      - vm_dev_postgres_data:/var/lib/postgresql/data
+    networks:
+      - vm_dev_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:6.2.6
+    container_name: vm_dev_redis
+    command: redis-server --requirepass "a0N3BMjTbdUFutl5bba6vWm4ykLnADVP" --appendonly yes
+    volumes:
+      - vm_dev_redis_data:/data
+    networks:
+      - vm_dev_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "a0N3BMjTbdUFutl5bba6vWm4ykLnADVP", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  serverpod:
+    build:
+      context: ./version_manager_server
+      dockerfile: Dockerfile
+    container_name: vm_dev_server
+    environment:
+      - runmode=staging
+      - serverid=default
+      - logging=normal
+      - role=monolith
+    ports:
+      - "9080:8080"
+      - "9081:8081"
+      - "9082:8082"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - vm_dev_network
+    restart: unless-stopped
+    volumes:
+      - /etc/dokploy/vm-secrets/passwords.yaml:/app/config/passwords.yaml:ro
+
+  flutter_web:
+    build:
+      context: .
+      dockerfile: ./version_manager_flutter/Dockerfile.dev
+    container_name: vm_dev_web
+    ports:
+      - "9083:80"
+    networks:
+      - vm_dev_network
+    restart: unless-stopped
+
+networks:
+  vm_dev_network:
+    driver: bridge
+
+volumes:
+  vm_dev_postgres_data:
+  vm_dev_redis_data:

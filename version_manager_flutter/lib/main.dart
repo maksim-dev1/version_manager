@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:version_manager_checker/version_manager_checker.dart';
 import 'package:version_manager_flutter/common/constants/env_consts.dart';
 import 'package:version_manager_flutter/shared/services/client_service.dart';
 import 'package:version_manager_flutter/shared/services/device_info_service.dart';
@@ -30,6 +31,12 @@ void main() async {
     appRunner: () async {
       WidgetsFlutterBinding.ensureInitialized();
 
+      await VersionChecker.initialize(
+        serverUrl: 'https://dev-checker.progger.pro',
+        apiKey: '47HhA13BtpX0F1DsbcgTLSRNb8k65-oBHd2g17SjNjNkI0eV9FmEIcW1vu8QTmOgNQRLg8M-N5QaO9waI-5GOw',
+        namespace: 'com.pixelio.version_manager_flutter',
+      );
+
       final serverUrl = _getServerUrl();
 
       // Инициализируем storage первым
@@ -51,13 +58,15 @@ void main() async {
 
       runApp(
         SentryWidget(
-          child: Provider<ClientService>(
-            create: (context) => clientService,
-            child: Provider<StorageService>(
-              create: (context) => storageService,
-              child: Provider(
-                create: (context) => deviceInfoService,
-                child: const VersionManagerApp(),
+          child: VersionCheckerBuilder(
+            child: Provider<ClientService>(
+              create: (context) => clientService,
+              child: Provider<StorageService>(
+                create: (context) => storageService,
+                child: Provider(
+                  create: (context) => deviceInfoService,
+                  child: const VersionManagerApp(),
+                ),
               ),
             ),
           ),
