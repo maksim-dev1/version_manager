@@ -13,7 +13,7 @@ WORKDIR /app/version_manager_flutter
 RUN flutter pub get
 
 # Собираем Flutter web приложение БЕЗ base-href
-RUN flutter build web --release --dart-define-from-file="lib/.env.prod.json"
+RUN flutter build web --release --dart-define-from-file="lib/env.prod.json"
 
 
 # Этап 2: Nginx для раздачи статики
