@@ -23,18 +23,18 @@ webServer:
 
 # Database configuration (Docker container)
 database:
-  host: postgres
+  host: 192.168.0.155
   port: 5432
   name: version_manager
-  user: postgres
+  user: maksim
   requireSsl: false
   #isUnixSocket: false
   #maxConnectionCount: 10
 
-# Redis configuration (Docker container)
+# Redis configuration (nexus)
 redis:
   enabled: true
-  host: redis
+  host: 192.168.0.155
   port: 6379
   #user: # defaults to empty
   requireSsl: false

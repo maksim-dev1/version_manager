@@ -1,0 +1,28 @@
+services:
+  serverpod:
+    build:
+      context: ./version_manager_server
+      dockerfile: Dockerfile
+    container_name: VM_server
+    environment:
+      - runmode=production
+      - serverid=default
+      - logging=normal
+      - role=monolith
+    ports:
+      - "127.0.0.1:9080:8080"
+      - "127.0.0.1:9081:8081"
+      - "127.0.0.1:9082:8082"
+    restart: always
+    volumes:
+      - ./version_manager_server/config:/app/config:ro
+      - ./version_manager_server/migrations:/app/migrations:ro
+
+  flutter_web:
+    build:
+      context: .
+      dockerfile: ./version_manager_flutter/Dockerfile
+    container_name: VM_web
+    ports:
+      - "127.0.0.1:9083:80"
+    restart: unless-stopped
