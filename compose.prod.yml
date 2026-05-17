@@ -10,6 +10,7 @@ services:
       - logging=normal
       - role=monolith
       - SERVERPOD_PASSWORD_database=${POSTGRES_PASSWORD}
+      - SERVERPOD_PASSWORD_redis=${REDIS_PASSWORD}
     ports:
       - "127.0.0.1:9080:8080"
       - "127.0.0.1:9081:8081"
