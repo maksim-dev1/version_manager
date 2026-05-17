@@ -3,14 +3,14 @@
 # Configuration for the main API server.
 apiServer:
   port: 8080
-  publicHost: manager.progger.pro
+  publicHost: api.manager.progger.pro
   publicPort: 443
   publicScheme: https
 
 # Configuration for the Insights server.
 insightsServer:
   port: 8081
-  publicHost: manager.progger.pro
+  publicHost: insights.manager.progger.pro
   publicPort: 443
   publicScheme: https
 
