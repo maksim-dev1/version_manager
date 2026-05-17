@@ -9,14 +9,12 @@ services:
       - serverid=default
       - logging=normal
       - role=monolith
+      - SERVERPOD_PASSWORD_database=${POSTGRES_PASSWORD}
     ports:
       - "127.0.0.1:9080:8080"
       - "127.0.0.1:9081:8081"
       - "127.0.0.1:9082:8082"
     restart: always
-    volumes:
-      - ./version_manager_server/config:/app/config:ro
-      - ./version_manager_server/migrations:/app/migrations:ro
 
   flutter_web:
     build:
